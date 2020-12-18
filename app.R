@@ -14,7 +14,7 @@ source("helpers.R")
 
 # Define UI ----
 ui <- fluidPage(
-  titlePanel("censusVis"),
+  titlePanel("GEO2R Visulisation"),
   
   sidebarLayout(
     sidebarPanel(
