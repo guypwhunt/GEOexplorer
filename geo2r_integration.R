@@ -6,41 +6,38 @@ library(limma)
 library(umap)
 
 # load series and platform data from GEO
-
+GEOaccession <- "GSE163386" # GSE163386 GSE18388
 # This contains the GEO accession used to access different gene expression data
-gset <- getGEO("GSE18388", GSEMatrix =TRUE, getGPL=FALSE)
-print('GSET')
-print(gset)
+gset <- getGEO(GEOaccession, GSEMatrix =TRUE, getGPL=FALSE)
 if (length(gset) > 1) idx <- grep("GPL6246", attr(gset, "names")) else idx <- 1
 gset <- gset[[idx]]
-print('GSET2')
 print(gset)
+print(exprs(gset))
 
 ex <- exprs(gset)
-print('EX')
-print(ex)
 # log2 transform
 qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
 LogC <- (qx[5] > 100) ||
   (qx[6]-qx[1] > 50 && qx[2] > 0)
 if (LogC) { ex[which(ex <= 0)] <- NaN
 ex <- log2(ex) }
-print('EX2')
-print(ex)
+
+setwd("C:/Users/User/Documents/qmul_courses/ECS750PECS751PECS753PECS754PECS7500P - EECS MSC PROJECT - 202021/shiny_geo2r_visulisation")
+write.csv(ex, file = "analysis-output.csv", row.names = TRUE)
 
 # box-and-whisker plot
 par(mar=c(7,4,2,1))
-title <- paste ("GSE18388", "/", annotation(gset), " Box and Whisker Plot", sep ="")
+title <- paste (GEOaccession, "/", annotation(gset), " Box and Whisker Plot", sep ="")
 boxplot(ex, boxwex=0.7, notch=T, main=title, outline=FALSE, las=2)
 
 # expression value distribution plot
 par(mar=c(4,4,2,1))
-title <- paste ("GSE18388", "/", annotation(gset), " value distribution", sep ="")
+title <- paste (GEOaccession, "/", annotation(gset), " value distribution", sep ="")
 plotDensities(ex, main=title, legend=F)
 
 # mean-variance trend
 ex <- na.omit(ex) # eliminate rows with NAs
-plotSA(lmFit(ex), main="Mean variance trend, GSE18388")
+plotSA(lmFit(ex), main= paste("Mean variance trend,", GEOaccession, sep =" "))
 
 # UMAP plot (multi-dimensional scaling)
 ex <- ex[!duplicated(ex), ]  # remove duplicates
