@@ -6,13 +6,11 @@ library(limma)
 library(umap)
 
 # load series and platform data from GEO
-GEOaccession <- "GSE163386" # GSE163386 GSE18388
+GEOaccession <- "GSE18388" # GSE163386 GSE18388
 # This contains the GEO accession used to access different gene expression data
 gset <- getGEO(GEOaccession, GSEMatrix =TRUE, getGPL=FALSE)
 if (length(gset) > 1) idx <- grep("GPL6246", attr(gset, "names")) else idx <- 1
 gset <- gset[[idx]]
-print(gset)
-print(exprs(gset))
 
 ex <- exprs(gset)
 # log2 transform
@@ -22,8 +20,9 @@ LogC <- (qx[5] > 100) ||
 if (LogC) { ex[which(ex <= 0)] <- NaN
 ex <- log2(ex) }
 
-setwd("C:/Users/User/Documents/qmul_courses/ECS750PECS751PECS753PECS754PECS7500P - EECS MSC PROJECT - 202021/shiny_geo2r_visulisation")
+setwd("C:/Users/User/Documents/qmul_courses/ECS750PECS751PECS753PECS754PECS7500P - EECS MSC PROJECT - 202021/shiny_geo2r_visulisation/data")
 write.csv(ex, file = "analysis-output.csv", row.names = TRUE)
+saveRDS(ex, file = "C:/Users/User/Documents/qmul_courses/ECS750PECS751PECS753PECS754PECS7500P - EECS MSC PROJECT - 202021/shiny_geo2r_visulisation/data/analysis-output.rds")
 
 # box-and-whisker plot
 par(mar=c(7,4,2,1))
