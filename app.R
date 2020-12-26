@@ -9,6 +9,7 @@ geo2r_data <- readRDS("data/analysis-output.rds")
 
 ui <- fluidPage(
   titlePanel("GEO2R Data Visualisation"),
+  textInput("GEO accession code", "GEO accession code", "Please enter the GEO accession code"),
   dataTableOutput('myTable')
 )
 

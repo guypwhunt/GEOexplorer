@@ -6,7 +6,7 @@ library(limma)
 library(umap)
 
 # load series and platform data from GEO
-GEOaccession <- "GSE18390" # GSE163386 GSE18388 #GSE18390
+GEOaccession <- "GSE18384" # GSE163386 GSE18388 #GSE18390 #GSE18384
 # This contains the GEO accession used to access different gene expression data
 gset <- getGEO(GEOaccession, GSEMatrix =TRUE, getGPL=FALSE)
 if (length(gset) > 1) idx <- grep("GPL6246", attr(gset, "names")) else idx <- 1
