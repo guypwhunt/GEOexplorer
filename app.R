@@ -4,13 +4,6 @@ library(GEOquery)
 library(limma)
 library(umap)
 
-# UPDATE HELPER FUNCTION TO RETURN DATA
-# LOOK AT LESSON 6
-# IDEA GEO2R SCRIPT TO RETRUN DATA 
-
-# Load Data
-geo2r_data <- readRDS("data/analysis-output.rds")
-
 ui <- fluidPage(
   titlePanel("GEO2R Data Visualisation"),
   helpText("Select a GEO accession code to examine the gene expression data.
