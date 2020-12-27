@@ -14,7 +14,7 @@ ui <- fluidPage(
 
         Information will be collected from GEO2R."),
   textInput("GEO accession code", "GEO accession code", "Please enter the GEO accession code"),
-  dataTableOutput('myTable')
+  mainPanel(dataTableOutput('myTable'))
 )
 
 server <- function(input, output, session){
