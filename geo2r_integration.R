@@ -11,7 +11,6 @@ GEOaccession <- "GSE18384" # GSE163386 GSE18388 #GSE18390 #GSE18384
 gset <- getGEO(GEOaccession, GSEMatrix =TRUE, getGPL=FALSE)
 if (length(gset) > 1) idx <- grep("GPL6246", attr(gset, "names")) else idx <- 1
 gset <- gset[[idx]]
-
 ex <- exprs(gset)
 # log2 transform
 qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))

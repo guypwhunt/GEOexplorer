@@ -1,9 +1,12 @@
 # Load Packages
 library(shiny)
-library(DT)
+library(GEOquery)
+library(limma)
+library(umap)
 
 # UPDATE HELPER FUNCTION TO RETURN DATA
 # LOOK AT LESSON 6
+# IDEA GEO2R SCRIPT TO RETRUN DATA 
 
 # Load Data
 geo2r_data <- readRDS("data/analysis-output.rds")
@@ -13,13 +16,26 @@ ui <- fluidPage(
   helpText("Select a GEO accession code to examine the gene expression data.
 
         Information will be collected from GEO2R."),
-  textInput("GEO accession code", "GEO accession code", "Please enter the GEO accession code"),
+  textInput("geo_accession_code", "GEO accession code", "GSE18384"),
   mainPanel(dataTableOutput('myTable'))
 )
 
 server <- function(input, output, session){
+  
+  data_input <- reactive({gset <- getGEO(input$geo_accession_code, GSEMatrix =TRUE, getGPL=FALSE)
+  if (length(gset) > 1) idx <- grep("GPL6246", attr(gset, "names")) else idx <- 1
+  gset <- gset[[idx]]
+  ex <- exprs(gset)
+  # log2 transform
+  qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
+  LogC <- (qx[5] > 100) ||
+    (qx[6]-qx[1] > 50 && qx[2] > 0)
+  if (LogC) { ex[which(ex <= 0)] <- NaN
+  ex <- log2(ex) }
+  return(ex)})
+  
   output$myTable <- renderDataTable({
-    geo2r_data
+    data_input()
   })
 }
 
