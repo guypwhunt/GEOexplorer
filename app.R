@@ -8,12 +8,37 @@
   ui <- fluidPage(
     titlePanel("GEO2R Data Visualisation"),
     helpText("GEO2R is an interactive web tool that allows users to compare two or more groups of Samples in a GEO Series in order to identify genes that are differentially expressed across experimental conditions. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of graphics to be generated from the GEO2R outputs."),
-    helpText("Select a GEO accession code to examine the gene expression data."),
-    textInput("geo_accession_code", "GEO accession code", "GSE18384"),
-    helpText("Please enter your platform of interest, if the Series is associated with multiple platforms."),
-    textInput("platform", "Platform", "GPL6246"),
+    sidebarPanel(
+      helpText("Input a GEO accession code to examine the gene expression data."),
+      textInput("geo_accession_code", "GEO accession code", "GSE18384"),
+      helpText("Input the platform of interest, if the series is associated with multiple platforms."),
+      textInput("platform", "Platform", "GPL6246"),
+      selectInput("pValueAdjustment", "Apply adjustment to the P-values:",
+                  choices = c("Benjamini & Hochberg (False discovery rate)", "Benjamini & Yekutieli", "Bonferroni", "Hochberg", "Holm", "Hommel", "None")),
+      radioButtons("logTransformation",
+                   label="Apply log transformation to the data:",
+                   choices=list("Auto-Detect","Yes","No"),
+                   selected="Auto-Detect"),
+      radioButtons("limmaPrecisionWeights",
+                   label="Apply limma precision weights (vooma):",
+                   choices=list("Yes","No"),
+                   selected="No"), 
+      radioButtons("forceNormalization",
+                   label="Force normalization:",
+                   choices=list("Yes","No"),
+                   selected="No"), 
+      radioButtons("forceNormalization",
+                   label="Category of Platform annotation to display on results:",
+                   choices=list("Submitter supplied","NCBI generated"),
+                   selected="No"), 
+      br(),
+      helpText("Plot displays"),
+      sliderInput("integer", "Significance level cut-off:",
+                  min = 0, max = 1,
+                  value = 0.05),
+      # add grouping functionality
+    ),
     mainPanel(tabsetPanel(type = "tabs",
-                          tabPanel("Options", plotOutput("plot")),
                           tabPanel("Dataset", dataTableOutput('myTable')),
                           tabPanel("Box-and-Whisper Plot", plotOutput('boxPlot')),
                           tabPanel("Expression Density Plot", plotOutput('expressionDensity')),
@@ -24,17 +49,31 @@
   
   server <- function(input, output, session){
     
-    data_input <- reactive({gset <- getGEO(input$geo_accession_code, GSEMatrix =TRUE, getGPL=FALSE)
+    gsetData <- reactive({gset <- getGEO(input$geo_accession_code, GSEMatrix =TRUE, getGPL=FALSE)
     if (length(gset) > 1) idx <- grep(input$platform, attr(gset, "names")) else idx <- 1
     gset <- gset[[idx]]
+    return(gset)})
+    
+    data_input <- reactive({gset <- gsetData()
+    if (input$logTransformation == "Auto-Detect"){
     ex <- exprs(gset)
     # log2 transform
     qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
     LogC <- (qx[5] > 100) ||
       (qx[6]-qx[1] > 50 && qx[2] > 0)
     if (LogC) { ex[which(ex <= 0)] <- NaN
-    ex <- log2(ex) }
-    return(ex)})
+    ex <- log2(ex)}
+    return(ex)} 
+    # this does not work for some reason!!!
+    else if (input$logTransformation == "Yes") {
+    ex <- exprs(gset)
+    ex <- ex[which(ex <= 0)] <- NaN
+    ex <- log2(ex)
+    return(ex)}
+    else if (input$logTransformation == "No") {
+    ex <- exprs(gset)
+    return(ex)}
+    })
     
     gset <- reactive({gset <- getGEO(input$geo_accession_code, GSEMatrix =TRUE, getGPL=FALSE)
     if (length(gset) > 1) idx <- grep(input$platform, attr(gset, "names")) else idx <- 1
