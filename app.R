@@ -4,6 +4,7 @@
   library(limma)
   library(umap)
   library("maptools")
+  library(ggplot2)
   
   ui <- fluidPage(
     titlePanel("GEO2R Data Visualisation"),
@@ -19,14 +20,17 @@
                    label="Apply log transformation to the data:",
                    choices=list("Auto-Detect","Yes","No"),
                    selected="Auto-Detect"),
+      # Need to get the radio button below working or delete
       radioButtons("limmaPrecisionWeights",
                    label="Apply limma precision weights (vooma):",
                    choices=list("Yes","No"),
                    selected="No"), 
+      # Need to get the radio button below working or delete
       radioButtons("forceNormalization",
                    label="Force normalization:",
                    choices=list("Yes","No"),
                    selected="No"), 
+      # Need to get the radio button below working or delete
       radioButtons("forceNormalization",
                    label="Category of Platform annotation to display on results:",
                    choices=list("Submitter supplied","NCBI generated"),
@@ -40,10 +44,13 @@
     ),
     mainPanel(tabsetPanel(type = "tabs",
                           tabPanel("Dataset", dataTableOutput('myTable')),
+                          tabPanel("GEO2R Data Visualization",
+                          tabsetPanel(type = "tabs",
                           tabPanel("Box-and-Whisper Plot", plotOutput('boxPlot')),
                           tabPanel("Expression Density Plot", plotOutput('expressionDensity')),
                           tabPanel("Mean-Variance Plot", plotOutput('meanVariance')),
-                          tabPanel("UMAP Plot", plotOutput('umap'))
+                          tabPanel("UMAP Plot", plotOutput('umap')))),
+                          tabPanel("Next Generation Data Visualization")
     ))
   )
   
@@ -67,7 +74,8 @@
     # this does not work for some reason!!!
     else if (input$logTransformation == "Yes") {
     ex <- exprs(gset)
-    ex <- ex[which(ex <= 0)] <- NaN
+    #I think the line below is an error in the original source code as it causes the data to become NaN!!!
+    #ex <- ex[which(ex <= 0)] <- NaN
     ex <- log2(ex)
     return(ex)}
     else if (input$logTransformation == "No") {
