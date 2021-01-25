@@ -1,35 +1,35 @@
-library(shiny)
-library(GEOquery)
-library(limma)
-library(umap)
-library("maptools")
-library(ggplot2)
-suppressMessages(library("argparser"))
-suppressMessages(library("GEOquery"))
-suppressMessages(library("impute"))
-suppressMessages(library("pathview")) # for the id2eg function
+#library(shiny)
+#library(GEOquery)
+#library(limma)
+#library(umap)
+#library("maptools")
+#library(ggplot2)
+#suppressMessages(library("argparser"))
+#suppressMessages(library("GEOquery"))
+#suppressMessages(library("impute"))
+#suppressMessages(library("pathview")) # for the id2eg function
 # Species database
-suppressMessages(library("org.Ag.eg.db")) # "Anopheles" "aga" "eg"
-suppressMessages(library("org.At.tair.db")) # "Arabidopsis" "ath" "tair"
-suppressMessages(library("org.Bt.eg.db")) # "Bovine" "bta" "eg"
-suppressMessages(library("org.Ce.eg.db")) # "Worm" "cel" "eg"
-suppressMessages(library("org.Cf.eg.db")) # "Canine" "cfa" "eg"
-suppressMessages(library("org.Dm.eg.db")) # "Fly" "dme" "eg"
-suppressMessages(library("org.Dr.eg.db")) # "Zebrafish" "dre" "eg"
-suppressMessages(library("org.EcK12.eg.db")) # "E coli strain K12" "eco" "eg"
-suppressMessages(library("org.EcSakai.eg.db")) # "E coli strain Sakai" "ecs" "eg"
-suppressMessages(library("org.Gg.eg.db")) # "Chicken" "gga" "eg"
-suppressMessages(library("org.Hs.eg.db")) # "Human" "hsa" "eg"
-suppressMessages(library("org.Mm.eg.db")) # "Mouse" "mmu" "eg"
-suppressMessages(library("org.Mmu.eg.db")) # "Rhesus" "mcc" "eg"
-suppressMessages(library("org.Pf.plasmo.db")) # "Malaria" "pfa" "orf"
-suppressMessages(library("org.Pt.eg.db")) # "Chimp" "ptr" "eg"
-suppressMessages(library("org.Rn.eg.db")) # "Rat" "rno" "eg"
-suppressMessages(library("org.Sc.sgd.db")) # "Yeast" "sce" "orf"
-suppressMessages(library("org.Ss.eg.db")) # "Pig" "ssc" "eg"
-suppressMessages(library("org.Xl.eg.db")) # "Xenopus" "xla" "eg"
-data(korg)
-data(bods)
+#suppressMessages(library("org.Ag.eg.db")) # "Anopheles" "aga" "eg"
+#suppressMessages(library("org.At.tair.db")) # "Arabidopsis" "ath" "tair"
+#suppressMessages(library("org.Bt.eg.db")) # "Bovine" "bta" "eg"
+#suppressMessages(library("org.Ce.eg.db")) # "Worm" "cel" "eg"
+#suppressMessages(library("org.Cf.eg.db")) # "Canine" "cfa" "eg"
+#suppressMessages(library("org.Dm.eg.db")) # "Fly" "dme" "eg"
+#suppressMessages(library("org.Dr.eg.db")) # "Zebrafish" "dre" "eg"
+#suppressMessages(library("org.EcK12.eg.db")) # "E coli strain K12" "eco" "eg"
+#suppressMessages(library("org.EcSakai.eg.db")) # "E coli strain Sakai" "ecs" "eg"
+#suppressMessages(library("org.Gg.eg.db")) # "Chicken" "gga" "eg"
+#suppressMessages(library("org.Hs.eg.db")) # "Human" "hsa" "eg"
+#suppressMessages(library("org.Mm.eg.db")) # "Mouse" "mmu" "eg"
+#suppressMessages(library("org.Mmu.eg.db")) # "Rhesus" "mcc" "eg"
+#suppressMessages(library("org.Pf.plasmo.db")) # "Malaria" "pfa" "orf"
+#suppressMessages(library("org.Pt.eg.db")) # "Chimp" "ptr" "eg"
+#suppressMessages(library("org.Rn.eg.db")) # "Rat" "rno" "eg"
+#suppressMessages(library("org.Sc.sgd.db")) # "Yeast" "sce" "orf"
+#suppressMessages(library("org.Ss.eg.db")) # "Pig" "ssc" "eg"
+#suppressMessages(library("org.Xl.eg.db")) # "Xenopus" "xla" "eg"
+#data(korg)
+#data(bods)
 
 geoAccessionCode <- "GSE18384"
 platform <- "GPL6246"
