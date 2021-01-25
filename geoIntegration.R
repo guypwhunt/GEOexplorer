@@ -1,4 +1,3 @@
-library(shiny)
 library(GEOquery)
 library(limma)
 
@@ -24,6 +23,7 @@ extractGeoData <- function(gset, logTransformation) {
   # If log transformation is set to yes
   else if (logTransformation == "Yes") {
     ex <- exprs(gset)
+    #ex <- ex[which(ex <= 0)] <- NaN
     ex <- log2(ex)
     return(ex)}
   

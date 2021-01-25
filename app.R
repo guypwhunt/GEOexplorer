@@ -3,10 +3,11 @@
   library(GEOquery)
   library(limma)
   library(umap)
-  library("maptools")
+  library(maptools)
   library(ggplot2)
   source("geoIntegration.R")
   source("geo2rDataVisualisation.R")
+  source("analyticsFunctions.R")
   
   ui <- fluidPage(
     titlePanel("GEO2R Data Visualisation"),
@@ -22,6 +23,11 @@
                    label="Apply log transformation to the data:",
                    choices=list("Auto-Detect","Yes","No"),
                    selected="Auto-Detect"),
+      radioButtons("knnTransformation",
+                   label="Apply k-nearest neighbors (KNN) algorithm to predict null data:",
+                   choices=list("Yes","No"),
+                   selected="No"),
+      helpText("The Buttons Below here currently are not functional."),
       # Need to get the radio button below working or delete
       radioButtons("limmaPrecisionWeights",
                    label="Apply limma precision weights (vooma):",
@@ -63,30 +69,32 @@
     dataInput <- reactive({extractGeoData(gsetData(), input$logTransformation)
     })
     
+    knnDataInput <- reactive({knnDataTransformation(dataInput(), input$knnTransformation)
+    })
     
     # Data Set Plot
     output$myTable <- renderDataTable({
-      dataInput()
+      knnDataInput()
     })
     
     # Box-and-Whisker Plot
     output$boxPlot <- renderPlot({
-      boxAndWhiskerPlot(input$geoAccessionCode, input$platform, dataInput())
+      boxAndWhiskerPlot(input$geoAccessionCode, input$platform, knnDataInput())
       })
     
     # Expression Value Distribution Plot
     output$expressionDensity <- renderPlot({
-      expressionValueDistributionPlot(input$geoAccessionCode, input$platform, dataInput())
+      expressionValueDistributionPlot(input$geoAccessionCode, input$platform, knnDataInput())
     })
     
     # Mean-Variance Plot
     output$meanVariance <- renderPlot({
-      meanVariancePlot(input$geoAccessionCode, input$platform, dataInput())
+      meanVariancePlot(input$geoAccessionCode, input$platform, knnDataInput())
     })
     
     # UMAP plot (multi-dimensional scaling)
     output$umap <- renderPlot({
-      umapPlot(input$geoAccessionCode, input$platform, dataInput())
+      umapPlot(input$geoAccessionCode, input$platform, knnDataInput())
       })
   }
   
