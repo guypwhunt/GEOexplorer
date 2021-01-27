@@ -9,7 +9,7 @@
   source("geo2rDataVisualisation.R")
   source("analyticsFunctions.R")
   
-  # Required for PCA data visulisations
+  # Required for PCA data visualizations
   library(factoextra)
   
   
