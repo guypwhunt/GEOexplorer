@@ -12,7 +12,7 @@ knnDataTransformation <- function(ex, knnTransformation) {
       ex <- ex[rowSums(is.na(ex)) != ncol(ex), ] # remove rows with missing data
       }
     # remove all zeros
-    ex <- ex[rowSums(ex != 0) != 0,]
+    # ex <- ex[rowSums(ex != 0) != 0,]
     
     # Replace missing value with calculated KNN value
     imputation <- impute.knn(ex)
