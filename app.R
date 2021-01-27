@@ -9,14 +9,18 @@
   source("geo2rDataVisualisation.R")
   source("analyticsFunctions.R")
   
+  # Required for PCA data visulisations
+  library(factoextra)
+  
+  
   ui <- fluidPage(
     titlePanel("GEO2R Data Visualisation"),
     helpText("GEO2R is an interactive web tool that allows users to compare two or more groups of Samples in a GEO Series in order to identify genes that are differentially expressed across experimental conditions. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of graphics to be generated from the GEO2R outputs."),
     sidebarPanel(
       helpText("Input a GEO accession code to examine the gene expression data."),
-      textInput("geoAccessionCode", "GEO accession code", "GSE18384"),
+      textInput("geoAccessionCode", "GEO accession code", "GSE18380"),
       helpText("Input the platform of interest, if the series is associated with multiple platforms."),
-      textInput("platform", "Platform", "GPL6246"),
+      textInput("platform", "Platform", "GPL4694"),
       radioButtons("logTransformation",
                    label="Apply log transformation to the data:",
                    choices=list("Auto-Detect","Yes","No"),
@@ -60,18 +64,40 @@
                           tabPanel("Expression Density Plot", plotOutput('expressionDensity')),
                           tabPanel("Mean-Variance Plot", plotOutput('meanVariance')),
                           tabPanel("UMAP Plot", plotOutput('umap')))),
-                          tabPanel("Next Generation Data Visualization")
-    ))
+                          tabPanel("Next Generation Data Visualization",
+                                   tabsetPanel(type = "tabs",
+                                               tabPanel("Principal Component Analysis", tabsetPanel(type = "tabs",
+                                                                                      tabPanel("Scree Plot", plotOutput('pcaScreePlot')),
+                                                                                      tabPanel("Individuals Plot", plotOutput('pcaIndividualsPlot')),
+                                                                                      tabPanel("Variables Plot", plotOutput('pcaVariablesPlot')),
+                                                                                      tabPanel("Individuals and Variables Biplot", plotOutput('pcaBiplotPlot'))
+                                                                                      )))
+    )
+    )
+  )
   )
   
   server <- function(input, output, session){
     
+    # Get GEO2R data
     gsetData <- reactive({getGeoData(input$geoAccessionCode, input$platform)})
     
-    dataInput <- reactive({extractGeoData(gsetData(), input$logTransformation)
+    # Extract expression data
+    expressionData <- reactive({extractExpressionData(gsetData())
     })
     
+    # Apply log transformation to expression data if necessary
+    dataInput <- reactive({logTransformExpressionData(expressionData(), input$logTransformation)
+    })
+    
+    # Perform KNN transformation on log expression data if neccessary
     knnDataInput <- reactive({knnDataTransformation(dataInput(), input$knnTransformation)
+    })
+    
+    # Move this into the analytics file
+    # Perform PCA analysis on KNN transformation expression data
+    pcaDataInput <- reactive({pca <- prcomp(knnDataTransformation(dataInput(),"Yes"), scale = TRUE)
+    return(pca)
     })
     
     # Data Set Plot
@@ -98,6 +124,39 @@
     output$umap <- renderPlot({
       umapPlot(input$geoAccessionCode, input$platform, knnDataInput())
       })
+    
+    # These components need to be moved into a function
+    # Principal component analysis scree plot
+    output$pcaScreePlot <- renderPlot({
+      fviz_eig(pcaDataInput())
+    })
+    
+    # Principal component analysis individuals plot
+    output$pcaIndividualsPlot <- renderPlot({
+      fviz_pca_ind(pcaDataInput(),
+                   col.ind = "cos2", # Color by the quality of representation
+                   gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+                   repel = TRUE     # Avoid text overlapping
+      )
+    })
+    
+    # Principal component analysis variables plot
+    output$pcaVariablesPlot <- renderPlot({
+      fviz_pca_var(pcaDataInput(),
+                   col.var = "contrib", # Color by contributions to the PC
+                   gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+                   repel = TRUE     # Avoid text overlapping
+      )
+    })
+    
+    # Principal component analysis biplot of individuals and variables
+    output$pcaBiplotPlot <- renderPlot({
+      fviz_pca_biplot(pcaDataInput(), repel = TRUE,
+                      col.var = "#2E9FDF", # Variables color
+                      col.ind = "#696969"  # Individuals color
+      )
+    })
+    
   }
   
   shinyApp(ui, server)

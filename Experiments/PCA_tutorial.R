@@ -1,6 +1,5 @@
-# Version info: R 3.2.3, Biobase 2.30.0, GEOquery 2.40.0, limma 3.26.8
-################################################################
-#   Data plots for selected GEO samples
+library(factoextra)
+
 library(GEOquery)
 library(limma)
 library(umap)
@@ -20,16 +19,10 @@ LogC <- (qx[5] > 100) ||
 if (LogC) { ex[which(ex <= 0)] <- NaN
 ex <- log2(ex) }
 
-pca_analysis2 <- function(ex){
-  pca <- prcomp(ex, scale = TRUE)
-  return(pca)
-}
 
-pca_data <- pca_analysis2(ex)
-print(pca_data)
+res.pca <- prcomp(ex, scale = TRUE)
 
-pca_data <- pca_analysis(ex)
-print(pca_data)
+print(res.pca)
+fviz_eig(res.pca)
 
-pca <- prcomp(ex, scale = TRUE)
-#print(pca)
+?fviz_pca_ind()

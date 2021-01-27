@@ -30,6 +30,3 @@ print(pca_data)
 
 pca_data <- pca_analysis(ex)
 print(pca_data)
-
-pca <- prcomp(ex, scale = TRUE)
-#print(pca)

@@ -8,10 +8,13 @@ getGeoData <- function(geoAccessionCode, platform) {
   return(gset)
 }
 
-extractGeoData <- function(gset, logTransformation) {
+extractExpressionData <- function(gset) {
+    ex <- exprs(gset)
+    return(ex)}
+
+logTransformExpressionData <- function(ex, logTransformation) {
   # If log transformation is set to auto-detect
   if (logTransformation == "Auto-Detect"){
-    ex <- exprs(gset)
     # log2 transform
     qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
     LogC <- (qx[5] > 100) ||
@@ -22,15 +25,13 @@ extractGeoData <- function(gset, logTransformation) {
   
   # If log transformation is set to yes
   else if (logTransformation == "Yes") {
-    ex <- exprs(gset)
     #ex <- ex[which(ex <= 0)] <- NaN
     ex <- log2(ex)
     return(ex)}
   
   # If log transformation is set to no
   else if (logTransformation == "No") {
-    ex <- exprs(gset)
     return(ex)
   }
-  }
+}
   
