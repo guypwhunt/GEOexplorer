@@ -157,7 +157,7 @@
     
     # Principal component analysis biplot of individuals and variables
     output$pcaBiplotPlot <- renderPlot({
-      fviz_pca_biplot(pcaDataInput(), repel = FALSE,
+      fviz_pca_biplot(pcaDataInput(), repel = TRUE,
                       col.var = "#2E9FDF", # Variables color
                       geom = "point",
                       col.ind = "#696969",  # Individuals color
