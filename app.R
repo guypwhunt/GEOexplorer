@@ -90,13 +90,18 @@
     dataInput <- reactive({logTransformExpressionData(expressionData(), input$logTransformation)
     })
     
-    # Perform KNN transformation on log expression data if neccessary
+    # Perform KNN transformation on log expression data if necessary
     knnDataInput <- reactive({knnDataTransformation(dataInput(), input$knnTransformation)
     })
     
+    # Perform KNN transformation on log expression data for PCA input
+    knnDataInputForPca <- reactive({knnDataTransformation(dataInput(), "Yes")
+    })
+    
+    # Trigger this in the back ground
     # Move this into the analytics file
     # Perform PCA analysis on KNN transformation expression data
-    pcaDataInput <- reactive({pca <- prcomp(knnDataTransformation(dataInput(),"Yes"), scale = TRUE)
+    pcaDataInput <- reactive({pca <- prcomp(knnDataTransformation(knnDataInputForPca(),"Yes"), scale = TRUE)
     return(pca)
     })
     
