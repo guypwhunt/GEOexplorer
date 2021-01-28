@@ -141,6 +141,7 @@
       fviz_pca_ind(pcaDataInput(),
                    col.ind = "cos2", # Color by the quality of representation
                    gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+                   geom = "point",
                    repel = TRUE     # Avoid text overlapping
       )
     })
@@ -156,9 +157,10 @@
     
     # Principal component analysis biplot of individuals and variables
     output$pcaBiplotPlot <- renderPlot({
-      fviz_pca_biplot(pcaDataInput(), repel = TRUE,
+      fviz_pca_biplot(pcaDataInput(), repel = FALSE,
                       col.var = "#2E9FDF", # Variables color
-                      col.ind = "#696969"  # Individuals color
+                      geom = "point",
+                      col.ind = "#696969",  # Individuals color
       )
     })
     
