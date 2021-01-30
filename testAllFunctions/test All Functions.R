@@ -8,7 +8,7 @@ source(".\dataTransformationFunctions/dataTransformationFunctions.R")
 geoAccessionCode <- "GSE18380"
 platform <- "GPL4694"
 logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No" 
-knnTransformation <- "Yes" # Values can also be "No"
+knnTransformation <- "No" # Values can also be "No"
 
 # Get GEO2R data
 gsetData <- getGeoData(geoAccessionCode, platform)
@@ -22,11 +22,10 @@ dataInput <- logTransformExpressionData(expressionData, logTransformation)
 # Perform KNN transformation on log expression data if necessary
 knnDataInput <- knnDataTransformation(dataInput, knnTransformation)
 
-# Perform KNN transformation on log expression data for PCA input
-knnDataInputForPca <- knnDataTransformation(dataInput, "Yes")
-
 # Perform PCA analysis on KNN transformation expression data
 pcaDataInput <- pcaAnalysis(knnDataInputForPca)
+
+print(pcaDataInput)
 
 # Box-and-Whisker Plot
 boxAndWhiskerPlot(geoAccessionCode, platform, knnDataInput)
