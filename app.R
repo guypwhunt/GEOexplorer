@@ -1,21 +1,12 @@
   # Load Packages
   library(shiny)
-  library(GEOquery)
-  library(limma)
-  library(umap)
-  library(maptools)
-  library(ggplot2)
-  source("geoIntegration.R")
-  source("geo2rDataVisualisation.R")
-  source("analyticsFunctions.R")
-  
-  # Required for PCA data visualizations
-  library(factoextra)
-  
+  source("geoIntegrationFunctions/geoIntegrationFunctions.R")
+  source("dataVisualizationFunctions/dataVisualizationFunctions.R")
+  source("dataTransformationFunctions/dataTransformationFunctions.R")
   
   ui <- fluidPage(
     titlePanel("GEO2R Data Visualisation"),
-    helpText("GEO2R is an interactive web tool that allows users to compare two or more groups of Samples in a GEO Series in order to identify genes that are differentially expressed across experimental conditions. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of graphics to be generated from the GEO2R outputs."),
+    helpText("GEO2R is an interactive web tool that allows users to compare two or more groups of Samples in a GEO Series to identify genes that are differentially expressed across experimental conditions. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data."),
     sidebarPanel(
       helpText("Input a GEO accession code to examine the gene expression data."),
       textInput("geoAccessionCode", "GEO accession code", "GSE18380"),
@@ -59,19 +50,18 @@
     mainPanel(tabsetPanel(type = "tabs",
                           tabPanel("Dataset", dataTableOutput('myTable')),
                           tabPanel("GEO2R Data Visualization",
-                          tabsetPanel(type = "tabs",
-                          tabPanel("Box-and-Whisper Plot", plotOutput('boxPlot')),
-                          tabPanel("Expression Density Plot", plotOutput('expressionDensity')),
-                          tabPanel("Mean-Variance Plot", plotOutput('meanVariance')),
-                          tabPanel("UMAP Plot", plotOutput('umap')))),
-                          tabPanel("Next Generation Data Visualization",
                                    tabsetPanel(type = "tabs",
-                                               tabPanel("Principal Component Analysis", tabsetPanel(type = "tabs",
-                                                                                      tabPanel("Scree Plot", plotOutput('pcaScreePlot')),
-                                                                                      tabPanel("Individuals Plot", plotOutput('pcaIndividualsPlot')),
-                                                                                      tabPanel("Variables Plot", plotOutput('pcaVariablesPlot')),
-                                                                                      tabPanel("Individuals and Variables Biplot", plotOutput('pcaBiplotPlot'))
-                                                                                      )))
+                                               tabPanel("Box-and-Whisper Plot", br(), span("Generated using R boxplot. The plot below displays the distribution of the values of the genes in the dataset. Viewing the distribution can be useful for determining if the data in the dataset is suitable for differential expression analysis. Generally, median-centred values are indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('boxPlot')),
+                                               tabPanel("Expression Density Plot", br(), span("Generated using R limma (plotDensities). The plot below displays the distribution of the values of the genes in the dataset. This plot complements the boxplot in checking for data normalization before differential expression analysis. If density curves are similar from gene to gene, it is indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('expressionDensity')),
+                                               tabPanel("Mean-Variance Plot", br(), span("Generated using R limma (plotSA, vooma). The plot below is used to check the mean-variance relationship of the expression data, after fitting a linear model. It can help show if there is a lot of variation in the data. Each point represents a gene. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('meanVariance')),
+                                               tabPanel("UMAP Plot", br(), span("Generated using R umap. Uniform Manifold Approximation and Projection (UMAP) is a dimension reduction technique useful for visualizing how genes are related to each other. The number of nearest neighbors used in the calculation is indicated in the graph. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('umap')))),
+                          tabPanel("Principal Component Analysis",
+                                   tabsetPanel(type = "tabs",
+                                               tabPanel("Scree Plot", br(), span("Generated using R prcomp and visualised using R fviz_eig. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information. The plot shows data after log transformation if performed. Additionally, the plot will always use the KNN transformed data regardless of if it was selected or not. "), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues against the number of dimensions."), br(), plotOutput('pcaScreePlot')),
+                                               tabPanel("Individuals Plot", br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information. The plot shows data after log transformation if performed. Additionally, the plot will always use the KNN transformed data regardless of if it was selected or not."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2)."), br(), plotOutput('pcaIndividualsPlot')),
+                                               tabPanel("Variables Plot", br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information. The plot shows data after log transformation if performed. Additionally, the plot will always use the KNN transformed data regardless of if it was selected or not."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2)."), br(), plotOutput('pcaVariablesPlot')),
+                                               tabPanel("Individuals and Variables Biplot",  br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information. The plot shows data after log transformation if performed. Additionally, the plot will always use the KNN transformed data regardless of if it was selected or not."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column)and individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2)."), br(), plotOutput('pcaBiplotPlot'))
+                                               )
     )
     )
   )
@@ -98,11 +88,8 @@
     knnDataInputForPca <- reactive({knnDataTransformation(dataInput(), "Yes")
     })
     
-    # Trigger this in the back ground
-    # Move this into the analytics file
     # Perform PCA analysis on KNN transformation expression data
-    pcaDataInput <- reactive({pca <- prcomp(knnDataTransformation(knnDataInputForPca(),"Yes"), scale = TRUE)
-    return(pca)
+    pcaDataInput <- reactive({pcaAnalysis(knnDataInputForPca())
     })
     
     # Data Set Plot
@@ -125,43 +112,30 @@
       meanVariancePlot(input$geoAccessionCode, input$platform, knnDataInput())
     })
     
+    # This was updated to mandatoryily use the KNN data, this may need to be reverted
     # UMAP plot (multi-dimensional scaling)
     output$umap <- renderPlot({
       umapPlot(input$geoAccessionCode, input$platform, knnDataInput())
       })
     
-    # These components need to be moved into a function
     # Principal component analysis scree plot
     output$pcaScreePlot <- renderPlot({
-      fviz_eig(pcaDataInput())
+      pcaScreePlot(pcaDataInput())
     })
     
     # Principal component analysis individuals plot
     output$pcaIndividualsPlot <- renderPlot({
-      fviz_pca_ind(pcaDataInput(),
-                   col.ind = "cos2", # Color by the quality of representation
-                   gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-                   geom = "point",
-                   repel = TRUE     # Avoid text overlapping
-      )
+      pcaIndividualsPlot(pcaDataInput())
     })
     
     # Principal component analysis variables plot
     output$pcaVariablesPlot <- renderPlot({
-      fviz_pca_var(pcaDataInput(),
-                   col.var = "contrib", # Color by contributions to the PC
-                   gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-                   repel = TRUE     # Avoid text overlapping
-      )
+      pcaVariablesPlot(pcaDataInput())
     })
     
     # Principal component analysis biplot of individuals and variables
     output$pcaBiplotPlot <- renderPlot({
-      fviz_pca_biplot(pcaDataInput(), repel = TRUE,
-                      col.var = "#2E9FDF", # Variables color
-                      geom = "point",
-                      col.ind = "#696969",  # Individuals color
-      )
+      pcaBiplotPlot(pcaDataInput())
     })
     
   }

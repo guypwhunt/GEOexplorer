@@ -1,0 +1,53 @@
+# The purpose of this script is to test all the functions used in the shiny app
+
+source(".\geoIntegrationFunctions/geoIntegrationFunctions.R")
+source(".\dataVisualizationFunctions/dataVisualizationFunctions.R")
+source(".\dataTransformationFunctions/dataTransformationFunctions.R")
+
+# Input Values
+geoAccessionCode <- "GSE18380"
+platform <- "GPL4694"
+logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No" 
+knnTransformation <- "Yes" # Values can also be "No"
+
+# Get GEO2R data
+gsetData <- getGeoData(geoAccessionCode, platform)
+
+# Extract expression data
+expressionData <- extractExpressionData(gsetData)
+
+# Apply log transformation to expression data if necessary
+dataInput <- logTransformExpressionData(expressionData, logTransformation)
+
+# Perform KNN transformation on log expression data if necessary
+knnDataInput <- knnDataTransformation(dataInput, knnTransformation)
+
+# Perform KNN transformation on log expression data for PCA input
+knnDataInputForPca <- knnDataTransformation(dataInput, "Yes")
+
+# Perform PCA analysis on KNN transformation expression data
+pcaDataInput <- pcaAnalysis(knnDataInputForPca)
+
+# Box-and-Whisker Plot
+boxAndWhiskerPlot(geoAccessionCode, platform, knnDataInput)
+
+# Expression Value Distribution Plot
+expressionValueDistributionPlot(geoAccessionCode, platform, knnDataInput)
+
+# Mean-Variance Plot
+meanVariancePlot(geoAccessionCode, platform, knnDataInput)
+
+# UMAP plot (multi-dimensional scaling)
+umapPlot(geoAccessionCode, platform, knnDataInput)
+
+# Principal component analysis scree plot
+pcaScreePlot(pcaDataInput)
+
+# Principal component analysis individuals plot
+pcaIndividualsPlot(pcaDataInput)
+
+# Principal component analysis variables plot
+pcaVariablesPlot(pcaDataInput)
+
+# Principal component analysis biplot of individuals and variables
+pcaBiplotPlot(pcaDataInput)

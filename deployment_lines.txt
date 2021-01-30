@@ -7,6 +7,6 @@ rsconnect::deployApp('C:/Users/User/Documents/qmul_courses/ECS750PECS751PECS753P
 
 
 
-GSE25723 - GPL11261
+GSE25723 - GPL11260, GPL11261
 GSE25721
 GSE18390
