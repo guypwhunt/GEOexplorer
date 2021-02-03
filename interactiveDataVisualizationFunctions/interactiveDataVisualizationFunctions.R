@@ -1,4 +1,5 @@
 library(plotly)
+library(ggplot2)
 
 interactiveBoxAndWhiskerPlot <- function(data) {
   data <- na.omit(data)
@@ -9,4 +10,5 @@ interactiveBoxAndWhiskerPlot <- function(data) {
     fig <- fig %>% add_trace(x = names(data)[i], y = data[,i], quartilemethod="linear", name=names(data)[i])
     i <- i+1
   }
+  return(fig)
   }

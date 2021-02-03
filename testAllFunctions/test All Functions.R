@@ -51,4 +51,7 @@ pcaVariablesPlot(pcaDataInput)
 pcaBiplotPlot(pcaDataInput)
 
 # Interactive Box-and-Whisker Plot
-interactiveBoxAndWhiskerPlot(knnDataInput)
+library(plotly)
+library(ggplot2)
+fig <- interactiveBoxAndWhiskerPlot(knnDataInput)
+fig
