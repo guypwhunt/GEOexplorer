@@ -6,4 +6,3 @@ getGeoData <- function(geoAccessionCode, platform) {
   gset <- gset[[idx]]
   return(gset)
 }
-

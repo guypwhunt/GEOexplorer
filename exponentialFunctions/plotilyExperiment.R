@@ -23,32 +23,21 @@ dataInput <- logTransformExpressionData(expressionData, logTransformation)
 # Perform KNN transformation on log expression data if necessary
 knnDataInput <- knnDataTransformation(dataInput, knnTransformation)
 
-# Perform PCA analysis on KNN transformation expression data
-pcaDataInput <- pcaAnalysis(knnDataInput)
+library(plotly)
+library(dplyr)
 
-# Box-and-Whisker Plot
-boxAndWhiskerPlot(geoAccessionCode, platform, knnDataInput)
+knnDataInput <- na.omit(knnDataInput)
+data <- as.data.frame(knnDataInput)
 
-# Expression Value Distribution Plot
-expressionValueDistributionPlot(geoAccessionCode, platform, knnDataInput)
+fig <- plot_ly(data, type = "box", quartilemethod="linear")
 
-# Mean-Variance Plot
-meanVariancePlot(geoAccessionCode, platform, knnDataInput)
+i = 1
+for(col in names(data)) {
+  print(col)
+  fig <- fig %>% add_trace(x = names(data)[i], y = data[,i], quartilemethod="linear", name=names(data)[i])
+  i <- i+1
+}
 
-# UMAP plot (multi-dimensional scaling)
-umapPlot(geoAccessionCode, platform, knnDataInput)
+fig
 
-# Principal component analysis scree plot
-pcaScreePlot(pcaDataInput)
-
-# Principal component analysis individuals plot
-pcaIndividualsPlot(pcaDataInput)
-
-# Principal component analysis variables plot
-pcaVariablesPlot(pcaDataInput)
-
-# Principal component analysis biplot of individuals and variables
-pcaBiplotPlot(pcaDataInput)
-
-# Interactive Box-and-Whisker Plot
-interactiveBoxAndWhiskerPlot(knnDataInput)
+warnings()

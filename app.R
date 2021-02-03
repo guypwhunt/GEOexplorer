@@ -1,5 +1,7 @@
   # Load Packages
   library(shiny)
+  library(plotly)
+  
   source("geoIntegrationFunctions/geoIntegrationFunctions.R")
   source("dataVisualizationFunctions/dataVisualizationFunctions.R")
   source("dataTransformationFunctions/dataTransformationFunctions.R")
@@ -21,46 +23,54 @@
                    choices=list("Yes","No"),
                    selected="No"),
       helpText("Rows with over 50% missing values are imputed using the overall mean per sample. Columns with over 80% will cause an error in the KNN computation."),
-      br(),
-      helpText("The Buttons Below here currently are not functional!!!"),
+      br()#,
+      #helpText("The Buttons Below here currently are not functional!!!"),
       # Need to get the radio button below working or delete
-      selectInput("pValueAdjustment", "Apply adjustment to the P-values:",
-                  choices = c("Benjamini & Hochberg (False discovery rate)", "Benjamini & Yekutieli", "Bonferroni", "Hochberg", "Holm", "Hommel", "None")),
-      radioButtons("limmaPrecisionWeights",
-                   label="Apply limma precision weights (vooma):",
-                   choices=list("Yes","No"),
-                   selected="No"), 
+      #selectInput("pValueAdjustment", "Apply adjustment to the P-values:",
+      #            choices = c("Benjamini & Hochberg (False discovery rate)", "Benjamini & Yekutieli", "Bonferroni", "Hochberg", "Holm", "Hommel", "None")),
+      #radioButtons("limmaPrecisionWeights",
+      #             label="Apply limma precision weights (vooma):",
+      #             choices=list("Yes","No"),
+      #             selected="No"), 
       # Need to get the radio button below working or delete
-      radioButtons("forceNormalization",
-                   label="Force normalization:",
-                   choices=list("Yes","No"),
-                   selected="No"), 
+      #radioButtons("forceNormalization",
+      #             label="Force normalization:",
+      #             choices=list("Yes","No"),
+      #             selected="No"), 
       # Need to get the radio button below working or delete
-      radioButtons("forceNormalization",
-                   label="Category of Platform annotation to display on results:",
-                   choices=list("Submitter supplied","NCBI generated"),
-                   selected="No"), 
-      br(),
-      helpText("Plot displays"),
-      sliderInput("integer", "Significance level cut-off:",
-                  min = 0, max = 1,
-                  value = 0.05),
+      #radioButtons("forceNormalization",
+      #             label="Category of Platform annotation to display on results:",
+      #             choices=list("Submitter supplied","NCBI generated"),
+      #             selected="No"), 
+      #br(),
+      #helpText("Plot displays"),
+      #sliderInput("integer", "Significance level cut-off:",
+      #            min = 0, max = 1,
+      #            value = 0.05),
       # add grouping functionality
     ),
     mainPanel(tabsetPanel(type = "tabs",
                           tabPanel("Dataset", dataTableOutput('myTable')),
-                          tabPanel("GEO2R Data Visualization",
+                          tabPanel("Exploratory Data Analysis",
                                    tabsetPanel(type = "tabs",
-                                               tabPanel("Box-and-Whisper Plot", br(), span("Generated using R boxplot. The plot below displays the distribution of the values of the genes in the dataset. Viewing the distribution can be useful for determining if the data in the dataset is suitable for differential expression analysis. Generally, median-centred values are indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('boxPlot')),
-                                               tabPanel("Expression Density Plot", br(), span("Generated using R limma (plotDensities). The plot below displays the distribution of the values of the genes in the dataset. This plot complements the boxplot in checking for data normalization before differential expression analysis. If density curves are similar from gene to gene, it is indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('expressionDensity')),
-                                               tabPanel("Mean-Variance Plot", br(), span("Generated using R limma (plotSA, vooma). The plot below is used to check the mean-variance relationship of the expression data, after fitting a linear model. It can help show if there is a lot of variation in the data. Each point represents a gene. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('meanVariance')),
-                                               tabPanel("UMAP Plot", br(), span("Generated using R umap. Uniform Manifold Approximation and Projection (UMAP) is a dimension reduction technique useful for visualizing how genes are related to each other. The number of nearest neighbors used in the calculation is indicated in the graph. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('umap')))),
+                                   tabPanel("Original Visualizations",
+                                            tabsetPanel(type = "tabs",
+                                                        tabPanel("Box-and-Whisper Plot", br(), span("Generated using R boxplot. The plot below displays the distribution of the values of the genes in the dataset. Viewing the distribution can be useful for determining if the data in the dataset is suitable for differential expression analysis. Generally, median-centred values are indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('boxPlot')),
+                                                        tabPanel("Expression Density Plot", br(), span("Generated using R limma (plotDensities). The plot below displays the distribution of the values of the genes in the dataset. This plot complements the boxplot in checking for data normalization before differential expression analysis. If density curves are similar from gene to gene, it is indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('expressionDensity')),
+                                                        tabPanel("Mean-Variance Plot", br(), span("Generated using R limma (plotSA, vooma). The plot below is used to check the mean-variance relationship of the expression data, after fitting a linear model. It can help show if there is a lot of variation in the data. Each point represents a gene. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('meanVariance')),
+                                                        tabPanel("UMAP Plot", br(), span("Generated using R umap. Uniform Manifold Approximation and Projection (UMAP) is a dimension reduction technique useful for visualizing how genes are related to each other. The number of nearest neighbors used in the calculation is indicated in the graph. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('umap')))),
+                                   tabPanel("Interactive Visualizations",
+                                            tabsetPanel(type = "tabs",
+                                                        tabPanel("Box-and-Whisper Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. The quartiles are calculated using the linear method. Viewing the distribution can be useful for determining if the data in the dataset is suitable for differential expression analysis. Generally, median-centred values are indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), plotlyOutput('interactiveBoxAndWhiskerPlot'))
+                                            ))
+                                                        
+                                   )),
                           tabPanel("Principal Component Analysis",
                                    tabsetPanel(type = "tabs",
                                                tabPanel("Scree Plot", br(), span("Generated using R prcomp and visualised using R fviz_eig. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information. "), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues against the number of dimensions. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaScreePlot')),
                                                tabPanel("Individuals Plot", br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaIndividualsPlot')),
                                                tabPanel("Variables Plot", br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaVariablesPlot')),
-                                               tabPanel("Individuals and Variables Biplot",  br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column)and individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaBiplotPlot'))
+                                               tabPanel("Individuals and Variables Biplot",  br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column) and individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaBiplotPlot'))
                                                )
     )
     )
@@ -133,6 +143,13 @@
     output$pcaBiplotPlot <- renderPlot({
       pcaBiplotPlot(pcaDataInput())
     })
+    
+    # Interactive Box-and-Whisker Plot
+    output$interactiveBoxAndWhiskerPlot <- renderPlotly({
+      interactiveBoxAndWhiskerPlot(knnDataInput())
+    })
+    
+    
     
   }
   
