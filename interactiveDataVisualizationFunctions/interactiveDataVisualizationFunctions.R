@@ -4,7 +4,7 @@ library(ggplot2)
 interactiveBoxAndWhiskerPlot <- function(data, geoAccessionCode, platform) {
   data <- na.omit(data)
   data <- as.data.frame(data)
-  fig <- plot_ly(data, type = "box", quartilemethod="linear")
+  fig <- plot_ly(type = "box", quartilemethod="linear")
   i = 1
   for(col in names(data)) {
     fig <- fig %>% add_trace(x = names(data)[i], y = data[,i], quartilemethod="linear", name=names(data)[i])
