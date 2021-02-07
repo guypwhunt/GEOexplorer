@@ -64,8 +64,11 @@
                                                         tabPanel("UMAP Plot", br(), span("Generated using R umap. Uniform Manifold Approximation and Projection (UMAP) is a dimension reduction technique useful for visualizing how genes are related to each other. The number of nearest neighbors used in the calculation is indicated in the graph. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('umap')))),
                                    tabPanel("Interactive Visualizations",
                                             tabsetPanel(type = "tabs",
-                                                        tabPanel("Box-and-Whisper Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. The quartiles are calculated using the linear method. Viewing the distribution can be useful for determining if the data in the dataset is suitable for differential expression analysis. Generally, median-centred values are indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), plotlyOutput('interactiveBoxAndWhiskerPlot'))
-                                            ))
+                                                        tabPanel("Box-and-Whisper Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. The quartiles are calculated using the linear method. Viewing the distribution can be useful for determining if the data in the dataset is suitable for differential expression analysis. Generally, median-centred values are indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), plotlyOutput('interactiveBoxAndWhiskerPlot')),
+                                                        tabPanel("Expression Density Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. This plot complements the boxplot in checking for data normalization before differential expression analysis. If density curves are similar from gene to gene, it is indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), plotlyOutput('interactiveDesnityPlot')),
+                                                        tabPanel("3D Expression Density Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. This plot complements the boxplot in checking for data normalization before differential expression analysis. If density curves are similar from gene to gene, it is indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), plotlyOutput('interactiveThreeDDesnityPlot'))
+                                                        
+                                                                                                    ))
                                                         
                                    )),
                           tabPanel("Principal Component Analysis",
@@ -150,6 +153,45 @@
     # Interactive Box-and-Whisker Plot
     output$interactiveBoxAndWhiskerPlot <- renderPlotly({
       interactiveBoxAndWhiskerPlot(knnDataInput())
+    })
+    
+    # Interactive Density Plot
+    output$interactiveDesnityPlot <- renderPlotly({
+      data <- as.data.frame(knnDataInput())
+      data <- na.omit(data)
+      fig <- plot_ly(type = 'scatter', mode = 'lines', name = 'Density Plot')
+      i <- 1
+      for(col in names(data)) {
+        density <- density(data[,i])
+        fig <- fig %>% add_trace(x = density$x, y = density$y, name = col)
+        i <- i+1
+      }
+      
+      fig <- fig %>% layout(title = 'Density Plot',
+        xaxis = list(title = 'Intensity'),
+                            yaxis = list(title = 'Density'))
+      fig
+    })
+    
+    output$interactiveThreeDDesnityPlot <- renderPlotly({
+      data <- as.data.frame(knnDataInput())
+      data <- na.omit(data)
+      fig <- plot_ly(type = 'scatter3d', mode = 'lines', name = 'Density Plot')
+      i <- 1
+      for(col in names(data)) {
+        density <- density(data[,i])
+        fig <- fig %>% add_trace(x = density$x, y = i, z = density$y, name = col)
+        i <- i+1
+      }
+      
+      fig <- fig %>% layout(
+        title = "Density Plot",
+        scene = list(
+          xaxis = list(title = "Intensity"),
+          yaxis = list(title = ""),
+          zaxis = list(title = "Density")
+          ))
+      fig
     })
     
     

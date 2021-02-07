@@ -55,3 +55,7 @@ library(plotly)
 library(ggplot2)
 fig <- interactiveBoxAndWhiskerPlot(knnDataInput)
 fig
+
+# Interactive Density Plot
+fig <- interactiveDesnityPlot(knnDataInput)
+fig
