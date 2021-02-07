@@ -1,7 +1,7 @@
 library(plotly)
 library(ggplot2)
 
-interactiveBoxAndWhiskerPlot <- function(data) {
+interactiveBoxAndWhiskerPlot <- function(data, geoAccessionCode, platform) {
   data <- na.omit(data)
   data <- as.data.frame(data)
   fig <- plot_ly(data, type = "box", quartilemethod="linear")
@@ -10,13 +10,14 @@ interactiveBoxAndWhiskerPlot <- function(data) {
     fig <- fig %>% add_trace(x = names(data)[i], y = data[,i], quartilemethod="linear", name=names(data)[i])
     i <- i+1
   }
+  fig <- fig %>% layout(title = (paste(paste(geoAccessionCode, "/"), platform)))
   return(fig)
 }
 
-interactiveDesnityPlot <- function(data) {
+interactiveDesnityPlot <- function(data, geoAccessionCode, platform) {
   data <- as.data.frame(data)
   data <- na.omit(data)
-  fig <- plot_ly(type = 'scatter', mode = 'lines', name = 'Density Plot')
+  fig <- plot_ly(type = 'scatter', mode = 'lines', name = (paste(paste(geoAccessionCode,platform),'value distribution')))
   i <- 1
   for(col in names(data)) {
     density <- density(data[,i])
@@ -24,16 +25,16 @@ interactiveDesnityPlot <- function(data) {
     i <- i+1
   }
   
-  fig <- fig %>% layout(xaxis = list(title = 'Intensity'),
+  fig <- fig %>% layout(title = (paste(paste(geoAccessionCode,platform),'value distribution')),
+                        xaxis = list(title = 'Intensity'),
                         yaxis = list(title = 'Density'))
-  
   return(fig)
 }
 
-interactiveThreeDDesnityPlot <- function(data) {
+interactiveThreeDDesnityPlot <- function(data, geoAccessionCode, platform) {
   data <- as.data.frame(data)
   data <- na.omit(data)
-  fig <- plot_ly(type = 'scatter3d', mode = 'lines', name = 'Density Plot')
+  fig <- plot_ly(type = 'scatter3d', mode = 'lines', name = (paste(paste(geoAccessionCode,platform),'value distribution')))
   i <- 1
   for(col in names(data)) {
     density <- density(data[,i])
@@ -41,8 +42,12 @@ interactiveThreeDDesnityPlot <- function(data) {
     i <- i+1
   }
   
-  fig <- fig %>% layout(xaxis = list(title = 'Intensity'),
-                        yaxis = list(title = 'Density'))
-  
-  return(fig)
+  fig <- fig %>% layout(
+    title = (paste(paste(geoAccessionCode,platform),'value distribution')),
+    scene = list(
+      xaxis = list(title = "Intensity"),
+      yaxis = list(title = ""),
+      zaxis = list(title = "Density")
+    ))
+  fig
 }
