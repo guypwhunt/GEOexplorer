@@ -22,6 +22,7 @@ meanVariancePlot <- function(geoAccessionCode, platform, data) {
 }
 
 umapPlot <- function(geoAccessionCode, platform, data) {
+  data <- na.omit(data) # eliminate rows with NAs
   ex <- data[!duplicated(data), ]  # remove duplicates
   nNeighbors <- 5
   ump <- umap(t(ex), n_neighbors = nNeighbors, random_state = 123)

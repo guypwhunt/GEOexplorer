@@ -9,7 +9,7 @@ source("interactiveDataVisualizationFunctions/interactiveDataVisualizationFuncti
 geoAccessionCode <- "GSE18380"
 platform <- "GPL4694"
 logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No" 
-knnTransformation <- "Yes" # Values can also be "No"
+knnTransformation <- "No" # Values can also be "No"
 
 # Get GEO2R data
 gsetData <- getGeoData(geoAccessionCode, platform)
@@ -62,4 +62,8 @@ fig
 
 # 3D Interactive Density Plot
 fig <- interactiveThreeDDesnityPlot(knnDataInput, geoAccessionCode, platform)
+fig
+
+# Interactive UMAP
+fig <- interactiveUmapPlot(knnDataInput)
 fig

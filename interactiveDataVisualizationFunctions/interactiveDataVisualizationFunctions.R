@@ -11,7 +11,6 @@ interactiveBoxAndWhiskerPlot <- function(data, geoAccessionCode, platform) {
     i <- i+1
   }
   fig <- fig %>% layout(title = (paste(paste(geoAccessionCode, "/"), platform)))
-  return(fig)
 }
 
 interactiveDesnityPlot <- function(data, geoAccessionCode, platform) {
@@ -28,7 +27,6 @@ interactiveDesnityPlot <- function(data, geoAccessionCode, platform) {
   fig <- fig %>% layout(title = (paste(paste(geoAccessionCode,platform),'value distribution')),
                         xaxis = list(title = 'Intensity'),
                         yaxis = list(title = 'Density'))
-  return(fig)
 }
 
 interactiveThreeDDesnityPlot <- function(data, geoAccessionCode, platform) {
@@ -49,5 +47,21 @@ interactiveThreeDDesnityPlot <- function(data, geoAccessionCode, platform) {
       yaxis = list(title = ""),
       zaxis = list(title = "Density")
     ))
-  fig
+}
+
+# Look into consolidating data <- na.omit(data) function
+interactiveUmapPlot <- function(data) {
+  data <- na.omit(data)
+  data <- data[!duplicated(data), ]  # remove duplicates
+  nNeighbors <- 5
+  ump <- umap(t(ex), n_neighbors = nNeighbors, random_state = 123)
+  i <- 1
+  fig <- plot_ly(type = 'scatter', mode = 'markers')
+  for(row in row.names(ump$layout)){
+    fig <- fig %>% add_trace(x = ump$layout[i,][1], y = ump$layout[i,][2], name = row)
+    i <- i+1
+  }
+  fig <- fig %>% layout(
+    title = (paste('UMAP plot, number of nearest neighbors used =',nNeighbors)))
+    
 }
