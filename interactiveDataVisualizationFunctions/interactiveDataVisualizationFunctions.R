@@ -2,6 +2,7 @@ library(plotly)
 library(ggplot2)
 
 interactiveBoxAndWhiskerPlot <- function(data, geoAccessionCode, platform) {
+  data <- as.data.frame(data)
   fig <- plot_ly(type = "box", quartilemethod="linear")
   i = 1
   for(col in names(data)) {
@@ -9,9 +10,11 @@ interactiveBoxAndWhiskerPlot <- function(data, geoAccessionCode, platform) {
     i <- i+1
   }
   fig <- fig %>% layout(title = (paste(paste(geoAccessionCode, "/"), platform)))
+  fig
 }
 
 interactiveDesnityPlot <- function(data, geoAccessionCode, platform) {
+  data <- as.data.frame(data)
   fig <- plot_ly(type = 'scatter', mode = 'lines', name = (paste(paste(geoAccessionCode,platform),'value distribution')))
   i <- 1
   for(col in names(data)) {
@@ -23,9 +26,11 @@ interactiveDesnityPlot <- function(data, geoAccessionCode, platform) {
   fig <- fig %>% layout(title = (paste(paste(geoAccessionCode,platform),'value distribution')),
                         xaxis = list(title = 'Intensity'),
                         yaxis = list(title = 'Density'))
+  fig
 }
 
 interactiveThreeDDesnityPlot <- function(data, geoAccessionCode, platform) {
+  data <- as.data.frame(data)
   fig <- plot_ly(type = 'scatter3d', mode = 'lines', name = (paste(paste(geoAccessionCode,platform),'value distribution')))
   i <- 1
   for(col in names(data)) {
@@ -41,6 +46,7 @@ interactiveThreeDDesnityPlot <- function(data, geoAccessionCode, platform) {
       yaxis = list(title = ""),
       zaxis = list(title = "Density")
     ))
+  fig
 }
 
 # Look into consolidating data <- na.omit(data) function
@@ -56,5 +62,5 @@ interactiveUmapPlot <- function(data) {
   }
   fig <- fig %>% layout(
     title = (paste('UMAP plot, number of nearest neighbors used =',nNeighbors)))
-    
+  fig
 }

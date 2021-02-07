@@ -23,8 +23,11 @@ dataInput <- logTransformExpressionData(expressionData, logTransformation)
 # Perform KNN transformation on log expression data if necessary
 knnDataInput <- knnDataTransformation(dataInput, knnTransformation)
 
+# Remove all incomplete rows
+naOmitInput <- naOmitTransformation(knnDataInput)
+
 # Perform PCA analysis on KNN transformation expression data
-pcaDataInput <- pcaAnalysis(knnDataInput)
+pcaDataInput <- pcaAnalysis(naOmitInput)
 
 # Box-and-Whisker Plot
 boxAndWhiskerPlot(geoAccessionCode, platform, knnDataInput)
@@ -33,10 +36,10 @@ boxAndWhiskerPlot(geoAccessionCode, platform, knnDataInput)
 expressionValueDistributionPlot(geoAccessionCode, platform, knnDataInput)
 
 # Mean-Variance Plot
-meanVariancePlot(geoAccessionCode, platform, knnDataInput)
+meanVariancePlot(geoAccessionCode, platform, naOmitInput)
 
 # UMAP plot (multi-dimensional scaling)
-umapPlot(geoAccessionCode, platform, knnDataInput)
+umapPlot(geoAccessionCode, platform, naOmitInput)
 
 # Principal component analysis scree plot
 pcaScreePlot(pcaDataInput)
@@ -57,13 +60,13 @@ fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform    
 fig
 
 # Interactive Density Plot
-fig <- interactiveDesnityPlot(knnDataInput, geoAccessionCode, platform)
+fig <- interactiveDesnityPlot(naOmitInput, geoAccessionCode, platform)
 fig
 
 # 3D Interactive Density Plot
-fig <- interactiveThreeDDesnityPlot(knnDataInput, geoAccessionCode, platform)
+fig <- interactiveThreeDDesnityPlot(naOmitInput, geoAccessionCode, platform)
 fig
 
 # Interactive UMAP
-fig <- interactiveUmapPlot(knnDataInput)
+fig <- interactiveUmapPlot(naOmitInput)
 fig

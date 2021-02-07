@@ -51,6 +51,5 @@ pcaAnalysis <- function(ex){
 }
 
 naOmitTransformation <- function(ex){
-  ex <- as.data.frame(ex)
   ex <- na.omit(ex)
   return(ex)}

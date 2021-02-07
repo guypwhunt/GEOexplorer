@@ -12,12 +12,12 @@ boxAndWhiskerPlot <- function(geoAccessionCode, platform, data) {
 
 expressionValueDistributionPlot <- function(geoAccessionCode, platform, data) {
   par(mar=c(4,4,2,1))
-  title <- paste (geoAccessionCode, "/", platform, " value distribution", sep ="")
+  title <- paste(geoAccessionCode, "/", platform, " value distribution", sep ="")
   plotDensities(data, main=title, legend=F)
 }
   
 meanVariancePlot <- function(geoAccessionCode, platform, data) {
-  plotSA(lmFit(ex), main= paste("Mean variance trend,", geoAccessionCode))
+  plotSA(lmFit(data), main= paste("Mean variance trend,", geoAccessionCode))
 }
 
 umapPlot <- function(geoAccessionCode, platform, data) {

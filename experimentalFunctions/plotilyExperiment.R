@@ -23,8 +23,13 @@
   # Perform KNN transformation on log expression data if necessary
   knnDataInput <- knnDataTransformation(dataInput, knnTransformation)
   
+  # Remove all incomplete rows
+  naOmitInput <- naOmitTransformation(knnDataInput)
+  
   library(plotly)
   library(dplyr)
+  
+  lmFit(data)
   
   knnDataInput <- as.data.frame(knnDataInput)
   

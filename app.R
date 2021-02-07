@@ -101,8 +101,8 @@
     knnDataInput <- reactive({knnDataTransformation(dataInput(), input$knnTransformation)
     })
     
-    # 
-    naOmitInput <-reactive({naOmitTransformation(dataInput())
+    # Remove all incomplete rows
+    naOmitInput <-reactive({naOmitTransformation(knnDataInput())
     })
     
     # Perform PCA analysis on KNN transformation expression data
@@ -162,12 +162,12 @@
     
     # Interactive Density Plot
     output$interactiveDesnityPlot <- renderPlotly({
-      interactiveDesnityPlot(knnDataInput(), input$geoAccessionCode, input$platform)
+      interactiveDesnityPlot(naOmitInput(), input$geoAccessionCode, input$platform)
     })
     
     # 3D Interactive Density Plot
     output$interactiveThreeDDesnityPlot <- renderPlotly({
-      interactiveThreeDDesnityPlot(knnDataInput(), input$geoAccessionCode, input$platform)
+      interactiveThreeDDesnityPlot(naOmitInput(), input$geoAccessionCode, input$platform)
     })
     
     # Interactive UMAP Plot
