@@ -5,6 +5,6 @@ account: geo2r-shiny-data-visualisation
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3430986
-bundleId: 4192650
+bundleId: 4192685
 url: https://geo2r-shiny-data-visualisation.shinyapps.io/geo2r_data_visulisation/
-when: 1612720618.53445
+when: 1612721452.16803

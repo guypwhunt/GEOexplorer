@@ -101,8 +101,12 @@
     knnDataInput <- reactive({knnDataTransformation(dataInput(), input$knnTransformation)
     })
     
+    # 
+    naOmitInput <-reactive({naOmitTransformation(dataInput())
+    })
+    
     # Perform PCA analysis on KNN transformation expression data
-    pcaDataInput <- reactive({pcaAnalysis(knnDataInput())
+    pcaDataInput <- reactive({pcaAnalysis(naOmitInput())
     })
     
     # Data Set Plot
@@ -122,13 +126,13 @@
     
     # Mean-Variance Plot
     output$meanVariancePlot <- renderPlot({
-      meanVariancePlot(input$geoAccessionCode, input$platform, knnDataInput())
+      meanVariancePlot(input$geoAccessionCode, input$platform, naOmitInput())
     })
     
     # This was updated to mandatoryily use the KNN data, this may need to be reverted
     # UMAP plot (multi-dimensional scaling)
     output$umapPlot <- renderPlot({
-      umapPlot(input$geoAccessionCode, input$platform, knnDataInput())
+      umapPlot(input$geoAccessionCode, input$platform, naOmitInput())
       })
     
     # Principal component analysis scree plot
@@ -168,7 +172,7 @@
     
     # Interactive UMAP Plot
     output$interactiveUmapPlot <- renderPlotly({
-      interactiveUmapPlot(knnDataInput())
+      interactiveUmapPlot(naOmitInput())
     })
     
   }

@@ -17,12 +17,10 @@ expressionValueDistributionPlot <- function(geoAccessionCode, platform, data) {
 }
   
 meanVariancePlot <- function(geoAccessionCode, platform, data) {
-  ex <- na.omit(data) # eliminate rows with NAs
   plotSA(lmFit(ex), main= paste("Mean variance trend,", geoAccessionCode))
 }
 
 umapPlot <- function(geoAccessionCode, platform, data) {
-  data <- na.omit(data) # eliminate rows with NAs
   ex <- data[!duplicated(data), ]  # remove duplicates
   nNeighbors <- 5
   ump <- umap(t(ex), n_neighbors = nNeighbors, random_state = 123)

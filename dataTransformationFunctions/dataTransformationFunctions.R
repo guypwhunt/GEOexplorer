@@ -46,8 +46,11 @@ knnDataTransformation <- function(ex, knnTransformation) {
 else if (knnTransformation == "No") {return(ex)}}
 
 pcaAnalysis <- function(ex){
-  # Remove all NA values
-  ex <- na.omit(ex)
   pca <- prcomp(ex, scale = TRUE)
   return(pca)
 }
+
+naOmitTransformation <- function(ex){
+  ex <- as.data.frame(ex)
+  ex <- na.omit(ex)
+  return(ex)}
