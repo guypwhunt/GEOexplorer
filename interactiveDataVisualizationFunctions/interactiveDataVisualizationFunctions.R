@@ -1,5 +1,6 @@
 library(plotly)
 library(ggplot2)
+library(limma)
 
 interactiveBoxAndWhiskerPlot <- function(data, geoAccessionCode, platform) {
   data <- as.data.frame(data)
@@ -64,3 +65,19 @@ interactiveUmapPlot <- function(data) {
     title = (paste('UMAP plot, number of nearest neighbors used =',nNeighbors)))
   fig
 }
+
+interactiveMeanVariancePlot <- function(data, geoAccessionCode) {
+  data <- lmFit(data)
+  data <- as.data.frame(data)
+  fig <- plot_ly(data = data, x = ~Amean, y = ~sigma, type = 'scatter', mode = 'markers', marker = list(
+    color = 'rgb(17, 157, 255)',
+    size = 3,
+    line = list(
+      color = 'rgb(0, 0, 0)',
+      width = 1
+    )))
+  fig <- fig %>% layout(
+    title = (paste('Mean variance trend, ',geoAccessionCode)))
+  fig
+  }
+  

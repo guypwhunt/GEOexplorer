@@ -70,3 +70,7 @@ fig
 # Interactive UMAP
 fig <- interactiveUmapPlot(naOmitInput)
 fig
+
+# Interactive Mean Variance Plot
+fig <- interactiveMeanVariancePlot(naOmitInput, geoAccessionCode)
+fig

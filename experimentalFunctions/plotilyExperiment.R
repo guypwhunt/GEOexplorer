@@ -3,7 +3,7 @@
   source(".\geoIntegrationFunctions/geoIntegrationFunctions.R")
   source(".\dataVisualizationFunctions/dataVisualizationFunctions.R")
   source(".\dataTransformationFunctions/dataTransformationFunctions.R")
-  source(".\interactiveDataVisualizationFunctions\interactiveDataVisualizationFunctions.R")
+  source(".\interactiveDataVisualizationFunctions/interactiveDataVisualizationFunctions.R")
   
   # Input Values
   geoAccessionCode <- "GSE18380"
@@ -28,6 +28,34 @@
   
   library(plotly)
   library(dplyr)
+  #library(umap)
+  #library(maptools)
+  #library(ggplot2)
   
-  data <- lmFit(naOmitInput)
-  data
+  # Mean Varience Done
+  data <- na.omit(knnDataInput)
+  data <- lmFit(data)
+  data <- as.data.frame(data)
+  fig <- plot_ly(data = data, x = ~Amean, y = ~sigma)
+  fig
+  
+  # TBC
+  # CREATE DATAFRAMES FROM THE DENSITY ATTRIBUTES
+  # Scatter Plot Updates
+  data <- na.omit(knnDataInput)
+  data <- as.data.frame(data)
+  density <- density(data)
+  density <- as.data.frame(density)
+  fig <- plot_ly(data = density, x = ~x, y = ~y, type = 'scatter', mode = 'lines', name = (paste(paste(geoAccessionCode,platform),'value distribution')))
+
+  # Box plot updates
+  data <- na.omit(knnDataInput)
+  data <- as.data.frame(t(data))
+  data <- as.data.frame(data)
+  data$row.names <- row.names(data)
+  attributes(data)
+  
+  fig <- plot_ly(data = data, x = ~row.names, y = data, type = "box", quartilemethod="linear")
+  fig
+  
+  
