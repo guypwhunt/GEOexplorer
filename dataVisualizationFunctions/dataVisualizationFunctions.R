@@ -20,11 +20,10 @@ meanVariancePlot <- function(geoAccessionCode, platform, data) {
   plotSA(lmFit(data), main= paste("Mean variance trend,", geoAccessionCode))
 }
 
-umapPlot <- function(geoAccessionCode, platform, data) {
+umapPlot <- function(geoAccessionCode, platform, data, knn) {
   ex <- data[!duplicated(data), ]  # remove duplicates
-  nNeighbors <- 5
-  ump <- umap(t(ex), n_neighbors = nNeighbors, random_state = 123)
-  plot(ump$layout, main=paste("UMAP plot, number of nearest neighbors used =", nNeighbors), xlab="", ylab="", pch=20, cex=1.5)
+  ump <- umap(t(ex), n_neighbors = knn, random_state = 123)
+  plot(ump$layout, main=paste("UMAP plot, number of nearest neighbors used =", knn), xlab="", ylab="", pch=20, cex=1.5)
   pointLabel(ump$layout, labels = rownames(ump$layout), method="SANN", cex=0.6)
 }
 

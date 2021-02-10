@@ -68,7 +68,7 @@
                                                         tabPanel("Expression Density Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. This plot complements the boxplot in checking for data normalization before differential expression analysis. If density curves are similar from gene to gene, it is indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveDesnityPlot')),
                                                         tabPanel("3D Expression Density Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. This plot complements the boxplot in checking for data normalization before differential expression analysis. If density curves are similar from gene to gene, it is indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveThreeDDesnityPlot')),
                                                         tabPanel("Mean-Variance Plot", br(), span("Generated using R limma and plotly. The plot below is used to check the mean-variance relationship of the expression data, after fitting a linear model. It can help show if there is a lot of variation in the data. Each point represents a gene. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveMeanVariancePlot')),
-                                                        tabPanel("UMAP Plot", br(), span("Generated using R umap and plotly. Uniform Manifold Approximation and Projection (UMAP) is a dimension reduction technique useful for visualizing how genes are related to each other. The number of nearest neighbors used in the calculation is indicated in the graph. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveUmapPlot'))
+                                                        tabPanel("UMAP Plot", br(), span("Generated using R umap and plotly. Uniform Manifold Approximation and Projection (UMAP) is a dimension reduction technique useful for visualizing how genes are related to each other. The number of nearest neighbors used in the calculation is indicated in the graph. The plot shows data after log and KNN transformation if they were performed."), br(), br(), numericInput("knn", "Input the k-nearest neighbors value  to use:", 5, min = 2,step = 1), br(), plotlyOutput('interactiveUmapPlot'))
                                                         
                                                                                                     ))
                                                         
@@ -85,7 +85,7 @@
                                    tabPanel("Interactive Visualizations",
                                             tabsetPanel(type = "tabs",
                                                         tabPanel("Scree Plot", br(), span("Generated using R princomp and visualised using R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information. "), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues against the number of dimensions. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaScreePlot')),
-                                                        tabPanel("Individuals Plot", br(), span("Generated using R princomp, clusters identified using R hclust and visualised using R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaIndividualsPlot'))#,
+                                                        tabPanel("Individuals Plot", br(), span("Generated using R princomp, clusters identified using R hclust and visualised using R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), br(), numericInput("clusters", "Input the clusters value to use:", 5, min = 0,step = 1), br(), plotlyOutput('interactivePcaIndividualsPlot'))#,
                                                         #tabPanel("Variables Plot", br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaVariablesPlot')),
                                                         #tabPanel("Individuals and Variables Biplot",  br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column) and individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaBiplotPlot')
                                                         )
@@ -150,7 +150,7 @@
     # This was updated to mandatoryily use the KNN data, this may need to be reverted
     # UMAP plot (multi-dimensional scaling)
     output$umapPlot <- renderPlot({
-      umapPlot(input$geoAccessionCode, input$platform, naOmitInput())
+      umapPlot(input$geoAccessionCode, input$platform, naOmitInput(), input$knn)
       })
     
     # Principal component analysis scree plot
@@ -190,7 +190,7 @@
     
     # Interactive UMAP Plot
     output$interactiveUmapPlot <- renderPlotly({
-      interactiveUmapPlot(naOmitInput())
+      interactiveUmapPlot(naOmitInput(), input$knn)
     })
     
     # Interactive Mean Variance Plot
@@ -205,7 +205,7 @@
     
     # Interactive PCA Individual Plot
     output$interactivePcaIndividualsPlot <- renderPlotly({
-      interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput(), input$geoAccessionCode)
+      interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput(), input$geoAccessionCode, input$clusters)
     })
   }
   

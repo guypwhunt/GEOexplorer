@@ -51,10 +51,9 @@ interactiveThreeDDesnityPlot <- function(data, geoAccessionCode, platform) {
 }
 
 # Look into consolidating data <- na.omit(data) function
-interactiveUmapPlot <- function(data) {
+interactiveUmapPlot <- function(data, knn) {
   data <- data[!duplicated(data), ]  # remove duplicates
-  nNeighbors <- 5
-  ump <- umap(t(ex), n_neighbors = nNeighbors, random_state = 123)
+  ump <- umap(t(ex), n_neighbors = knn, random_state = 123)
   i <- 1
   fig <- plot_ly(type = 'scatter', mode = 'markers')
   for(row in row.names(ump$layout)){
@@ -62,7 +61,7 @@ interactiveUmapPlot <- function(data) {
     i <- i+1
   }
   fig <- fig %>% layout(
-    title = (paste('UMAP plot, number of nearest neighbors used =',nNeighbors)))
+    title = (paste('UMAP plot, number of nearest neighbors used =',knn)))
   fig
 }
 
@@ -116,19 +115,19 @@ interactivePrincompPcaScreePlot <- function(data, geoAccessionCode) {
   fig
 }
 
-interactivePrincompPcaIndividualsPlot <- function(data, geoAccessionCode) {
+interactivePrincompPcaIndividualsPlot <- function(data, geoAccessionCode, clusters) {
   pcaHC <- hclust(dist(data$scores),method = "ward.D2")
-  pcaClusters <- cutree(pcaHC,k=3)
+  pcaClusters <- cutree(pcaHC,k=clusters)
   
   pcaDf <- data.frame(data$scores,"cluster"=factor(pcaClusters))
   pcaDf <- transform(pcaDf,cluster_name = paste("Cluster",pcaClusters))
   
   fig <- plot_ly(pcaDf,x=~Comp.1,y=~Comp.2,text=rownames(pcaDf), mode="markers", type = 'scatter'
-               ,color = ~cluster_name,marker=list(size=3)
+                 ,color = ~cluster_name,marker=list(size=3)
   )
-  fig <- layout(fig,title="PCA Clusters from Hierachical Clustering of Cars Data",
-              xaxis=list(title="PC1"),
-              yaxis=list(title="PC2"))
+  fig <- layout(fig,title= paste(geoAccessionCode, "PCA Clusters from Hierachical Clustering"),
+                xaxis=list(title="PC1"),
+                yaxis=list(title="PC2"))
   fig
   
 }

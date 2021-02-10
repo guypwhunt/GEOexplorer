@@ -5,4 +5,10 @@ getGeoData <- function(geoAccessionCode, platform) {
   if (length(gset) > 1) idx <- grep(platform, attr(gset, "names")) else idx <- 1
   gset <- gset[[idx]]
   return(gset)
+  }
+
+extractPlatformData <- function(gset, platform) {
+  if (length(gset) > 1) idx <- grep(platform, attr(gset, "names")) else idx <- 1
+  gset <- gset[[idx]]
+  return(gset)
 }
