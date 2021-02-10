@@ -1,9 +1,9 @@
   # The purpose of this script is to test all the functions used in the shiny app
-  
-  source(".\geoIntegrationFunctions/geoIntegrationFunctions.R")
-  source(".\dataVisualizationFunctions/dataVisualizationFunctions.R")
-  source(".\dataTransformationFunctions/dataTransformationFunctions.R")
-  source(".\interactiveDataVisualizationFunctions/interactiveDataVisualizationFunctions.R")
+  setwd('C:/Users/User/Documents/qmul_courses/ECS750PECS751PECS753PECS754PECS7500P - EECS MSC PROJECT - 202021/shiny_geo2r_visulisation')
+  source("./geoIntegrationFunctions/geoIntegrationFunctions.R")
+  source("./dataVisualizationFunctions/dataVisualizationFunctions.R")
+  source("./dataTransformationFunctions/dataTransformationFunctions.R")
+  source("./interactiveDataVisualizationFunctions/interactiveDataVisualizationFunctions.R")
   
   # Input Values
   geoAccessionCode <- "GSE18380"
@@ -28,34 +28,28 @@
   
   library(plotly)
   library(dplyr)
-  #library(umap)
-  #library(maptools)
-  #library(ggplot2)
   
-  # Mean Varience Done
-  data <- na.omit(knnDataInput)
-  data <- lmFit(data)
-  data <- as.data.frame(data)
-  fig <- plot_ly(data = data, x = ~Amean, y = ~sigma)
+  # Perform PCA analysis on KNN transformation expression data
+  pcaDataInput <- pcaAnalysis(naOmitInput)
+  attributes(pcaDataInput)
+  
+  pcaDataInput$scale
+  
+  x <- pcaDataInput$x
+  df <- data.frame(x)
+  colnames(df)
+  
+  fig <- plot_ly(
+    name = "Scree Plot",
+    type = "bar"
+  )
+  
+  i = 1 
+  for(col in colnames(df)) {
+    fig <- fig %>% add_trace(x = col ,y = df[,i], name = col)
+    i <- i +1
+    
+  } 
+  
   fig
-  
-  # TBC
-  # CREATE DATAFRAMES FROM THE DENSITY ATTRIBUTES
-  # Scatter Plot Updates
-  data <- na.omit(knnDataInput)
-  data <- as.data.frame(data)
-  density <- density(data)
-  density <- as.data.frame(density)
-  fig <- plot_ly(data = density, x = ~x, y = ~y, type = 'scatter', mode = 'lines', name = (paste(paste(geoAccessionCode,platform),'value distribution')))
-
-  # Box plot updates
-  data <- na.omit(knnDataInput)
-  data <- as.data.frame(t(data))
-  data <- as.data.frame(data)
-  data$row.names <- row.names(data)
-  attributes(data)
-  
-  fig <- plot_ly(data = data, x = ~row.names, y = data, type = "box", quartilemethod="linear")
-  fig
-  
   

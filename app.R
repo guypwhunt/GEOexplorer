@@ -158,7 +158,7 @@
     
     # Interactive Box-and-Whisker Plot
     output$interactiveBoxAndWhiskerPlot <- renderPlotly({
-      interactiveBoxAndWhiskerPlot(knnDataInput(), input$geoAccessionCode, input$platform)
+      interactiveBoxAndWhiskerPlot(naOmitInput(), input$geoAccessionCode, input$platform)
     })
     
     # Interactive Density Plot
