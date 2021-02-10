@@ -50,6 +50,11 @@ pcaAnalysis <- function(ex){
   return(pca)
 }
 
+pcaPrincompAnalysis <- function(ex){
+  pca <- princomp(ex, cor = TRUE)
+  return(pca)
+}
+
 naOmitTransformation <- function(ex){
   ex <- na.omit(ex)
   return(ex)}

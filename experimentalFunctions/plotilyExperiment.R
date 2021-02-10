@@ -26,30 +26,31 @@
   # Remove all incomplete rows
   naOmitInput <- naOmitTransformation(knnDataInput)
   
+  pcaDataInput <- pcaAnalysis(naOmitInput)
+  
+  
   library(plotly)
   library(dplyr)
   
   # Perform PCA analysis on KNN transformation expression data
-  pcaDataInput <- pcaAnalysis(naOmitInput)
-  attributes(pcaDataInput)
+  pcaDataInput <- pcaPrincompAnalysis(naOmitInput)
   
-  pcaDataInput$scale
   
-  x <- pcaDataInput$x
-  df <- data.frame(x)
-  colnames(df)
+  carsHC <- hclust(dist(pcaDataInput$scores),method = "ward.D2")
+  carsClusters <- cutree(carsHC,k=3)
+
   
-  fig <- plot_ly(
-    name = "Scree Plot",
-    type = "bar"
+  carsDf <- data.frame(pcaDataInput$scores,"cluster"=factor(carsClusters))
+  carsDf <- transform(carsDf,cluster_name = paste("Cluster",carsClusters))
+
+  library(plotly)
+  p <- plot_ly(carsDf,x=~Comp.1,y=~Comp.2,text=rownames(carsDf), mode="markers", type = 'scatter'
+               ,color = ~cluster_name,marker=list(size=3)
   )
+  p <- layout(p,title="PCA Clusters from Hierachical Clustering of Cars Data",
+              xaxis=list(title="PC1"),
+              yaxis=list(title="PC2"))
+  p
   
-  i = 1 
-  for(col in colnames(df)) {
-    fig <- fig %>% add_trace(x = col ,y = df[,i], name = col)
-    i <- i +1
-    
-  } 
   
-  fig
   

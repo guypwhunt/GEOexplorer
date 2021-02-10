@@ -75,11 +75,23 @@
                                    )),
                           tabPanel("Principal Component Analysis",
                                    tabsetPanel(type = "tabs",
+                                               tabPanel("Original Visualizations",
+                                   tabsetPanel(type = "tabs",
                                                tabPanel("Scree Plot", br(), span("Generated using R prcomp and visualised using R fviz_eig. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information. "), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues against the number of dimensions. The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaScreePlot')),
                                                tabPanel("Individuals Plot", br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaIndividualsPlot')),
                                                tabPanel("Variables Plot", br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaVariablesPlot')),
                                                tabPanel("Individuals and Variables Biplot",  br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column) and individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaBiplotPlot'))
-                                               )
+                                               )),
+                                   tabPanel("Interactive Visualizations",
+                                            tabsetPanel(type = "tabs",
+                                                        tabPanel("Scree Plot", br(), span("Generated using R princomp and visualised using R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information. "), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues against the number of dimensions. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaScreePlot')),
+                                                        tabPanel("Individuals Plot", br(), span("Generated using R princomp, clusters identified using R hclust and visualised using R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaIndividualsPlot'))#,
+                                                        #tabPanel("Variables Plot", br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaVariablesPlot')),
+                                                        #tabPanel("Individuals and Variables Biplot",  br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column) and individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaBiplotPlot')
+                                                        )
+                                            )
+                                        )
+                                   
     )
     )
   )
@@ -106,8 +118,13 @@
     naOmitInput <-reactive({naOmitTransformation(knnDataInput())
     })
     
+    # This functions is no longer required as the one below is used instead
     # Perform PCA analysis on KNN transformation expression data
-    pcaDataInput <- reactive({pcaAnalysis(naOmitInput())
+    #pcaDataInput <- reactive({pcaAnalysis(naOmitInput())
+    #})
+    
+    # Perform PCA analysis on KNN transformation expression data using princomp
+    pcaPrincompDataInput <- reactive({pcaPrincompAnalysis(naOmitInput())
     })
     
     # Data Set Plot
@@ -138,22 +155,22 @@
     
     # Principal component analysis scree plot
     output$pcaScreePlot <- renderPlot({
-      pcaScreePlot(pcaDataInput())
+      pcaScreePlot(pcaPrincompDataInput())
     })
     
     # Principal component analysis individuals plot
     output$pcaIndividualsPlot <- renderPlot({
-      pcaIndividualsPlot(pcaDataInput())
+      pcaIndividualsPlot(pcaPrincompDataInput())
     })
     
     # Principal component analysis variables plot
     output$pcaVariablesPlot <- renderPlot({
-      pcaVariablesPlot(pcaDataInput())
+      pcaVariablesPlot(pcaPrincompDataInput())
     })
     
     # Principal component analysis biplot of individuals and variables
     output$pcaBiplotPlot <- renderPlot({
-      pcaBiplotPlot(pcaDataInput())
+      pcaBiplotPlot(pcaPrincompDataInput())
     })
     
     # Interactive Box-and-Whisker Plot
@@ -179,6 +196,16 @@
     # Interactive Mean Variance Plot
     output$interactiveMeanVariancePlot <- renderPlotly({
       interactiveMeanVariancePlot(naOmitInput(),input$geoAccessionCode)
+    })
+    
+    # Interactive PCA Scree Plot
+    output$interactivePcaScreePlot <- renderPlotly({
+      interactivePrincompPcaScreePlot(pcaPrincompDataInput(), input$geoAccessionCode)
+    })
+    
+    # Interactive PCA Individual Plot
+    output$interactivePcaIndividualsPlot <- renderPlotly({
+      interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput(), input$geoAccessionCode)
     })
   }
   

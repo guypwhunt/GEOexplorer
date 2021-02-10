@@ -79,5 +79,56 @@ interactiveMeanVariancePlot <- function(data, geoAccessionCode) {
   fig <- fig %>% layout(
     title = (paste('Mean variance trend, ',geoAccessionCode)))
   fig
-  }
+}
+
+interactivePcaScreePlot <- function(data, geoAccessionCode) {
+  columnNames <- colnames(data$x)
+  proportionOfVariance <- data$sdev^2/sum(data$sdev^2)
+  pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
   
+  fig <- plot_ly(data = pcaDataFrame, x = ~columnNames, y = ~proportionOfVariance, type = "bar") %>%
+    layout(
+      title = paste(geoAccessionCode, "Scree Plot"),
+      xaxis = list(title = "Principal Components/Dimensions",
+                   categoryorder = "array",
+                   categoryarray = ~columnNames),
+      yaxis = list(title = "Percentage of Explained Variances",
+                   tickformat = "%")
+    )
+  
+  fig
+}
+
+interactivePrincompPcaScreePlot <- function(data, geoAccessionCode) {
+  columnNames <-   colnames(data$loadings)
+  proportionOfVariance <- data$sdev^2/sum(data$sdev^2)
+  pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
+  fig <- plot_ly(data = pcaDataFrame, x = ~columnNames, y = ~proportionOfVariance, type = "bar") %>%
+    layout(
+      title = paste(geoAccessionCode, "Scree Plot"),
+      xaxis = list(title = "Principal Components/Dimensions",
+                   categoryorder = "array",
+                   categoryarray = ~columnNames),
+      yaxis = list(title = "Percentage of Explained Variances",
+                   tickformat = "%")
+    )
+  
+  fig
+}
+
+interactivePrincompPcaIndividualsPlot <- function(data, geoAccessionCode) {
+  pcaHC <- hclust(dist(data$scores),method = "ward.D2")
+  pcaClusters <- cutree(pcaHC,k=3)
+  
+  pcaDf <- data.frame(data$scores,"cluster"=factor(pcaClusters))
+  pcaDf <- transform(pcaDf,cluster_name = paste("Cluster",pcaClusters))
+  
+  fig <- plot_ly(pcaDf,x=~Comp.1,y=~Comp.2,text=rownames(pcaDf), mode="markers", type = 'scatter'
+               ,color = ~cluster_name,marker=list(size=3)
+  )
+  fig <- layout(fig,title="PCA Clusters from Hierachical Clustering of Cars Data",
+              xaxis=list(title="PC1"),
+              yaxis=list(title="PC2"))
+  fig
+  
+}

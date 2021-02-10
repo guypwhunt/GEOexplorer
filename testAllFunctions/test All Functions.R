@@ -1,9 +1,17 @@
 # The purpose of this script is to test all the functions used in the shiny app
+
+# Change the below file path to the file path you save the repo to
 setwd('C:/Users/User/Documents/qmul_courses/ECS750PECS751PECS753PECS754PECS7500P - EECS MSC PROJECT - 202021/shiny_geo2r_visulisation')
+
+# Import Functions
 source("geoIntegrationFunctions/geoIntegrationFunctions.R")
 source("dataVisualizationFunctions/dataVisualizationFunctions.R")
 source("dataTransformationFunctions/dataTransformationFunctions.R")
 source("interactiveDataVisualizationFunctions/interactiveDataVisualizationFunctions.R")
+
+# Import Libraries
+library(plotly)
+library(ggplot2)
 
 # Input Values
 geoAccessionCode <- "GSE18380"
@@ -29,6 +37,9 @@ naOmitInput <- naOmitTransformation(knnDataInput)
 # Perform PCA analysis on KNN transformation expression data
 pcaDataInput <- pcaAnalysis(naOmitInput)
 
+# Perform PCA analysis on KNN transformation expression data
+pcaPrincompDataInput <- pcaPrincompAnalysis(naOmitInput)
+
 # Box-and-Whisker Plot
 boxAndWhiskerPlot(geoAccessionCode, platform, knnDataInput)
 
@@ -42,20 +53,18 @@ meanVariancePlot(geoAccessionCode, platform, naOmitInput)
 umapPlot(geoAccessionCode, platform, naOmitInput)
 
 # Principal component analysis scree plot
-pcaScreePlot(pcaDataInput)
+pcaScreePlot(pcaPrincompDataInput)
 
 # Principal component analysis individuals plot
-pcaIndividualsPlot(pcaDataInput)
+pcaIndividualsPlot(pcaPrincompDataInput)
 
 # Principal component analysis variables plot
-pcaVariablesPlot(pcaDataInput)
+pcaVariablesPlot(pcaPrincompDataInput)
 
 # Principal component analysis biplot of individuals and variables
-pcaBiplotPlot(pcaDataInput)
+pcaBiplotPlot(pcaPrincompDataInput)
 
 # Interactive Box-and-Whisker Plot
-library(plotly)
-library(ggplot2)
 fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform                                 )
 fig
 
@@ -73,4 +82,12 @@ fig
 
 # Interactive Mean Variance Plot
 fig <- interactiveMeanVariancePlot(naOmitInput, geoAccessionCode)
+fig
+
+# Interactive PCA Scree Plot
+fig <- interactivePrincompPcaScreePlot(pcaPrincompDataInput, geoAccessionCode)
+fig
+
+# Interactive PCA Individual Plot
+fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, geoAccessionCode)
 fig
