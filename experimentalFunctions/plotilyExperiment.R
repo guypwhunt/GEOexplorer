@@ -6,7 +6,7 @@
   source("./interactiveDataVisualizationFunctions/interactiveDataVisualizationFunctions.R")
   
   # Input Values
-  geoAccessionCode <- "GSE18380"
+  geoAccessionCode <- "GSE18384"
   platform <- "GPL4694"
   logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No" 
   knnTransformation <- "No" # Values can also be "No"
@@ -26,31 +26,31 @@
   # Remove all incomplete rows
   naOmitInput <- naOmitTransformation(knnDataInput)
   
-  pcaDataInput <- pcaAnalysis(naOmitInput)
+  pcaDataInput <- pcaPrincompAnalysis(naOmitInput)
   
   
   library(plotly)
   library(dplyr)
   
-  # Perform PCA analysis on KNN transformation expression data
-  pcaDataInput <- pcaPrincompAnalysis(naOmitInput)
+  data <- pcaDataInput
+  #pcaHC <- hclust(dist(data$scores),method = "ward.D2")
+  #pcaClusters <- cutree(pcaHC,k=clusters)
   
+  #pcaDf <- data.frame(data$scores,"cluster"=factor(pcaClusters))
+  #pcaDf <- transform(pcaDf,cluster_name = paste("Cluster",pcaClusters))
+  pcaDf <- data.frame(data$scores)
+  pcaDf <- transform(pcaDf)
   
-  carsHC <- hclust(dist(pcaDataInput$scores),method = "ward.D2")
-  carsClusters <- cutree(carsHC,k=3)
-
-  
-  carsDf <- data.frame(pcaDataInput$scores,"cluster"=factor(carsClusters))
-  carsDf <- transform(carsDf,cluster_name = paste("Cluster",carsClusters))
-
-  library(plotly)
-  p <- plot_ly(carsDf,x=~Comp.1,y=~Comp.2,text=rownames(carsDf), mode="markers", type = 'scatter'
-               ,color = ~cluster_name,marker=list(size=3)
+  fig <- plot_ly(pcaDf,x=~Comp.1,y=~Comp.2,text=rownames(pcaDf), mode="markers", type = 'scatter'
+                 , marker = list(
+                   color = 'rgb(17, 157, 255)',
+                   size = 3,
+                   line = list(
+                     color = 'rgb(0, 0, 0)',
+                     width = 1
+                   ))
   )
-  p <- layout(p,title="PCA Clusters from Hierachical Clustering of Cars Data",
-              xaxis=list(title="PC1"),
-              yaxis=list(title="PC2"))
-  p
-  
-  
-  
+  fig <- layout(fig,title= paste(geoAccessionCode, "PCA Individuals Plot"),
+                xaxis=list(title="PC1"),
+                yaxis=list(title="PC2"))
+  fig

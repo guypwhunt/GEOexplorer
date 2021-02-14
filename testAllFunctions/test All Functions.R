@@ -18,6 +18,8 @@ geoAccessionCode <- "GSE18380"
 platform <- "GPL4694"
 logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No" 
 knnTransformation <- "No" # Values can also be "No"
+clusters <- 5
+knn <- 5
 
 # Get GEO2R data
 gsetData <- getGeoData(geoAccessionCode, platform)
@@ -50,7 +52,7 @@ expressionValueDistributionPlot(geoAccessionCode, platform, knnDataInput)
 meanVariancePlot(geoAccessionCode, platform, naOmitInput)
 
 # UMAP plot (multi-dimensional scaling)
-umapPlot(geoAccessionCode, platform, naOmitInput)
+umapPlot(geoAccessionCode, platform, naOmitInput, knn)
 
 # Principal component analysis scree plot
 pcaScreePlot(pcaPrincompDataInput)
@@ -77,7 +79,7 @@ fig <- interactiveThreeDDesnityPlot(naOmitInput, geoAccessionCode, platform)
 fig
 
 # Interactive UMAP
-fig <- interactiveUmapPlot(naOmitInput)
+fig <- interactiveUmapPlot(naOmitInput, knn)
 fig
 
 # Interactive Mean Variance Plot
@@ -89,5 +91,9 @@ fig <- interactivePrincompPcaScreePlot(pcaPrincompDataInput, geoAccessionCode)
 fig
 
 # Interactive PCA Individual Plot
-fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, geoAccessionCode)
+fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, geoAccessionCode, clusters)
+fig
+
+# Interactive PCA Variables Plot
+fig <- interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, geoAccessionCode)
 fig
