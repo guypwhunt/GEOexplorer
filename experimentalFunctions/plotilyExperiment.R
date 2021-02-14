@@ -5,6 +5,8 @@
   source("./dataTransformationFunctions/dataTransformationFunctions.R")
   source("./interactiveDataVisualizationFunctions/interactiveDataVisualizationFunctions.R")
   
+  library(scales)
+  
   # Input Values
   geoAccessionCode <- "GSE18384"
   platform <- "GPL4694"
@@ -32,25 +34,36 @@
   library(plotly)
   library(dplyr)
   
+  # First Graph
   data <- pcaDataInput
-  #pcaHC <- hclust(dist(data$scores),method = "ward.D2")
-  #pcaClusters <- cutree(pcaHC,k=clusters)
   
-  #pcaDf <- data.frame(data$scores,"cluster"=factor(pcaClusters))
-  #pcaDf <- transform(pcaDf,cluster_name = paste("Cluster",pcaClusters))
+  eig.val <- get_eigenvalue(data)
+  eig.val
+  eig.val[1,2]
+  eig.val[2,2]
+  
+  # Results for Variables
+  res.var <- get_pca_var(data)
+  res.var$coord          # Coordinates
+  res.var$contrib[1]        # Contributions to the PCs
+  res.var$cos2           # Quality of representation 
+  # Results for individuals
+  res.ind <- get_pca_ind(res.pca)
+  res.ind$coord          # Coordinates
+  res.ind$contrib        # Contributions to the PCs
+  res.ind$cos2[,1]          # Quality of representation 
+  
   pcaDf <- data.frame(data$scores)
   pcaDf <- transform(pcaDf)
   
   fig <- plot_ly(pcaDf,x=~Comp.1,y=~Comp.2,text=rownames(pcaDf), mode="markers", type = 'scatter'
                  , marker = list(
-                   color = 'rgb(17, 157, 255)',
-                   size = 3,
-                   line = list(
-                     color = 'rgb(0, 0, 0)',
-                     width = 1
-                   ))
+                   color = ~res.ind$cos2[,1],
+                   size = 3
+                   )
   )
   fig <- layout(fig,title= paste(geoAccessionCode, "PCA Individuals Plot"),
-                xaxis=list(title="PC1"),
-                yaxis=list(title="PC2"))
+                xaxis=list(title=paste("PC1", label_percent()(eig.val[1,2]))),
+                yaxis=list(title=paste("PC2", label_percent()(eig.val[2,2]))))
   fig
+  

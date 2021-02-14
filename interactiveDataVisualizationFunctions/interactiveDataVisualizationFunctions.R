@@ -118,19 +118,18 @@ interactivePrincompPcaScreePlot <- function(data, geoAccessionCode) {
 interactivePrincompPcaIndividualsPlot <- function(data, geoAccessionCode) {
   pcaDf <- data.frame(data$scores)
   pcaDf <- transform(pcaDf)
-  
+  individualsStats <- get_pca_ind(res.pca)
+  eigenValue <- get_eigenvalue(data)
+
   fig <- plot_ly(pcaDf,x=~Comp.1,y=~Comp.2,text=rownames(pcaDf), mode="markers", type = 'scatter'
                  , marker = list(
-                   color = 'rgb(17, 157, 255)',
-                   size = 3,
-                   line = list(
-                     color = 'rgb(0, 0, 0)',
-                     width = 1
-                   ))
+                   color = ~individualsStats$cos2[,1],
+                   size = 3
+                   )
   )
   fig <- layout(fig,title= paste(geoAccessionCode, "PCA Individuals Plot"),
-                xaxis=list(title="PC1"),
-                yaxis=list(title="PC2"))
+                xaxis=list(title=paste("PC1", label_percent()(eigenValue[1,2]/100))),
+                yaxis=list(title=paste("PC2", label_percent()(eigenValue[2,2]/100))))
   fig
   
 }

@@ -1,5 +1,6 @@
 library(impute)
 library(limma)
+library(factoextra)
 
 extractExpressionData <- function(gset) {
   ex <- exprs(gset)

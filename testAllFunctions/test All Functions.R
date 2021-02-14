@@ -18,7 +18,6 @@ geoAccessionCode <- "GSE18380"
 platform <- "GPL4694"
 logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No" 
 knnTransformation <- "No" # Values can also be "No"
-clusters <- 5
 knn <- 5
 
 # Get GEO2R data
@@ -91,7 +90,7 @@ fig <- interactivePrincompPcaScreePlot(pcaPrincompDataInput, geoAccessionCode)
 fig
 
 # Interactive PCA Individual Plot
-fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, geoAccessionCode, clusters)
+fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, geoAccessionCode)
 fig
 
 # Interactive PCA Variables Plot
