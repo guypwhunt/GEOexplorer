@@ -55,15 +55,16 @@
   
   pcaDf <- data.frame(data$scores)
   pcaDf <- transform(pcaDf)
+  individualsStats <- get_pca_ind(res.pca)
+  eigenValue <- get_eigenvalue(data)
   
   fig <- plot_ly(pcaDf,x=~Comp.1,y=~Comp.2,text=rownames(pcaDf), mode="markers", type = 'scatter'
                  , marker = list(
-                   color = ~res.ind$cos2[,1],
+                   color = ~individualsStats$cos2[,1],
                    size = 3
-                   )
+                 )
   )
   fig <- layout(fig,title= paste(geoAccessionCode, "PCA Individuals Plot"),
-                xaxis=list(title=paste("PC1", label_percent()(eig.val[1,2]))),
-                yaxis=list(title=paste("PC2", label_percent()(eig.val[2,2]))))
+                xaxis=list(title=paste("PC1", label_percent()(eigenValue[1,2]/100))),
+                yaxis=list(title=paste("PC2", label_percent()(eigenValue[2,2]/100))))
   fig
-  

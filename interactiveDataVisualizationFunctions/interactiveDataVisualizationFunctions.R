@@ -1,6 +1,8 @@
 library(plotly)
 library(ggplot2)
 library(limma)
+library(scales)
+
 
 interactiveBoxAndWhiskerPlot <- function(data, geoAccessionCode, platform) {
   data <- as.data.frame(data)
