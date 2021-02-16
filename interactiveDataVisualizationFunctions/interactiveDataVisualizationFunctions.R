@@ -120,7 +120,7 @@ interactivePrincompPcaScreePlot <- function(data, geoAccessionCode) {
 interactivePrincompPcaIndividualsPlot <- function(data, geoAccessionCode) {
   pcaDf <- data.frame(data$scores)
   pcaDf <- transform(pcaDf)
-  individualsStats <- get_pca_ind(res.pca)
+  individualsStats <- get_pca_ind(data)
   eigenValue <- get_eigenvalue(data)
 
   fig <- plot_ly(pcaDf,x=~Comp.1,y=~Comp.2,text=rownames(pcaDf), mode="markers", type = 'scatter'
@@ -130,21 +130,23 @@ interactivePrincompPcaIndividualsPlot <- function(data, geoAccessionCode) {
                    )
   )
   fig <- layout(fig,title= paste(geoAccessionCode, "PCA Individuals Plot"),
-                xaxis=list(title=paste("PC1", label_percent()(eigenValue[1,2]/100))),
-                yaxis=list(title=paste("PC2", label_percent()(eigenValue[2,2]/100))))
+                xaxis=list(title=paste("Comp.1", label_percent(accuracy=0.1)(eigenValue[1,2]/100))),
+                yaxis=list(title=paste("Comp.2", label_percent(accuracy=0.1)(eigenValue[2,2]/100))))
   fig
   
 }
 
 interactivePrincompPcaVariablesPlot <- function(data, geoAccessionCode) {
+  variableStats <- get_pca_var(data)
+  eigenValue <- get_eigenvalue(data)
   data <- as.data.frame(unclass(data$loadings))
   
   fig <- plot_ly(data,x=~Comp.1,y=~Comp.2,text=rownames(data), mode="markers", type = 'scatter'
-                 ,marker=list(size=10, color = rownames(data)), name = rownames(data))
+                 ,marker=list(size=10, color = ~variableStats$contrib[,1]), name = rownames(data))
   
   fig <- layout(fig,title= paste(geoAccessionCode, "PCA Variables Plot"),
-                xaxis=list(title="PC1"),
-                yaxis=list(title="PC2"))
+                xaxis=list(title=paste("Comp.1", label_percent(accuracy=0.1)(eigenValue[1,2]/100))),
+                yaxis=list(title=paste("Comp.2", label_percent(accuracy=0.1)(eigenValue[2,2]/100))))
   fig
 }
   

@@ -45,17 +45,17 @@
   # Results for Variables
   res.var <- get_pca_var(data)
   res.var$coord          # Coordinates
-  res.var$contrib[1]        # Contributions to the PCs
-  res.var$cos2           # Quality of representation 
+  res.var$contrib[,1]        # Contributions to the PCs
+  res.var$cos2[,1]           # Quality of representation 
   # Results for individuals
-  res.ind <- get_pca_ind(res.pca)
+  res.ind <- get_pca_ind(data)
   res.ind$coord          # Coordinates
   res.ind$contrib        # Contributions to the PCs
   res.ind$cos2[,1]          # Quality of representation 
   
   pcaDf <- data.frame(data$scores)
   pcaDf <- transform(pcaDf)
-  individualsStats <- get_pca_ind(res.pca)
+  individualsStats <- get_pca_ind(data)
   eigenValue <- get_eigenvalue(data)
   
   fig <- plot_ly(pcaDf,x=~Comp.1,y=~Comp.2,text=rownames(pcaDf), mode="markers", type = 'scatter'
@@ -68,3 +68,5 @@
                 xaxis=list(title=paste("PC1", label_percent()(eigenValue[1,2]/100))),
                 yaxis=list(title=paste("PC2", label_percent()(eigenValue[2,2]/100))))
   fig
+  
+  individualsStats$cos2[,1]
