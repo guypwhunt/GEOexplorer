@@ -20,14 +20,32 @@ logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No"
 knnTransformation <- "No" # Values can also be "No"
 knn <- 5
 
+# Get the GEO2R data for all platforms
+allGset <- getGset(geoAccessionCode)
+
+# Get a list of all the platforms
+platforms <- getPlatforms(allGset) 
+
+# Extract the GEO2R data from the specified platform
+gsetData <- getPlatformGset(allGset, platform)
+
+# Extract the experiment information 
+experimentInformation <- getExperimentInformation(gsetData)
+typeof(experimentInformation)
+
+# This function was retired
 # Get GEO2R data
-gsetData <- getGeoData(geoAccessionCode, platform)
+#gsetData <- getGeoData(geoAccessionCode, platform)
 
 # Extract expression data
 expressionData <- extractExpressionData(gsetData)
 
 # Apply log transformation to expression data if necessary
 dataInput <- logTransformExpressionData(expressionData, logTransformation)
+
+# Is log transformation auto applied
+autoLogInformation <- isLogTransformAutoApplied(expressionData)
+autoLogInformation
 
 # Perform KNN transformation on log expression data if necessary
 knnDataInput <- knnDataTransformation(dataInput, knnTransformation)

@@ -15,7 +15,7 @@ logTransformExpressionData <- function(ex, logTransformation) {
       (qx[6]-qx[1] > 50 && qx[2] > 0)
     if (LogC) { ex[which(ex <= 0)] <- NaN
     ex <- log2(ex)}
-    return(ex)} 
+    return(ex)}
   
   # If log transformation is set to yes
   else if (logTransformation == "Yes") {
@@ -28,6 +28,20 @@ logTransformExpressionData <- function(ex, logTransformation) {
     return(ex)
   }
 }
+
+isLogTransformAutoApplied <- function(ex) {
+  # If log transformation is set to auto-detect
+    qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
+    LogC <- (qx[5] > 100) || 
+      (qx[6]-qx[1] > 50 && qx[2] > 0)
+    if (LogC) {
+      result <- "The auto-detect option applied log transformation."
+      } else {
+        result <- "The auto-detect option did not apply log transformation."
+      }
+  return(result)
+    }
+    
 
 knnDataTransformation <- function(ex, knnTransformation) {
   if (knnTransformation == "Yes") {

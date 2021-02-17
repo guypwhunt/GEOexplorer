@@ -2,7 +2,7 @@
   library(shiny)
   library(plotly)
   library(ggplot2)
-  
+  library(shinyBS)
 
   source("geoIntegrationFunctions/geoIntegrationFunctions.R")
   source("dataVisualizationFunctions/dataVisualizationFunctions.R")
@@ -11,21 +11,24 @@
   
   ui <- fluidPage(
     titlePanel("GEO2R Data Visualisation"),
-    helpText("GEO2R is an interactive web tool that allows users to compare two or more groups of Samples in a GEO Series to identify genes that are differentially expressed across experimental conditions. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data."),
+    helpText("GEO2R is an interactive web tool that allows users to compare two or more groups of samples in a GEO Series to identify genes that are differentially expressed across experimental conditions. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data."),
     sidebarPanel(
       helpText("Input a GEO accession code to examine the gene expression data."),
       textInput("geoAccessionCode", "GEO accession code", "GSE18380"),
-      helpText("Input the platform of interest, if the series is associated with multiple platforms."),
-      textInput("platform", "Platform", "GPL4694"),
+      helpText("Select the platform of interest."),
+      selectInput("platform", "Platform",c()),
       radioButtons("logTransformation",
                    label="Apply log transformation to the data:",
                    choices=list("Auto-Detect","Yes","No"),
                    selected="Auto-Detect"),
+      bsTooltip(id = "logTransformation", title = "The GEO database accepts a variety of data value types, including logged and unlogged data. Limma expects data values to be in log space. To address this, an auto-detect feature that checks the values of selected samples and automatically performs a log2 transformation on values determined not to be in log space. Alternatively, the user can select Yes to force log2 transformation, or No to override the auto-detect feature. The auto-detect feature only considers Sample values that have been assigned to a group, and applies the transformation in an all-or-none fashion", placement = "top", trigger = "hover"),
+      uiOutput("logTransformationText"),
+      br(),
       radioButtons("knnTransformation",
                    label="Apply k-nearest neighbors (KNN) algorithm to predict null data:",
                    choices=list("Yes","No"),
                    selected="No"),
-      helpText("Rows with over 50% missing values are imputed using the overall mean per sample. Columns with over 80% will cause an error in the KNN computation."),
+      bsTooltip(id = "knnTransformation", title = "Rows with over 50% missing values are imputed using the overall mean per sample. Columns with over 80% will cause an error in the KNN computation.", placement = "top", trigger = "hover"),
       br()#,
       #helpText("The Buttons Below here currently are not functional!!!"),
       # Need to get the radio button below working or delete
@@ -53,7 +56,8 @@
       # add grouping functionality
     ),
     mainPanel(tabsetPanel(type = "tabs",
-                          tabPanel("Dataset", dataTableOutput('myTable')),
+                          tabPanel("Experiment Information", br(), htmlOutput('experimentInfo')),
+                          tabPanel("Dataset", dataTableOutput('table')),
                           tabPanel("Exploratory Data Analysis",
                                    tabsetPanel(type = "tabs",
                                    tabPanel("Original Visualizations",
@@ -75,12 +79,12 @@
                                                         tabPanel("Expression Density Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. This plot complements the boxplot in checking for data normalization before differential expression analysis. If density curves are similar from gene to gene, it is indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveDesnityPlot')),
                                                         tabPanel("3D Expression Density Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. This plot complements the boxplot in checking for data normalization before differential expression analysis. If density curves are similar from gene to gene, it is indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveThreeDDesnityPlot')),
                                                         tabPanel("Mean-Variance Plot", br(), span("Generated using R limma and plotly. The plot below is used to check the mean-variance relationship of the expression data, after fitting a linear model. It can help show if there is a lot of variation in the data. Each point represents a gene. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveMeanVariancePlot')),
-                                                        tabPanel("UMAP Plot", br(), span("Generated using R umap and plotly. Uniform Manifold Approximation and Projection (UMAP) is a dimension reduction technique useful for visualizing how genes are related to each other. The number of nearest neighbors used in the calculation is indicated in the graph. The plot shows data after log and KNN transformation if they were performed."), br(), br(), numericInput("knn", "Input the k-nearest neighbors value  to use:", 5, min = 2,step = 1), br(), plotlyOutput('interactiveUmapPlot')),
+                                                        tabPanel("UMAP Plot", br(), span("Generated using R umap and plotly. Uniform Manifold Approximation and Projection (UMAP) is a dimension reduction technique useful for visualizing how genes are related to each other. The number of nearest neighbours used in the calculation is indicated in the graph. The plot shows data after log and KNN transformation if they were performed."), br(), br(), numericInput("knn", "Input the k-nearest neighbors value  to use:", 5, min = 2,step = 1), br(), plotlyOutput('interactiveUmapPlot')),
                                                         tabPanel("PCA Analysis",
                                                                  tabsetPanel(type = "tabs",
-                                                                             tabPanel("Scree Plot", br(), span("Generated using R princomp and visualised using R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information. "), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues against the number of dimensions. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaScreePlot')),
-                                                                             tabPanel("Individuals Plot", br(), span("Generated using R princomp and visualised using R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each individual (row) in the gene expression dataset for the top two principal components (PC 1 and PC 2). The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaIndividualsPlot')),
-                                                                             tabPanel("Variables Plot", br(), span("Generated using R princomp and visualised using R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column) in the gene expression dataset for the top two principal components (PC 1 and PC 2). The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaVariablesPlot'))#,
+                                                                             tabPanel("Scree Plot", br(), span("Generated using R princomp and plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (Comp). The plot displays the eigenvalues against the number of dimensions. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaScreePlot')),
+                                                                             tabPanel("Individuals Plot", br(), span("Generated using R princomp and R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (Comp). The plot displays the eigenvalues for each individual (row) in the gene expression dataset for the top two principal components (Comp.1 and Comp.2). The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaIndividualsPlot')),
+                                                                             tabPanel("Variables Plot", br(), span("Generated using R princomp and R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (Comp). The plot displays the eigenvalues for each variable (column) in the gene expression dataset for the top two principal components (Comp.1 and Comp.2). The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaVariablesPlot'))#,
                                                                              #tabPanel("Individuals and Variables Biplot",  br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column) and individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaBiplotPlot')
                                                                  )
                                                         )
@@ -92,14 +96,31 @@
   )
   
   server <- function(input, output, session){
+    # Data Extraction Functions
+    # Get the GEO2R data for all platforms
+    allGset <- reactive({getGset(input$geoAccessionCode)})
     
+    # Get a list of all the platforms
+    platforms <- reactive({getPlatforms(allGset())})
+    
+    # Extract the GEO2R data from the specified platform
+    gsetData <- reactive({getPlatformGset(allGset(), input$platform)})
+    
+    # Extract the experiment information 
+    experimentInformation <- reactive({getExperimentInformation(gsetData())})
+
+    # This function is no longer required as it has been replaced by the above functions
     # Get GEO2R data
-    gsetData <- reactive({getGeoData(input$geoAccessionCode, input$platform)})
+    # gsetData <- reactive({getGeoData(input$geoAccessionCode, input$platform)})
     
     # Extract expression data
     expressionData <- reactive({extractExpressionData(gsetData())
     })
     
+    # Is log transformation auto applied
+    autoLogInformation <- reactive({isLogTransformAutoApplied(expressionData())})
+    
+    # Data Transformation Functions
     # Apply log transformation to expression data if necessary
     dataInput <- reactive({logTransformExpressionData(expressionData(), input$logTransformation)
     })
@@ -121,8 +142,26 @@
     pcaPrincompDataInput <- reactive({pcaPrincompAnalysis(naOmitInput())
     })
     
+    
+    # Data Visualisation Functions
+    # Update Platform Options
+    platformObserve <- observe({
+      updateSelectInput(session, "platform",
+                               choices = platforms(),
+                               selected = tail(platforms(), 1))
+      })
+    
+    output$logTransformationText <- renderUI({
+      helpText(autoLogInformation())
+    })
+    
+    # Experimental Information Display
+    output$experimentInfo <- renderUI({
+      extractExperimentInformation(experimentInformation())
+    })
+    
     # Data Set Plot
-    output$myTable <- renderDataTable({
+    output$table <- renderDataTable({
       knnDataInput()
     })
     
