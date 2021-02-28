@@ -46,7 +46,7 @@ isLogTransformAutoApplied <- function(ex) {
 knnDataTransformation <- function(ex, knnTransformation) {
   if (knnTransformation == "Yes") {
     if (ncol(ex) == 2) {
-    ex <- ex[complete.cases(ex), ] # KNN does not work when there are only 2 samples
+    ex <- ex[complete.cases(ex), ] #Â KNN does not work when there are only 2 samples
     } else {
       ex <- ex[rowSums(is.na(ex)) != ncol(ex), ] # remove rows with missing data
       }
