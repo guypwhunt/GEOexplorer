@@ -13,7 +13,7 @@ ui <- fluidPage(
   helpText("GEO2R is an interactive web tool that allows users to compare two or more groups of samples in a GEO Series to identify genes that are differentially expressed across experimental conditions. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data."),
   sidebarPanel(
     helpText("Input a GEO accession code to examine the gene expression data."),
-    textInput("geoAccessionCode", "GEO accession code", "GSE18380"),
+    textInput("geoAccessionCode", "GEO accession code", "GSE18388"),
     helpText("Select the platform of interest."),
     selectInput("platform", "Platform",c()),
     radioButtons("logTransformation",
@@ -55,8 +55,12 @@ ui <- fluidPage(
     # add grouping functionality
   ),
   mainPanel(tabsetPanel(type = "tabs",
-                        tabPanel("Experiment Information", br(), htmlOutput('experimentInfo')),
-                        tabPanel("Dataset", dataTableOutput('table')),
+                        tabPanel("Dataset Information",
+                                 tabsetPanel(type = "tabs",
+                                            tabPanel("Experiment Information", br(), htmlOutput('experimentInfo')),
+                                            tabPanel("Dataset", dataTableOutput('table')),
+                                            tabPanel("Column Details", dataTableOutput('columnTable'))
+                                            )),
                         tabPanel("Exploratory Data Analysis",
                                  tabsetPanel(type = "tabs",
                                              tabPanel("Box-and-Whisper Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. The quartiles are calculated using the linear method. Viewing the distribution can be useful for determining if the data in the dataset is suitable for differential expression analysis. Generally, median-centred values are indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveBoxAndWhiskerPlot')),
@@ -81,9 +85,9 @@ ui <- fluidPage(
                                                       headerPanel("Test"),
                                                       
                                                       sidebarPanel(
-                                                        selectInput("options", "options", choices=c('abc','def')),
-                                                        textInput("textbox", "Text", ""),
-                                                        actionButton("add","Add")
+                                                        selectInput("columns1", "Group 1 Columns", choices=c(), multiple = TRUE),
+                                                        selectInput("columns2", "Group 2 Columns", choices=c(), multiple = TRUE),
+                                                        selectInput("columns3", "Group 3 Columns", choices=c(), multiple = TRUE)
                                                       ),
                                                       
                                                       mainPanel(
@@ -111,11 +115,16 @@ server <- function(input, output, session){
   experimentInformation <- reactive({getExperimentInformation(gsetData())})
   
   # Extract expression data
-  expressionData <- reactive({extractExpressionData(gsetData())
-  })
+  expressionData <- reactive({extractExpressionData(gsetData())})
+  
+  # Extract Column Information
+  columnInfo <- reactive({getColumnDetails(gsetData())})
   
   # Is log transformation auto applied
   autoLogInformation <- reactive({isLogTransformAutoApplied(expressionData())})
+  
+  # Get a list of all the columns
+  columns <- reactive({extractColumns(expressionData())})
   
   
   # Data Transformation Functions
@@ -144,6 +153,7 @@ server <- function(input, output, session){
                       selected = tail(platforms(), 1))
   })
   
+  # Update if log transformation took place
   output$logTransformationText <- renderUI({
     helpText(autoLogInformation())
   })
@@ -152,6 +162,11 @@ server <- function(input, output, session){
   output$experimentInfo <- renderUI({
     extractExperimentInformation(experimentInformation())
   })
+  
+  # Column Set Plot
+  output$columnTable <- renderDataTable({
+    columnInfo()
+    })
   
   # Data Set Plot
   output$table <- renderDataTable({
@@ -200,16 +215,22 @@ server <- function(input, output, session){
   
   
   # Differential Gene Expression Functions
-  # Update Groups on UI
-  observe({
-    VALUE <- ''
-    if(input$add>0) {
-      isolate({
-        VALUE <- input$options
-      })
-    }
-    updateTextInput(session, inputId = "textbox", value = VALUE)
+  # Update Column on UI
+  columns1Observe <- observe({
+    updateSelectInput(session, "columns1",
+                      choices = columns())
   })
+  
+  columns2Observe <- observe({
+    updateSelectInput(session, "columns2",
+                      choices = columns())
+  })
+  
+  columns3Observe <- observe({
+    updateSelectInput(session, "columns3",
+                      choices = columns())
+  })
+
   
   output$caption <- renderText({
     paste(input$textbox, input$caption)

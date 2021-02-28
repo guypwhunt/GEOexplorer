@@ -29,17 +29,29 @@ getPlatformGset <- function(gset, platform) {
 }
 
 getExperimentInformation <- function(gset) {
-  experimentData <- experimentData(gset)
-  return(experimentData)
+  experimentalData <- experimentData(gset)
+  return(experimentalData)
 }
 
 extractExperimentInformation <- function(experimentData) {
-  name <- paste("<b>", "Experimenter's Name:", "</b>", experimentData@name)
-  lab <- paste("<b>", "Laboratory:", "</b>", experimentData@lab)
-  contact <- paste("<b>", "Contact Information:", "</b>", experimentData@contact)
-  title <- paste("<b>", "Paper Title:", "</b>", experimentData@title)
-  abstract <- paste("<b>", "Abstract:", "</b>", experimentData@abstract)
-  url <- paste("<b>", "Paper URL:", "</b>", experimentData@url)
-  pubMedIds <- paste("<b>", "PubMed ID:", "</b>", experimentData@pubMedIds)
-  html <- HTML(paste(title, name, lab, contact, url, pubMedIds, abstract, sep = "<br/><br/>"))
+  name <- paste("<b>", "Author's Name:", "</b>", "<p>", experimentData@name, "</p>")
+  lab <- paste("<b>", "Laboratory:", "</b>", "<p>", experimentData@lab, "</p>")
+  contact <- paste("<b>", "Contact Information:", "</b>", "<p>", experimentData@contact, "</p>")
+  title <- paste("<b>", "Paper Title:", "</b>", "<p>", experimentData@title, "</p>")
+  abstract <- paste("<b>", "Abstract:", "</b>", "<p>", experimentData@abstract, "</p>")
+  url <- paste("<b>", "Paper URL:", "</b>", "<p>", experimentData@url, "</p>")
+  pubMedIds <- paste("<b>", "PubMed ID:", "</b>", "<p>", experimentData@pubMedIds, "</p>")
+  html <- HTML(paste(title, name, lab, contact, url, pubMedIds, abstract, sep = ""))
+}
+
+getColumnDetails <- function(gset){
+  phenoDataset <- phenoData(gset)
+  phenoData <- phenoDataset@data
+  df <- data.frame(
+    column=row.names(phenoData),
+    title=phenoData["title"],
+    source=phenoData["source_name_ch1"], 
+    characteristic1=phenoData["characteristics_ch1"], 
+    characteristic2=phenoData["characteristics_ch1.1"]) 
+  return(df)
 }
