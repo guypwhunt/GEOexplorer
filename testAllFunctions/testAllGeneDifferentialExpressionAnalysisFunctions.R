@@ -72,91 +72,23 @@ naOmitInput <- naOmitTransformation(knnDataInput)
 # Perform PCA analysis on KNN transformation expression data
 pcaPrincompDataInput <- pcaPrincompAnalysis(naOmitInput)
 
-# This function was retired
-# Box-and-Whisker Plot
-#boxAndWhiskerPlot(geoAccessionCode, platform, knnDataInput)
-
-# This function was retired
-# Expression Value Distribution Plot
-#expressionValueDistributionPlot(geoAccessionCode, platform, knnDataInput)
-
-# This function was retired
-# Mean-Variance Plot
-#meanVariancePlot(geoAccessionCode, platform, naOmitInput)
-
-# This function was retired
-# UMAP plot (multi-dimensional scaling)
-#umapPlot(geoAccessionCode, platform, naOmitInput, knn)
-
-# This function was retired
-# Principal component analysis scree plot
-#pcaScreePlot(pcaPrincompDataInput)
-
-# This function was retired
-# Principal component analysis individuals plot
-#pcaIndividualsPlot(pcaPrincompDataInput)
-
-# This function was retired
-# Principal component analysis variables plot
-#pcaVariablesPlot(pcaPrincompDataInput)
-
-# This function was retired
-# Principal component analysis biplot of individuals and variables
-#pcaBiplotPlot(pcaPrincompDataInput)
-
-# Interactive Box-and-Whisker Plot
-fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform                                 )
-fig
-
-# Interactive Density Plot
-fig <- interactiveDesnityPlot(naOmitInput, geoAccessionCode, platform)
-fig
-
-# 3D Interactive Density Plot
-fig <- interactiveThreeDDesnityPlot(naOmitInput, geoAccessionCode, platform)
-fig
-
-# Interactive UMAP
-fig <- interactiveUmapPlot(naOmitInput, knn, geoAccessionCode)
-fig
-
-# Interactive Mean Variance Plot
-fig <- interactiveMeanVariancePlot(naOmitInput, geoAccessionCode)
-fig
-
-# Interactive PCA Scree Plot
-fig <- interactivePrincompPcaScreePlot(pcaPrincompDataInput, geoAccessionCode)
-fig
-
-# Interactive PCA Individual Plot
-fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, geoAccessionCode)
-fig
-
-# Interactive PCA Variables Plot
-fig <- interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, geoAccessionCode)
-fig
-
 
 # Differential gene expression analysis functions
 # Get column names
 columnNames <- extractColumns(expressionData)
 
 # Define Groups
-group1 <- list ("GSM458594", "GSM458595", "GSM458596", "GSM458597") 
+group1 <- list ("GSM458594", "GSM458595", "GSM458596") #, "GSM458597") 
 group2 <- list ("GSM458598", "GSM458599", "GSM458600", "GSM458601") 
-group3 <- list ()
 
 # Calculate gsms
-gsms <- calculateGsms(columnNames,group1, group2, group3)
-print(gsms)
+gsms <- calculateGsms(columnNames,group1, group2)
 
 # Get fit2 data
-fit2 <- differentialGeneExpression(gsetData, gsms)
+fit2 <- differentialGeneExpression(gsetData, knnDataInput, gsms)
 
 # Print Top deferentially expressed genes
-tT <- topDifferentiallyExpressedGenesTable("GSE18388")
-as.data.frame(tT)
-write.table(tT, file=stdout(), row.names=F, sep="\t")
+tT <- topDifferentiallyExpressedGenesTable(fit2)
 
 # Plot Histogram of fit 2 data
 fig <- histogramPlot(fit2)

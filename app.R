@@ -85,7 +85,6 @@ ui <- fluidPage(
                                                       sidebarPanel(
                                                         selectInput("columns1", "Group 1 Columns", choices=c(), multiple = TRUE),
                                                         selectInput("columns2", "Group 2 Columns", choices=c(), multiple = TRUE),
-                                                        selectInput("columns3", "Group 3 Columns", choices=c(), multiple = TRUE),
                                                         actionButton("differentialExpressionButton", "Analyse")
                                                       ),
                                                       mainPanel(
@@ -230,16 +229,11 @@ server <- function(input, output, session){
     updateSelectInput(session, "columns2",
                       choices = columns())
   })
-  
-  columns3Observe <- observe({
-    updateSelectInput(session, "columns3",
-                      choices = columns())
-  })
 
   observeEvent(input$differentialExpressionButton, {
-    gsms <- calculateGsms(columns(),input$columns1, input$columns2, input$columns3)
-    fit2 <- differentialGeneExpression(gsetData(), gsms)
-    tT <- topDifferentiallyExpressedGenesTable(input$geoAccessionCode)
+    gsms <- calculateGsms(columns(),input$columns1, input$columns2)
+    fit2 <- differentialGeneExpression(gsetData(), knnDataInput(), gsms)
+    tT <- topDifferentiallyExpressedGenesTable(fit2)
     dT <- dT(fit2)
     ct <- 1  
     
