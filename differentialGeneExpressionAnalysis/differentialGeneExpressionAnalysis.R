@@ -64,6 +64,11 @@ differentialGeneExpression <- function(gset, gsms) {
   return(fit2)
 }
 
+topDifferentiallyExpressedGenesTable2 <- function(geoAccessionCode) {
+  tT <- topTable(fit2, adjust="fdr", sort.by="B", number=250)
+  return(tT)
+}
+
 topDifferentiallyExpressedGenesTable <- function(geoAccessionCode) {
   gset <- getGEO(geoAccessionCode, GSEMatrix =TRUE, AnnotGPL=TRUE)
   if (length(gset) > 1) idx <- grep("GPL6246", attr(gset, "names")) else idx <- 1
@@ -103,7 +108,7 @@ topDifferentiallyExpressedGenesTable <- function(geoAccessionCode) {
   fit2 <- eBayes(fit2, 0.01)
   tT <- topTable(fit2, adjust="fdr", sort.by="B", number=250)
   
-  tT <- subset(tT, select=c("ID","adj.P.Val","P.Value","t","B","logFC","Gene.symbol","Gene.title"))
+  #tT <- subset(tT, select=c("ID","adj.P.Val","P.Value","t","B","logFC","Gene.symbol","Gene.title"))
   return(tT)
 }
 
