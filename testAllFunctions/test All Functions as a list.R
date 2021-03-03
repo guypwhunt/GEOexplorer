@@ -141,11 +141,22 @@ fig
 # Get column names
 columnNames <- extractColumns(expressionData)
 
+# Define Groups
+group1 <- list ("GSM458594", "GSM458595", "GSM458596", "GSM458597") 
+group2 <- list ("GSM458598", "GSM458599", "GSM458600", "GSM458601") 
+group3 <- list ()
+
+# Calculate gsms
+gsms <- calculateGsms(columnNames,group1, group2, group3)
+print(gsms)
+
 # Get fit2 data
-fit2 <- differentialGeneExpression(gsetData)
+fit2 <- differentialGeneExpression(gsetData, gsms)
 
 # Print Top deferentially expressed genes
-tT <- topDifferentiallyExpressedGenesTable(fit2)
+tT <- topDifferentiallyExpressedGenesTable("GSE18388")
+as.data.frame(tT)
+write.table(tT, file=stdout(), row.names=F, sep="\t")
 
 # Plot Histogram of fit 2 data
 fig <- histogramPlot(fit2)

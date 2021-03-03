@@ -7,6 +7,7 @@ library(shinyBS)
 source("geoIntegrationFunctions/geoIntegrationFunctions.R")
 source("dataTransformationFunctions/dataTransformationFunctions.R")
 source("interactiveDataVisualizationFunctions/interactiveDataVisualizationFunctions.R")
+source("differentialGeneExpressionAnalysis/differentialGeneExpressionAnalysis.R")
 
 ui <- fluidPage(
   titlePanel("GEO2R Data Visualisation"),
@@ -72,28 +73,32 @@ ui <- fluidPage(
                                                       tabsetPanel(type = "tabs",
                                                                   tabPanel("Scree Plot", br(), span("Generated using R princomp and plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (Comp). The plot displays the eigenvalues against the number of dimensions. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaScreePlot')),
                                                                   tabPanel("Individuals Plot", br(), span("Generated using R princomp and R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (Comp). The plot displays the eigenvalues for each individual (row) in the gene expression dataset for the top two principal components (Comp.1 and Comp.2). The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaIndividualsPlot')),
-                                                                  tabPanel("Variables Plot", br(), span("Generated using R princomp and R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (Comp). The plot displays the eigenvalues for each variable (column) in the gene expression dataset for the top two principal components (Comp.1 and Comp.2). The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaVariablesPlot'))#,
-                                                                  #tabPanel("Individuals and Variables Biplot",  br(), span("Generated using R prcomp and visualised using R fviz_pca. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (PC). The plot displays the eigenvalues for each variable (column) and individual (row) in the gene expression dataset for the top two principal components (Dim 1 and Dim 2). The plot shows data after log and KNN transformation if they were performed."), br(), plotOutput('pcaBiplotPlot')
-                                                      )
+                                                                  tabPanel("Variables Plot", br(), span("Generated using R princomp and R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (Comp). The plot displays the eigenvalues for each variable (column) in the gene expression dataset for the top two principal components (Comp.1 and Comp.2). The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaVariablesPlot'))                                                      )
                                              )
                                              
                                  )
                         ),
-                        tabPanel("Differential Gene Expression",
+                        tabPanel("Differential Gene Expression Analysis",
                                  tabsetPanel(type = "tabs",
-                                             tabPanel("Differential Gene Expression Analysis", 
+                                             tabPanel("Set Parameters", 
                                                       headerPanel("Test"),
-                                                      
                                                       sidebarPanel(
                                                         selectInput("columns1", "Group 1 Columns", choices=c(), multiple = TRUE),
                                                         selectInput("columns2", "Group 2 Columns", choices=c(), multiple = TRUE),
-                                                        selectInput("columns3", "Group 3 Columns", choices=c(), multiple = TRUE)
+                                                        selectInput("columns3", "Group 3 Columns", choices=c(), multiple = TRUE),
+                                                        actionButton("differentialExpressionButton", "Analyse")
                                                       ),
-                                                      
                                                       mainPanel(
                                                         textOutput("caption")
                                                       )
-                                             ))
+                                                      ),
+                                             tabPanel("Top Differentially Expressed Genes", dataTableOutput('dETable')),
+                                             tabPanel("Histogram Plot", plotOutput('dEHistogram')),
+                                             tabPanel("Venn Diagram Plot", plotOutput('dEVennDiagram')),
+                                             tabPanel("Q-Q Plot", plotOutput('dEQQ')),
+                                             tabPanel("Volcano Plot", plotOutput('dEVolcano')),
+                                             tabPanel("MD Plot", plotOutput('dEMd'))
+                                             )
                                  
                         )
   )
@@ -231,10 +236,44 @@ server <- function(input, output, session){
                       choices = columns())
   })
 
-  
-  output$caption <- renderText({
-    paste(input$textbox, input$caption)
+  observeEvent(input$differentialExpressionButton, {
+    gsms <- calculateGsms(columns(),input$columns1, input$columns2, input$columns3)
+    fit2 <- differentialGeneExpression(gsetData(), gsms)
+    tT <- topDifferentiallyExpressedGenesTable(input$geoAccessionCode)
+    dT <- dT(fit2)
+    ct <- 1  
+    
+    output$caption <- renderText({ 
+      "Analysis Successfully Performed!"
+    })
+    
+    output$dETable <- renderDataTable({
+      as.data.frame(tT)
+    })
+    
+    
+    output$dEHistogram <- renderPlot({
+      histogramPlot(fit2)
+    })
+    
+    output$dEVennDiagram <- renderPlot({
+      vennDiagramPlot(dT)
+    })
+    
+    output$dEQQ <- renderPlot({
+      qqPlot(fit2)
+    })
+    
+    output$dEVolcano <- renderPlot({
+      volcanoPlot(fit2, dT, ct)
+    })
+    
+    output$dEMd <- renderPlot({
+      mdPlot(fit2, dT, ct)
+    })
+    
   })
+  
 }
 
 shinyApp(ui, server)
