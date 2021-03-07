@@ -29,31 +29,7 @@ ui <- fluidPage(
                  choices=list("Yes","No"),
                  selected="No"),
     bsTooltip(id = "knnTransformation", title = "Rows with over 50% missing values are imputed using the overall mean per sample. Columns with over 80% will cause an error in the KNN computation.", placement = "top", trigger = "hover"),
-    br()#,
-    #helpText("The Buttons Below here currently are not functional!!!"),
-    # Need to get the radio button below working or delete
-    #selectInput("pValueAdjustment", "Apply adjustment to the P-values:",
-    #            choices = c("Benjamini & Hochberg (False discovery rate)", "Benjamini & Yekutieli", "Bonferroni", "Hochberg", "Holm", "Hommel", "None")),
-    #radioButtons("limmaPrecisionWeights",
-    #             label="Apply limma precision weights (vooma):",
-    #             choices=list("Yes","No"),
-    #             selected="No"), 
-    # Need to get the radio button below working or delete
-    #radioButtons("forceNormalization",
-    #             label="Force normalization:",
-    #             choices=list("Yes","No"),
-    #             selected="No"), 
-    # Need to get the radio button below working or delete
-    #radioButtons("forceNormalization",
-    #             label="Category of Platform annotation to display on results:",
-    #             choices=list("Submitter supplied","NCBI generated"),
-    #             selected="No"), 
-    #br(),
-    #helpText("Plot displays"),
-    #sliderInput("integer", "Significance level cut-off:",
-    #            min = 0, max = 1,
-    #            value = 0.05),
-    # add grouping functionality
+    br()
   ),
   mainPanel(tabsetPanel(type = "tabs",
                         tabPanel("Dataset Information",
@@ -82,9 +58,26 @@ ui <- fluidPage(
                                  tabsetPanel(type = "tabs",
                                              tabPanel("Set Parameters", 
                                                       headerPanel("Test"),
-                                                      sidebarPanel(
+                                                      sidebarPanel( width = 8,
                                                         selectInput("columns1", "Group 1 Columns", choices=c(), multiple = TRUE),
                                                         selectInput("columns2", "Group 2 Columns", choices=c(), multiple = TRUE),
+                                                        selectInput("pValueAdjustment", "Apply adjustment to the P-values:",
+                                                                    choices = c("Benjamini & Hochberg (False discovery rate)", "Benjamini & Yekutieli", "Bonferroni", "Holm", "None")), # "Hochberg" and "Hommel" were removed
+                                                        radioButtons("limmaPrecisionWeights",
+                                                                     label="Apply limma precision weights (vooma):",
+                                                                     choices=list("Yes","No"),
+                                                                     selected="No"), 
+                                                        radioButtons("forceNormalization",
+                                                                     label="Force normalization:",
+                                                                     choices=list("Yes","No"),
+                                                                     selected="No"), 
+                                                        radioButtons("platformAnnotation",
+                                                                     label="Category of Platform annotation to display on results:",
+                                                                     choices=list("Submitter supplied","NCBI generated"),
+                                                                     selected="NCBI generated"), 
+                                                        sliderInput("significanceLevelCutOff", "Significance level cut-off:",
+                                                                    min = 0, max = 1,
+                                                                    value = 0.05),
                                                         actionButton("differentialExpressionButton", "Analyse")
                                                       ),
                                                       mainPanel(
@@ -107,7 +100,7 @@ ui <- fluidPage(
 server <- function(input, output, session){
   # Data Extraction Functions
   # Get the GEO2R data for all platforms
-  allGset <- reactive({getGset(input$geoAccessionCode)})
+  allGset <- reactive({getGset(input$geoAccessionCode, input$platformAnnotation)})
   
   # Get a list of all the platforms
   platforms <- reactive({getPlatforms(allGset())})
@@ -232,9 +225,10 @@ server <- function(input, output, session){
 
   observeEvent(input$differentialExpressionButton, {
     gsms <- calculateGsms(columns(),input$columns1, input$columns2)
-    fit2 <- differentialGeneExpression(gsetData(), knnDataInput(), gsms)
-    tT <- topDifferentiallyExpressedGenesTable(fit2)
-    dT <- dT(fit2)
+    fit2 <- differentialGeneExpression(gsetData(), knnDataInput(), gsms, input$limmaPrecisionWeights, input$forceNormalization)
+    adjustment <- adjustmentCalculation(input$pValueAdjustment)
+    tT <- topDifferentiallyExpressedGenesTable(fit2, adjustment)
+    dT <- dT(fit2, adjustment, input$significanceLevelCutOff)
     ct <- 1  
     
     output$caption <- renderText({ 
@@ -247,7 +241,7 @@ server <- function(input, output, session){
     
     
     output$dEHistogram <- renderPlot({
-      histogramPlot(fit2)
+      histogramPlot(fit2, adjustment)
     })
     
     output$dEVennDiagram <- renderPlot({

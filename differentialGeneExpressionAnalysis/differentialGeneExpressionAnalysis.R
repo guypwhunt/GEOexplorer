@@ -31,7 +31,7 @@ calculateGsms <- function(columnNames,group1, group2){
   return(gsms)
 }
 
-differentialGeneExpression <- function(gset, ex, gsms) {
+differentialGeneExpression <- function(gset, ex, gsms, limmaPrecisionWeights, forceNormalization) {
   # make proper column names to match toptable 
   fvarLabels(gset) <- make.names(fvarLabels(gset))
   
@@ -45,6 +45,10 @@ differentialGeneExpression <- function(gset, ex, gsms) {
   ex <- ex[ ,sel]
   exprs(gset) <- ex
   
+  if(forceNormalization == "Yes"){
+    exprs(gset) <- normalizeBetweenArrays(exprs(gset)) # normalize data
+  }
+  
   # assign samples to groups and set up design matrix
   gs <- factor(sml)
   groups <- make.names(c("Group1","Group2"))
@@ -53,7 +57,21 @@ differentialGeneExpression <- function(gset, ex, gsms) {
   design <- model.matrix(~group + 0, gset)
   colnames(design) <- levels(gs)
   
-  fit <- lmFit(gset, design)  # fit linear model
+  if (limmaPrecisionWeights == "Yes"){
+    nall <- nrow(gset)
+    gset <- gset[complete.cases(exprs(gset)), ]
+    
+    # calculate precision weights and show plot of mean-variance trend
+    v <- vooma(gset, design, plot=T)
+    # OR weights by group
+    # v <- voomaByGroup(gset, group=groups, design, plot=T, cex=0.1, pch=".", col=1:nlevels(gs))
+    v$genes <- fData(gset) # attach gene annotations
+    
+    # fit linear model
+    fit  <- lmFit(v)
+  } else if (limmaPrecisionWeights == "No"){
+    fit <- lmFit(gset, design)  # fit linear model 
+  }
   
   # set up contrasts of interest and recalculate model coefficients
   cts <- paste(groups[1], groups[2], sep="-")
@@ -65,23 +83,43 @@ differentialGeneExpression <- function(gset, ex, gsms) {
   return(fit2)
 }
 
-topDifferentiallyExpressedGenesTable <- function(fit2) {
-  tT <- topTable(fit2, adjust="fdr", sort.by="B", number=250)
+adjustmentCalculation <- function(adjustment)
+  {
+  if (adjustment == "Benjamini & Hochberg (False discovery rate)"){
+  adjustment <- "fdr"
+} else if (adjustment == "Benjamini & Yekutieli"){
+  adjustment <- "BY"
+} else if (adjustment == "Bonferroni"){
+  adjustment <- "bonferroni"
+} else if (adjustment == "Hochberg"){
+  adjustment <- "hochberg"
+} else if (adjustment == "Holm"){
+  adjustment <- "holm"
+} else if (adjustment == "Hommel"){
+  adjustment <- "hommel"
+} else if (adjustment == "None"){
+  adjustment <- "none"
+}
+  return(adjustment)
+}
+
+topDifferentiallyExpressedGenesTable <- function(fit2, adjustment) {
+  tT <- topTable(fit2, adjust=adjustment, sort.by="B", number=250)
   tT["ID"] <- rownames(tT)
   tT <- subset(tT, select=c("ID","adj.P.Val","P.Value","t","B","logFC"))
   return(tT)
 }
 
 
-histogramPlot <- function(fit2) {
-  tT2 <- topTable(fit2, adjust="fdr", sort.by="B", number=Inf)
+histogramPlot <- function(fit2, adjustment) {
+  tT2 <- topTable(fit2, adjust=adjustment, sort.by="B", number=Inf)
   hist(tT2$adj.P.Val, col = "grey", border = "white", xlab = "P-adj",
        ylab = "Number of genes", main = "P-adj value distribution")
 }
 
 # summarize test results as "up", "down" or "not expressed"
-dT <- function(fit2) {
-  dT<- decideTests(fit2, adjust.method="fdr", p.value=0.05)
+dT <- function(fit2, adjustment, significanceLevelCutOff) {
+  dT<- decideTests(fit2, adjust.method=adjustment, p.value=significanceLevelCutOff)
   return(dT)
 }
 

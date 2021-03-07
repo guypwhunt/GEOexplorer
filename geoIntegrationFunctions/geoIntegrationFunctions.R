@@ -7,8 +7,13 @@ getGeoData <- function(geoAccessionCode, platform) {
   return(gset)
 }
 
-getGset <- function(geoAccessionCode) {
-  gset <- getGEO(geoAccessionCode, GSEMatrix =TRUE, getGPL=FALSE)
+getGset <- function(geoAccessionCode, platformAnnotation) {
+  if (platformAnnotation == "Submitter supplied") {
+    platformAnnotation == FALSE
+  } else if (platformAnnotation == "NCBI generated") {
+    platformAnnotation == TRUE
+  } 
+  gset <- getGEO(geoAccessionCode, GSEMatrix =TRUE, getGPL=FALSE, AnnotGPL=platformAnnotation)
   return(gset)
 }
 
