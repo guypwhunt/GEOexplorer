@@ -105,8 +105,17 @@ adjustmentCalculation <- function(adjustment)
 
 topDifferentiallyExpressedGenesTable <- function(fit2, adjustment) {
   tT <- topTable(fit2, adjust=adjustment, sort.by="B", number=250)
+  columnNamesList <- c("ID","adj.P.Val","P.Value","t","B","logFC")
+  optionalColumnNamesList <- c("Gene.symbol","Gene.title")
+  for(columnName in optionalColumnNamesList)
+  {
+    if (columnName %in% colnames(tT))
+    {
+      columnNamesList <- c(columnNamesList,columnName)
+    }
+  }
   tT["ID"] <- rownames(tT)
-  tT <- subset(tT, select=c("ID","adj.P.Val","P.Value","t","B","logFC"))
+  tT <- subset(tT, select=columnNamesList)
   return(tT)
 }
 
