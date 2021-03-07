@@ -3,6 +3,7 @@ library(shiny)
 library(plotly)
 library(ggplot2)
 library(shinyBS)
+library(shinyjs)
 
 source("geoIntegrationFunctions/geoIntegrationFunctions.R")
 source("dataTransformationFunctions/dataTransformationFunctions.R")
@@ -100,7 +101,7 @@ ui <- fluidPage(
 server <- function(input, output, session){
   # Data Extraction Functions
   # Get the GEO2R data for all platforms
-  allGset <- reactive({getGset(input$geoAccessionCode, input$platformAnnotation)})
+  allGset <- reactive({getGset(input$geoAccessionCode, TRUE)})
   
   # Get a list of all the platforms
   platforms <- reactive({getPlatforms(allGset())})
@@ -224,16 +225,14 @@ server <- function(input, output, session){
   })
 
   observeEvent(input$differentialExpressionButton, {
+    allGset2 <- getGset(input$geoAccessionCode, input$platformAnnotation)
+    gsetData2 <- getPlatformGset(allGset2, input$platform)
     gsms <- calculateGsms(columns(),input$columns1, input$columns2)
-    fit2 <- differentialGeneExpression(gsetData(), knnDataInput(), gsms, input$limmaPrecisionWeights, input$forceNormalization)
+    fit2 <- differentialGeneExpression(gsetData2, knnDataInput(), gsms, input$limmaPrecisionWeights, input$forceNormalization)
     adjustment <- adjustmentCalculation(input$pValueAdjustment)
     tT <- topDifferentiallyExpressedGenesTable(fit2, adjustment)
     dT <- dT(fit2, adjustment, input$significanceLevelCutOff)
     ct <- 1  
-    
-    output$caption <- renderText({ 
-      "Analysis Successfully Performed!"
-    })
     
     output$dETable <- renderDataTable({
       as.data.frame(tT)
@@ -260,6 +259,10 @@ server <- function(input, output, session){
       mdPlot(fit2, dT, ct)
     })
     
+    output$caption <- renderText({ 
+      "Analysis Successfully Performed!"
+    })
+
   })
   
 }
