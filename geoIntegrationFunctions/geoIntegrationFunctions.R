@@ -7,13 +7,15 @@ getGeoData <- function(geoAccessionCode, platform) {
   return(gset)
 }
 
-getGset <- function(geoAccessionCode, platformAnnotation) {
+getGset <- function(geoAccessionCode, platformAnnotation, GSEMatrix=TRUE, getGPL=FALSE) {
   if (platformAnnotation == "Submitter supplied") {
-    platformAnnotation == FALSE
+    platformAnnotation <- FALSE
   } else if (platformAnnotation == "NCBI generated") {
-    platformAnnotation == TRUE
-  } 
-  gset <- getGEO(geoAccessionCode, GSEMatrix =TRUE, getGPL=FALSE, AnnotGPL=platformAnnotation)
+    platformAnnotation <- TRUE
+  } else {
+    platformAnnotation <- TRUE
+  }
+  gset <- getGEO(geoAccessionCode, GSEMatrix=GSEMatrix, getGPL=getGPL, AnnotGPL=platformAnnotation)
   return(gset)
 }
 
@@ -52,11 +54,20 @@ extractExperimentInformation <- function(experimentData) {
 getColumnDetails <- function(gset){
   phenoDataset <- phenoData(gset)
   phenoData <- phenoDataset@data
-  df <- data.frame(
-    column=row.names(phenoData),
-    title=phenoData["title"],
-    source=phenoData["source_name_ch1"], 
-    characteristic1=phenoData["characteristics_ch1"], 
-    characteristic2=phenoData["characteristics_ch1.1"]) 
+  columnNames <- c("title", "source_name_ch1", "characteristics_ch1", "characteristics_ch1.1")
+  finalColumnNames <- c()
+  i <- 1
+  
+  for (name in columnNames) {
+    if (name %in% colnames(phenoData)) {
+      finalColumnNames <- c(finalColumnNames,name)
+    }
+  }
+  
+  df <- data.frame(column=row.names(phenoData))
+  
+  for (name in finalColumnNames){
+    df <- data.frame(df, phenoData[name])
+  }
   return(df)
 }

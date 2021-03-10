@@ -62,10 +62,10 @@ ui <- fluidPage(
                         tabPanel("Differential Gene Expression Analysis",
                                  tabsetPanel(type = "tabs",
                                              tabPanel("Set Parameters", 
-                                                      headerPanel("Test"),
                                                       mainPanel(
                                                         fluidRow(
                                                         column(6,
+                                                               br(), 
                                                                selectInput("columns1", "Group 1 Columns", choices=c(), multiple = TRUE),
                                                                selectInput("columns2", "Group 2 Columns", choices=c(), multiple = TRUE),
                                                                selectInput("pValueAdjustment", "Apply adjustment to the P-values:",
@@ -89,12 +89,12 @@ ui <- fluidPage(
                                                         )
                                                         )
                                                       ),
-                                             tabPanel("Top Differentially Expressed Genes", dataTableOutput('dETable')),
-                                             tabPanel("Histogram Plot", plotOutput('dEHistogram')),
-                                             tabPanel("Venn Diagram Plot", plotOutput('dEVennDiagram')),
-                                             tabPanel("Q-Q Plot", plotOutput('dEQQ')),
-                                             tabPanel("Volcano Plot", plotOutput('dEVolcano')),
-                                             tabPanel("MD Plot", plotOutput('dEMd'))
+                                             tabPanel("Top Differentially Expressed Genes", br(), span("The table below displays the top differentially expressed genes between the groups selected."), br(), span("adj.P.Val is the P-value after adjustment for multiple testing. This column is generally recommended as the primary statistic by which to interpret results. Genes with the smallest P-values will be the most reliable."), br(), span("P.Value is the Raw P-value"), br(), span("t is the Moderated t-statistic (only available when two groups of Samples are defined)"), br(), span("B is the B-statistic or log-odds that the gene is differentially expressed (only available when two groups of Samples are defined)"), br(), span("logFC is the Log2-fold change between two experimental conditions (only available when two groups of Samples are defined)"), br(), span("F is the moderated F-statistic which combines the t-statistics for all the pair-wise comparisons into an overall test of significance for that gene (only available when more than two groups of Samples are defined)"), br(), dataTableOutput('dETable')),
+                                             tabPanel("Histogram Plot", br(), span("Generated using hist. Use to view the distribution of the P-values in the analysis results. The P-value here is the same as in the Top differentially expressed genes table and computed using all selected contrasts. While the displayed table is limited by size this plot allows you to see the 'big picture' by showing the P-value distribution for all analyzed genes.") , plotOutput('dEHistogram')),
+                                             tabPanel("Venn Diagram Plot", br(), span("Generated using limma (vennDiagram). Use to explore the overlap in significant genes between multiple contrasts.") , plotOutput('dEVennDiagram')),
+                                             tabPanel("Q-Q Plot", br(), span("Generated using limma (qqt). Plots the quantiles of a data sample against the theoretical quantiles of a Student's t distribution. This plot helps to assess the quality of the limma test results. Ideally the points should lie along a straight line, meaning that the values for moderated t-statistic computed during the test follow their theoretically predicted distribution."), plotOutput('dEQQ')),
+                                             tabPanel("Volcano Plot", br(), span("Generated using limma (volcanoplot). A volcano plot displays statistical significance (-log10 P value) versus magnitude of change (log2 fold change) and is useful for visualizing differentially expressed genes. Highlighted genes are significantly differentially expressed at the selected adjusted p-value cutoff value (red = upregulated, blue = downregulated).") , plotOutput('dEVolcano')),
+                                             tabPanel("Mean Difference Plot", br(), span("Generated using limma (plotMD). A mean difference (MD) plot displays log2 fold change versus average log2 expression values and is useful for visualizing differentially expressed genes. Highlighted genes are significantly differentially expressed at the selected adjusted p-value cutoff (red = upregulated, blue = downregulated)."), plotOutput('dEMd'))
                                              )
                                  
                         )
@@ -229,6 +229,8 @@ server <- function(input, output, session){
   })
 
   observeEvent(input$differentialExpressionButton, {
+    #dFAllGset <- getGset(input$geoAccessionCode, input$platformAnnotation, GSEMatrix=TRUE, getGPL=TRUE)
+    #dFGsetData <- getPlatformGset(dFAllGset, input$platform)
     gsms <- calculateGsms(columns(),input$columns1, input$columns2)
     fit2 <- differentialGeneExpression(gsetData(), knnDataInput(), gsms, input$limmaPrecisionWeights, input$forceNormalization)
     adjustment <- adjustmentCalculation(input$pValueAdjustment)

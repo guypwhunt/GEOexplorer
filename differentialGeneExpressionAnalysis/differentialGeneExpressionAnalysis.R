@@ -107,9 +107,10 @@ topDifferentiallyExpressedGenesTable <- function(fit2, adjustment) {
   tT <- topTable(fit2, adjust=adjustment, sort.by="B", number=250)
   columnNamesList <- c("ID","adj.P.Val","P.Value","t","B","logFC")
   optionalColumnNamesList <- c("Gene.symbol","Gene.title")
+  tTColumnNames <- colnames(tT)
   for(columnName in optionalColumnNamesList)
   {
-    if (columnName %in% colnames(tT))
+    if (columnName %in% tTColumnNames)
     {
       columnNamesList <- c(columnNamesList,columnName)
     }

@@ -32,7 +32,7 @@ badList <- list("GSE25758", "GSE25762", "GSE25723", "GSE18459") # The first two 
 
 #for(geoAccessionCode in geoAccessionCodes)
 #{
-geoAccessionCode <- "GSE18388"
+geoAccessionCode <- "GSE18397"#"GSE18388"
 #  tryCatch({
 
 # Get the GEO2R data for all platforms
@@ -47,6 +47,7 @@ gsetData <- getPlatformGset(allGset, platform)
 
 # Get column Details
 getColumnDetails <- getColumnDetails(gsetData)
+getColumnDetails
 
 # Extract the experiment information 
 experimentInformation <- getExperimentInformation(gsetData)
@@ -92,8 +93,75 @@ gsms <- calculateGsms(columnNames,group1, group2)
 # Convert P value adjustment
 adjustment <- adjustmentCalculation(pValueAdjustment)
 
+# Get annotated GSET
+dEAllGset <- getGset(geoAccessionCode, platformAnnotation, GSEMatrix=TRUE, getGPL=TRUE)
+dEGsetData <- getPlatformGset(dEAllGset, platform)
+
+# Extract expression data
+dEExpressionData <- extractExpressionData(dEGsetData)
+
+# Apply log transformation to expression data if necessary
+dEDataInput <- logTransformExpressionData(dEExpressionData, logTransformation)
+
+# Perform KNN transformation on log expression data if necessary
+dEKnnDataInput <- knnDataTransformation(dEDataInput, knnTransformation)
+
+
+
+  # make proper column names to match toptable 
+  fvarLabels(dEGsetData) <- make.names(fvarLabels(dEGsetData))
+  
+  # group membership for all samples
+  sml <- strsplit(gsms, split="")[[1]]
+  
+  # filter out excluded samples (marked as "X")
+  sel <- which(sml != "X")
+  sml <- sml[sel]
+  dEGsetData <- dEGsetData[ ,sel]
+  dEKnnDataInput <- dEKnnDataInput[ ,sel]
+  exprs(dEGsetData) <- dEKnnDataInput
+  
+  if(forceNormalization == "Yes"){
+    exprs(dEGsetData) <- normalizeBetweenArrays(exprs(dEGsetData)) # normalize data
+  }
+  
+  # assign samples to groups and set up design matrix
+  gs <- factor(sml)
+  groups <- make.names(c("Group1","Group2"))
+  levels(gs) <- groups
+  dEGsetData$group <- gs
+  design <- model.matrix(~group + 0, gset)
+  colnames(design) <- levels(gs)
+  
+  if (limmaPrecisionWeights == "Yes"){
+    nall <- nrow(dEGsetData)
+    dEGsetData <- dEGsetData[complete.cases(exprs(dEGsetData)), ]
+    
+    # calculate precision weights and show plot of mean-variance trend
+    v <- vooma(dEGsetData, design, plot=T)
+    # OR weights by group
+    # v <- voomaByGroup(gset, group=groups, design, plot=T, cex=0.1, pch=".", col=1:nlevels(gs))
+    v$genes <- fData(dEGsetData) # attach gene annotations
+    
+    # fit linear model
+    fit  <- lmFit(v)
+  } else if (limmaPrecisionWeights == "No"){
+    fit <- lmFit(dEGsetData, design)  # fit linear model 
+  }
+  
+  # set up contrasts of interest and recalculate model coefficients
+  cts <- paste(groups[1], groups[2], sep="-")
+  cont.matrix <- makeContrasts(contrasts=cts, levels=design)
+  fit2 <- contrasts.fit(fit, cont.matrix)
+  
+  # compute statistics and table of top significant genes
+  fit2 <- eBayes(fit2, 0.01)
+  return(fit2)
+}
+
+
 # Get fit2 data
-fit2 <- differentialGeneExpression(gsetData, knnDataInput, gsms, limmaPrecisionWeights, forceNormalization)
+fit2 <- differentialGeneExpression1(dEGsetData, dEKnnDataInput, gsms, limmaPrecisionWeights, forceNormalization)
 
 # Print Top deferentially expressed genes
 tT <- topDifferentiallyExpressedGenesTable(fit2, adjustment)
