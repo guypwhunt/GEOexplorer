@@ -4,6 +4,8 @@ library(limma)
 library(umap)
 library(data.table)
 
+source("geoIntegrationFunctions/geoIntegrationFunctions.R")
+source("dataTransformationFunctions/dataTransformationFunctions.R")
 
 extractColumns <- function(ex) {
   columnNames <- colnames(ex) 
@@ -29,6 +31,75 @@ calculateGsms <- function(columnNames,group1, group2){
   }
   gsms <- paste(gsmsList, collapse = '')
   return(gsms)
+}
+
+calculateFit2 <- function(geoAccessionCode, platform, platformAnnotation, gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation){
+  if (platformAnnotation == "Submitter supplied") {
+    platformAnnotation <- FALSE
+  } else if (platformAnnotation == "NCBI generated") {
+    platformAnnotation <- TRUE
+  } else {
+    platformAnnotation <- TRUE
+  }
+  gset <- getGEO(geoAccessionCode, GSEMatrix =TRUE, AnnotGPL=platformAnnotation)
+  gset <- getPlatformGset(gset, platform)
+  
+  # make proper column names to match toptable 
+  fvarLabels(gset) <- make.names(fvarLabels(gset))
+  
+  # group membership for all samples
+  sml <- strsplit(gsms, split="")[[1]]
+  
+  ex <- extractExpressionData(gset)
+  
+  ex <- logTransformExpressionData(ex, logTransformation)
+  
+  ex <- knnDataTransformation(ex, knnTransformation)
+  
+  sel <- which(sml != "X")
+  sml <- sml[sel]
+  gset <- gset[ ,sel]
+  ex <- ex[ ,sel]
+  exprs(gset) <- ex
+  
+  if(forceNormalization == "Yes"){
+    exprs(gset) <- normalizeBetweenArrays(exprs(gset)) # normalize data
+  }
+  
+  
+  
+  # assign samples to groups and set up design matrix
+  gs <- factor(sml)
+  groups <- make.names(c("Group1","Group2"))
+  levels(gs) <- groups
+  gset$group <- gs
+  design <- model.matrix(~group + 0, gset)
+  colnames(design) <- levels(gs)
+  
+  if (limmaPrecisionWeights == "Yes"){
+    nall <- nrow(gset)
+    gset <- gset[complete.cases(exprs(gset)), ]
+    
+    # calculate precision weights and show plot of mean-variance trend
+    v <- vooma(gset, design, plot=T)
+    # OR weights by group
+    # v <- voomaByGroup(gset, group=groups, design, plot=T, cex=0.1, pch=".", col=1:nlevels(gs))
+    v$genes <- fData(gset) # attach gene annotations
+    
+    # fit linear model
+    fit  <- lmFit(v)
+  } else if (limmaPrecisionWeights == "No"){
+    fit <- lmFit(gset, design)  # fit linear model 
+  }
+  
+  # set up contrasts of interest and recalculate model coefficients
+  cts <- paste(groups[1], groups[2], sep="-")
+  cont.matrix <- makeContrasts(contrasts=cts, levels=design)
+  fit2 <- contrasts.fit(fit, cont.matrix)
+  
+  # compute statistics and table of top significant genes
+  fit2 <- eBayes(fit2, 0.01)
+  return(fit2)
 }
 
 differentialGeneExpression <- function(gset, ex, gsms, limmaPrecisionWeights, forceNormalization) {
@@ -84,35 +155,35 @@ differentialGeneExpression <- function(gset, ex, gsms, limmaPrecisionWeights, fo
 }
 
 adjustmentCalculation <- function(adjustment)
-  {
+{
   if (adjustment == "Benjamini & Hochberg (False discovery rate)"){
-  adjustment <- "fdr"
-} else if (adjustment == "Benjamini & Yekutieli"){
-  adjustment <- "BY"
-} else if (adjustment == "Bonferroni"){
-  adjustment <- "bonferroni"
-} else if (adjustment == "Hochberg"){
-  adjustment <- "hochberg"
-} else if (adjustment == "Holm"){
-  adjustment <- "holm"
-} else if (adjustment == "Hommel"){
-  adjustment <- "hommel"
-} else if (adjustment == "None"){
-  adjustment <- "none"
-}
+    adjustment <- "fdr"
+  } else if (adjustment == "Benjamini & Yekutieli"){
+    adjustment <- "BY"
+  } else if (adjustment == "Bonferroni"){
+    adjustment <- "bonferroni"
+  } else if (adjustment == "Hochberg"){
+    adjustment <- "hochberg"
+  } else if (adjustment == "Holm"){
+    adjustment <- "holm"
+  } else if (adjustment == "Hommel"){
+    adjustment <- "hommel"
+  } else if (adjustment == "None"){
+    adjustment <- "none"
+  }
   return(adjustment)
 }
 
 topDifferentiallyExpressedGenesTable <- function(fit2, adjustment) {
   tT <- topTable(fit2, adjust=adjustment, sort.by="B", number=250)
   columnNamesList <- c("ID","adj.P.Val","P.Value","t","B","logFC")
-  optionalColumnNamesList <- c("Gene.symbol","Gene.title")
+  optionalColumnNamesList <- c("Gene.symbol","Gene.title", "GB_LIST", "SPOT_ID", "RANGE_GB", "RANGE_STRAND", "RANGE_START", "GB_ACC", "GB_RANGE", "SEQUENCE")
   tTColumnNames <- colnames(tT)
   for(columnName in optionalColumnNamesList)
   {
     if (columnName %in% tTColumnNames)
     {
-      columnNamesList <- c(columnNamesList,columnName)
+      columnNamesList <- c(columnNamesList, columnName)
     }
   }
   tT["ID"] <- rownames(tT)
@@ -139,16 +210,16 @@ vennDiagramPlot <- function(dT) {
 }
 
 qqPlot <- function(fit2) {
-# create Q-Q plot for t-statistic
-t.good <- which(!is.na(fit2$F)) # filter out bad probes
-qqt(fit2$t[t.good], fit2$df.total[t.good], main="Moderated t statistic")
+  # create Q-Q plot for t-statistic
+  t.good <- which(!is.na(fit2$F)) # filter out bad probes
+  qqt(fit2$t[t.good], fit2$df.total[t.good], main="Moderated t statistic")
 }
 
 volcanoPlot <- function(fit2, dT, ct) {
-# volcano plot (log P-value vs log fold change)
-colnames(fit2) # list contrast names
-volcanoplot(fit2, coef=ct, main=colnames(fit2)[ct], pch=20,
-            highlight=length(which(dT[,ct]!=0)), names=rep('+', nrow(fit2)))
+  # volcano plot (log P-value vs log fold change)
+  colnames(fit2) # list contrast names
+  volcanoplot(fit2, coef=ct, main=colnames(fit2)[ct], pch=20,
+              highlight=length(which(dT[,ct]!=0)), names=rep('+', nrow(fit2)))
 }
 
 mdPlot <- function(fit2, dT, ct) {
