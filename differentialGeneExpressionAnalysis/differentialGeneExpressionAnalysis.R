@@ -4,6 +4,7 @@ library(limma)
 library(umap)
 library(data.table)
 
+#setwd("..")
 source("geoIntegrationFunctions/geoIntegrationFunctions.R")
 source("dataTransformationFunctions/dataTransformationFunctions.R")
 
@@ -176,8 +177,8 @@ adjustmentCalculation <- function(adjustment)
 
 topDifferentiallyExpressedGenesTable <- function(fit2, adjustment) {
   tT <- topTable(fit2, adjust=adjustment, sort.by="B", number=250)
-  columnNamesList <- c("ID","adj.P.Val","P.Value","t","B","logFC")
-  optionalColumnNamesList <- c("Gene.symbol","Gene.title", "GB_LIST", "SPOT_ID", "RANGE_GB", "RANGE_STRAND", "RANGE_START", "GB_ACC", "GB_RANGE", "SEQUENCE")
+  columnNamesList <- c()
+  optionalColumnNamesList <- c("ID","adj.P.Val","P.Value","t","B","logFC","Gene.symbol","Gene.title", "GB_LIST", "SPOT_ID", "RANGE_GB", "RANGE_STRAND", "RANGE_START", "GB_ACC", "GB_RANGE", "SEQUENCE")
   tTColumnNames <- colnames(tT)
   for(columnName in optionalColumnNamesList)
   {

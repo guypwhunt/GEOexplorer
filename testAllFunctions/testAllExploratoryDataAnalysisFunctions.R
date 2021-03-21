@@ -1,7 +1,7 @@
 # The purpose of this script is to test all the functions used in the shiny app
 
 # Change the below file path to the file path you save the repo to
-setwd('C:/Users/guypw/Documents/geo2rShinyApp')
+setwd('C:/Users/guypw/OneDrive/Documents/geo2rShinyApp')
 
 # Import Functions
 source("geoIntegrationFunctions/geoIntegrationFunctions.R")

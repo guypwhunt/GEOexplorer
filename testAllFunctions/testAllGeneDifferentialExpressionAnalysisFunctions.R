@@ -1,7 +1,7 @@
 # The purpose of this script is to test all the functions used in the shiny app
 
 # Change the below file path to the file path you save the repo to
-setwd('C:/Users/guypw/Documents/geo2rShinyApp')
+setwd('C:/Users/guypw/OneDrive/Documents/geo2rShinyApp')
 
 # Import Functions
 source("geoIntegrationFunctions/geoIntegrationFunctions.R")
@@ -9,6 +9,7 @@ source("dataVisualizationFunctions/dataVisualizationFunctions.R")
 source("dataTransformationFunctions/dataTransformationFunctions.R")
 source("interactiveDataVisualizationFunctions/interactiveDataVisualizationFunctions.R")
 source("differentialGeneExpressionAnalysis/differentialGeneExpressionAnalysis.R")
+source("interactiveDataVisualizationFunctions/interactiveDifferentialGeneExpressionDataVisualizationFunctions.R")
 
 
 # Import Libraries
@@ -108,6 +109,10 @@ tT
 fig <- histogramPlot(fit2, adjustment)
 fig
 
+# Plot Interactive Histogram of fit 2 data
+fig <- interactiveHistogramPlot(fit2, adjustment)
+fig
+
 # summarize test results as "up", "down" or "not expressed"
 dT <- dT(fit2, adjustment, significanceLevelCutOff)
 
@@ -127,6 +132,11 @@ fig
 # MD plot (log fold change vs mean log expression)
 fig <- mdPlot(fit2, dT, ct)
 fig
+
+# Plot Interactive Mean Difference of fit 2 data
+fig <- interactiveMeanDifferencePlot(fit2, adjustment)
+fig
+
 
 #  }, error = function(e) {
 #    write(as.character(geoAccessionCode),file = outputFile, append = TRUE, sep = "\n")
