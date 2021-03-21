@@ -27,3 +27,19 @@ interactiveMeanDifferencePlot <- function(fit2, adjustment, dT, ct) {
     ))
   fig}
   
+interactiveVolcanoPlot <- function(fit2, adjustment, dT, ct) {
+  fit2Df <- data.frame((0-log10(fit2$p.value)), fit2$coefficients, expression = dT[,ct])
+  
+  fig <- plot_ly(data = fit2Df, x = ~Group1.Group2.1, y = ~Group1.Group2, color = ~Group1.Group2.2, colors = c("blue", "black", "red"), type = 'scatter', mode = 'markers', 
+                 marker = list(size = 3))
+  fig <- fig %>% layout(
+    title = ('Group1-Group2'),
+    xaxis = list(
+      title = "Log2 Fold Change"
+    ),
+    yaxis = list(
+      title = "-log10(P-value)"
+    ))
+  fig
+}
+  

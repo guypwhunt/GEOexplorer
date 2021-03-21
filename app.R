@@ -97,8 +97,9 @@ ui <- fluidPage(
                                              tabPanel("Venn Diagram Plot", br(), span("Generated using limma (vennDiagram). Use to explore the overlap in significant genes between multiple contrasts.") , plotOutput('dEVennDiagram')),
                                              tabPanel("Q-Q Plot", br(), span("Generated using limma (qqt). Plots the quantiles of a data sample against the theoretical quantiles of a Student's t distribution. This plot helps to assess the quality of the limma test results. Ideally the points should lie along a straight line, meaning that the values for moderated t-statistic computed during the test follow their theoretically predicted distribution."), plotOutput('dEQQ')),
                                              tabPanel("Volcano Plot", br(), span("Generated using limma (volcanoplot). A volcano plot displays statistical significance (-log10 P value) versus magnitude of change (log2 fold change) and is useful for visualizing differentially expressed genes. Highlighted genes are significantly differentially expressed at the selected adjusted p-value cutoff value") , plotOutput('dEVolcano')),
+                                             tabPanel("Interactive Volcano Plot", br(), span("") , plotlyOutput('iDEVolcano')),
                                              tabPanel("Mean Difference Plot", br(), span("Generated using limma (plotMD). A mean difference (MD) plot displays log2 fold change versus average log2 expression values and is useful for visualizing differentially expressed genes. Highlighted genes are significantly differentially expressed at the selected adjusted p-value cutoff (red = upregulated, blue = downregulated)."), plotOutput('dEMd')),
-                                             tabPanel("Interactive Mean Difference Plot", br(), span(""), plotlyOutput('idEMd'))
+                                             tabPanel("Interactive Mean Difference Plot", br(), span(""), plotlyOutput('iDEMd'))
                                              
                                              )
                                  
@@ -269,11 +270,15 @@ server <- function(input, output, session){
       volcanoPlot(fit2, dT, ct)
     })
     
+    output$iDEVolcano <- renderPlotly({
+      interactiveVolcanoPlot(fit2, adjustment, dT, ct)
+    })
+    
     output$dEMd <- renderPlot({
       mdPlot(fit2, dT, ct)
     })
     
-    output$idEMd <- renderPlotly({
+    output$iDEMd <- renderPlotly({
       interactiveMeanDifferencePlot(fit2, adjustment, dT, ct)
     })
     
