@@ -42,4 +42,22 @@ interactiveVolcanoPlot <- function(fit2, adjustment, dT, ct) {
     ))
   fig
 }
+
+interactiveQQPlot <- function(fit2) {
+  t.good <- which(!is.na(fit2$F)) # filter out bad probes
+  qqData <- qqt(fit2$t[t.good], fit2$df.total[t.good], main="Moderated t statistic", plot.it = FALSE)
+  
+  fig <- plot_ly(x = qqData$x, y = qqData$y, type = 'scatter', mode = 'markers', 
+                 marker = list(size = 3))
+  fig <- fig %>% layout(
+    title = ('Moderated t statistic'),
+    xaxis = list(
+      title = "Theoretical Quantiles"
+    ),
+    yaxis = list(
+      title = "Sample Quantiles"
+    ))
+  fig
+  }
+  
   
