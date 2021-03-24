@@ -236,11 +236,8 @@ server <- function(input, output, session){
   })
 
   observeEvent(input$differentialExpressionButton, {
-    #dFAllGset <- getGset(input$geoAccessionCode, input$platformAnnotation, GSEMatrix=TRUE, getGPL=TRUE)
-    #dFGsetData <- getPlatformGset(dFAllGset, input$platform)
     gsms <- calculateGsms(columns(),input$columns1, input$columns2)
     fit2 <- calculateFit2(input$geoAccessionCode, input$platform, input$platformAnnotation, gsms, input$logTransformation, input$limmaPrecisionWeights, input$forceNormalization, input$knnTransformation)
-    #fit2 <- differentialGeneExpression(gsetData(), knnDataInput(), gsms, input$limmaPrecisionWeights, input$forceNormalization)
     adjustment <- adjustmentCalculation(input$pValueAdjustment)
     tT <- topDifferentiallyExpressedGenesTable(fit2, adjustment)
     dT <- dT(fit2, adjustment, input$significanceLevelCutOff)
@@ -268,7 +265,7 @@ server <- function(input, output, session){
     })
     
     output$iDEQQ <- renderPlotly({
-      interactiveQQPlot(fit2)
+      interactiveQQPlot(fit2, dT, ct)
     })
     
     output$dEVolcano <- renderPlot({
@@ -276,7 +273,7 @@ server <- function(input, output, session){
     })
     
     output$iDEVolcano <- renderPlotly({
-      interactiveVolcanoPlot(fit2, adjustment, dT, ct)
+      interactiveVolcanoPlot(fit2, dT, ct)
     })
     
     output$dEMd <- renderPlot({
@@ -284,7 +281,7 @@ server <- function(input, output, session){
     })
     
     output$iDEMd <- renderPlotly({
-      interactiveMeanDifferencePlot(fit2, adjustment, dT, ct)
+      interactiveMeanDifferencePlot(fit2, dT, ct)
     })
     
     updateActionButton(session, "differentialExpressionButton",
