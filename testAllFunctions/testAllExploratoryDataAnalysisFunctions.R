@@ -36,7 +36,7 @@ geoAccessionCode <- "GSE18388"
 #  tryCatch({
 
 # Get the GEO2R data for all platforms
-allGset <- getGset(geoAccessionCode, platformAnnotation)
+allGset <- getGset(geoAccessionCode)
 
 # Get a list of all the platforms
 platforms <- getPlatforms(allGset) 
