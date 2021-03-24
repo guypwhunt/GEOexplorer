@@ -34,7 +34,7 @@ calculateGsms <- function(columnNames,group1, group2){
   return(gsms)
 }
 
-calculateFit2 <- function(geoAccessionCode, platform, platformAnnotation, gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation){
+calculateFit2 <- function(geoAccessionCode, platform, gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation, platformAnnotation = "NCBI generated"){
   if (platformAnnotation == "Submitter supplied") {
     platformAnnotation <- FALSE
   } else if (platformAnnotation == "NCBI generated") {
