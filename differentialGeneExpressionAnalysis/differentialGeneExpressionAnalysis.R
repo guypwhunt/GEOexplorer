@@ -200,8 +200,8 @@ histogramPlot <- function(fit2, adjustment) {
 }
 
 # summarize test results as "up", "down" or "not expressed"
-dT <- function(fit2, adjustment, significanceLevelCutOff) {
-  dT<- decideTests(fit2, adjust.method=adjustment, p.value=significanceLevelCutOff)
+calculateDT <- function(fit2, adjustment, significanceLevelCutOff) {
+  dT <- decideTests(fit2, adjust.method=adjustment, p.value=significanceLevelCutOff)
   return(dT)
 }
 

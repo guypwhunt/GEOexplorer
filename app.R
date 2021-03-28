@@ -151,7 +151,7 @@ server <- function(input, output, session){
   platformObserve <- observe({
     updateSelectInput(session, "platform",
                       choices = platforms(),
-                      selected = tail(platforms(), 1))
+                      selected = head(platforms()))
   })
   
   # Update if log transformation took place
@@ -233,7 +233,7 @@ server <- function(input, output, session){
     fit2 <- calculateFit2(input$geoAccessionCode, input$platform, gsms, input$logTransformation, input$limmaPrecisionWeights, input$forceNormalization, input$knnTransformation)
     adjustment <- adjustmentCalculation(input$pValueAdjustment)
     tT <- topDifferentiallyExpressedGenesTable(fit2, adjustment)
-    dT <- dT(fit2, adjustment, input$significanceLevelCutOff)
+    dT <- calculateDT(fit2, adjustment, input$significanceLevelCutOff)
     ct <- 1  
     
     # Differential gene expression table

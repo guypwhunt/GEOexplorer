@@ -19,7 +19,6 @@ library(ggplot2)
 logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No" 
 knnTransformation <- "No" # Values can also be "Yes"
 knn <- 2
-outputFile <-file("output.txt")
 geoAccessionCodes <- list("GSE18388")
 pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
 limmaPrecisionWeights <- "No"
@@ -32,7 +31,7 @@ badList <- list("GSE25758", "GSE25762", "GSE25723", "GSE18459") # The first two 
 
 #for(geoAccessionCode in geoAccessionCodes)
 #{
-geoAccessionCode <- "GSE18388"
+geoAccessionCode <- "GSE18380"
 #  tryCatch({
 
 # Get the GEO2R data for all platforms
@@ -40,29 +39,33 @@ allGset <- getGset(geoAccessionCode)
 
 # Get a list of all the platforms
 platforms <- getPlatforms(allGset) 
+platforms
 platform <- platforms[1]
+platform
 
 # Extract the GEO2R data from the specified platform
 gsetData <- getPlatformGset(allGset, platform)
 
-# Get column Details
-getColumnDetails <- getColumnDetails(gsetData)
-
 # Extract the experiment information 
 experimentInformation <- getExperimentInformation(gsetData)
-
-# This function was retired
-# Get GEO2R data
-#gsetData <- getGeoData(geoAccessionCode, platform)
+experimentInformation
 
 # Extract expression data
 expressionData <- extractExpressionData(gsetData)
 
-# Apply log transformation to expression data if necessary
-dataInput <- logTransformExpressionData(expressionData, logTransformation)
+# Get column Details
+columnInfo <- getColumnDetails(gsetData)
+columnInfo
 
 # Is log transformation auto applied
 autoLogInformation <- isLogTransformAutoApplied(expressionData)
+
+# Get a list of all the columns
+columns <- extractColumns(expressionData)
+columns
+
+# Apply log transformation to expression data if necessary
+dataInput <- logTransformExpressionData(expressionData, logTransformation)
 
 # Perform KNN transformation on log expression data if necessary
 knnDataInput <- knnDataTransformation(dataInput, knnTransformation)
@@ -70,44 +73,11 @@ knnDataInput <- knnDataTransformation(dataInput, knnTransformation)
 # Remove all incomplete rows
 naOmitInput <- naOmitTransformation(knnDataInput)
 
-# This function was retired
-# Perform PCA analysis on KNN transformation expression data
-# pcaDataInput <- pcaAnalysis(naOmitInput)
-
 # Perform PCA analysis on KNN transformation expression data
 pcaPrincompDataInput <- pcaPrincompAnalysis(naOmitInput)
 
-# This function was retired
-# Box-and-Whisker Plot
-#boxAndWhiskerPlot(geoAccessionCode, platform, knnDataInput)
-
-# This function was retired
-# Expression Value Distribution Plot
-#expressionValueDistributionPlot(geoAccessionCode, platform, knnDataInput)
-
-# This function was retired
-# Mean-Variance Plot
-#meanVariancePlot(geoAccessionCode, platform, naOmitInput)
-
-# This function was retired
-# UMAP plot (multi-dimensional scaling)
-#umapPlot(geoAccessionCode, platform, naOmitInput, knn)
-
-# This function was retired
-# Principal component analysis scree plot
-#pcaScreePlot(pcaPrincompDataInput)
-
-# This function was retired
-# Principal component analysis individuals plot
-#pcaIndividualsPlot(pcaPrincompDataInput)
-
-# This function was retired
-# Principal component analysis variables plot
-#pcaVariablesPlot(pcaPrincompDataInput)
-
-# This function was retired
-# Principal component analysis biplot of individuals and variables
-#pcaBiplotPlot(pcaPrincompDataInput)
+# Extract Experiment Information
+extractedExperimentInformation <- extractExperimentInformation(experimentInformation)
 
 # Interactive Box-and-Whisker Plot
 fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform                                 )
@@ -142,6 +112,7 @@ fig <- interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, geoAccessionCod
 fig
 
 #  }, error = function(e) {
+#    outputFile <-file("output.txt")
 #    write(as.character(geoAccessionCode),file = outputFile, append = TRUE, sep = "\n")
 #    close(outputFile)
 #  })
