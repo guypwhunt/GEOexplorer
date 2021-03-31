@@ -63,6 +63,7 @@ ui <- fluidPage(
                                                         fluidRow(
                                                         column(6,
                                                                br(), 
+                                                               uiOutput("dyncolumns"),
                                                                selectInput("columns1", "Group 1 Columns", choices=c(), multiple = TRUE),
                                                                selectInput("columns2", "Group 2 Columns", choices=c(), multiple = TRUE),
                                                                selectInput("pValueAdjustment", "Apply adjustment to the P-values:",
@@ -224,7 +225,7 @@ server <- function(input, output, session){
   
   columns2Observe <- observe({
     updateSelectInput(session, "columns2",
-                      choices = columns())
+                      choices = exclusiveColumns(columns(),input$columns1))
   })
 
   observeEvent(input$differentialExpressionButton, {

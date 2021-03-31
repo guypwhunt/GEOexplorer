@@ -2,10 +2,6 @@ library(impute)
 library(limma)
 library(factoextra)
 
-extractExpressionData <- function(gset) {
-  ex <- exprs(gset)
-  return(ex)}
-
 logTransformExpressionData <- function(ex, logTransformation) {
   # If log transformation is set to auto-detect
   if (logTransformation == "Auto-Detect"){

@@ -20,7 +20,7 @@ library(ggplot2)
 logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No" 
 knnTransformation <- "No" # Values can also be "Yes"
 knn <- 2
-geoAccessionCodes <- list('GSE25770', 'GSE25771','GSE25774',"GSE18385","GSE18397", "GSE18400", "GSE18408", "GSE18423", "GSE18433", 'GSE25778', 'GSE25776', 'GSE25775', "GSE18388",'GSE25768','GSE25767','GSE25766','GSE25765','GSE25764','GSE25763','GSE25755','GSE25752','GSE25746','GSE25745','GSE25744','GSE25743','GSE25742','GSE25741','GSE25737','GSE25736','GSE25734','GSE25733','GSE25732','GSE25731','GSE25729','GSE25728','GSE25727','GSE25725','GSE25724','GSE25722','GSE25721','GSE18458','GSE18457','GSE18456','GSE18454','GSE18453','GSE18452','GSE18451','GSE18450','GSE18449','GSE18448','GSE18447','GSE18446','GSE18445','GSE18444','GSE18443','GSE18442','GSE18441','GSE18439','GSE18438','GSE18437','GSE18435','GSE18434','GSE18432','GSE18431','GSE18430','GSE18428','GSE18427','GSE18426','GSE18424','GSE18422','GSE18421','GSE18420','GSE18419','GSE18417','GSE18416','GSE18415','GSE18414','GSE18413','GSE18412','GSE18411','GSE18409','GSE18407','GSE18404','GSE18403','GSE18399','GSE18396','GSE18394','GSE18393','GSE18392','GSE18391','GSE18390','GSE18389','GSE18388','GSE18387','GSE18386','GSE18384','GSE18383','GSE18382','GSE18380')
+geoAccessionCodes <- list('GSE25774',"GSE18385","GSE18397", "GSE18400", "GSE18408", "GSE18423", "GSE18433", 'GSE25778', 'GSE25776', 'GSE25775', "GSE18388",'GSE25768','GSE25767','GSE25766','GSE25765','GSE25764','GSE25763','GSE25755','GSE25752','GSE25746','GSE25745','GSE25744','GSE25743','GSE25742','GSE25741','GSE25737','GSE25736','GSE25734','GSE25733','GSE25732','GSE25731','GSE25729','GSE25728','GSE25727','GSE25725','GSE25724','GSE25722','GSE25721','GSE18458','GSE18457','GSE18456','GSE18454','GSE18453','GSE18452','GSE18451','GSE18450','GSE18449','GSE18448','GSE18447','GSE18446','GSE18445','GSE18444','GSE18443','GSE18442','GSE18441','GSE18439','GSE18438','GSE18437','GSE18435','GSE18434','GSE18432','GSE18431','GSE18430','GSE18428','GSE18427','GSE18426','GSE18424','GSE18422','GSE18421','GSE18420','GSE18419','GSE18417','GSE18416','GSE18415','GSE18414','GSE18413','GSE18412','GSE18411','GSE18409','GSE18407','GSE18404','GSE18403','GSE18399','GSE18396','GSE18394','GSE18393','GSE18392','GSE18391','GSE18390','GSE18389','GSE18388','GSE18387','GSE18386','GSE18384','GSE18383','GSE18382','GSE18380')
 pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
 limmaPrecisionWeights <- "No"
 forceNormalization <- "No"
@@ -28,14 +28,14 @@ platformAnnotation <- "NCBI generated"
 significanceLevelCutOff <- 0.50
 outputFile <-file("Output.txt") 
 
-goodList <- list('GSE25772', 'GSE18388')
+goodList <- list('GSE18388', 'GSE25770')
 badList <- list("GSE25758", "GSE25762", "GSE25723", "GSE18459") # The first two have only 1 column, the third is just massive and the fourth errors on GEO2R
-investigateList <- list()
+investigateList <- list('GSE25771', 'GSE25772')
 
-for(geoAccessionCode in geoAccessionCodes)
-{
-#geoAccessionCode <- "GSE18388"
-  tryCatch({
+#for(geoAccessionCode in goodList)
+#{
+geoAccessionCode <- "GSE18388"
+#  tryCatch({
 
 # Get the GEO2R data for all platforms
 allGset <- getGset(geoAccessionCode)
@@ -102,6 +102,9 @@ for (name in columnNames) {
     i <- i +1
   }
 }
+
+# Select columns in group2
+column2 <- exclusiveColumns(columnNames, group1)
 
 # Calculate gsms
 gsms <- calculateGsms(columnNames,group1, group2)
@@ -186,8 +189,12 @@ fig <- fig %>% layout(
   ))
 fig
 
-  }, error = function(e) {
-    write(as.character(geoAccessionCode),file = outputFile, append = TRUE, sep = "\n")
-    close(outputFile)
-  })
-}
+fig <- heatmapPlot(fit2, expressionData) 
+fig
+
+
+#  }, error = function(e) {
+#    write(as.character(geoAccessionCode),file = outputFile, append = TRUE, sep = "\n")
+#    close(outputFile)
+#  })
+#}

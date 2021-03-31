@@ -71,3 +71,15 @@ getColumnDetails <- function(gset){
   }
   return(df)
 }
+
+extractExpressionData <- function(gset) {
+  ex <- exprs(gset)
+  return(ex)}
+
+extractSampleInfo <- function(gset) {
+  sampleInfo <- pData(gset)
+  return(sampleInfo)}
+
+extractGeneAnnotation <- function(gset) {
+  geneAnnotation <- fData(gset)
+  return(geneAnnotation)}

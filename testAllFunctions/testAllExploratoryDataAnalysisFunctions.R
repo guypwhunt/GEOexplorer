@@ -48,7 +48,14 @@ gsetData <- getPlatformGset(allGset, platform)
 
 # Extract the experiment information 
 experimentInformation <- getExperimentInformation(gsetData)
-experimentInformation
+
+# Extract Sample Information
+sampleInfo <- extractSampleInfo(gsetData)
+sampleInfo
+
+# Extract Sample Information
+geneAnnotation <- extractGeneAnnotation(gsetData)
+geneAnnotation
 
 # Extract expression data
 expressionData <- extractExpressionData(gsetData)
@@ -109,6 +116,10 @@ fig
 
 # Interactive PCA Variables Plot
 fig <- interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, geoAccessionCode)
+fig
+
+# Correlation Matrix of samples
+fig <- correlationMatrixPlot(naOmitInput)
 fig
 
 #  }, error = function(e) {

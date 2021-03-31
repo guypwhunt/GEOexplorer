@@ -230,3 +230,36 @@ mdPlot <- function(fit2, dT, ct) {
   abline(h=0)
 }
 
+exclusiveColumns <- function(columns, inputColumns) {
+  columns1Input <- c()
+  for (value in columns) {
+    if(value %in% inputColumns) {
+      
+    } else {
+      columns1Input = c(columns1Input, value)
+    }
+    }
+    return(columns1Input)
+}
+
+heatmapPlot <- function(fit2, ex) {
+  full_results <- topTable(fit2, number=Inf)
+  topN <- 20
+  ##
+  ids_of_interest <- mutate(full_results, Rank = 1:n()) %>% 
+    filter(Rank < topN) %>% 
+    pull(ID)
+  
+  gene_names <- mutate(full_results, Rank = 1:n()) %>% 
+    filter(Rank < topN) %>% 
+    pull(ID) 
+  
+  ## Get the rows corresponding to ids_of_interest and all columns
+  gene_matrix <- ex[ids_of_interest,]
+  
+  pheatmap(gene_matrix)
+  
+  pheatmap(gene_matrix,
+           scale="row")
+} 
+
