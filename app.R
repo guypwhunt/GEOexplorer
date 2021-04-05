@@ -1,6 +1,8 @@
 # Load Packages
 library(shiny)
 library(plotly)
+library(heatmaply)
+library(shinyHeatmaply)
 library(ggplot2)
 library(shinyBS)
 library(shinyjs)
@@ -10,7 +12,7 @@ source("dataTransformationFunctions/dataTransformationFunctions.R")
 source("interactiveDataVisualizationFunctions/interactiveDataVisualizationFunctions.R")
 source("differentialGeneExpressionAnalysis/differentialGeneExpressionAnalysis.R")
 source("interactiveDataVisualizationFunctions/interactiveDifferentialGeneExpressionDataVisualizationFunctions.R")
-
+source("dataVisualizationFunctions/dataVisualizationFunctions.R")
 
 ui <- fluidPage(
   titlePanel("GEO2R Data Visualisation"),
@@ -36,10 +38,10 @@ ui <- fluidPage(
   mainPanel(tabsetPanel(type = "tabs",
                         tabPanel("Dataset Information",
                                  tabsetPanel(type = "tabs",
-                                            tabPanel("Experiment Information", br(), htmlOutput('experimentInfo')),
-                                            tabPanel("Column Details", dataTableOutput('columnTable')),
-                                            tabPanel("Dataset", dataTableOutput('table'))
-                                            )),
+                                             tabPanel("Experiment Information", br(), htmlOutput('experimentInfo')),
+                                             tabPanel("Column Details", dataTableOutput('columnTable')),
+                                             tabPanel("Dataset", dataTableOutput('table'))
+                                 )),
                         tabPanel("Exploratory Data Analysis",
                                  tabsetPanel(type = "tabs",
                                              tabPanel("Box-and-Whisper Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. The quartiles are calculated using the linear method. Viewing the distribution can be useful for determining if the data in the dataset is suitable for differential expression analysis. Generally, median-centred values are indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveBoxAndWhiskerPlot')),
@@ -47,6 +49,7 @@ ui <- fluidPage(
                                              tabPanel("3D Expression Density Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. This plot complements the boxplot in checking for data normalization before differential expression analysis. If density curves are similar from gene to gene, it is indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveThreeDDesnityPlot')),
                                              tabPanel("Mean-Variance Plot", br(), span("Generated using R limma and plotly. The plot below is used to check the mean-variance relationship of the expression data, after fitting a linear model. It can help show if there is a lot of variation in the data. Each point represents a gene. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveMeanVariancePlot')),
                                              tabPanel("UMAP Plot", br(), span("Generated using R umap and plotly. Uniform Manifold Approximation and Projection (UMAP) is a dimension reduction technique useful for visualizing how genes are related to each other. The number of nearest neighbours used in the calculation is indicated in the graph. The plot shows data after log and KNN transformation if they were performed."), br(), br(), numericInput("knn", "Input the k-nearest neighbors value  to use:", 2, min = 2,step = 1), br(), plotlyOutput('interactiveUmapPlot')),
+                                             tabPanel("Heatmap Plot", br(), span(""), br(), br(), plotlyOutput('interactiveHeatMapPlot')),
                                              tabPanel("PCA Analysis",
                                                       tabsetPanel(type = "tabs",
                                                                   tabPanel("Scree Plot", br(), span("Generated using R princomp and plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (Comp). The plot displays the eigenvalues against the number of dimensions. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaScreePlot')),
@@ -61,33 +64,33 @@ ui <- fluidPage(
                                              tabPanel("Set Parameters", 
                                                       mainPanel(
                                                         fluidRow(
-                                                        column(6,
-                                                               br(), 
-                                                               uiOutput("dyncolumns"),
-                                                               selectInput("columns1", "Group 1 Columns", choices=c(), multiple = TRUE),
-                                                               selectInput("columns2", "Group 2 Columns", choices=c(), multiple = TRUE),
-                                                               selectInput("pValueAdjustment", "Apply adjustment to the P-values:",
-                                                                           choices = c("Benjamini & Hochberg (False discovery rate)", "Benjamini & Yekutieli", "Bonferroni", "Holm", "None")) # "Hochberg" and "Hommel" were removed
-                                                               #,radioButtons("platformAnnotation", label="Category of Platform annotation to display on results:",choices=list("Submitter supplied","NCBI generated"),selected="NCBI generated")
-                                                               ),
-                                                        br(),
-                                                        column(6,
-                                                               radioButtons("limmaPrecisionWeights",
-                                                                            label="Apply limma precision weights (vooma):",
-                                                                            choices=list("Yes","No"),
-                                                                            selected="No"),
-                                                               radioButtons("forceNormalization",
-                                                                            label="Force normalization:",
-                                                                            choices=list("Yes","No"),
-                                                                            selected="No"), 
-                                                               sliderInput("significanceLevelCutOff", "Significance level cut-off:",
-                                                                           min = 0, max = 1,
-                                                                           value = 0.05),
-                                                               actionButton("differentialExpressionButton", "Analyse")
-                                                               )
+                                                          column(6,
+                                                                 br(), 
+                                                                 uiOutput("dyncolumns"),
+                                                                 selectInput("columns1", "Group 1 Columns", choices=c(), multiple = TRUE),
+                                                                 selectInput("columns2", "Group 2 Columns", choices=c(), multiple = TRUE),
+                                                                 selectInput("pValueAdjustment", "Apply adjustment to the P-values:",
+                                                                             choices = c("Benjamini & Hochberg (False discovery rate)", "Benjamini & Yekutieli", "Bonferroni", "Holm", "None")) # "Hochberg" and "Hommel" were removed
+                                                                 #,radioButtons("platformAnnotation", label="Category of Platform annotation to display on results:",choices=list("Submitter supplied","NCBI generated"),selected="NCBI generated")
+                                                          ),
+                                                          br(),
+                                                          column(6,
+                                                                 radioButtons("limmaPrecisionWeights",
+                                                                              label="Apply limma precision weights (vooma):",
+                                                                              choices=list("Yes","No"),
+                                                                              selected="No"),
+                                                                 radioButtons("forceNormalization",
+                                                                              label="Force normalization:",
+                                                                              choices=list("Yes","No"),
+                                                                              selected="No"), 
+                                                                 sliderInput("significanceLevelCutOff", "Significance level cut-off:",
+                                                                             min = 0, max = 1,
+                                                                             value = 0.05),
+                                                                 actionButton("differentialExpressionButton", "Analyse")
+                                                          )
                                                         )
-                                                        )
-                                                      ),
+                                                      )
+                                             ),
                                              tabPanel("Top Differentially Expressed Genes", br(), span("The table below displays the top differentially expressed genes between the groups selected."), br(), br(), span("adj.P.Val is the P-value after adjustment for multiple testing. This column is generally recommended as the primary statistic by which to interpret results. Genes with the smallest P-values will be the most reliable."), br(), span("P.Value is the Raw P-value"), br(), span("t is the Moderated t-statistic (only available when two groups of Samples are defined)"), br(), span("B is the B-statistic or log-odds that the gene is differentially expressed (only available when two groups of Samples are defined)"), br(), span("logFC is the Log2-fold change between two experimental conditions (only available when two groups of Samples are defined)"), br(), span("F is the moderated F-statistic which combines the t-statistics for all the pair-wise comparisons into an overall test of significance for that gene (only available when more than two groups of Samples are defined)"),  br(), br(), downloadButton("downloadData", "Download"), br(), br(), dataTableOutput('dETable')),
                                              tabPanel("Histogram Plot", br(), span("Generated using hist. Use to view the distribution of the P-values in the analysis results. The P-value here is the same as in the Top differentially expressed genes table and computed using all selected contrasts. While the displayed table is limited by size this plot allows you to see the 'big picture' by showing the P-value distribution for all analyzed genes."), br(), br(), plotlyOutput('iDEHistogram')),
                                              tabPanel("Venn Diagram Plot", br(), span("Generated using limma (vennDiagram). Use to explore the overlap in significant genes between multiple contrasts.") , plotOutput('dEVennDiagram')),
@@ -95,7 +98,7 @@ ui <- fluidPage(
                                              tabPanel("Volcano Plot", br(), span("Generated using R plotly. A volcano plot displays statistical significance (-log10 P value) versus magnitude of change (log2 fold change) and is useful for visualizing differentially expressed genes. Highlighted genes are significantly differentially expressed at the selected adjusted p-value cutoff value") , br(), br(), plotlyOutput('iDEVolcano')),
                                              tabPanel("Mean Difference Plot", br(), span("Generated using R plotly. A mean difference (MD) plot displays log2 fold change versus average log2 expression values and is useful for visualizing differentially expressed genes. Highlighted genes are significantly differentially expressed at the selected adjusted p-value cutoff."), br(), br(), plotlyOutput('iDEMd'))
                                              
-                                             )
+                                 )
                                  
                         )
   )
@@ -168,7 +171,7 @@ server <- function(input, output, session){
   # Column Set Plot
   output$columnTable <- renderDataTable({
     columnInfo()
-    })
+  })
   
   # Data Set Plot
   output$table <- renderDataTable({
@@ -195,9 +198,14 @@ server <- function(input, output, session){
     interactiveUmapPlot(naOmitInput(), input$knn, input$geoAccessionCode)
   })
   
+  # Heatmap Plot
+  output$interactiveHeatMapPlot <- renderPlotly({
+    interactiveHeatMapPlot(naOmitInput())
+  })
+  
   # Interactive Mean Variance Plot
   output$interactiveMeanVariancePlot <- renderPlotly({
-    interactiveMeanVariancePlot(naOmitInput(),input$geoAccessionCode)
+    interactiveMeanVariancePlot(naOmitInput(),input$geoAccessionCode, gsetData())
   })
   
   # Interactive PCA Scree Plot
@@ -207,7 +215,7 @@ server <- function(input, output, session){
   
   # Interactive PCA Individual Plot
   output$interactivePcaIndividualsPlot <- renderPlotly({
-    interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput(), input$geoAccessionCode)
+    interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput(), input$geoAccessionCode, gsetData())
   })
   
   # Interactive PCA Variables Plot
@@ -227,7 +235,7 @@ server <- function(input, output, session){
     updateSelectInput(session, "columns2",
                       choices = exclusiveColumns(columns(),input$columns1))
   })
-
+  
   observeEvent(input$differentialExpressionButton, {
     # Differential gene expression analysis
     gsms <- calculateGsms(columns(),input$columns1, input$columns2)

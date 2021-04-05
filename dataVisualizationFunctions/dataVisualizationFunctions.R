@@ -60,5 +60,6 @@ pcaBiplotPlot <- function(ex) {
 
 correlationMatrixPlot <- function(ex){
   corMatrix <- cor(ex,use="c")
-  pheatmap(corMatrix)  
+  fig <- pheatmap(corMatrix)  
+  return(fig)
 }

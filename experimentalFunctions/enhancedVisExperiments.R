@@ -30,12 +30,17 @@ sampleInfo <- select(sampleInfo, source_name_ch1,characteristics_ch1.1)
 sampleInfo <- rename(sampleInfo,group = source_name_ch1, patient=characteristics_ch1.1)
 
 library(pheatmap)
-## argument use="c" stops an error if there are any missing data points
+library(heatmaply)
 
 corMatrix <- cor(exprs(gse),use="c")
-pheatmap(corMatrix)  
+i = 1
+df[i] <- data.frame(colnames(corMatrix))
+while(i <= length(colnames(corMatrix))){
+  df[i] <- data.frame(corMatrix[,i])
+  i <- i + 1
+}
+heatmaply(df)
 
-colnames(corMatrix)
 
 sampleInfo
 

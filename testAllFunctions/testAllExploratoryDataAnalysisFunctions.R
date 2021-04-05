@@ -14,6 +14,7 @@ source("differentialGeneExpressionAnalysis/differentialGeneExpressionAnalysis.R"
 # Import Libraries
 library(plotly)
 library(ggplot2)
+library(stringr)
 
 # Input Values
 logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No" 
@@ -45,9 +46,11 @@ platform
 
 # Extract the GEO2R data from the specified platform
 gsetData <- getPlatformGset(allGset, platform)
+gsetData
 
 # Extract the experiment information 
 experimentInformation <- getExperimentInformation(gsetData)
+experimentInformation
 
 # Extract Sample Information
 sampleInfo <- extractSampleInfo(gsetData)
@@ -59,6 +62,7 @@ geneAnnotation
 
 # Extract expression data
 expressionData <- extractExpressionData(gsetData)
+expressionData
 
 # Get column Details
 columnInfo <- getColumnDetails(gsetData)
@@ -66,6 +70,7 @@ columnInfo
 
 # Is log transformation auto applied
 autoLogInformation <- isLogTransformAutoApplied(expressionData)
+autoLogInformation
 
 # Get a list of all the columns
 columns <- extractColumns(expressionData)
@@ -73,6 +78,7 @@ columns
 
 # Apply log transformation to expression data if necessary
 dataInput <- logTransformExpressionData(expressionData, logTransformation)
+dataInput
 
 # Perform KNN transformation on log expression data if necessary
 knnDataInput <- knnDataTransformation(dataInput, knnTransformation)
@@ -103,7 +109,7 @@ fig <- interactiveUmapPlot(naOmitInput, knn, geoAccessionCode)
 fig
 
 # Interactive Mean Variance Plot
-fig <- interactiveMeanVariancePlot(naOmitInput, geoAccessionCode)
+fig <- interactiveMeanVariancePlot(naOmitInput, geoAccessionCode, gsetData)
 fig
 
 # Interactive PCA Scree Plot
@@ -111,7 +117,7 @@ fig <- interactivePrincompPcaScreePlot(pcaPrincompDataInput, geoAccessionCode)
 fig
 
 # Interactive PCA Individual Plot
-fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, geoAccessionCode)
+fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, geoAccessionCode, gsetData)
 fig
 
 # Interactive PCA Variables Plot
@@ -119,8 +125,90 @@ fig <- interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, geoAccessionCod
 fig
 
 # Correlation Matrix of samples
-fig <- correlationMatrixPlot(naOmitInput)
+fig <- interactiveHeatMapPlot(naOmitInput)
 fig
+
+##########################
+ex <- lmFit(naOmitInput)
+ex <- as.data.frame(ex)
+ex["ID"] <- rownames(ex)
+
+colnames(gsetData@featureData)
+
+gsetData@featureData@data["Gene symbol"]
+
+geneData <- gsetData@featureData@data
+geneData <- as.data.frame(geneData)
+combineData <- merge(ex, geneData, by = "ID")
+combineData %>% filter(ID %in% c(rownames(ex)))
+colnames(combineData) <- str_replace_all(colnames(combineData), " ", ".")
+
+if('ID' %in% colnames(combineData)){
+  if('Gene symbol' %in% colnames(combineData)){
+    if('Gene title' %in% colnames(combineData)){
+      if('Gene ID' %in% colnames(combineData)){
+        fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter', 
+                       text = ~paste('ID: ', ID, '<br></br>', 'Gene Symbol: ', Gene symbol, '<br></br>', 'Gene Title: ', Gene title, '<br></br>', 'Gene ID: ', Gene ID, '<br></br>', 'Amean: ', Amean, '<br></br>', 'Sigma: ', sigma),
+                       hoverinfo = text,
+                       mode = 'markers', marker = list(
+                         color = 'rgb(17, 157, 255)',
+                         size = 3,
+                         line = list(
+                           color = 'rgb(0, 0, 0)',
+                           width = 1
+                         )))	
+      } else {
+        fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter', 
+                       text = ~paste('ID: ', ID, '<br></br>', 'Gene Symbol: ', Gene.symbol, '<br></br>', 'Gene Title: ', Gene.title, '<br></br>', 'Amean: ', Amean, '<br></br>', 'Sigma: ', sigma),
+                       hoverinfo = text,
+                       mode = 'markers', marker = list(
+                         color = 'rgb(17, 157, 255)',
+                         size = 3,
+                         line = list(
+                           color = 'rgb(0, 0, 0)',
+                           width = 1
+                         )))	
+      }
+    } else {
+      fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter', 
+                     text = ~paste('ID: ', ID, '<br></br>', 'Gene Symbol: ', Gene.symbol, '<br></br>', 'Amean: ', Amean, '<br></br>', 'Sigma: ', sigma),
+                     hoverinfo = text,
+                     mode = 'markers', marker = list(
+                       color = 'rgb(17, 157, 255)',
+                       size = 3,
+                       line = list(
+                         color = 'rgb(0, 0, 0)',
+                         width = 1
+                       )))	  
+    }
+  } else{
+    fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter', 
+                   text = ~paste('ID: ', ID, '<br></br>', 'Amean: ', Amean, '<br></br>', 'Sigma: ', sigma),
+                   hoverinfo = text,
+                   mode = 'markers', marker = list(
+                     color = 'rgb(17, 157, 255)',
+                     size = 3,
+                     line = list(
+                       color = 'rgb(0, 0, 0)',
+                       width = 1
+                     )))
+  }
+} else{
+  fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter', 
+                 text = ~paste('Amean: ', Amean, '<br></br>', 'Sigma: ', sigma),
+                 hoverinfo = text,
+                 mode = 'markers', marker = list(
+                   color = 'rgb(17, 157, 255)',
+                   size = 3,
+                   line = list(
+                     color = 'rgb(0, 0, 0)',
+                     width = 1
+                   )))
+}
+fig <- fig %>% layout(
+  title = (paste('Mean variance trend, ',geoAccessionCode)))
+fig
+##################
 
 #  }, error = function(e) {
 #    outputFile <-file("output.txt")

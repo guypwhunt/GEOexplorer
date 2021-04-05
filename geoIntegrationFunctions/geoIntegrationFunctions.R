@@ -7,7 +7,7 @@ getGeoData <- function(geoAccessionCode, platform) {
   return(gset)
 }
 
-getGset <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=FALSE, platformAnnotation = "NCBI generated") {
+getGset <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated") {
   if (platformAnnotation == "Submitter supplied") {
     platformAnnotation <- FALSE
   } else if (platformAnnotation == "NCBI generated") {
@@ -15,7 +15,7 @@ getGset <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=FALSE, platformAnno
   } else {
     platformAnnotation <- TRUE
   }
-  gset <- getGEO(geoAccessionCode, GSEMatrix=GSEMatrix, getGPL=getGPL, AnnotGPL=platformAnnotation)
+  gset <- getGEO(geoAccessionCode, GSEMatrix=GSEMatrix, AnnotGPL=platformAnnotation) # getGPL=getGPL, 
   return(gset)
 }
 
@@ -27,7 +27,7 @@ getPlatforms <- function(gset) {
     i <- i + 1
   }
   return(platforms)
-  }
+}
 
 getPlatformGset <- function(gset, platform) {
   if (length(gset) > 1) idx <- grep(platform, attr(gset, "names")) else idx <- 1

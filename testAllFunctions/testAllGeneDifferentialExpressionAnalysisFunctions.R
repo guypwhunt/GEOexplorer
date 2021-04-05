@@ -156,6 +156,14 @@ fig <- mdPlot(fit2, dT, ct)
 fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
 fig
 
+#########################
+
+###########################
+
+
+
+
+
 t.good <- which(!is.na(fit2$F)) # filter out bad probes
 qqData <- qqt(fit2$t[t.good], fit2$df.total[t.good], main="Moderated t statistic", plot.it = FALSE)
 

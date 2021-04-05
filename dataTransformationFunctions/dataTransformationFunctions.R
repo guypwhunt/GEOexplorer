@@ -27,25 +27,25 @@ logTransformExpressionData <- function(ex, logTransformation) {
 
 isLogTransformAutoApplied <- function(ex) {
   # If log transformation is set to auto-detect
-    qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
-    LogC <- (qx[5] > 100) || 
-      (qx[6]-qx[1] > 50 && qx[2] > 0)
-    if (LogC) {
-      result <- "The auto-detect option applied log transformation."
-      } else {
-        result <- "The auto-detect option did not apply log transformation."
-      }
+  qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
+  LogC <- (qx[5] > 100) || 
+    (qx[6]-qx[1] > 50 && qx[2] > 0)
+  if (LogC) {
+    result <- "The auto-detect option applied log transformation."
+  } else {
+    result <- "The auto-detect option did not apply log transformation."
+  }
   return(result)
-    }
-    
+}
+
 
 knnDataTransformation <- function(ex, knnTransformation) {
   if (knnTransformation == "Yes") {
     if (ncol(ex) == 2) {
-    ex <- ex[complete.cases(ex), ] #Â KNN does not work when there are only 2 samples
+      ex <- ex[complete.cases(ex), ] #Â KNN does not work when there are only 2 samples
     } else {
       ex <- ex[rowSums(is.na(ex)) != ncol(ex), ] # remove rows with missing data
-      }
+    }
     # remove all zeros (this was originally imported from GeoDrive but seems to be broken)
     # ex <- ex[rowSums(ex != 0) != 0,]
     
@@ -54,7 +54,7 @@ knnDataTransformation <- function(ex, knnTransformation) {
     
     ex <- imputation$data
     return(ex)}
-else if (knnTransformation == "No") {return(ex)}}
+  else if (knnTransformation == "No") {return(ex)}}
 
 pcaAnalysis <- function(ex){
   pca <- prcomp(ex, scale = TRUE)
