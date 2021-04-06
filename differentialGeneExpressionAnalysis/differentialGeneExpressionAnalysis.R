@@ -5,11 +5,11 @@ library(umap)
 library(data.table)
 
 #setwd("..")
-source("geoIntegrationFunctions/geoIntegrationFunctions.R")
-source("dataTransformationFunctions/dataTransformationFunctions.R")
+#source("geoIntegrationFunctions/geoIntegrationFunctions.R")
+#source("dataTransformationFunctions/dataTransformationFunctions.R")
 
 extractColumns <- function(ex) {
-  columnNames <- colnames(ex) 
+  columnNames <- colnames(ex)
   return(columnNames)
 }
 
@@ -17,7 +17,7 @@ calculateGsms <- function(columnNames,group1, group2){
   lengthOfColumns <- sum(unlist(lapply(columnNames, length)))
   gsmsList <- vector(mode = "list", length = lengthOfColumns)
   i <- 1
-  
+
   for (column in columnNames){
     if (column %in% group1) {
       gsmsList[[i]] <- 0
@@ -34,7 +34,7 @@ calculateGsms <- function(columnNames,group1, group2){
   return(gsms)
 }
 
-calculateFit2 <- function(geoAccessionCode, platform, gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation, platformAnnotation = "NCBI generated"){
+calculateFit2 <- function(geoAccessionCode, platform, gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation, gset, platformAnnotation = "NCBI generated"){
   if (platformAnnotation == "Submitter supplied") {
     platformAnnotation <- FALSE
   } else if (platformAnnotation == "NCBI generated") {
@@ -42,33 +42,33 @@ calculateFit2 <- function(geoAccessionCode, platform, gsms, logTransformation, l
   } else {
     platformAnnotation <- TRUE
   }
-  gset <- getGEO(geoAccessionCode, GSEMatrix =TRUE, AnnotGPL=platformAnnotation)
-  gset <- getPlatformGset(gset, platform)
-  
-  # make proper column names to match toptable 
+  #gset <- getGEO(geoAccessionCode, GSEMatrix =TRUE, AnnotGPL=platformAnnotation)
+  #gset <- getPlatformGset(gset, platform)
+
+  # make proper column names to match toptable
   fvarLabels(gset) <- make.names(fvarLabels(gset))
-  
+
   # group membership for all samples
   sml <- strsplit(gsms, split="")[[1]]
-  
+
   ex <- extractExpressionData(gset)
-  
+
   ex <- logTransformExpressionData(ex, logTransformation)
-  
+
   ex <- knnDataTransformation(ex, knnTransformation)
-  
+
   sel <- which(sml != "X")
   sml <- sml[sel]
   gset <- gset[ ,sel]
   ex <- ex[ ,sel]
   exprs(gset) <- ex
-  
+
   if(forceNormalization == "Yes"){
     exprs(gset) <- normalizeBetweenArrays(exprs(gset)) # normalize data
   }
-  
-  
-  
+
+
+
   # assign samples to groups and set up design matrix
   gs <- factor(sml)
   groups <- make.names(c("Group1","Group2"))
@@ -76,51 +76,51 @@ calculateFit2 <- function(geoAccessionCode, platform, gsms, logTransformation, l
   gset$group <- gs
   design <- model.matrix(~group + 0, gset)
   colnames(design) <- levels(gs)
-  
+
   if (limmaPrecisionWeights == "Yes"){
     nall <- nrow(gset)
     gset <- gset[complete.cases(exprs(gset)), ]
-    
+
     # calculate precision weights and show plot of mean-variance trend
     v <- vooma(gset, design, plot=T)
     # OR weights by group
     # v <- voomaByGroup(gset, group=groups, design, plot=T, cex=0.1, pch=".", col=1:nlevels(gs))
     v$genes <- fData(gset) # attach gene annotations
-    
+
     # fit linear model
     fit  <- lmFit(v)
   } else if (limmaPrecisionWeights == "No"){
-    fit <- lmFit(gset, design)  # fit linear model 
+    fit <- lmFit(gset, design)  # fit linear model
   }
-  
+
   # set up contrasts of interest and recalculate model coefficients
   cts <- paste(groups[1], groups[2], sep="-")
   cont.matrix <- makeContrasts(contrasts=cts, levels=design)
   fit2 <- contrasts.fit(fit, cont.matrix)
-  
+
   # compute statistics and table of top significant genes
   fit2 <- eBayes(fit2, 0.01)
   return(fit2)
 }
 
 differentialGeneExpression <- function(gset, ex, gsms, limmaPrecisionWeights, forceNormalization) {
-  # make proper column names to match toptable 
+  # make proper column names to match toptable
   fvarLabels(gset) <- make.names(fvarLabels(gset))
-  
+
   # group membership for all samples
   sml <- strsplit(gsms, split="")[[1]]
-  
+
   # filter out excluded samples (marked as "X")
   sel <- which(sml != "X")
   sml <- sml[sel]
   gset <- gset[ ,sel]
   ex <- ex[ ,sel]
   exprs(gset) <- ex
-  
+
   if(forceNormalization == "Yes"){
     exprs(gset) <- normalizeBetweenArrays(exprs(gset)) # normalize data
   }
-  
+
   # assign samples to groups and set up design matrix
   gs <- factor(sml)
   groups <- make.names(c("Group1","Group2"))
@@ -128,28 +128,28 @@ differentialGeneExpression <- function(gset, ex, gsms, limmaPrecisionWeights, fo
   gset$group <- gs
   design <- model.matrix(~group + 0, gset)
   colnames(design) <- levels(gs)
-  
+
   if (limmaPrecisionWeights == "Yes"){
     nall <- nrow(gset)
     gset <- gset[complete.cases(exprs(gset)), ]
-    
+
     # calculate precision weights and show plot of mean-variance trend
     v <- vooma(gset, design, plot=T)
     # OR weights by group
     # v <- voomaByGroup(gset, group=groups, design, plot=T, cex=0.1, pch=".", col=1:nlevels(gs))
     v$genes <- fData(gset) # attach gene annotations
-    
+
     # fit linear model
     fit  <- lmFit(v)
   } else if (limmaPrecisionWeights == "No"){
-    fit <- lmFit(gset, design)  # fit linear model 
+    fit <- lmFit(gset, design)  # fit linear model
   }
-  
+
   # set up contrasts of interest and recalculate model coefficients
   cts <- paste(groups[1], groups[2], sep="-")
   cont.matrix <- makeContrasts(contrasts=cts, levels=design)
   fit2 <- contrasts.fit(fit, cont.matrix)
-  
+
   # compute statistics and table of top significant genes
   fit2 <- eBayes(fit2, 0.01)
   return(fit2)
@@ -234,7 +234,7 @@ exclusiveColumns <- function(columns, inputColumns) {
   columns1Input <- c()
   for (value in columns) {
     if(value %in% inputColumns) {
-      
+
     } else {
       columns1Input = c(columns1Input, value)
     }
@@ -246,20 +246,20 @@ heatmapPlot <- function(fit2, ex) {
   full_results <- topTable(fit2, number=Inf)
   topN <- 20
   ##
-  ids_of_interest <- mutate(full_results, Rank = 1:n()) %>% 
-    filter(Rank < topN) %>% 
+  ids_of_interest <- mutate(full_results, Rank = 1:n()) %>%
+    filter(Rank < topN) %>%
     pull(ID)
-  
-  gene_names <- mutate(full_results, Rank = 1:n()) %>% 
-    filter(Rank < topN) %>% 
-    pull(ID) 
-  
+
+  gene_names <- mutate(full_results, Rank = 1:n()) %>%
+    filter(Rank < topN) %>%
+    pull(ID)
+
   ## Get the rows corresponding to ids_of_interest and all columns
   gene_matrix <- ex[ids_of_interest,]
-  
+
   pheatmap(gene_matrix)
-  
+
   pheatmap(gene_matrix,
            scale="row")
-} 
+}
 

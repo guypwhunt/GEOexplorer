@@ -30,10 +30,7 @@ getPlatforms <- function(gset) {
 }
 
 getPlatformGset <- function(gset, platform) {
-  if (length(gset) > 1) {
-    if(platform %in% attr(gset, "names")) {
-      idx <- grep(platform, attr(gset, "names"))} else {idx <- 1}
-    } else {idx <- 1}
+  if (length(gset) > 1) idx <- grep(platform[1], attr(gset, "names")) else idx <- 1
   gset <- gset[[idx]]
   return(gset)
 }

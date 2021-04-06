@@ -33,7 +33,8 @@ ui <- fluidPage(
                  label="Apply k-nearest neighbors (KNN) algorithm to predict null data:",
                  choices=list("Yes","No"),
                  selected="No"),
-    bsTooltip(id = "knnTransformation", title = "Rows with over 50% missing values are imputed using the overall mean per sample. Columns with over 80% will cause an error in the KNN computation.", placement = "top", trigger = "hover")
+    bsTooltip(id = "knnTransformation", title = "Rows with over 50% missing values are imputed using the overall mean per sample. Columns with over 80% will cause an error in the KNN computation.", placement = "top", trigger = "hover"),
+    actionButton("exploratoryDataAnalysisButton", "Analyse")
   ),
   mainPanel(tabsetPanel(type = "tabs",
                         tabPanel("Dataset Information",
@@ -126,125 +127,125 @@ server <- function(input, output, session){
                       selected = platform())
   })
 
-  # Extract the GEO2R data from the specified platform
-  gsetData <- reactive({getPlatformGset(allGset(), input$platform)})
+  # Exploratory data analysis visualisation
+  observeEvent(input$exploratoryDataAnalysisButton, {
+    # Extract the GEO2R data from the specified platform
+    gsetData <- getPlatformGset(allGset(), input$platform)
 
-  # Extract the experiment information
-  experimentInformation <- reactive({getExperimentInformation(gsetData())})
+    # Extract the experiment information
+    experimentInformation <- getExperimentInformation(gsetData)
 
-  # Extract expression data
-  expressionData <- reactive({extractExpressionData(gsetData())})
+    # Extract expression data
+    expressionData <- extractExpressionData(gsetData)
 
-  # Extract Column Information
-  columnInfo <- reactive({getColumnDetails(gsetData())})
+    # Extract Column Information
+    columnInfo <- getColumnDetails(gsetData)
 
-  # Is log transformation auto applied
-  autoLogInformation <- reactive({isLogTransformAutoApplied(expressionData())})
+    # Is log transformation auto applied
+    autoLogInformation <- isLogTransformAutoApplied(expressionData)
 
-  # Get a list of all the columns
-  columns <- reactive({extractColumns(expressionData())})
+    # Get a list of all the columns
+    columns <- extractColumns(expressionData)
 
+    # Data Transformation Functions
+    # Apply log transformation to expression data if necessary
+    dataInput <- logTransformExpressionData(expressionData, input$logTransformation)
 
-  # Data Transformation Functions
-  # Apply log transformation to expression data if necessary
-  dataInput <- reactive({logTransformExpressionData(expressionData(), input$logTransformation)
+    # Perform KNN transformation on log expression data if necessary
+    knnDataInput <- knnDataTransformation(dataInput, input$knnTransformation)
+
+    # Remove all incomplete rows
+    naOmitInput <- naOmitTransformation(knnDataInput)
+
+    # Perform PCA analysis on KNN transformation expression data using princomp
+    pcaPrincompDataInput <- pcaPrincompAnalysis(naOmitInput)
+
+    # Data Visualisation Functions
+    # Update if log transformation took place
+    output$logTransformationText <- renderUI({
+      helpText(autoLogInformation)
+    })
+
+    # Experimental Information Display
+    output$experimentInfo <- renderUI({
+      extractExperimentInformation(experimentInformation)
+    })
+
+    # Column Set Plot
+    output$columnTable <- renderDataTable({
+      columnInfo
+    })
+
+    # Data Set Plot
+    output$table <- renderDataTable({
+      knnDataInput
+    })
+
+    # Interactive Box-and-Whisker Plot
+    output$interactiveBoxAndWhiskerPlot <- renderPlotly({
+      interactiveBoxAndWhiskerPlot(naOmitInput, input$geoAccessionCode, input$platform)
+    })
+
+    # Interactive Density Plot
+    output$interactiveDesnityPlot <- renderPlotly({
+      interactiveDesnityPlot(naOmitInput, input$geoAccessionCode, input$platform)
+    })
+
+    # 3D Interactive Density Plot
+    output$interactiveThreeDDesnityPlot <- renderPlotly({
+      interactiveThreeDDesnityPlot(naOmitInput, input$geoAccessionCode, input$platform)
+    })
+
+    # Interactive UMAP Plot
+    output$interactiveUmapPlot <- renderPlotly({
+      interactiveUmapPlot(naOmitInput, input$knn, input$geoAccessionCode)
+    })
+
+    # Heatmap Plot
+    output$interactiveHeatMapPlot <- renderPlotly({
+      interactiveHeatMapPlot(naOmitInput)
+    })
+
+    # Interactive Mean Variance Plot
+    output$interactiveMeanVariancePlot <- renderPlotly({
+      interactiveMeanVariancePlot(naOmitInput,input$geoAccessionCode, gsetData)
+    })
+
+    # Interactive PCA Scree Plot
+    output$interactivePcaScreePlot <- renderPlotly({
+      interactivePrincompPcaScreePlot(pcaPrincompDataInput, input$geoAccessionCode)
+    })
+
+    # Interactive PCA Individual Plot
+    output$interactivePcaIndividualsPlot <- renderPlotly({
+      interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, input$geoAccessionCode, gsetData)
+    })
+
+    # Interactive PCA Variables Plot
+    output$interactivePcaVariablesPlot <- renderPlotly({
+      interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, input$geoAccessionCode)
+    })
+
+    # Update Column on UI
+    columns1Observe <- observe({
+      updateSelectInput(session, "columns1",
+                        choices = columns)
+    })
+
+    columns2Observe <- observe({
+      updateSelectInput(session, "columns2",
+                        choices = exclusiveColumns(columns,input$columns1))
+    })
   })
-
-  # Perform KNN transformation on log expression data if necessary
-  knnDataInput <- reactive({knnDataTransformation(dataInput(), input$knnTransformation)
-  })
-
-  # Remove all incomplete rows
-  naOmitInput <-reactive({naOmitTransformation(knnDataInput())
-  })
-
-  # Perform PCA analysis on KNN transformation expression data using princomp
-  pcaPrincompDataInput <- reactive({pcaPrincompAnalysis(naOmitInput())
-  })
-
-  # Data Visualisation Functions
-  # Update if log transformation took place
-  output$logTransformationText <- renderUI({
-    helpText(autoLogInformation())
-  })
-
-  # Experimental Information Display
-  output$experimentInfo <- renderUI({
-    extractExperimentInformation(experimentInformation())
-  })
-
-  # Column Set Plot
-  output$columnTable <- renderDataTable({
-    columnInfo()
-  })
-
-  # Data Set Plot
-  output$table <- renderDataTable({
-    knnDataInput()
-  })
-
-  # Interactive Box-and-Whisker Plot
-  output$interactiveBoxAndWhiskerPlot <- renderPlotly({
-    interactiveBoxAndWhiskerPlot(naOmitInput(), input$geoAccessionCode, input$platform)
-  })
-
-  # Interactive Density Plot
-  output$interactiveDesnityPlot <- renderPlotly({
-    interactiveDesnityPlot(naOmitInput(), input$geoAccessionCode, input$platform)
-  })
-
-  # 3D Interactive Density Plot
-  output$interactiveThreeDDesnityPlot <- renderPlotly({
-    interactiveThreeDDesnityPlot(naOmitInput(), input$geoAccessionCode, input$platform)
-  })
-
-  # Interactive UMAP Plot
-  output$interactiveUmapPlot <- renderPlotly({
-    interactiveUmapPlot(naOmitInput(), input$knn, input$geoAccessionCode)
-  })
-
-  # Heatmap Plot
-  output$interactiveHeatMapPlot <- renderPlotly({
-    interactiveHeatMapPlot(naOmitInput())
-  })
-
-  # Interactive Mean Variance Plot
-  output$interactiveMeanVariancePlot <- renderPlotly({
-    interactiveMeanVariancePlot(naOmitInput(),input$geoAccessionCode, gsetData())
-  })
-
-  # Interactive PCA Scree Plot
-  output$interactivePcaScreePlot <- renderPlotly({
-    interactivePrincompPcaScreePlot(pcaPrincompDataInput(), input$geoAccessionCode)
-  })
-
-  # Interactive PCA Individual Plot
-  output$interactivePcaIndividualsPlot <- renderPlotly({
-    interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput(), input$geoAccessionCode, gsetData())
-  })
-
-  # Interactive PCA Variables Plot
-  output$interactivePcaVariablesPlot <- renderPlotly({
-    interactivePrincompPcaVariablesPlot(pcaPrincompDataInput(), input$geoAccessionCode)
-  })
-
 
   # Differential Gene Expression Functions
-  # Update Column on UI
-  columns1Observe <- observe({
-    updateSelectInput(session, "columns1",
-                      choices = columns())
-  })
-
-  columns2Observe <- observe({
-    updateSelectInput(session, "columns2",
-                      choices = exclusiveColumns(columns(),input$columns1))
-  })
-
   observeEvent(input$differentialExpressionButton, {
     # Differential gene expression analysis
-    gsms <- calculateGsms(columns(),input$columns1, input$columns2)
-    fit2 <- calculateFit2(input$geoAccessionCode, input$platform, gsms, input$logTransformation, input$limmaPrecisionWeights, input$forceNormalization, input$knnTransformation)
+    gsetData <- getPlatformGset(allGset(), input$platform)
+    expressionData <- extractExpressionData(gsetData)
+    columns <- extractColumns(expressionData)
+    gsms <- calculateGsms(columns,input$columns1, input$columns2)
+    fit2 <- calculateFit2(input$geoAccessionCode, input$platform, gsms, input$logTransformation, input$limmaPrecisionWeights, input$forceNormalization, input$knnTransformation, gsetData)
     adjustment <- adjustmentCalculation(input$pValueAdjustment)
     tT <- topDifferentiallyExpressedGenesTable(fit2, adjustment)
     dT <- calculateDT(fit2, adjustment, input$significanceLevelCutOff)
