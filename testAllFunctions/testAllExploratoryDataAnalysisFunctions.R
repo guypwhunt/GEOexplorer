@@ -17,10 +17,10 @@ library(ggplot2)
 library(stringr)
 
 # Input Values
-logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No" 
+logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No"
 knnTransformation <- "No" # Values can also be "Yes"
 knn <- 2
-geoAccessionCodes <- list("GSE18388")
+geoAccessionCodes <- list("GSE18380")
 pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
 limmaPrecisionWeights <- "No"
 forceNormalization <- "No"
@@ -39,16 +39,19 @@ geoAccessionCode <- "GSE18380"
 allGset <- getGset(geoAccessionCode)
 
 # Get a list of all the platforms
-platforms <- getPlatforms(allGset) 
+platforms <- getPlatforms(allGset)
 platforms
+typeof(platforms)
 platform <- platforms[1]
 platform
+
+x <- list(1,2,3)
 
 # Extract the GEO2R data from the specified platform
 gsetData <- getPlatformGset(allGset, platform)
 gsetData
 
-# Extract the experiment information 
+# Extract the experiment information
 experimentInformation <- getExperimentInformation(gsetData)
 experimentInformation
 
@@ -147,7 +150,7 @@ if('ID' %in% colnames(combineData)){
   if('Gene symbol' %in% colnames(combineData)){
     if('Gene title' %in% colnames(combineData)){
       if('Gene ID' %in% colnames(combineData)){
-        fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter', 
+        fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter',
                        text = ~paste('ID: ', ID, '<br></br>', 'Gene Symbol: ', Gene symbol, '<br></br>', 'Gene Title: ', Gene title, '<br></br>', 'Gene ID: ', Gene ID, '<br></br>', 'Amean: ', Amean, '<br></br>', 'Sigma: ', sigma),
                        hoverinfo = text,
                        mode = 'markers', marker = list(
@@ -156,9 +159,9 @@ if('ID' %in% colnames(combineData)){
                          line = list(
                            color = 'rgb(0, 0, 0)',
                            width = 1
-                         )))	
+                         )))
       } else {
-        fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter', 
+        fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter',
                        text = ~paste('ID: ', ID, '<br></br>', 'Gene Symbol: ', Gene.symbol, '<br></br>', 'Gene Title: ', Gene.title, '<br></br>', 'Amean: ', Amean, '<br></br>', 'Sigma: ', sigma),
                        hoverinfo = text,
                        mode = 'markers', marker = list(
@@ -167,10 +170,10 @@ if('ID' %in% colnames(combineData)){
                          line = list(
                            color = 'rgb(0, 0, 0)',
                            width = 1
-                         )))	
+                         )))
       }
     } else {
-      fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter', 
+      fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter',
                      text = ~paste('ID: ', ID, '<br></br>', 'Gene Symbol: ', Gene.symbol, '<br></br>', 'Amean: ', Amean, '<br></br>', 'Sigma: ', sigma),
                      hoverinfo = text,
                      mode = 'markers', marker = list(
@@ -179,10 +182,10 @@ if('ID' %in% colnames(combineData)){
                        line = list(
                          color = 'rgb(0, 0, 0)',
                          width = 1
-                       )))	  
+                       )))
     }
   } else{
-    fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter', 
+    fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter',
                    text = ~paste('ID: ', ID, '<br></br>', 'Amean: ', Amean, '<br></br>', 'Sigma: ', sigma),
                    hoverinfo = text,
                    mode = 'markers', marker = list(
@@ -194,7 +197,7 @@ if('ID' %in% colnames(combineData)){
                      )))
   }
 } else{
-  fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter', 
+  fig <- plot_ly(data = combineData, x = ~Amean, y = ~sigma, type = 'scatter',
                  text = ~paste('Amean: ', Amean, '<br></br>', 'Sigma: ', sigma),
                  hoverinfo = text,
                  mode = 'markers', marker = list(

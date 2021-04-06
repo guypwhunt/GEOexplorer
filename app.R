@@ -19,7 +19,7 @@ ui <- fluidPage(
   helpText("GEO2R is an interactive web tool that allows users to compare two or more groups of samples in a GEO Series to identify genes that are differentially expressed across experimental conditions. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data."),
   sidebarPanel(
     helpText("Input a GEO accession code to examine the gene expression data."),
-    textInput("geoAccessionCode", "GEO accession code", "GSE18388"),
+    textInput("geoAccessionCode", "GEO accession code", "GSE18380"),
     helpText("Select the platform of interest."),
     selectInput("platform", "Platform",c()),
     radioButtons("logTransformation",
@@ -56,16 +56,16 @@ ui <- fluidPage(
                                                                   tabPanel("Individuals Plot", br(), span("Generated using R princomp and R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (Comp). The plot displays the eigenvalues for each individual (row) in the gene expression dataset for the top two principal components (Comp.1 and Comp.2). The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaIndividualsPlot')),
                                                                   tabPanel("Variables Plot", br(), span("Generated using R princomp and R plotly. Principal component analysis (PCA) reduces the dimensionality of multivariate data to two dimensions that can be visualized graphically with minimal loss of information."), br(), span("Eigenvalues correspond to the amount of the variation explained by each principal component (Comp). The plot displays the eigenvalues for each variable (column) in the gene expression dataset for the top two principal components (Comp.1 and Comp.2). The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactivePcaVariablesPlot'))                                                      )
                                              )
-                                             
+
                                  )
                         ),
                         tabPanel("Differential Gene Expression Analysis",
                                  tabsetPanel(type = "tabs",
-                                             tabPanel("Set Parameters", 
+                                             tabPanel("Set Parameters",
                                                       mainPanel(
                                                         fluidRow(
                                                           column(6,
-                                                                 br(), 
+                                                                 br(),
                                                                  uiOutput("dyncolumns"),
                                                                  selectInput("columns1", "Group 1 Columns", choices=c(), multiple = TRUE),
                                                                  selectInput("columns2", "Group 2 Columns", choices=c(), multiple = TRUE),
@@ -82,7 +82,7 @@ ui <- fluidPage(
                                                                  radioButtons("forceNormalization",
                                                                               label="Force normalization:",
                                                                               choices=list("Yes","No"),
-                                                                              selected="No"), 
+                                                                              selected="No"),
                                                                  sliderInput("significanceLevelCutOff", "Significance level cut-off:",
                                                                              min = 0, max = 1,
                                                                              value = 0.05),
@@ -97,9 +97,9 @@ ui <- fluidPage(
                                              tabPanel("Q-Q Plot", br(), span("Generated using limma (qqt) and R plotly. Plots the quantiles of a data sample against the theoretical quantiles of a Student's t distribution. This plot helps to assess the quality of the limma test results. Ideally the points should lie along a straight line, meaning that the values for moderated t-statistic computed during the test follow their theoretically predicted distribution."), br(), br(), plotlyOutput('iDEQQ')),
                                              tabPanel("Volcano Plot", br(), span("Generated using R plotly. A volcano plot displays statistical significance (-log10 P value) versus magnitude of change (log2 fold change) and is useful for visualizing differentially expressed genes. Highlighted genes are significantly differentially expressed at the selected adjusted p-value cutoff value") , br(), br(), plotlyOutput('iDEVolcano')),
                                              tabPanel("Mean Difference Plot", br(), span("Generated using R plotly. A mean difference (MD) plot displays log2 fold change versus average log2 expression values and is useful for visualizing differentially expressed genes. Highlighted genes are significantly differentially expressed at the selected adjusted p-value cutoff."), br(), br(), plotlyOutput('iDEMd'))
-                                             
+
                                  )
-                                 
+
                         )
   )
   )
@@ -109,133 +109,138 @@ server <- function(input, output, session){
   # Data Extraction Functions
   # Get the GEO2R data for all platforms
   allGset <- reactive({getGset(input$geoAccessionCode)})
-  
+
   # Get a list of all the platforms
   platforms <- reactive({getPlatforms(allGset())})
-  
-  # Extract the GEO2R data from the specified platform
-  gsetData <- reactive({getPlatformGset(allGset(), input$platform)})
-  
-  # Extract the experiment information 
-  experimentInformation <- reactive({getExperimentInformation(gsetData())})
-  
-  # Extract expression data
-  expressionData <- reactive({extractExpressionData(gsetData())})
-  
-  # Extract Column Information
-  columnInfo <- reactive({getColumnDetails(gsetData())})
-  
-  # Is log transformation auto applied
-  autoLogInformation <- reactive({isLogTransformAutoApplied(expressionData())})
-  
-  # Get a list of all the columns
-  columns <- reactive({extractColumns(expressionData())})
-  
-  
-  # Data Transformation Functions
-  # Apply log transformation to expression data if necessary
-  dataInput <- reactive({logTransformExpressionData(expressionData(), input$logTransformation)
+
+  # Select the top platform
+  platform <- reactive({
+    platforms()[1]
   })
-  
-  # Perform KNN transformation on log expression data if necessary
-  knnDataInput <- reactive({knnDataTransformation(dataInput(), input$knnTransformation)
-  })
-  
-  # Remove all incomplete rows
-  naOmitInput <-reactive({naOmitTransformation(knnDataInput())
-  })
-  
-  # Perform PCA analysis on KNN transformation expression data using princomp
-  pcaPrincompDataInput <- reactive({pcaPrincompAnalysis(naOmitInput())
-  })
-  
-  
-  # Data Visualisation Functions
+
+
   # Update Platform Options
   platformObserve <- observe({
     updateSelectInput(session, "platform",
                       choices = platforms(),
-                      selected = head(platforms()))
+                      selected = platform())
   })
-  
+
+  # Extract the GEO2R data from the specified platform
+  gsetData <- reactive({getPlatformGset(allGset(), input$platform)})
+
+  # Extract the experiment information
+  experimentInformation <- reactive({getExperimentInformation(gsetData())})
+
+  # Extract expression data
+  expressionData <- reactive({extractExpressionData(gsetData())})
+
+  # Extract Column Information
+  columnInfo <- reactive({getColumnDetails(gsetData())})
+
+  # Is log transformation auto applied
+  autoLogInformation <- reactive({isLogTransformAutoApplied(expressionData())})
+
+  # Get a list of all the columns
+  columns <- reactive({extractColumns(expressionData())})
+
+
+  # Data Transformation Functions
+  # Apply log transformation to expression data if necessary
+  dataInput <- reactive({logTransformExpressionData(expressionData(), input$logTransformation)
+  })
+
+  # Perform KNN transformation on log expression data if necessary
+  knnDataInput <- reactive({knnDataTransformation(dataInput(), input$knnTransformation)
+  })
+
+  # Remove all incomplete rows
+  naOmitInput <-reactive({naOmitTransformation(knnDataInput())
+  })
+
+  # Perform PCA analysis on KNN transformation expression data using princomp
+  pcaPrincompDataInput <- reactive({pcaPrincompAnalysis(naOmitInput())
+  })
+
+  # Data Visualisation Functions
   # Update if log transformation took place
   output$logTransformationText <- renderUI({
     helpText(autoLogInformation())
   })
-  
+
   # Experimental Information Display
   output$experimentInfo <- renderUI({
     extractExperimentInformation(experimentInformation())
   })
-  
+
   # Column Set Plot
   output$columnTable <- renderDataTable({
     columnInfo()
   })
-  
+
   # Data Set Plot
   output$table <- renderDataTable({
     knnDataInput()
   })
-  
+
   # Interactive Box-and-Whisker Plot
   output$interactiveBoxAndWhiskerPlot <- renderPlotly({
     interactiveBoxAndWhiskerPlot(naOmitInput(), input$geoAccessionCode, input$platform)
   })
-  
+
   # Interactive Density Plot
   output$interactiveDesnityPlot <- renderPlotly({
     interactiveDesnityPlot(naOmitInput(), input$geoAccessionCode, input$platform)
   })
-  
+
   # 3D Interactive Density Plot
   output$interactiveThreeDDesnityPlot <- renderPlotly({
     interactiveThreeDDesnityPlot(naOmitInput(), input$geoAccessionCode, input$platform)
   })
-  
+
   # Interactive UMAP Plot
   output$interactiveUmapPlot <- renderPlotly({
     interactiveUmapPlot(naOmitInput(), input$knn, input$geoAccessionCode)
   })
-  
+
   # Heatmap Plot
   output$interactiveHeatMapPlot <- renderPlotly({
     interactiveHeatMapPlot(naOmitInput())
   })
-  
+
   # Interactive Mean Variance Plot
   output$interactiveMeanVariancePlot <- renderPlotly({
     interactiveMeanVariancePlot(naOmitInput(),input$geoAccessionCode, gsetData())
   })
-  
+
   # Interactive PCA Scree Plot
   output$interactivePcaScreePlot <- renderPlotly({
     interactivePrincompPcaScreePlot(pcaPrincompDataInput(), input$geoAccessionCode)
   })
-  
+
   # Interactive PCA Individual Plot
   output$interactivePcaIndividualsPlot <- renderPlotly({
     interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput(), input$geoAccessionCode, gsetData())
   })
-  
+
   # Interactive PCA Variables Plot
   output$interactivePcaVariablesPlot <- renderPlotly({
     interactivePrincompPcaVariablesPlot(pcaPrincompDataInput(), input$geoAccessionCode)
   })
-  
-  
+
+
   # Differential Gene Expression Functions
   # Update Column on UI
   columns1Observe <- observe({
     updateSelectInput(session, "columns1",
                       choices = columns())
   })
-  
+
   columns2Observe <- observe({
     updateSelectInput(session, "columns2",
                       choices = exclusiveColumns(columns(),input$columns1))
   })
-  
+
   observeEvent(input$differentialExpressionButton, {
     # Differential gene expression analysis
     gsms <- calculateGsms(columns(),input$columns1, input$columns2)
@@ -243,38 +248,38 @@ server <- function(input, output, session){
     adjustment <- adjustmentCalculation(input$pValueAdjustment)
     tT <- topDifferentiallyExpressedGenesTable(fit2, adjustment)
     dT <- calculateDT(fit2, adjustment, input$significanceLevelCutOff)
-    ct <- 1  
-    
+    ct <- 1
+
     # Differential gene expression table
     output$dETable <- renderDataTable({
       as.data.frame(tT)
     })
-    
+
     # Interactive Histogram Plot
     output$iDEHistogram <- renderPlotly({
       interactiveHistogramPlot(fit2, adjustment)
     })
-    
+
     # Venn Diagram Plot
     output$dEVennDiagram <- renderPlot({
       vennDiagramPlot(dT)
     })
-    
+
     # Interactive QQ Plot
     output$iDEQQ <- renderPlotly({
       interactiveQQPlot(fit2, dT, ct)
     })
-    
+
     # Interactive Volcano Plot
     output$iDEVolcano <- renderPlotly({
       interactiveVolcanoPlot(fit2, dT, ct)
     })
-    
+
     # Interactive Mean Difference Plot
     output$iDEMd <- renderPlotly({
       interactiveMeanDifferencePlot(fit2, dT, ct)
     })
-    
+
     # Download Top Differentially Expressed Genes Table
     output$downloadData <- downloadHandler(
       filename = function() {
@@ -284,7 +289,7 @@ server <- function(input, output, session){
         write.csv(tT, file, row.names = FALSE)
       }
     )
-    
+
     # Button to trigger differential gene expression analysis
     updateActionButton(session, "differentialExpressionButton",
                        label = "Successful")

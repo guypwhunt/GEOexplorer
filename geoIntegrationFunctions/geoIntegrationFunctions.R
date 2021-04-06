@@ -15,22 +15,25 @@ getGset <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platformAnnot
   } else {
     platformAnnotation <- TRUE
   }
-  gset <- getGEO(geoAccessionCode, GSEMatrix=GSEMatrix, AnnotGPL=platformAnnotation) # getGPL=getGPL, 
+  gset <- getGEO(geoAccessionCode, GSEMatrix=GSEMatrix, AnnotGPL=platformAnnotation) # getGPL=getGPL,
   return(gset)
 }
 
 getPlatforms <- function(gset) {
-  platforms <- list()
+  platforms <- c()
   i <-1
   for(dataset in gset) {
-    platforms[[i]] <- annotation(dataset)
+    platforms[i] <- annotation(dataset)
     i <- i + 1
   }
   return(platforms)
 }
 
 getPlatformGset <- function(gset, platform) {
-  if (length(gset) > 1) idx <- grep(platform, attr(gset, "names")) else idx <- 1
+  if (length(gset) > 1) {
+    if(platform %in% attr(gset, "names")) {
+      idx <- grep(platform, attr(gset, "names"))} else {idx <- 1}
+    } else {idx <- 1}
   gset <- gset[[idx]]
   return(gset)
 }
@@ -57,15 +60,15 @@ getColumnDetails <- function(gset){
   columnNames <- c("title", "source_name_ch1", "characteristics_ch1", "characteristics_ch1.1")
   finalColumnNames <- c()
   i <- 1
-  
+
   for (name in columnNames) {
     if (name %in% colnames(phenoData)) {
       finalColumnNames <- c(finalColumnNames,name)
     }
   }
-  
+
   df <- data.frame(column=row.names(phenoData))
-  
+
   for (name in finalColumnNames){
     df <- data.frame(df, phenoData[name])
   }
