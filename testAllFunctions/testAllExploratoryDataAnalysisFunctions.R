@@ -40,10 +40,7 @@ allGset <- getGset(geoAccessionCode)
 
 # Get a list of all the platforms
 platforms <- getPlatforms(allGset)
-platforms
-typeof(platforms)
 platform <- platforms[1]
-platform
 
 x <- list(1,2,3)
 

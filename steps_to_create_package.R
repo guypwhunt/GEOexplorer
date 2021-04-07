@@ -1,23 +1,28 @@
-# Download neccessary libraries
-install.packages("devtools")
-library("devtools")
-devtools::install_github("klutometis/roxygen")
+# Download necessary libraries
+#install.packages("devtools")
+#devtools::install_github("klutometis/roxygen")
+
+# Import necessary libraries
+library(devtools)
 library(roxygen2)
 
 # Create cats package
 setwd("..")
-create("cats")
+create("geo2rShinyAppPackage")
+
+# Add files to R folder
 
 # Create documentation
-setwd("./cats")
+setwd("./geo2rShinyAppPackage")
 document()
 
 # Install the package
 setwd("..")
-install("cats")
+install("geo2rShinyAppPackage")
 
 # Test cats worked
-?cat_function
+library(geo2rShinyAppPackage)
+?geo2rShinyAppPackage
 
 # Macke the package a github repo
 setwd("./cats")

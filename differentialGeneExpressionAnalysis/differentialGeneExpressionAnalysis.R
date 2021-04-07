@@ -4,10 +4,6 @@ library(limma)
 library(umap)
 library(data.table)
 
-#setwd("..")
-#source("geoIntegrationFunctions/geoIntegrationFunctions.R")
-#source("dataTransformationFunctions/dataTransformationFunctions.R")
-
 extractColumns <- function(ex) {
   columnNames <- colnames(ex)
   return(columnNames)
