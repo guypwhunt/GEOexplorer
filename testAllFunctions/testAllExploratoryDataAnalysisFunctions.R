@@ -32,7 +32,7 @@ badList <- list("GSE25758", "GSE25762", "GSE25723", "GSE18459") # The first two 
 
 #for(geoAccessionCode in geoAccessionCodes)
 #{
-geoAccessionCode <- "GSE18380"
+geoAccessionCode <- "GDS10"
 #  tryCatch({
 
 # Get the GEO2R data for all platforms

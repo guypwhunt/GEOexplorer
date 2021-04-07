@@ -8,6 +8,9 @@ library(stringr)
 
 
 interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
+  library(plotly)
+  library(ggplot2)
+  library(limma)
   ex <- as.data.frame(ex)
   fig <- plot_ly(type = "box", quartilemethod="linear")
   i = 1
@@ -20,6 +23,9 @@ interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
 }
 
 interactiveDesnityPlot <- function(ex, geoAccessionCode, platform) {
+  library(plotly)
+  library(ggplot2)
+  library(limma)
   ex <- as.data.frame(ex)
   fig <- plot_ly(type = 'scatter', mode = 'lines', name = (paste(paste(geoAccessionCode,platform),'value distribution')))
   i <- 1
@@ -36,6 +42,9 @@ interactiveDesnityPlot <- function(ex, geoAccessionCode, platform) {
 }
 
 interactiveThreeDDesnityPlot <- function(ex, geoAccessionCode, platform) {
+  library(plotly)
+  library(ggplot2)
+  library(limma)
   ex <- as.data.frame(ex)
   fig <- plot_ly(type = 'scatter3d', mode = 'lines', name = (paste(paste(geoAccessionCode,platform),'value distribution')))
   i <- 1
@@ -56,6 +65,9 @@ interactiveThreeDDesnityPlot <- function(ex, geoAccessionCode, platform) {
 }
 
 interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
+  library(plotly)
+  library(ggplot2)
+  library(limma)
   ex <- ex[!duplicated(ex), ]  # remove duplicates
   ump <- umap(t(ex), n_neighbors = knn, random_state = 123)
   i <- 1
@@ -70,6 +82,10 @@ interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
 }
 
 interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
+  library(plotly)
+  library(ggplot2)
+  library(limma)
+  library(stringr)
   ex <- lmFit(ex)
   ex <- as.data.frame(ex)
   ex["ID"] <- rownames(ex)
@@ -147,6 +163,9 @@ interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
 }
 
 interactivePcaScreePlot <- function(pcaData, geoAccessionCode) {
+  library(plotly)
+  library(ggplot2)
+  library(limma)
   columnNames <- colnames(pcaData$x)
   proportionOfVariance <- pcaData$sdev^2/sum(pcaData$sdev^2)
   pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
@@ -165,6 +184,9 @@ interactivePcaScreePlot <- function(pcaData, geoAccessionCode) {
 }
 
 interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
+  library(plotly)
+  library(ggplot2)
+  library(limma)
   columnNames <-   colnames(pcaData$loadings)
   proportionOfVariance <- pcaData$sdev^2/sum(pcaData$sdev^2)
   pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
@@ -182,6 +204,10 @@ interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
 }
 
 interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
+  library(plotly)
+  library(ggplot2)
+  library(limma)
+  library(stringr)
   pcaDf <- data.frame(pcaData$scores)
   pcaDf <- transform(pcaDf)
   pcaDf["ID"] <- rownames(pcaDf)
@@ -250,6 +276,9 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
 }
 
 interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
+  library(plotly)
+  library(ggplot2)
+  library(limma)
   variableStats <- get_pca_var(pcaData)
   eigenValue <- get_eigenvalue(pcaData)
   pcaData <- as.data.frame(unclass(pcaData$loadings))
@@ -264,6 +293,13 @@ interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
 }
 
 interactiveHeatMapPlot <- function(ex) {
+  library(plotly)
+  library(ggplot2)
+  library(limma)
+  library(scales)
+  library(pheatmap)
+  library(heatmaply)
+  library(stringr)
   corMatrix <- cor(ex,use="c")
   df <- data.frame(corMatrix[1,])
   df <- df[-c(1)]
