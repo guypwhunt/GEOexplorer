@@ -236,3 +236,4 @@ calculateDT <- function(fit2, adjustment, significanceLevelCutOff) {
 vennDiagramPlot <- function(dT) {
   vennDiagram(dT, circle.col=palette())
 }
+

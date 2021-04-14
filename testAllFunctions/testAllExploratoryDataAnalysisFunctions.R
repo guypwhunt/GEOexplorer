@@ -32,17 +32,17 @@ badList <- list("GSE25758", "GSE25762", "GSE25723", "GSE18459") # The first two 
 
 #for(geoAccessionCode in geoAccessionCodes)
 #{
-geoAccessionCode <- "GDS10"
+geoAccessionCode <- "GSE50499"
 #  tryCatch({
 
 # Get the GEO2R data for all platforms
 allGset <- getGset(geoAccessionCode)
+attributes(allGset)
+
 
 # Get a list of all the platforms
 platforms <- getPlatforms(allGset)
 platform <- platforms[1]
-
-x <- list(1,2,3)
 
 # Extract the GEO2R data from the specified platform
 gsetData <- getPlatformGset(allGset, platform)
