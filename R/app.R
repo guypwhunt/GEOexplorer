@@ -1,4 +1,11 @@
-myApp <- function() {
+#' A Function to Load the Shiny App
+#'
+#' This function loads the Shiny App
+#' @keywords GEO
+#' @export
+#' @examples fit2 <- calculateFit2(gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation)
+#' @author Guy Hunt
+loadApp <- function() {
   # Load Packages
   library(shiny)
   library(plotly)

@@ -38,3 +38,15 @@ geo2rShinyApp::myApp()
 # Mack the package a github repo
 #setwd("./cats")
 #install_github('cats','github_username')
+
+# Push to github
+
+# Install from GitHub
+library(devtools)
+install_github("guypwhunt/r_shiny_geo2r_visulisation")
+
+# Test library
+library(geo2rShinyApp)
+pkgload::load_all(".")
+geo2rShinyApp::myApp()
+
