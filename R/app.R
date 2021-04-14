@@ -3,8 +3,8 @@
 #' This function loads the Shiny App
 #' @keywords GEO
 #' @export
-#' @examples fit2 <- calculateFit2(gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation)
-#' @import shiny plotly heatmaply shinyHeatmaply ggplot2 shinyBS shinyjs
+#' @examples loadApp()
+#' @import shiny plotly heatmaply shinyHeatmaply ggplot2 shinyBS shinyjs BiocManager
 #' @author Guy Hunt
 loadApp <- function() {
   # Load Packages
