@@ -50,6 +50,19 @@ calculateGsms <- function(columnNames, group1, group2){
   return(gsms)
 }
 
+#' A Function to Calculate the Differential Gene EXpression between two groups
+#'
+#' This function calculates the differential expression for two groups
+#' @param gsms
+#' @param logTransformation Whether to auto-detect if log transformation is appropriate or to apply log transformation. Values can be "Auto-Detect" for auto detect, "Yes" to apply log transformation and "No" to not perform log transformation.
+#' @param limmaPrecisionWeights Whether to apply limma precision weights (vooma)
+#' @param forceNormalization Whether to force normalization
+#' @param knnTransformation Whether to fill in missing values using Knn
+#' @param gset
+#' @keywords GEO
+#' @export
+#' @examples fit2 <- calculateFit2(gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation)
+#' @author Guy Hunt
 calculateFit2 <- function(gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation, gset){
   library(GEOquery)
   library(limma)

@@ -93,7 +93,7 @@ pcaPrincompDataInput <- pcaPrincompAnalysis(naOmitInput)
 extractedExperimentInformation <- extractExperimentInformation(experimentInformation)
 
 # Interactive Box-and-Whisker Plot
-fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform                                 )
+fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform)
 fig
 
 # Interactive Density Plot
