@@ -1,20 +1,12 @@
-# Load Packages
-library(shiny)
-library(plotly)
-library(heatmaply)
-library(shinyHeatmaply)
-library(ggplot2)
-library(shinyBS)
-library(shinyjs)
-
-source("geoIntegrationFunctions/geoIntegrationFunctions.R")
-source("dataTransformationFunctions/dataTransformationFunctions.R")
-source("interactiveDataVisualizationFunctions/interactiveDataVisualizationFunctions.R")
-source("differentialGeneExpressionAnalysis/differentialGeneExpressionAnalysis.R")
-source("interactiveDataVisualizationFunctions/interactiveDifferentialGeneExpressionDataVisualizationFunctions.R")
-source("dataVisualizationFunctions/dataVisualizationFunctions.R")
-
-#myApp <- function() {
+myApp <- function() {
+  # Load Packages
+  library(shiny)
+  library(plotly)
+  library(heatmaply)
+  library(shinyHeatmaply)
+  library(ggplot2)
+  library(shinyBS)
+  library(shinyjs)
 
 ui <- fluidPage(
   titlePanel("GEO2R Data Visualisation"),
@@ -296,4 +288,4 @@ server <- function(input, output, session){
 }
 
 shinyApp(ui, server)
-#}
+}
