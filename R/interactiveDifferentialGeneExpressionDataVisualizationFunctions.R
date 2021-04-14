@@ -1,3 +1,5 @@
+#' @export
+#' @import plotly ggplot2 limma scales
 interactiveHistogramPlot <- function(fit2, adjustment) {
   library(plotly)
   library(ggplot2)
@@ -11,7 +13,8 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
   fig
 }
 
-
+#' @export
+#' @import plotly ggplot2 limma scales
 interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
   library(plotly)
   library(ggplot2)
@@ -75,6 +78,8 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
   fig
   }
 
+#' @export
+#' @import plotly ggplot2 limma scales
 interactiveVolcanoPlot <- function(fit2, dT, ct) {
   library(plotly)
   library(ggplot2)
@@ -136,6 +141,8 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
   fig
 }
 
+#' @export
+#' @import plotly ggplot2 limma scales
 interactiveQQPlot <- function(fit2, dT, ct) {
   library(plotly)
   library(ggplot2)

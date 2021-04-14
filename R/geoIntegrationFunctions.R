@@ -5,6 +5,7 @@
 #' @param platform The study's platform
 #' @keywords GEO
 #' @export
+#' @import GEOquery
 #' @examples getGeoData("GSE18380", "GPL4694")
 #' @author Guy Hunt
 getGeoData <- function(geoAccessionCode, platform) {
@@ -24,6 +25,7 @@ getGeoData <- function(geoAccessionCode, platform) {
 #' @param platformAnnotation A string defaulting to "NCBI generated" meaning true as to whether or not to use the Annotation GPL information. These files are nice to use because they contain up-to-date information remapped from Entrez Gene on a regular basis. However, they do not exist for all GPLs; in general, they are only available for GPLs referenced by a GDS. Input "Submitter supplied" for FALSE
 #' @keywords GEO
 #' @export
+#' @import GEOquery
 #' @examples allGset <- getGset("GSE18380", GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated")
 #' @author Guy Hunt
 getGset <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated") {
@@ -45,6 +47,7 @@ getGset <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platformAnnot
 #' @param gset The GEO object
 #' @keywords GEO
 #' @export
+#' @import GEOquery
 #' @examples platforms <- getPlatforms(allGset)
 #' @author Guy Hunt
 getPlatforms <- function(gset) {
@@ -65,6 +68,7 @@ getPlatforms <- function(gset) {
 #' @param platform The platform code
 #' @keywords GEO
 #' @export
+#' @import GEOquery
 #' @examples gsetData <- getPlatformGset(gset, platforms[1])
 #' @author Guy Hunt
 getPlatformGset <- function(gset, platform) {
@@ -80,6 +84,7 @@ getPlatformGset <- function(gset, platform) {
 #' @param gset The GEO object
 #' @keywords GEO
 #' @export
+#' @import GEOquery
 #' @examples experimentInformation <- getExperimentInformation(gsetData)
 #' @author Guy Hunt
 getExperimentInformation <- function(gset) {
@@ -94,6 +99,7 @@ getExperimentInformation <- function(gset) {
 #' @param experimentData The experiment object obtained from the getExperimentInformation() function
 #' @keywords GEO
 #' @export
+#' @import GEOquery
 #' @examples extractedExperimentInformation <- extractExperimentInformation(experimentInformation)
 #' @author Guy Hunt
 extractExperimentInformation <- function(experimentData) {
@@ -114,6 +120,7 @@ extractExperimentInformation <- function(experimentData) {
 #' @param gset The GEO object
 #' @keywords GEO
 #' @export
+#' @import GEOquery
 #' @examples columnInfo <- getColumnDetails(gsetData)
 #' @author Guy Hunt
 getColumnDetails <- function(gset){
@@ -123,15 +130,15 @@ getColumnDetails <- function(gset){
   columnNames <- c("title", "source_name_ch1", "characteristics_ch1", "characteristics_ch1.1")
   finalColumnNames <- c()
   i <- 1
-  
+
   for (name in columnNames) {
     if (name %in% colnames(phenoData)) {
       finalColumnNames <- c(finalColumnNames,name)
     }
   }
-  
+
   df <- data.frame(column=row.names(phenoData))
-  
+
   for (name in finalColumnNames){
     df <- data.frame(df, phenoData[name])
   }
@@ -144,6 +151,7 @@ getColumnDetails <- function(gset){
 #' @param gset The GEO object
 #' @keywords GEO
 #' @export
+#' @import GEOquery
 #' @examples expressionData <- extractExpressionData(gsetData)
 #' @author Guy Hunt
 extractExpressionData <- function(gset) {
@@ -170,6 +178,7 @@ extractSampleInfo <- function(gset) {
 #' @param gset The GEO object
 #' @keywords GEO
 #' @export
+#' @import GEOquery
 #' @examples geneAnnotation <- extractGeneAnnotation(gsetData)
 #' @author Guy Hunt
 extractGeneAnnotation <- function(gset) {

@@ -32,7 +32,7 @@ install("geo2rShinyApp")
 # Test cats worked
 library(geo2rShinyApp)
 pkgload::load_all(".")
-geo2rShinyApp::myApp()
+geo2rShinyApp::loadApp()
 geo2rShinyApp::myApp()
 
 # Mack the package a github repo
@@ -48,5 +48,5 @@ install_github("guypwhunt/r_shiny_geo2r_visulisation")
 # Test library
 library(geo2rShinyApp)
 pkgload::load_all(".")
-geo2rShinyApp::myApp()
+geo2rShinyApp::loadApp()
 

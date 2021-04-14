@@ -1,3 +1,5 @@
+#' @export
+#' @import plotly ggplot2 limma
 interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
   library(plotly)
   library(ggplot2)
@@ -13,6 +15,8 @@ interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
   fig
 }
 
+#' @export
+#' @import plotly ggplot2 limma
 interactiveDesnityPlot <- function(ex, geoAccessionCode, platform) {
   library(plotly)
   library(ggplot2)
@@ -32,6 +36,8 @@ interactiveDesnityPlot <- function(ex, geoAccessionCode, platform) {
   fig
 }
 
+#' @export
+#' @import plotly ggplot2 limma
 interactiveThreeDDesnityPlot <- function(ex, geoAccessionCode, platform) {
   library(plotly)
   library(ggplot2)
@@ -55,6 +61,8 @@ interactiveThreeDDesnityPlot <- function(ex, geoAccessionCode, platform) {
   fig
 }
 
+#' @export
+#' @import plotly ggplot2 limma
 interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
@@ -72,6 +80,8 @@ interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
   fig
 }
 
+#' @export
+#' @import plotly ggplot2 limma stringr
 interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
   library(plotly)
   library(ggplot2)
@@ -153,6 +163,8 @@ interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
   fig
 }
 
+#' @export
+#' @import plotly ggplot2 limma
 interactivePcaScreePlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
@@ -174,6 +186,8 @@ interactivePcaScreePlot <- function(pcaData, geoAccessionCode) {
   fig
 }
 
+#' @export
+#' @import plotly ggplot2 limma
 interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
@@ -194,6 +208,8 @@ interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
   fig
 }
 
+#' @export
+#' @import plotly ggplot2 limma stringr
 interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
   library(plotly)
   library(ggplot2)
@@ -266,6 +282,8 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
 
 }
 
+#' @export
+#' @import plotly ggplot2 limma
 interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
@@ -283,6 +301,8 @@ interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
   fig
 }
 
+#' @export
+#' @import plotly ggplot2 limma scales pheatmap heatmaply stringr
 interactiveHeatMapPlot <- function(ex) {
   library(plotly)
   library(ggplot2)

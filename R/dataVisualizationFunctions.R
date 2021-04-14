@@ -6,6 +6,7 @@
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import impute umap maptools ggplot2
 #' @examples fig <- boxAndWhiskerPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
 boxAndWhiskerPlot <- function(geoAccessionCode = "", platform ="", ex) {
@@ -26,6 +27,7 @@ boxAndWhiskerPlot <- function(geoAccessionCode = "", platform ="", ex) {
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import impute umap maptools ggplot2
 #' @examples fig <- expressionValueDistributionPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
 expressionValueDistributionPlot <- function(geoAccessionCode = "", platform = "", ex) {
@@ -46,6 +48,7 @@ expressionValueDistributionPlot <- function(geoAccessionCode = "", platform = ""
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import impute umap maptools ggplot2
 #' @examples fig <- meanVariancePlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
 meanVariancePlot <- function(geoAccessionCode = "", platform = "", ex) {
@@ -64,6 +67,7 @@ meanVariancePlot <- function(geoAccessionCode = "", platform = "", ex) {
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import impute umap maptools ggplot2
 #' @examples fig <- umapPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
 umapPlot <- function(geoAccessionCode = "", platform = "", ex, knn) {
@@ -83,6 +87,7 @@ umapPlot <- function(geoAccessionCode = "", platform = "", ex, knn) {
 #' @param pcaEx A PCA object which can be obtained from the pcaPrincompAnalysis() function
 #' @keywords GEO
 #' @export
+#' @import impute umap maptools ggplot2 factoextra pheatmap
 #' @examples fig <- pcaScreePlot(pcaPrincompDataInput)
 #' @author Guy Hunt
 pcaScreePlot <- function(pcaEx) {
@@ -101,6 +106,7 @@ pcaScreePlot <- function(pcaEx) {
 #' @param pcaEx A PCA object which can be obtained from the pcaPrincompAnalysis() function
 #' @keywords GEO
 #' @export
+#' @import impute umap maptools ggplot2 factoextra pheatmap
 #' @examples fig <- pcaIndividualsPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
 pcaIndividualsPlot <- function(pcaEx) {
@@ -124,6 +130,7 @@ pcaIndividualsPlot <- function(pcaEx) {
 #' @param pcaEx A PCA object which can be obtained from the pcaPrincompAnalysis() function
 #' @keywords GEO
 #' @export
+#' @import impute umap maptools ggplot2 factoextra pheatmap
 #' @examples fig <- pcaVariablesPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
 pcaVariablesPlot <- function(pcaEx) {
@@ -146,6 +153,7 @@ pcaVariablesPlot <- function(pcaEx) {
 #' @param pcaEx A PCA object which can be obtained from the pcaPrincompAnalysis() function
 #' @keywords GEO
 #' @export
+#' @import impute umap maptools ggplot2 factoextra pheatmap
 #' @examples fig <- pcaBiplotPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
 pcaBiplotPlot <- function(pcaEx) {
@@ -168,6 +176,7 @@ pcaBiplotPlot <- function(pcaEx) {
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import impute umap maptools ggplot2 factoextra pheatmap
 #' @examples fig <- correlationMatrixPlot(expressionData)
 #' @author Guy Hunt
 correlationMatrixPlot <- function(ex){

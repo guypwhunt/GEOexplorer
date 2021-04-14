@@ -1,10 +1,11 @@
-#' A Function to Log Transform an Expression Object 
+#' A Function to Log Transform an Expression Object
 #'
 #' This function allows you to log transform expression objects
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @param logTransformation Whether to auto-detect if log transformation is appropriate or to apply log transformation. Values can be "Auto-Detect" for auto detect, "Yes" to apply log transformation and "No" to not perform log transformation.
 #' @keywords GEO
 #' @export
+#' @import impute limma factoextra
 #' @examples dataInput <- logTransformExpressionData(expressionData, "Auto-Detect")
 #' @author Guy Hunt
 logTransformExpressionData <- function(ex, logTransformation) {
@@ -20,25 +21,26 @@ logTransformExpressionData <- function(ex, logTransformation) {
     if (LogC) { ex[which(ex <= 0)] <- NaN
     ex <- log2(ex)}
     return(ex)}
-  
+
   # If log transformation is set to yes
   else if (logTransformation == "Yes") {
     #ex <- ex[which(ex <= 0)] <- NaN
     ex <- log2(ex)
     return(ex)}
-  
+
   # If log transformation is set to no
   else if (logTransformation == "No") {
     return(ex)
   }
 }
 
-#' A Function to Determine if Log Transformation should Automatically be Applied 
+#' A Function to Determine if Log Transformation should Automatically be Applied
 #'
 #' This function allows you to determine if log transformation should be performed on an expression objects
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import impute limma factoextra
 #' @examples autoLogInformation <- isLogTransformAutoApplied(expressionData)
 #' @author Guy Hunt
 isLogTransformAutoApplied <- function(ex) {
@@ -47,7 +49,7 @@ isLogTransformAutoApplied <- function(ex) {
   library(factoextra)
   # If log transformation is set to auto-detect
   qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
-  LogC <- (qx[5] > 100) || 
+  LogC <- (qx[5] > 100) ||
     (qx[6]-qx[1] > 50 && qx[2] > 0)
   if (LogC) {
     result <- "The auto-detect option applied log transformation."
@@ -57,13 +59,14 @@ isLogTransformAutoApplied <- function(ex) {
   return(result)
 }
 
-#' A Function to Perform KNN Impute on an Expression Object 
+#' A Function to Perform KNN Impute on an Expression Object
 #'
 #' A function to impute missing expression data, using nearest neighbor averaging.
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @param knnTransformation Whether to apply KNN impute. This can be "Yes" or "No"
 #' @keywords GEO
 #' @export
+#' @import impute limma factoextra
 #' @examples knnDataInput <- knnDataTransformation(dataInput, knnTransformation)
 #' @author Guy Hunt
 knnDataTransformation <- function(ex, knnTransformation) {
@@ -78,20 +81,21 @@ knnDataTransformation <- function(ex, knnTransformation) {
     }
     # remove all zeros (this was originally imported from GeoDrive but seems to be broken)
     # ex <- ex[rowSums(ex != 0) != 0,]
-    
+
     # Replace missing value with calculated KNN value
     imputation <- impute.knn(ex)
-    
+
     ex <- imputation$data
     return(ex)}
   else if (knnTransformation == "No") {return(ex)}}
 
-#' A Function to Perform Principle Component Analysis on an Expression Object 
+#' A Function to Perform Principle Component Analysis on an Expression Object
 #'
-#' A function to perform prcomp principle component analysis on an expression object. 
+#' A function to perform prcomp principle component analysis on an expression object.
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import impute limma factoextra
 #' @examples pcaDataInput <- pcaAnalysis(knnDataInput)
 #' @author Guy Hunt
 pcaAnalysis <- function(ex){
@@ -102,12 +106,13 @@ pcaAnalysis <- function(ex){
   return(pca)
 }
 
-#' A Function to Perform Principle Component Analysis on an Expression Object 
+#' A Function to Perform Principle Component Analysis on an Expression Object
 #'
-#' A function to perform Princomp principle component analysis on an expression object. 
+#' A function to perform Princomp principle component analysis on an expression object.
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import impute limma factoextra
 #' @examples pcaPrincompDataInput <- pcaPrincompAnalysis(knnDataInput)
 #' @author Guy Hunt
 pcaPrincompAnalysis <- function(ex){
@@ -118,12 +123,13 @@ pcaPrincompAnalysis <- function(ex){
   return(pca)
 }
 
-#' A Function to Removes Rows in an Expression Object that Contain Null Values 
+#' A Function to Removes Rows in an Expression Object that Contain Null Values
 #'
-#' A function to perform remove rows that contain a null value from an expression object. 
+#' A function to perform remove rows that contain a null value from an expression object.
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import impute limma factoextra
 #' @examples naOmitInput <- naOmitTransformation(knnDataInput)
 #' @author Guy Hunt
 naOmitTransformation <- function(ex){
