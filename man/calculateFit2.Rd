@@ -14,6 +14,8 @@ calculateFit2(
 )
 }
 \arguments{
+\item{gsms}{TBD}
+
 \item{logTransformation}{Whether to auto-detect if log transformation is appropriate or to apply log transformation. Values can be "Auto-Detect" for auto detect, "Yes" to apply log transformation and "No" to not perform log transformation.}
 
 \item{limmaPrecisionWeights}{Whether to apply limma precision weights (vooma)}
@@ -21,6 +23,8 @@ calculateFit2(
 \item{forceNormalization}{Whether to force normalization}
 
 \item{knnTransformation}{Whether to fill in missing values using Knn}
+
+\item{gset}{TBD}
 }
 \description{
 This function calculates the differential expression for two groups

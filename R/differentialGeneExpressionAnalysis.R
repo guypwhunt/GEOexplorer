@@ -4,6 +4,7 @@
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import GEOquery limma umap data.table
 #' @examples columnNames <- extractColumns(expressionData)
 #' @author Guy Hunt
 extractColumns <- function(ex) {
@@ -23,6 +24,7 @@ extractColumns <- function(ex) {
 #' @param group2 The sample names in group 2. This must not contain any sample names that are in group1
 #' @keywords GEO
 #' @export
+#' @import GEOquery limma umap data.table
 #' @examples gsms <- calculateGsms(columnNames,c("GSM455528", "GSM455541", "GSM455542", "GSM455543", "GSM455578", "GSM455610", "GSM455782"), c("GSM455783", "GSM455784", "GSM455785", "GSM455786", "GSM455787"))
 #' @author Guy Hunt
 calculateGsms <- function(columnNames, group1, group2){
@@ -53,14 +55,15 @@ calculateGsms <- function(columnNames, group1, group2){
 #' A Function to Calculate the Differential Gene EXpression between two groups
 #'
 #' This function calculates the differential expression for two groups
-#' @param gsms
+#' @param gsms TBD
 #' @param logTransformation Whether to auto-detect if log transformation is appropriate or to apply log transformation. Values can be "Auto-Detect" for auto detect, "Yes" to apply log transformation and "No" to not perform log transformation.
 #' @param limmaPrecisionWeights Whether to apply limma precision weights (vooma)
 #' @param forceNormalization Whether to force normalization
 #' @param knnTransformation Whether to fill in missing values using Knn
-#' @param gset
+#' @param gset TBD
 #' @keywords GEO
 #' @export
+#' @import GEOquery limma umap data.table
 #' @examples fit2 <- calculateFit2(gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation)
 #' @author Guy Hunt
 calculateFit2 <- function(gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation, gset){
@@ -123,6 +126,14 @@ calculateFit2 <- function(gsms, logTransformation, limmaPrecisionWeights, forceN
   return(fit2)
 }
 
+#' TBD
+#'
+#' TBD
+#' @keywords GEO
+#' @export
+#' @import GEOquery limma umap data.table
+#' @examples TBD
+#' @author Guy Hunt
 differentialGeneExpression <- function(gset, ex, gsms, limmaPrecisionWeights, forceNormalization) {
   library(GEOquery)
   library(limma)
@@ -179,6 +190,14 @@ differentialGeneExpression <- function(gset, ex, gsms, limmaPrecisionWeights, fo
   return(fit2)
 }
 
+#' TBD
+#'
+#' TBD
+#' @keywords GEO
+#' @export
+#' @import GEOquery limma umap data.table
+#' @examples TBD
+#' @author Guy Hunt
 adjustmentCalculation <- function(adjustment){
   library(GEOquery)
   library(limma)
@@ -202,6 +221,14 @@ adjustmentCalculation <- function(adjustment){
   return(adjustment)
 }
 
+#' TBD
+#'
+#' TBD
+#' @keywords GEO
+#' @export
+#' @import GEOquery limma umap data.table
+#' @examples TBD
+#' @author Guy Hunt
 topDifferentiallyExpressedGenesTable <- function(fit2, adjustment) {
   library(GEOquery)
   library(limma)
@@ -223,6 +250,14 @@ topDifferentiallyExpressedGenesTable <- function(fit2, adjustment) {
   return(tT)
 }
 
+#' TBD
+#'
+#' TBD
+#' @keywords GEO
+#' @export
+#' @import GEOquery limma umap data.table
+#' @examples TBD
+#' @author Guy Hunt
 exclusiveColumns <- function(columns, inputColumns) {
   library(GEOquery)
   library(limma)
@@ -239,14 +274,35 @@ exclusiveColumns <- function(columns, inputColumns) {
     return(columns1Input)
 }
 
-# summarize test results as "up", "down" or "not expressed"
+#' TBD
+#'
+#' TBD
+#' @keywords GEO
+#' @export
+#' @import GEOquery limma umap data.table
+#' @examples TBD
+#' @author Guy Hunt
 calculateDT <- function(fit2, adjustment, significanceLevelCutOff) {
+  library(GEOquery)
+  library(limma)
+  library(umap)
+  library(data.table)
   dT <- decideTests(fit2, adjust.method=adjustment, p.value=significanceLevelCutOff)
   return(dT)
 }
 
-# Venn diagram of results
+#' TBD
+#'
+#' TBD
+#' @keywords GEO
+#' @export
+#' @import GEOquery limma umap data.table
+#' @examples TBD
+#' @author Guy Hunt
 vennDiagramPlot <- function(dT) {
+  library(GEOquery)
+  library(limma)
+  library(umap)
+  library(data.table)
   vennDiagram(dT, circle.col=palette())
 }
-
