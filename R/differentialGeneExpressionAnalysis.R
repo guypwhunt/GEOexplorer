@@ -82,6 +82,8 @@ calculateFit2 <- function(gsms, logTransformation, limmaPrecisionWeights, forceN
   ex <- logTransformExpressionData(ex, logTransformation)
   ex <- knnDataTransformation(ex, knnTransformation)
 
+  gset <- gset[row.names(gset) %in% row.names(ex), ]
+
   sel <- which(sml != "X")
   sml <- sml[sel]
   gset <- gset[ ,sel]

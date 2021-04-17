@@ -4,11 +4,11 @@
 setwd('C:/Users/guypw/OneDrive/Documents/geo2rShinyApp')
 
 # Import Functions
-source("geoIntegrationFunctions/geoIntegrationFunctions.R")
-source("dataVisualizationFunctions/dataVisualizationFunctions.R")
-source("dataTransformationFunctions/dataTransformationFunctions.R")
-source("interactiveDataVisualizationFunctions/interactiveDataVisualizationFunctions.R")
-source("differentialGeneExpressionAnalysis/differentialGeneExpressionAnalysis.R")
+source("R/geoIntegrationFunctions.R")
+source("R/dataVisualizationFunctions.R")
+source("R/dataTransformationFunctions.R")
+source("R/interactiveDataVisualizationFunctions.R")
+source("R/differentialGeneExpressionAnalysis.R")
 
 
 # Import Libraries
