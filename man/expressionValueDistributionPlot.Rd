@@ -2,14 +2,14 @@
 % Please edit documentation in R/dataVisualizationFunctions.R
 \name{expressionValueDistributionPlot}
 \alias{expressionValueDistributionPlot}
-\title{A Function to Create a Density Plot from Expression Object}
+\title{A Function to Create a Density Plot from an Expression Object}
 \usage{
 expressionValueDistributionPlot(geoAccessionCode = "", platform = "", ex)
 }
 \arguments{
 \item{geoAccessionCode}{A character string representing a GEO object for download and parsing}
 
-\item{platform}{The study's platform}
+\item{platform}{A character string representing the study's platform}
 
 \item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
 }

@@ -1,5 +1,14 @@
+#' A Function to Create an Interactive Box and Whisker Plot from an Expression Object
+#'
+#' This function allows you to plot expression data into an interactive Box and Whisker Plot
+#' @param geoAccessionCode A character string representing a GEO object for download and parsing
+#' @param platform A character string representing the study's platform
+#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactiveBoxAndWhiskerPlot(expressionData, "GSE18380", "GPL4694")
 #' @import plotly ggplot2 limma
+#' @author Guy Hunt
 interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
   library(plotly)
   library(ggplot2)
@@ -15,8 +24,17 @@ interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
   fig
 }
 
+#' A Function to Create an Interactive Density Plot from an Expression Object
+#'
+#' This function allows you to plot expression data into an interactive Density Plot
+#' @param geoAccessionCode A character string representing a GEO object for download and parsing
+#' @param platform A character string representing the study's platform
+#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactiveDesnityPlot(expressionData, "GSE18380", "GPL4694")
 #' @import plotly ggplot2 limma
+#' @author Guy Hunt
 interactiveDesnityPlot <- function(ex, geoAccessionCode, platform) {
   library(plotly)
   library(ggplot2)
@@ -36,8 +54,17 @@ interactiveDesnityPlot <- function(ex, geoAccessionCode, platform) {
   fig
 }
 
+#' A Function to Create an Interactive Three Dimensional Density Plot from an Expression Object
+#'
+#' This function allows you to plot expression data into an interactive Three Dimensional Density Plot
+#' @param geoAccessionCode A character string representing a GEO object for download and parsing
+#' @param platform A character string representing the study's platform
+#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactiveThreeDDesnityPlot(expressionData, "GSE18380", "GPL4694")
 #' @import plotly ggplot2 limma
+#' @author Guy Hunt
 interactiveThreeDDesnityPlot <- function(ex, geoAccessionCode, platform) {
   library(plotly)
   library(ggplot2)
@@ -61,8 +88,17 @@ interactiveThreeDDesnityPlot <- function(ex, geoAccessionCode, platform) {
   fig
 }
 
+#' A Function to Create an Interactive UMAP Plot from an Expression Object
+#'
+#' This function allows you to plot expression data into an interactive UMAP Plot
+#' @param geoAccessionCode A character string representing a GEO object for download and parsing
+#' @param knn A integer representing the number of k nearest neighbor's to use
+#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactiveUmapPlot(expressionData, 2, "GSE18380")
 #' @import plotly ggplot2 limma
+#' @author Guy Hunt
 interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
@@ -80,8 +116,17 @@ interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
   fig
 }
 
+#' A Function to Create an Interactive Mean Variance Plot from an Expression Object
+#'
+#' This function allows you to plot expression data into an interactive Mean Variance Plot
+#' @param geoAccessionCode A character string representing a GEO object for download and parsing
+#' @param gset The GEO object
+#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactiveMeanVariancePlot(expressionData, "GSE18380", gset)
 #' @import plotly ggplot2 limma stringr
+#' @author Guy Hunt
 interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
   library(plotly)
   library(ggplot2)
@@ -163,8 +208,16 @@ interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
   fig
 }
 
+#' A Function to Create an Interactive Histogram of the Principle Components from the PCA outputs of an Expression Object
+#'
+#' This function allows you to plot PCA expression results into an interactive Histogram of the Principle Components
+#' @param geoAccessionCode A character string representing a GEO object for download and parsing
+#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the pcaAnalysis() function
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactivePrincompPcaScreePlot(pcaData, "GSE18380")
 #' @import plotly ggplot2 limma
+#' @author Guy Hunt
 interactivePcaScreePlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
@@ -186,8 +239,16 @@ interactivePcaScreePlot <- function(pcaData, geoAccessionCode) {
   fig
 }
 
+#' A Function to Create an Interactive Histogram of the Principle Components from the PCA outputs of an Expression Object
+#'
+#' This function allows you to plot PCA expression results into an interactive Histogram of the Principle Components
+#' @param geoAccessionCode A character string representing a GEO object for download and parsing
+#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the pcaPrincompAnalysis() function
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactivePrincompPcaScreePlot(pcaData, "GSE18380")
 #' @import plotly ggplot2 limma
+#' @author Guy Hunt
 interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
@@ -208,8 +269,17 @@ interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
   fig
 }
 
+#' A Function to Create an Interactive Scatter Plot of the Principle Components Analysis of each of the Genes in an Expression Object
+#'
+#' This function allows you to plot PCA expression results into an interactive Scatter Plot
+#' @param geoAccessionCode A character string representing a GEO object for download and parsing
+#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the pcaPrincompAnalysis() function
+#' @param gset The GEO object
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactivePrincompPcaIndividualsPlot(pcaData, "GSE18380", gset)
 #' @import plotly ggplot2 limma stringr
+#' @author Guy Hunt
 interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
   library(plotly)
   library(ggplot2)
@@ -282,8 +352,16 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
 
 }
 
+#' A Function to Create an Interactive Scatter Plot of the Principle Components Analysis of each of the Samples in an Expression Object
+#'
+#' This function allows you to plot PCA expression results into an interactive Scatter Plot
+#' @param geoAccessionCode A character string representing a GEO object for download and parsing
+#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the pcaPrincompAnalysis() function
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
 #' @import plotly ggplot2 limma
+#' @author Guy Hunt
 interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
@@ -301,8 +379,15 @@ interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
   fig
 }
 
+#' A Function to Create an Interactive Heat Map of the Correlations between Samples
+#'
+#' This function allows you to plot an interactive heat map of the correlations between samples in an expression object
+#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
 #' @import plotly ggplot2 limma scales pheatmap heatmaply stringr
+#' @author Guy Hunt
 interactiveHeatMapPlot <- function(ex) {
   library(plotly)
   library(ggplot2)

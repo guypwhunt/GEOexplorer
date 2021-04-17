@@ -2,15 +2,20 @@
 % Please edit documentation in R/differentialGeneExpressionAnalysis.R
 \name{exclusiveColumns}
 \alias{exclusiveColumns}
-\title{TBD}
+\title{A Function to Create a List of Columns that Have Not Been Selected}
 \usage{
 exclusiveColumns(columns, inputColumns)
 }
+\arguments{
+\item{columns}{A list of all columns within the expression object}
+
+\item{inputColumns}{A list of the columns that have been selected}
+}
 \description{
-TBD
+This function creates a list of columns that have not been selected in the UI
 }
 \examples{
-TBD
+column2 <- exclusiveColumns(c("GSM455528", "GSM455541", "GSM455542", "GSM455543"), c("GSM455528", "GSM455541"))
 }
 \author{
 Guy Hunt

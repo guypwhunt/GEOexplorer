@@ -2,15 +2,18 @@
 % Please edit documentation in R/differentialGeneExpressionAnalysis.R
 \name{vennDiagramPlot}
 \alias{vennDiagramPlot}
-\title{TBD}
+\title{A Function to Plot a Venn Diagram with the Number of Genes that were and were not Differentially Expressed}
 \usage{
 vennDiagramPlot(dT)
 }
+\arguments{
+\item{dT}{An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDT() function}
+}
 \description{
-TBD
+This function creates a venndigram containing the number of genes that were and were not differentially expressed
 }
 \examples{
-TBD
+fig <- vennDiagramPlot(dT)
 }
 \author{
 Guy Hunt

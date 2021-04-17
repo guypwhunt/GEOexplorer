@@ -1,8 +1,8 @@
-#' A Function to Create a Box and Whisker Plot from Expression Object
+#' A Function to Create a Box and Whisker Plot from an Expression Object
 #'
 #' This function allows you to plot expression data into a Box and Whisker Plot
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
-#' @param platform The study's platform
+#' @param platform A character string representing the study's platform
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
@@ -19,11 +19,11 @@ boxAndWhiskerPlot <- function(geoAccessionCode = "", platform ="", ex) {
   boxplot(ex, boxwex=0.7, notch=T, main=title, outline=FALSE, las=2)
 }
 
-#' A Function to Create a Density Plot from Expression Object
+#' A Function to Create a Density Plot from an Expression Object
 #'
 #' This function allows you to plot expression data into a Density Plot
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
-#' @param platform The study's platform
+#' @param platform A character string representing the study's platform
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
@@ -40,11 +40,11 @@ expressionValueDistributionPlot <- function(geoAccessionCode = "", platform = ""
   plotDensities(ex, main=title, legend=F)
 }
 
-#' A Function to Create a Mean Variance Plot from Expression Object
+#' A Function to Create a Mean Variance Plot from an Expression Object
 #'
 #' This function allows you to plot expression data into a Mean Variance Plot
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
-#' @param platform The study's platform
+#' @param platform A character string representing the study's platform
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
@@ -59,11 +59,11 @@ meanVariancePlot <- function(geoAccessionCode = "", platform = "", ex) {
   plotSA(lmFit(ex), main= paste("Mean variance trend,", geoAccessionCode))
 }
 
-#' A Function to Create a UMAP Plot from Expression Object
+#' A Function to Create a UMAP Plot from an Expression Object
 #'
 #' This function allows you to plot expression data into a UMAP Plot
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
-#' @param platform The study's platform
+#' @param platform A character string representing the study's platform
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export

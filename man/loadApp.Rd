@@ -10,7 +10,7 @@ loadApp()
 This function loads the Shiny App
 }
 \examples{
-fit2 <- calculateFit2(gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation)
+loadApp()
 }
 \author{
 Guy Hunt

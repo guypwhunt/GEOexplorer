@@ -128,6 +128,7 @@ fig
 
 # summarize test results as "up", "down" or "not expressed"
 dT <- calculateDT(fit2, adjustment, significanceLevelCutOff)
+
 ct <- 1
 
 # Venn diagram of results

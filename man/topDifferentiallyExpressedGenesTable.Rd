@@ -2,15 +2,20 @@
 % Please edit documentation in R/differentialGeneExpressionAnalysis.R
 \name{topDifferentiallyExpressedGenesTable}
 \alias{topDifferentiallyExpressedGenesTable}
-\title{TBD}
+\title{A Function to Create a Table of the Top Differentially Expressed Genes}
 \usage{
 topDifferentiallyExpressedGenesTable(fit2, adjustment)
 }
+\arguments{
+\item{fit2}{An object containing the differentially expressed genes analysis that can be obtained from the calculateFit2() function}
+
+\item{adjustment}{A string character containing the adjustment to the P-value}
+}
 \description{
-TBD
+This function creates a table of the top differentially expressed genes
 }
 \examples{
-TBD
+tT <- topDifferentiallyExpressedGenesTable(fit2, "fdr")
 }
 \author{
 Guy Hunt
