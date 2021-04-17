@@ -1,5 +1,13 @@
+#' A Function to Create an Interactive Histogram of the P values from Differential Gene Expression Analysis
+#'
+#' This function allows you to plot an interactive histogram of the P values from differential gene expression analysis
+#' @param fit2 An object containing the results of differntial gene expression analysis which can be obtained from the calculateFit2() function
+#' @param adjustment A character string containing the adjustment to P-values
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactiveHistogramPlot(fit2, adjustment)
 #' @import plotly ggplot2 limma scales
+#' @author Guy Hunt
 interactiveHistogramPlot <- function(fit2, adjustment) {
   library(plotly)
   library(ggplot2)
@@ -13,8 +21,17 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
   fig
 }
 
+#' A Function to Create an Interactive Mean Difference Plot of the log2 Fold Change Versus Average log2 Expression Values from Differential Gene Expression Analysis
+#'
+#' This function allows you to plot an interactive mean difference plot of the log2 fold change versus average log2 expression values from differential gene expression analysis
+#' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateFit2() function
+#' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDT() function
+#' @param ct A integer indicating the column to select from the dT object
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
 #' @import plotly ggplot2 limma scales
+#' @author Guy Hunt
 interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
   library(plotly)
   library(ggplot2)
@@ -78,8 +95,17 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
   fig
   }
 
+#' A Function to Create an Interactive Volcano Plot of the Statistical Significance (-log10 P Value) Versus Magnitude of Change (log2 Fold Change) from Differential Gene Expression Analysis
+#'
+#' This function allows you to plot an interactive volcano plot of the statistical significance (-log10 P value) versus magnitude of change (log2 fold change) from differential gene expression analysis
+#' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateFit2() function
+#' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDT() function
+#' @param ct A integer indicating the column to select from the dT object
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactiveVolcanoPlot(fit2, dT, ct)
 #' @import plotly ggplot2 limma scales
+#' @author Guy Hunt
 interactiveVolcanoPlot <- function(fit2, dT, ct) {
   library(plotly)
   library(ggplot2)
@@ -141,8 +167,17 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
   fig
 }
 
+#' A Function to Create an Interactive QQ Plot of the Quantiles of a Data Sample Against the Theoretical Quantiles of a Student's T Distribution from Differential Gene Expression Analysis
+#'
+#' This function allows you to plot an interactive QQ plot of the quantiles of a data sample against the theoretical quantiles of a Student's t distribution from differential gene expression analysis
+#' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateFit2() function
+#' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDT() function
+#' @param ct A integer indicating the column to select from the dT object
+#' @keywords GEO
 #' @export
+#' @examples fig <- interactiveQQPlot(fit2, dT, ct)
 #' @import plotly ggplot2 limma scales
+#' @author Guy Hunt
 interactiveQQPlot <- function(fit2, dT, ct) {
   library(plotly)
   library(ggplot2)

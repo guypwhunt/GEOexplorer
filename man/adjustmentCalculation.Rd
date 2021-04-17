@@ -2,15 +2,18 @@
 % Please edit documentation in R/differentialGeneExpressionAnalysis.R
 \name{adjustmentCalculation}
 \alias{adjustmentCalculation}
-\title{TBD}
+\title{A Function to Convert the UI P-Value Adjustment into the Backend P-Value Adjustment}
 \usage{
 adjustmentCalculation(adjustment)
 }
+\arguments{
+\item{adjustment}{A string character containing the adjustment to the P-value}
+}
 \description{
-TBD
+This function converts the P-value adjustment value from the UI into the value required by the backend
 }
 \examples{
-TBD
+adjustment <- adjustmentCalculation("Benjamini & Hochberg (False discovery rate)")
 }
 \author{
 Guy Hunt

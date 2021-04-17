@@ -2,15 +2,22 @@
 % Please edit documentation in R/differentialGeneExpressionAnalysis.R
 \name{calculateDT}
 \alias{calculateDT}
-\title{TBD}
+\title{A Function to Create an Object Containing if Each Gene is Unregulated, Down Regulated or has a Similar Level of Expression between the Groups}
 \usage{
 calculateDT(fit2, adjustment, significanceLevelCutOff)
 }
+\arguments{
+\item{fit2}{An object containing the differentially expressed genes analysis that can be obtained from the calculateFit2() function}
+
+\item{adjustment}{A string character containing the adjustment to the P-value}
+
+\item{significanceLevelCutOff}{A float indicating the P-value cutoff}
+}
 \description{
-TBD
+This function creates an object containing if each gene is unreguate, downregulated or not
 }
 \examples{
-TBD
+dT <- calculateDT(fit2, "fdr", 0.05)
 }
 \author{
 Guy Hunt

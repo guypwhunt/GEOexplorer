@@ -14,7 +14,7 @@ calculateFit2(
 )
 }
 \arguments{
-\item{gsms}{TBD}
+\item{gsms}{A string of intgers indicating which group a sample belongs to}
 
 \item{logTransformation}{Whether to auto-detect if log transformation is appropriate or to apply log transformation. Values can be "Auto-Detect" for auto detect, "Yes" to apply log transformation and "No" to not perform log transformation.}
 
@@ -24,7 +24,7 @@ calculateFit2(
 
 \item{knnTransformation}{Whether to fill in missing values using Knn}
 
-\item{gset}{TBD}
+\item{gset}{The GEO object}
 }
 \description{
 This function calculates the differential expression for two groups

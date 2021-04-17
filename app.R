@@ -7,12 +7,12 @@ library(ggplot2)
 library(shinyBS)
 library(shinyjs)
 
-source("geoIntegrationFunctions/geoIntegrationFunctions.R")
-source("dataTransformationFunctions/dataTransformationFunctions.R")
-source("interactiveDataVisualizationFunctions/interactiveDataVisualizationFunctions.R")
-source("differentialGeneExpressionAnalysis/differentialGeneExpressionAnalysis.R")
-source("interactiveDataVisualizationFunctions/interactiveDifferentialGeneExpressionDataVisualizationFunctions.R")
-source("dataVisualizationFunctions/dataVisualizationFunctions.R")
+source("R/geoIntegrationFunctions.R")
+source("R/dataTransformationFunctions.R")
+source("R/interactiveDataVisualizationFunctions.R")
+source("R/differentialGeneExpressionAnalysis.R")
+source("R/interactiveDifferentialGeneExpressionDataVisualizationFunctions.R")
+source("R/dataVisualizationFunctions.R")
 
 #myApp <- function() {
 

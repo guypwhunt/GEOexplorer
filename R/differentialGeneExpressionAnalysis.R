@@ -55,12 +55,12 @@ calculateGsms <- function(columnNames, group1, group2){
 #' A Function to Calculate the Differential Gene EXpression between two groups
 #'
 #' This function calculates the differential expression for two groups
-#' @param gsms TBD
+#' @param gsms A string of intgers indicating which group a sample belongs to
 #' @param logTransformation Whether to auto-detect if log transformation is appropriate or to apply log transformation. Values can be "Auto-Detect" for auto detect, "Yes" to apply log transformation and "No" to not perform log transformation.
 #' @param limmaPrecisionWeights Whether to apply limma precision weights (vooma)
 #' @param forceNormalization Whether to force normalization
 #' @param knnTransformation Whether to fill in missing values using Knn
-#' @param gset TBD
+#' @param gset The GEO object
 #' @keywords GEO
 #' @export
 #' @import GEOquery limma umap data.table
@@ -82,6 +82,8 @@ calculateFit2 <- function(gsms, logTransformation, limmaPrecisionWeights, forceN
   ex <- logTransformExpressionData(ex, logTransformation)
   ex <- knnDataTransformation(ex, knnTransformation)
 
+  gset <- gset[row.names(gset) %in% row.names(ex), ]
+
   sel <- which(sml != "X")
   sml <- sml[sel]
   gset <- gset[ ,sel]
@@ -126,77 +128,14 @@ calculateFit2 <- function(gsms, logTransformation, limmaPrecisionWeights, forceN
   return(fit2)
 }
 
-#' TBD
+#' A Function to Convert the UI P-Value Adjustment into the Backend P-Value Adjustment
 #'
-#' TBD
+#' This function converts the P-value adjustment value from the UI into the value required by the backend
+#' @param adjustment A string character containing the adjustment to the P-value
 #' @keywords GEO
 #' @export
 #' @import GEOquery limma umap data.table
-#' @examples TBD
-#' @author Guy Hunt
-differentialGeneExpression <- function(gset, ex, gsms, limmaPrecisionWeights, forceNormalization) {
-  library(GEOquery)
-  library(limma)
-  library(umap)
-  library(data.table)
-  # make proper column names to match toptable
-  fvarLabels(gset) <- make.names(fvarLabels(gset))
-
-  # group membership for all samples
-  sml <- strsplit(gsms, split="")[[1]]
-
-  # filter out excluded samples (marked as "X")
-  sel <- which(sml != "X")
-  sml <- sml[sel]
-  gset <- gset[ ,sel]
-  ex <- ex[ ,sel]
-  exprs(gset) <- ex
-
-  if(forceNormalization == "Yes"){
-    exprs(gset) <- normalizeBetweenArrays(exprs(gset)) # normalize data
-  }
-
-  # assign samples to groups and set up design matrix
-  gs <- factor(sml)
-  groups <- make.names(c("Group1","Group2"))
-  levels(gs) <- groups
-  gset$group <- gs
-  design <- model.matrix(~group + 0, gset)
-  colnames(design) <- levels(gs)
-
-  if (limmaPrecisionWeights == "Yes"){
-    nall <- nrow(gset)
-    gset <- gset[complete.cases(exprs(gset)), ]
-
-    # calculate precision weights and show plot of mean-variance trend
-    v <- vooma(gset, design, plot=T)
-    # OR weights by group
-    # v <- voomaByGroup(gset, group=groups, design, plot=T, cex=0.1, pch=".", col=1:nlevels(gs))
-    v$genes <- fData(gset) # attach gene annotations
-
-    # fit linear model
-    fit  <- lmFit(v)
-  } else if (limmaPrecisionWeights == "No"){
-    fit <- lmFit(gset, design)  # fit linear model
-  }
-
-  # set up contrasts of interest and recalculate model coefficients
-  cts <- paste(groups[1], groups[2], sep="-")
-  cont.matrix <- makeContrasts(contrasts=cts, levels=design)
-  fit2 <- contrasts.fit(fit, cont.matrix)
-
-  # compute statistics and table of top significant genes
-  fit2 <- eBayes(fit2, 0.01)
-  return(fit2)
-}
-
-#' TBD
-#'
-#' TBD
-#' @keywords GEO
-#' @export
-#' @import GEOquery limma umap data.table
-#' @examples TBD
+#' @examples adjustment <- adjustmentCalculation("Benjamini & Hochberg (False discovery rate)")
 #' @author Guy Hunt
 adjustmentCalculation <- function(adjustment){
   library(GEOquery)
@@ -221,13 +160,15 @@ adjustmentCalculation <- function(adjustment){
   return(adjustment)
 }
 
-#' TBD
+#' A Function to Create a Table of the Top Differentially Expressed Genes
 #'
-#' TBD
+#' This function creates a table of the top differentially expressed genes
+#' @param fit2 An object containing the differentially expressed genes analysis that can be obtained from the calculateFit2() function
+#' @param adjustment A string character containing the adjustment to the P-value
 #' @keywords GEO
 #' @export
 #' @import GEOquery limma umap data.table
-#' @examples TBD
+#' @examples tT <- topDifferentiallyExpressedGenesTable(fit2, "fdr")
 #' @author Guy Hunt
 topDifferentiallyExpressedGenesTable <- function(fit2, adjustment) {
   library(GEOquery)
@@ -250,13 +191,15 @@ topDifferentiallyExpressedGenesTable <- function(fit2, adjustment) {
   return(tT)
 }
 
-#' TBD
+#' A Function to Create a List of Columns that Have Not Been Selected
 #'
-#' TBD
+#' This function creates a list of columns that have not been selected in the UI
+#' @param columns A list of all columns within the expression object
+#' @param inputColumns A list of the columns that have been selected
 #' @keywords GEO
 #' @export
 #' @import GEOquery limma umap data.table
-#' @examples TBD
+#' @examples column2 <- exclusiveColumns(c("GSM455528", "GSM455541", "GSM455542", "GSM455543"), c("GSM455528", "GSM455541"))
 #' @author Guy Hunt
 exclusiveColumns <- function(columns, inputColumns) {
   library(GEOquery)
@@ -274,13 +217,16 @@ exclusiveColumns <- function(columns, inputColumns) {
     return(columns1Input)
 }
 
-#' TBD
+#' A Function to Create an Object Containing if Each Gene is Unregulated, Down Regulated or has a Similar Level of Expression between the Groups
 #'
-#' TBD
+#' This function creates an object containing if each gene is unreguate, downregulated or not
+#' @param fit2 An object containing the differentially expressed genes analysis that can be obtained from the calculateFit2() function
+#' @param adjustment A string character containing the adjustment to the P-value
+#' @param significanceLevelCutOff A float indicating the P-value cutoff
 #' @keywords GEO
 #' @export
 #' @import GEOquery limma umap data.table
-#' @examples TBD
+#' @examples dT <- calculateDT(fit2, "fdr", 0.05)
 #' @author Guy Hunt
 calculateDT <- function(fit2, adjustment, significanceLevelCutOff) {
   library(GEOquery)
@@ -291,13 +237,14 @@ calculateDT <- function(fit2, adjustment, significanceLevelCutOff) {
   return(dT)
 }
 
-#' TBD
+#' A Function to Plot a Venn Diagram with the Number of Genes that were and were not Differentially Expressed
 #'
-#' TBD
+#' This function creates a venndigram containing the number of genes that were and were not differentially expressed
+#' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDT() function
 #' @keywords GEO
 #' @export
 #' @import GEOquery limma umap data.table
-#' @examples TBD
+#' @examples fig <- vennDiagramPlot(dT)
 #' @author Guy Hunt
 vennDiagramPlot <- function(dT) {
   library(GEOquery)
