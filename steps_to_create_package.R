@@ -42,7 +42,7 @@ geo2rShinyApp::myApp()
 # Push to github
 
 # Install from GitHub
-install.packages(devtools)
+install.packages("devtools")
 library(devtools)
 install_github("guypwhunt/r_shiny_geo2r_visulisation")
 

@@ -245,9 +245,11 @@ server <- function(input, output, session){
     # Differential gene expression analysis
     gsetData <- getPlatformGset(allGset(), input$platform)
     expressionData <- extractExpressionData(gsetData)
-    columns <- extractColumns(expressionData)
+    dataInput <- logTransformExpressionData(expressionData, input$logTransformation)
+    knnDataInput <- knnDataTransformation(dataInput, input$knnTransformation)
+    columns <- extractColumns(knnDataInput)
     gsms <- calculateGsms(columns,input$columns1, input$columns2)
-    fit2 <- calculateFit2(gsms, input$logTransformation, input$limmaPrecisionWeights, input$forceNormalization, input$knnTransformation, gsetData)
+    fit2 <- calculateFit2(gsms, input$limmaPrecisionWeights, input$forceNormalization, gsetData, knnDataInput)
     adjustment <- adjustmentCalculation(input$pValueAdjustment)
     tT <- topDifferentiallyExpressedGenesTable(fit2, adjustment)
     dT <- calculateDT(fit2, adjustment, input$significanceLevelCutOff)

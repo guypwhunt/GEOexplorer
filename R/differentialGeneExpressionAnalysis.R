@@ -66,7 +66,7 @@ calculateGsms <- function(columnNames, group1, group2){
 #' @import GEOquery limma umap data.table
 #' @examples fit2 <- calculateFit2(gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation)
 #' @author Guy Hunt
-calculateFit2 <- function(gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation, gset){
+calculateFit2 <- function(gsms, limmaPrecisionWeights, forceNormalization, gset, ex){
   library(GEOquery)
   library(limma)
   library(umap)
@@ -78,11 +78,9 @@ calculateFit2 <- function(gsms, logTransformation, limmaPrecisionWeights, forceN
   sml <- strsplit(gsms, split="")[[1]]
 
   # This might need to be looked into
-  ex <- extractExpressionData(gset)
-  ex <- logTransformExpressionData(ex, logTransformation)
-  ex <- knnDataTransformation(ex, knnTransformation)
-
   gset <- gset[row.names(gset) %in% row.names(ex), ]
+
+  gset <- gset[,colnames(gset) %in% colnames(ex)]
 
   sel <- which(sml != "X")
   sml <- sml[sel]
