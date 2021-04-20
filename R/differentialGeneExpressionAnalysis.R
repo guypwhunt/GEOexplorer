@@ -56,15 +56,14 @@ calculateGsms <- function(columnNames, group1, group2){
 #'
 #' This function calculates the differential expression for two groups
 #' @param gsms A string of intgers indicating which group a sample belongs to
-#' @param logTransformation Whether to auto-detect if log transformation is appropriate or to apply log transformation. Values can be "Auto-Detect" for auto detect, "Yes" to apply log transformation and "No" to not perform log transformation.
 #' @param limmaPrecisionWeights Whether to apply limma precision weights (vooma)
 #' @param forceNormalization Whether to force normalization
-#' @param knnTransformation Whether to fill in missing values using Knn
 #' @param gset The GEO object
+#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
 #' @import GEOquery limma umap data.table
-#' @examples fit2 <- calculateFit2(gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation)
+#' @examples fit2 <- calculateFit2(gsms, limmaPrecisionWeights, forceNormalization, gset, ex)
 #' @author Guy Hunt
 calculateFit2 <- function(gsms, limmaPrecisionWeights, forceNormalization, gset, ex){
   library(GEOquery)
@@ -77,9 +76,8 @@ calculateFit2 <- function(gsms, limmaPrecisionWeights, forceNormalization, gset,
   # group membership for all samples
   sml <- strsplit(gsms, split="")[[1]]
 
-  # This might need to be looked into
+  # Reduce the dimensionality of gset to that of ex
   gset <- gset[row.names(gset) %in% row.names(ex), ]
-
   gset <- gset[,colnames(gset) %in% colnames(ex)]
 
   sel <- which(sml != "X")

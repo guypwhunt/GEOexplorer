@@ -114,7 +114,7 @@ gsms <- calculateGsms(columnNames,group1, group2)
 adjustment <- adjustmentCalculation(pValueAdjustment)
 
 # Get fit 2
-fit2 <- calculateFit2(gsms, logTransformation, limmaPrecisionWeights, forceNormalization, knnTransformation, gsetData)
+fit2 <- calculateFit2(gsms, limmaPrecisionWeights, forceNormalization, gsetData, expressionData)
 
 # Print Top deferentially expressed genes
 tT <- topDifferentiallyExpressedGenesTable(fit2, adjustment)
