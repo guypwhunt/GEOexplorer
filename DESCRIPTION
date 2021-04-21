@@ -29,7 +29,4 @@ Imports:
   shinyHeatmaply,
   shinyjs,
   stringr,
-  umap,
-  GEOquery,
-  limma,
-  impute
+  umap
