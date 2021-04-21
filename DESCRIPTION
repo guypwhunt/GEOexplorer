@@ -1,16 +1,35 @@
 Package: geo2rShinyApp
-Title: What the Package Does (One Line, Title Case)
+Title: geo2rShinyApp extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data.
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Guy",
+           family = "Hunt",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
+           email = "guypwhunt@gmail.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Description: geo2rShinyApp extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1.9001
+biocViews: GEOquery, limma, impute
+Imports: 
+  data.table, 
+  factoextra,
+  ggplot2,
+  heatmaply,
+  maptools,
+  pheatmap,
+  plotly,
+  scales,
+  shiny,
+  shinyBS,
+  shinyHeatmaply,
+  shinyjs,
+  stringr,
+  umap,
+  GEOquery,
+  limma,
+  impute
