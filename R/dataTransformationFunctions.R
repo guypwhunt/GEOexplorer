@@ -6,9 +6,9 @@
 #' @keywords GEO
 #' @export
 #' @import impute limma factoextra
-#' @examples dataInput <- logTransformExpressionData(expressionData, "Auto-Detect")
+#' @examples dataInput <- calculateLogTransformation(expressionData, "Auto-Detect")
 #' @author Guy Hunt
-logTransformExpressionData <- function(ex, logTransformation) {
+calculateLogTransformation <- function(ex, logTransformation = "Auto-Detect") {
   library(impute)
   library(limma)
   library(factoextra)
@@ -41,9 +41,9 @@ logTransformExpressionData <- function(ex, logTransformation) {
 #' @keywords GEO
 #' @export
 #' @import impute limma factoextra
-#' @examples autoLogInformation <- isLogTransformAutoApplied(expressionData)
+#' @examples autoLogInformation <- calculateAutoLogTransformApplication(expressionData)
 #' @author Guy Hunt
-isLogTransformAutoApplied <- function(ex) {
+calculateAutoLogTransformApplication <- function(ex) {
   library(impute)
   library(limma)
   library(factoextra)
@@ -67,9 +67,9 @@ isLogTransformAutoApplied <- function(ex) {
 #' @keywords GEO
 #' @export
 #' @import impute limma factoextra
-#' @examples knnDataInput <- knnDataTransformation(dataInput, knnTransformation)
+#' @examples knnDataInput <- calculateKnnImpute(dataInput, "Yes")
 #' @author Guy Hunt
-knnDataTransformation <- function(ex, knnTransformation) {
+calculateKnnImpute <- function(ex, knnTransformation) {
   library(impute)
   library(limma)
   library(factoextra)
@@ -96,9 +96,9 @@ knnDataTransformation <- function(ex, knnTransformation) {
 #' @keywords GEO
 #' @export
 #' @import impute limma factoextra
-#' @examples pcaDataInput <- pcaAnalysis(knnDataInput)
+#' @examples pcaDataInput <- calculatePca(knnDataInput)
 #' @author Guy Hunt
-pcaAnalysis <- function(ex){
+calculatePca <- function(ex){
   library(impute)
   library(limma)
   library(factoextra)
@@ -113,9 +113,9 @@ pcaAnalysis <- function(ex){
 #' @keywords GEO
 #' @export
 #' @import impute limma factoextra
-#' @examples pcaPrincompDataInput <- pcaPrincompAnalysis(knnDataInput)
+#' @examples pcaPrincompDataInput <- calculatePrincompPca(knnDataInput)
 #' @author Guy Hunt
-pcaPrincompAnalysis <- function(ex){
+calculatePrincompPca <- function(ex){
   library(impute)
   library(limma)
   library(factoextra)
@@ -130,9 +130,9 @@ pcaPrincompAnalysis <- function(ex){
 #' @keywords GEO
 #' @export
 #' @import impute limma factoextra
-#' @examples naOmitInput <- naOmitTransformation(knnDataInput)
+#' @examples naOmitInput <- calculateNaOmit(knnDataInput)
 #' @author Guy Hunt
-naOmitTransformation <- function(ex){
+calculateNaOmit <- function(ex){
   library(impute)
   library(limma)
   library(factoextra)
