@@ -48,7 +48,7 @@ ui <- fluidPage(
                         tabPanel("Exploratory Data Analysis",
                                  tabsetPanel(type = "tabs",
                                              tabPanel("Box-and-Whisper Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. The quartiles are calculated using the linear method. Viewing the distribution can be useful for determining if the data in the dataset is suitable for differential expression analysis. Generally, median-centred values are indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveBoxAndWhiskerPlot')),
-                                             tabPanel("Expression Density Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. This plot complements the boxplot in checking for data normalization before differential expression analysis. If density curves are similar from gene to gene, it is indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveDesnityPlot')),
+                                             tabPanel("Expression Density Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. This plot complements the boxplot in checking for data normalization before differential expression analysis. If density curves are similar from gene to gene, it is indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveDensityPlot')),
                                              tabPanel("3D Expression Density Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. This plot complements the boxplot in checking for data normalization before differential expression analysis. If density curves are similar from gene to gene, it is indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveThreeDDesnityPlot')),
                                              tabPanel("Mean-Variance Plot", br(), span("Generated using R limma and plotly. The plot below is used to check the mean-variance relationship of the expression data, after fitting a linear model. It can help show if there is a lot of variation in the data. Each point represents a gene. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveMeanVariancePlot')),
                                              tabPanel("UMAP Plot", br(), span("Generated using R umap and plotly. Uniform Manifold Approximation and Projection (UMAP) is a dimension reduction technique useful for visualizing how genes are related to each other. The number of nearest neighbours used in the calculation is indicated in the graph. The plot shows data after log and KNN transformation if they were performed."), br(), br(), numericInput("knn", "Input the k-nearest neighbors value  to use:", 2, min = 2,step = 1), br(), plotlyOutput('interactiveUmapPlot')),
@@ -111,10 +111,10 @@ ui <- fluidPage(
 server <- function(input, output, session){
   # Data Extraction Functions
   # Get the GEO2R data for all platforms
-  allGset <- reactive({getGset(input$geoAccessionCode)})
+  allGset <- reactive({getGeoObject(input$geoAccessionCode)})
 
   # Get a list of all the platforms
-  platforms <- reactive({getPlatforms(allGset())})
+  platforms <- reactive({extractPlatforms(allGset())})
 
   # Select the top platform
   platform <- reactive({
@@ -132,35 +132,35 @@ server <- function(input, output, session){
   # Exploratory data analysis visualisation
   observeEvent(input$exploratoryDataAnalysisButton, {
     # Extract the GEO2R data from the specified platform
-    gsetData <- getPlatformGset(allGset(), input$platform)
+    gsetData <- extractPlatformGset(allGset(), input$platform)
 
     # Extract the experiment information
-    experimentInformation <- getExperimentInformation(gsetData)
+    experimentInformation <- extractExperimentInformation(gsetData)
 
     # Extract expression data
     expressionData <- extractExpressionData(gsetData)
 
     # Extract Column Information
-    columnInfo <- getColumnDetails(gsetData)
+    columnInfo <- extractSampleDetails(gsetData)
 
     # Is log transformation auto applied
-    autoLogInformation <- isLogTransformAutoApplied(expressionData)
+    autoLogInformation <- calculateAutoLogTransformApplication(expressionData)
 
     # Get a list of all the columns
-    columns <- extractColumns(expressionData)
+    columns <- extractSampleNames(expressionData)
 
     # Data Transformation Functions
     # Apply log transformation to expression data if necessary
-    dataInput <- logTransformExpressionData(expressionData, input$logTransformation)
+    dataInput <- calculateLogTransformation(expressionData, input$logTransformation)
 
     # Perform KNN transformation on log expression data if necessary
-    knnDataInput <- knnDataTransformation(dataInput, input$knnTransformation)
+    knnDataInput <- calculateKnnImpute(dataInput, input$knnTransformation)
 
     # Remove all incomplete rows
-    naOmitInput <- naOmitTransformation(knnDataInput)
+    naOmitInput <- calculateNaOmit(knnDataInput)
 
     # Perform PCA analysis on KNN transformation expression data using princomp
-    pcaPrincompDataInput <- pcaPrincompAnalysis(naOmitInput)
+    pcaPrincompDataInput <- calculatePrincompPca(naOmitInput)
 
     # Data Visualisation Functions
     # Update if log transformation took place
@@ -170,7 +170,7 @@ server <- function(input, output, session){
 
     # Experimental Information Display
     output$experimentInfo <- renderUI({
-      extractExperimentInformation(experimentInformation)
+      convertExperimentInformation(experimentInformation)
     })
 
     # Column Set Plot
@@ -189,8 +189,8 @@ server <- function(input, output, session){
     })
 
     # Interactive Density Plot
-    output$interactiveDesnityPlot <- renderPlotly({
-      interactiveDesnityPlot(naOmitInput, input$geoAccessionCode, input$platform)
+    output$interactiveDensityPlot <- renderPlotly({
+      interactiveDensityPlot(naOmitInput, input$geoAccessionCode, input$platform)
     })
 
     # 3D Interactive Density Plot
@@ -236,23 +236,23 @@ server <- function(input, output, session){
 
     columns2Observe <- observe({
       updateSelectInput(session, "columns2",
-                        choices = exclusiveColumns(columns,input$columns1))
+                        choices = calculateExclusiveColumns(columns,input$columns1))
     })
   })
 
   # Differential Gene Expression Functions
   observeEvent(input$differentialExpressionButton, {
     # Differential gene expression analysis
-    gsetData <- getPlatformGset(allGset(), input$platform)
+    gsetData <- extractPlatformGset(allGset(), input$platform)
     expressionData <- extractExpressionData(gsetData)
-    dataInput <- logTransformExpressionData(expressionData, input$logTransformation)
-    knnDataInput <- knnDataTransformation(dataInput, input$knnTransformation)
-    columns <- extractColumns(knnDataInput)
-    gsms <- calculateGsms(columns,input$columns1, input$columns2)
-    fit2 <- calculateFit2(gsms, input$limmaPrecisionWeights, input$forceNormalization, gsetData, knnDataInput)
-    adjustment <- adjustmentCalculation(input$pValueAdjustment)
-    tT <- topDifferentiallyExpressedGenesTable(fit2, adjustment)
-    dT <- calculateDT(fit2, adjustment, input$significanceLevelCutOff)
+    dataInput <- calculateLogTransformation(expressionData, input$logTransformation)
+    knnDataInput <- calculateKnnImpute(dataInput, input$knnTransformation)
+    columns <- extractSampleNames(knnDataInput)
+    gsms <- calculateEachGroupsSamples(columns,input$columns1, input$columns2)
+    fit2 <- calculateDifferentialGeneExpression(gsms, input$limmaPrecisionWeights, input$forceNormalization, gsetData, knnDataInput)
+    adjustment <- convertAdjustment(input$pValueAdjustment)
+    tT <- calculateTopDifferentiallyExpressedGenes(fit2, adjustment)
+    dT <- calculateDifferentialGeneExpressionSummary(fit2, adjustment, input$significanceLevelCutOff)
     ct <- 1
 
     # Differential gene expression table
@@ -267,7 +267,7 @@ server <- function(input, output, session){
 
     # Venn Diagram Plot
     output$dEVennDiagram <- renderPlot({
-      vennDiagramPlot(dT)
+      nonInteractiveVennDiagramPlot(dT)
     })
 
     # Interactive QQ Plot

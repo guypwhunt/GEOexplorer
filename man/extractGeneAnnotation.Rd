@@ -2,7 +2,7 @@
 % Please edit documentation in R/geoIntegrationFunctions.R
 \name{extractGeneAnnotation}
 \alias{extractGeneAnnotation}
-\title{A GEO Function to Extract Gene Information from a GEO object}
+\title{THIS FUNCTION IS RETIRED: A GEO Function to Extract Gene Information from a GEO object}
 \usage{
 extractGeneAnnotation(gset)
 }

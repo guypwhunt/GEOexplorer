@@ -6,9 +6,9 @@
 #' @keywords GEO
 #' @export
 #' @import GEOquery
-#' @examples getGeoData("GSE18380", "GPL4694")
+#' @examples extractGeoData("GSE18380", "GPL4694")
 #' @author Guy Hunt
-getGeoData <- function(geoAccessionCode, platform) {
+extractGeoData <- function(geoAccessionCode, platform) {
   library(GEOquery)
   gset <- getGEO(geoAccessionCode, GSEMatrix =TRUE, getGPL=FALSE)
   if (length(gset) > 1) idx <- grep(platform, attr(gset, "names")) else idx <- 1
@@ -26,9 +26,9 @@ getGeoData <- function(geoAccessionCode, platform) {
 #' @keywords GEO
 #' @export
 #' @import GEOquery
-#' @examples allGset <- getGset("GSE18380", GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated")
+#' @examples allGset <- getGeoObject("GSE18380", GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated")
 #' @author Guy Hunt
-getGset <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated") {
+getGeoObject <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated") {
   library(GEOquery)
   if (platformAnnotation == "Submitter supplied") {
     platformAnnotation <- FALSE
@@ -48,9 +48,9 @@ getGset <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platformAnnot
 #' @keywords GEO
 #' @export
 #' @import GEOquery
-#' @examples platforms <- getPlatforms(allGset)
+#' @examples platforms <- extractPlatforms(allGset)
 #' @author Guy Hunt
-getPlatforms <- function(gset) {
+extractPlatforms <- function(gset) {
   library(GEOquery)
   platforms <- c()
   i <-1
@@ -69,9 +69,9 @@ getPlatforms <- function(gset) {
 #' @keywords GEO
 #' @export
 #' @import GEOquery
-#' @examples gsetData <- getPlatformGset(gset, platforms[1])
+#' @examples gsetData <- extractPlatformGset(gset, platforms[1])
 #' @author Guy Hunt
-getPlatformGset <- function(gset, platform) {
+extractPlatformGset <- function(gset, platform) {
   library(GEOquery)
   if (length(gset) > 1) idx <- grep(platform[1], attr(gset, "names")) else idx <- 1
   gset <- gset[[idx]]
@@ -85,9 +85,9 @@ getPlatformGset <- function(gset, platform) {
 #' @keywords GEO
 #' @export
 #' @import GEOquery
-#' @examples experimentInformation <- getExperimentInformation(gsetData)
+#' @examples experimentInformation <- extractExperimentInformation(gsetData)
 #' @author Guy Hunt
-getExperimentInformation <- function(gset) {
+extractExperimentInformation <- function(gset) {
   library(GEOquery)
   experimentalData <- experimentData(gset)
   return(experimentalData)
@@ -96,13 +96,13 @@ getExperimentInformation <- function(gset) {
 #' A GEO Function to Convert the Experiment Information Object into HTML
 #'
 #' This function allows you to convert experiment information into HTML
-#' @param experimentData The experiment object obtained from the getExperimentInformation() function
+#' @param experimentData The experiment object obtained from the extractExperimentInformation() function
 #' @keywords GEO
 #' @export
 #' @import GEOquery
-#' @examples extractedExperimentInformation <- extractExperimentInformation(experimentInformation)
+#' @examples convertExperimentInformation <- extractExperimentInformation(experimentInformation)
 #' @author Guy Hunt
-extractExperimentInformation <- function(experimentData) {
+convertExperimentInformation <- function(experimentData) {
   library(GEOquery)
   name <- paste("<b>", "Author's Name:", "</b>", "<p>", experimentData@name, "</p>")
   lab <- paste("<b>", "Laboratory:", "</b>", "<p>", experimentData@lab, "</p>")
@@ -121,9 +121,9 @@ extractExperimentInformation <- function(experimentData) {
 #' @keywords GEO
 #' @export
 #' @import GEOquery
-#' @examples columnInfo <- getColumnDetails(gsetData)
+#' @examples columnInfo <- extractSampleDetails(gsetData)
 #' @author Guy Hunt
-getColumnDetails <- function(gset){
+extractSampleDetails <- function(gset){
   library(GEOquery)
   phenoDataset <- phenoData(gset)
   phenoData <- phenoDataset@data
@@ -165,19 +165,18 @@ extractExpressionData <- function(gset) {
 #' @param gset The GEO object
 #' @keywords GEO
 #' @export
-#' @examples sampleInfo <- extractSampleInfo(gsetData)
+#' @examples sampleInfo <- extractSampleInformation(gsetData)
 #' @author Guy Hunt
-extractSampleInfo <- function(gset) {
+extractSampleInformation <- function(gset) {
   library(GEOquery)
   sampleInfo <- pData(gset)
   return(sampleInfo)}
 
-#' A GEO Function to Extract Gene Information from a GEO object
+#' THIS FUNCTION IS RETIRED: A GEO Function to Extract Gene Information from a GEO object
 #'
 #' This function allows you to extract the studies Gene information from a GEO object
 #' @param gset The GEO object
 #' @keywords GEO
-#' @export
 #' @import GEOquery
 #' @examples geneAnnotation <- extractGeneAnnotation(gsetData)
 #' @author Guy Hunt

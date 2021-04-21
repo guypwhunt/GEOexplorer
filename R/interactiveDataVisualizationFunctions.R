@@ -32,10 +32,10 @@ interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
-#' @examples fig <- interactiveDesnityPlot(expressionData, "GSE18380", "GPL4694")
+#' @examples fig <- interactiveDensityPlot(expressionData, "GSE18380", "GPL4694")
 #' @import plotly ggplot2 limma
 #' @author Guy Hunt
-interactiveDesnityPlot <- function(ex, geoAccessionCode, platform) {
+interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
   library(plotly)
   library(ggplot2)
   library(limma)
@@ -215,7 +215,7 @@ interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
 #' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the pcaAnalysis() function
 #' @keywords GEO
 #' @export
-#' @examples fig <- interactivePrincompPcaScreePlot(pcaData, "GSE18380")
+#' @examples fig <- interactivePcaScreePlot(pcaData, "GSE18380")
 #' @import plotly ggplot2 limma
 #' @author Guy Hunt
 interactivePcaScreePlot <- function(pcaData, geoAccessionCode) {

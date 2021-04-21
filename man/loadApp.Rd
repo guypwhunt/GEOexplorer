@@ -2,12 +2,12 @@
 % Please edit documentation in R/app.R
 \name{loadApp}
 \alias{loadApp}
-\title{A Function to Load the Shiny App}
+\title{A Function to Load the GEO2R Data Visualisation Shiny App}
 \usage{
 loadApp()
 }
 \description{
-This function loads the Shiny App
+This function loads the GEO2R Data Visualisation Shiny App. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data.
 }
 \examples{
 loadApp()

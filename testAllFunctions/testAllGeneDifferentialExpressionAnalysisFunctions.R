@@ -38,51 +38,51 @@ geoAccessionCode <- "GSE18380"
 #  tryCatch({
 
 # Get the GEO2R data for all platforms
-allGset <- getGset(geoAccessionCode)
+allGset <- getGeoObject(geoAccessionCode)
 
 # Get a list of all the platforms
-platforms <- getPlatforms(allGset)
+platforms <- extractPlatforms(allGset)
 platform <- platforms[1]
 
 # Extract the GEO2R data from the specified platform
-gsetData <- getPlatformGset(allGset, platform)
+gsetData <- extractPlatformGset(allGset, platform)
 
 # Get column Details
-getColumnDetails <- getColumnDetails(gsetData)
+getColumnDetails <- extractSampleDetails(gsetData)
 
 # Extract the experiment information
-experimentInformation <- getExperimentInformation(gsetData)
+experimentInformation <- extractExperimentInformation(gsetData)
 
 # This function was retired
 # Get GEO2R data
-gsetData <- getGeoData(geoAccessionCode, platform)
+gsetData <- extractGeoData(geoAccessionCode, platform)
 
 # Extract expression data
 expressionData <- extractExpressionData(gsetData)
 
 # Apply log transformation to expression data if necessary
-#dataInput <- logTransformExpressionData(expressionData, logTransformation)
+#dataInput <- calculateLogTransformation(expressionData, logTransformation)
 
 # Is log transformation auto applied
-#autoLogInformation <- isLogTransformAutoApplied(expressionData)
+#autoLogInformation <- calculateAutoLogTransformApplication(expressionData)
 
 # Perform KNN transformation on log expression data if necessary
-#knnDataInput <- knnDataTransformation(dataInput, knnTransformation)
+#knnDataInput <- calculateKnnImpute(dataInput, knnTransformation)
 
 # Remove all incomplete rows
-#naOmitInput <- naOmitTransformation(knnDataInput)
+#naOmitInput <- calculateNaOmit(knnDataInput)
 
 # This function was retired
 # Perform PCA analysis on KNN transformation expression data
-# pcaDataInput <- pcaAnalysis(naOmitInput)
+# pcaDataInput <- calculatePca(naOmitInput)
 
 # Perform PCA analysis on KNN transformation expression data
-#pcaPrincompDataInput <- pcaPrincompAnalysis(naOmitInput)
+#pcaPrincompDataInput <- calculatePrincompPca(naOmitInput)
 
 
 # Differential gene expression analysis functions
 # Get column names
-columnNames <- extractColumns(expressionData)
+columnNames <- extractSampleNames(expressionData)
 
 # Define Groups
 numberOfColumns <- length(columnNames)
@@ -105,19 +105,19 @@ for (name in columnNames) {
 
 
 # Select columns in group2
-column2 <- exclusiveColumns(columnNames, group1)
+column2 <- calculateExclusiveColumns(columnNames, group1)
 
 # Calculate gsms
-gsms <- calculateGsms(columnNames,group1, group2)
+gsms <- calculateEachGroupsSamples(columnNames,group1, group2)
 
 # Convert P value adjustment
-adjustment <- adjustmentCalculation(pValueAdjustment)
+adjustment <- convertAdjustment(pValueAdjustment)
 
 # Get fit 2
-fit2 <- calculateFit2(gsms, limmaPrecisionWeights, forceNormalization, gsetData, expressionData)
+fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gsetData, expressionData)
 
 # Print Top deferentially expressed genes
-tT <- topDifferentiallyExpressedGenesTable(fit2, adjustment)
+tT <- calculateTopDifferentiallyExpressedGenes(fit2, adjustment)
 
 # Plot Histogram of fit 2 data
 fig <- histogramPlot(fit2, adjustment)
@@ -127,7 +127,7 @@ fig <- interactiveHistogramPlot(fit2, adjustment)
 fig
 
 # summarize test results as "up", "down" or "not expressed"
-dT <- calculateDT(fit2, adjustment, significanceLevelCutOff)
+dT <- calculateDifferentialGeneExpressionSummary(fit2, adjustment, significanceLevelCutOff)
 
 ct <- 1
 

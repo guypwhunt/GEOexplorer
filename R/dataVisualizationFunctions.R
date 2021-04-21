@@ -2,14 +2,13 @@
 #'
 #' This function allows you to plot expression data into a Box and Whisker Plot
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
-#' @param platform A character string representing the study's platform
 #' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2
-#' @examples fig <- boxAndWhiskerPlot(expressionData, "GSE18380", "GPL4694")
+#' @examples fig <- nonInteractiveBoxAndWhiskerPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
-boxAndWhiskerPlot <- function(geoAccessionCode = "", platform ="", ex) {
+nonInteractiveBoxAndWhiskerPlot <- function(geoAccessionCode = "", platform ="", ex) {
   library(limma)
   library(umap)
   library(maptools)
@@ -28,9 +27,9 @@ boxAndWhiskerPlot <- function(geoAccessionCode = "", platform ="", ex) {
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2
-#' @examples fig <- expressionValueDistributionPlot(expressionData, "GSE18380", "GPL4694")
+#' @examples fig <- nonInteractiveDesnityPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
-expressionValueDistributionPlot <- function(geoAccessionCode = "", platform = "", ex) {
+nonInteractiveDesnityPlot <- function(geoAccessionCode = "", platform = "", ex) {
   library(limma)
   library(umap)
   library(maptools)
@@ -49,9 +48,9 @@ expressionValueDistributionPlot <- function(geoAccessionCode = "", platform = ""
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2
-#' @examples fig <- meanVariancePlot(expressionData, "GSE18380", "GPL4694")
+#' @examples fig <- nonInteractiveMeanVariancePlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
-meanVariancePlot <- function(geoAccessionCode = "", platform = "", ex) {
+nonInteractiveMeanVariancePlot <- function(geoAccessionCode = "", platform = "", ex) {
   library(limma)
   library(umap)
   library(maptools)
@@ -68,9 +67,9 @@ meanVariancePlot <- function(geoAccessionCode = "", platform = "", ex) {
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2
-#' @examples fig <- umapPlot(expressionData, "GSE18380", "GPL4694")
+#' @examples fig <- nonInteractiveUmapPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
-umapPlot <- function(geoAccessionCode = "", platform = "", ex, knn) {
+nonInteractiveUmapPlot <- function(geoAccessionCode = "", platform = "", ex, knn) {
   library(limma)
   library(umap)
   library(maptools)
@@ -88,9 +87,9 @@ umapPlot <- function(geoAccessionCode = "", platform = "", ex, knn) {
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2 factoextra pheatmap
-#' @examples fig <- pcaScreePlot(pcaPrincompDataInput)
+#' @examples fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)
 #' @author Guy Hunt
-pcaScreePlot <- function(pcaEx) {
+nonInteractivePcaScreePlot <- function(pcaEx) {
   library(limma)
   library(umap)
   library(maptools)
@@ -107,9 +106,9 @@ pcaScreePlot <- function(pcaEx) {
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2 factoextra pheatmap
-#' @examples fig <- pcaIndividualsPlot(pcaPrincompDataInput)
+#' @examples fig <- nonInteractivePcaIndividualsPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
-pcaIndividualsPlot <- function(pcaEx) {
+nonInteractivePcaIndividualsPlot <- function(pcaEx) {
   library(limma)
   library(umap)
   library(maptools)
@@ -131,9 +130,9 @@ pcaIndividualsPlot <- function(pcaEx) {
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2 factoextra pheatmap
-#' @examples fig <- pcaVariablesPlot(pcaPrincompDataInput)
+#' @examples fig <- nonInteractivePcaVariablesPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
-pcaVariablesPlot <- function(pcaEx) {
+nonInteractivePcaVariablesPlot <- function(pcaEx) {
   library(limma)
   library(umap)
   library(maptools)
@@ -154,9 +153,9 @@ pcaVariablesPlot <- function(pcaEx) {
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2 factoextra pheatmap
-#' @examples fig <- pcaBiplotPlot(pcaPrincompDataInput)
+#' @examples fig <- nonInteractivePcaBiplotPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
-pcaBiplotPlot <- function(pcaEx) {
+nonInteractivePcaBiplotPlot <- function(pcaEx) {
   library(limma)
   library(umap)
   library(maptools)
@@ -177,9 +176,9 @@ pcaBiplotPlot <- function(pcaEx) {
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2 factoextra pheatmap
-#' @examples fig <- correlationMatrixPlot(expressionData)
+#' @examples fig <- nonInteractiveCorrelationMatrixPlot(expressionData)
 #' @author Guy Hunt
-correlationMatrixPlot <- function(ex){
+nonInteractiveCorrelationMatrixPlot <- function(ex){
   library(limma)
   library(umap)
   library(maptools)
@@ -189,4 +188,88 @@ correlationMatrixPlot <- function(ex){
   corMatrix <- cor(ex,use="c")
   fig <- pheatmap(corMatrix)
   return(fig)
+}
+
+#' A Function to Plot a Venn Diagram with the Number of Genes that were and were not Differentially Expressed
+#'
+#' This function creates a venndigram containing the number of genes that were and were not differentially expressed
+#' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDT() function
+#' @keywords GEO
+#' @export
+#' @import GEOquery limma umap data.table
+#' @examples fig <- nonInteractiveVennDiagramPlot(dT)
+#' @author Guy Hunt
+nonInteractiveVennDiagramPlot <- function(dT) {
+  library(GEOquery)
+  library(limma)
+  library(umap)
+  library(data.table)
+  vennDiagram(dT, circle.col=palette())
+}
+
+#' A Function to Create a QQ Plot of the Quantiles of a Data Sample Against the Theoretical Quantiles of a Student's T Distribution from Differential Gene Expression Analysis
+#'
+#' This function allows you to plot a QQ plot of the quantiles of a data sample against the theoretical quantiles of a Student's t distribution from differential gene expression analysis
+#' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateFit2() function
+#' @keywords GEO
+#' @export
+#' @examples fig <- nonInteractiveQQPlot(fit2)
+#' @import GEOquery limma umap data.table
+#' @author Guy Hunt
+nonInteractiveQQPlot <- function(fit2) {
+  # create Q-Q plot for t-statistic
+  t.good <- which(!is.na(fit2$F)) # filter out bad probes
+  qqt(fit2$t[t.good], fit2$df.total[t.good], main="Moderated t statistic")
+}
+
+#' A Function to Create a Volcano Plot of the Statistical Significance (-log10 P Value) Versus Magnitude of Change (log2 Fold Change) from Differential Gene Expression Analysis
+#'
+#' This function allows you to plot a volcano plot of the statistical significance (-log10 P value) versus magnitude of change (log2 fold change) from differential gene expression analysis
+#' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateFit2() function
+#' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDT() function
+#' @param ct A integer indicating the column to select from the dT object
+#' @keywords GEO
+#' @export
+#' @examples fig <- nonInteractiveVolcanoPlot(fit2, dT, ct)
+#' @import GEOquery limma umap data.table
+#' @author Guy Hunt
+nonInteractiveVolcanoPlot <- function(fit2, dT, ct) {
+  # volcano plot (log P-value vs log fold change)
+  colnames(fit2) # list contrast names
+  volcanoplot(fit2, coef=ct, main=colnames(fit2)[ct], pch=20,
+              highlight=length(which(dT[,ct]!=0)), names=rep('+', nrow(fit2)))
+}
+
+#' A Function to Create a Mean Difference Plot of the log2 Fold Change Versus Average log2 Expression Values from Differential Gene Expression Analysis
+#'
+#' This function allows you to plot a mean difference plot of the log2 fold change versus average log2 expression values from differential gene expression analysis
+#' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateFit2() function
+#' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDT() function
+#' @param ct A integer indicating the column to select from the dT object
+#' @keywords GEO
+#' @export
+#' @examples fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
+#' @import plotly ggplot2 limma scales
+#' @author Guy Hunt
+noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
+  # MD plot (log fold change vs mean log expression)
+  # highlight statistically significant (p-adj < 0.05) probes
+  plotMD(fit2, column=ct, status=dT[,ct], legend=F, pch=20, cex=1)
+  abline(h=0)
+}
+
+#' A Function to Create a Histogram of the P values from Differential Gene Expression Analysis
+#'
+#' This function allows you to plot a histogram of the P values from differential gene expression analysis
+#' @param fit2 An object containing the results of differntial gene expression analysis which can be obtained from the calculateFit2() function
+#' @param adjustment A character string containing the adjustment to P-values
+#' @keywords GEO
+#' @export
+#' @examples fig <- nonInteractiveHistogramPlot(fit2, adjustment)
+#' @import plotly ggplot2 limma scales
+#' @author Guy Hunt
+nonInteractiveHistogramPlot <- function(fit2, adjustment) {
+  tT2 <- topTable(fit2, adjust=adjustment, sort.by="B", number=Inf)
+  hist(tT2$adj.P.Val, col = "grey", border = "white", xlab = "P-adj",
+       ylab = "Number of genes", main = "P-adj value distribution")
 }

@@ -20,7 +20,7 @@ library(stringr)
 logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No"
 knnTransformation <- "No" # Values can also be "Yes"
 knn <- 2
-geoAccessionCodes <- list("GSE18380")
+geoAccessionCodes <- list("GSE18388")
 pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
 limmaPrecisionWeights <- "No"
 forceNormalization <- "No"
@@ -36,68 +36,59 @@ geoAccessionCode <- "GSE50499"
 #  tryCatch({
 
 # Get the GEO2R data for all platforms
-allGset <- getGset(geoAccessionCode)
-attributes(allGset)
-
+allGset <- getGeoObject(geoAccessionCode)
 
 # Get a list of all the platforms
-platforms <- getPlatforms(allGset)
+platforms <- extractPlatforms(allGset)
 platform <- platforms[1]
 
 # Extract the GEO2R data from the specified platform
-gsetData <- getPlatformGset(allGset, platform)
-gsetData
+gsetData <- extractPlatformGset(allGset, platform)
 
 # Extract the experiment information
-experimentInformation <- getExperimentInformation(gsetData)
-experimentInformation
+experimentInformation <- extractExperimentInformation(gsetData)
 
 # Extract Sample Information
-sampleInfo <- extractSampleInfo(gsetData)
-sampleInfo
-
-# Extract Sample Information
-geneAnnotation <- extractGeneAnnotation(gsetData)
-geneAnnotation
+sampleInfo <- extractSampleInformation(gsetData)
 
 # Extract expression data
 expressionData <- extractExpressionData(gsetData)
-expressionData
 
 # Get column Details
-columnInfo <- getColumnDetails(gsetData)
+columnInfo <- extractSampleDetails(gsetData)
 columnInfo
 
 # Is log transformation auto applied
-autoLogInformation <- isLogTransformAutoApplied(expressionData)
+autoLogInformation <- calculateAutoLogTransformApplication(expressionData)
 autoLogInformation
 
 # Get a list of all the columns
-columns <- extractColumns(expressionData)
+columns <- extractSampleNames(expressionData)
 columns
 
 # Apply log transformation to expression data if necessary
-dataInput <- logTransformExpressionData(expressionData, logTransformation)
+dataInput <- calculateLogTransformation(expressionData, logTransformation)
 dataInput
 
 # Perform KNN transformation on log expression data if necessary
-knnDataInput <- knnDataTransformation(dataInput, knnTransformation)
+knnDataInput <- calculateKnnImpute(dataInput, knnTransformation)
 
 # Remove all incomplete rows
-naOmitInput <- naOmitTransformation(knnDataInput)
+naOmitInput <- calculateNaOmit(knnDataInput)
 
 # Perform PCA analysis on KNN transformation expression data
-pcaPrincompDataInput <- pcaPrincompAnalysis(naOmitInput)
+pcaPrincompDataInput <- calculatePrincompPca(naOmitInput)
 
 # Extract Experiment Information
-extractedExperimentInformation <- extractExperimentInformation(experimentInformation)
+extractedExperimentInformation <- convertExperimentInformation(experimentInformation)
+extractedExperimentInformation
 
 # Interactive Box-and-Whisker Plot
 fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform)
 fig
 
 # Interactive Density Plot
-fig <- interactiveDesnityPlot(naOmitInput, geoAccessionCode, platform)
+fig <- interactiveDensityPlot(naOmitInput, geoAccessionCode, platform)
 fig
 
 # 3D Interactive Density Plot

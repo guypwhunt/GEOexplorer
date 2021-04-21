@@ -2,18 +2,18 @@
 % Please edit documentation in R/geoIntegrationFunctions.R
 \name{extractExperimentInformation}
 \alias{extractExperimentInformation}
-\title{A GEO Function to Convert the Experiment Information Object into HTML}
+\title{A GEO Function to Obtain the Experiment Information from a GEO Object}
 \usage{
-extractExperimentInformation(experimentData)
+extractExperimentInformation(gset)
 }
 \arguments{
-\item{experimentData}{The experiment object obtained from the getExperimentInformation() function}
+\item{gset}{The GEO object}
 }
 \description{
-This function allows you to convert experiment information into HTML
+This function allows you to extract experiment information from a GEO object
 }
 \examples{
-extractedExperimentInformation <- extractExperimentInformation(experimentInformation)
+experimentInformation <- extractExperimentInformation(gsetData)
 }
 \author{
 Guy Hunt

@@ -15,7 +15,7 @@ interactivePcaScreePlot(pcaData, geoAccessionCode)
 This function allows you to plot PCA expression results into an interactive Histogram of the Principle Components
 }
 \examples{
-fig <- interactivePrincompPcaScreePlot(pcaData, "GSE18380")
+fig <- interactivePcaScreePlot(pcaData, "GSE18380")
 }
 \author{
 Guy Hunt

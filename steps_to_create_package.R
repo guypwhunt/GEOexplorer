@@ -33,7 +33,6 @@ install("geo2rShinyApp")
 library(geo2rShinyApp)
 pkgload::load_all(".")
 geo2rShinyApp::loadApp()
-geo2rShinyApp::myApp()
 
 # Mack the package a github repo
 #setwd("./cats")
