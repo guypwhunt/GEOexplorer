@@ -43,7 +43,6 @@ geo2rShinyApp::loadApp()
 # Install from GitHub
 install.packages("devtools")
 library(devtools)
-install_github("guypwhunt/r_shiny_geo2r_visulisation", auth_token = "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")
 
 # Test library
 library(geo2rShinyApp)

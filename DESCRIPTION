@@ -1,13 +1,13 @@
 Package: geo2rShinyApp
-Title: geo2rShinyApp extends GEO2Rs functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data.
+Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Guy",
-           family = "Hunt",
+    person(given = "First",
+           family = "Last",
            role = c("aut", "cre"),
-           email = "guypwhunt@gmail.com",
+           email = "first.last@example.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: geo2rShinyApp extends GEO2Rs functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data.
+Description: What the package does (one paragraph).
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
