@@ -171,16 +171,3 @@ extractSampleInformation <- function(gset) {
   library(GEOquery)
   sampleInfo <- pData(gset)
   return(sampleInfo)}
-
-#' THIS FUNCTION IS RETIRED: A GEO Function to Extract Gene Information from a GEO object
-#'
-#' This function allows you to extract the studies Gene information from a GEO object
-#' @param gset The GEO object
-#' @keywords GEO
-#' @import GEOquery
-#' @examples geneAnnotation <- extractGeneAnnotation(gsetData)
-#' @author Guy Hunt
-extractGeneAnnotation <- function(gset) {
-  library(GEOquery)
-  geneAnnotation <- fData(gset)
-  return(geneAnnotation)}
