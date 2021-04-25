@@ -7,7 +7,7 @@
 nonInteractiveHistogramPlot(fit2, adjustment)
 }
 \arguments{
-\item{fit2}{An object containing the results of differntial gene expression analysis which can be obtained from the calculateFit2() function}
+\item{fit2}{An object containing the results of differntial gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function}
 
 \item{adjustment}{A character string containing the adjustment to P-values}
 }
@@ -16,6 +16,9 @@ This function allows you to plot a histogram of the P values from differential g
 }
 \examples{
 fig <- nonInteractiveHistogramPlot(fit2, adjustment)
+}
+\seealso{
+\code{\link[=calculateDifferentialGeneExpression]{calculateDifferentialGeneExpression()}} for differential gene expression object
 }
 \author{
 Guy Hunt

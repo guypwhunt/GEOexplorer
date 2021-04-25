@@ -7,13 +7,16 @@
 calculateNaOmit(ex)
 }
 \arguments{
-\item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
+\item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 }
 \description{
 A function to perform remove rows that contain a null value from an expression object.
 }
 \examples{
 naOmitInput <- calculateNaOmit(knnDataInput)
+}
+\seealso{
+\code{\link[=extractExpressionData]{extractExpressionData()}} for expression object
 }
 \author{
 Guy Hunt

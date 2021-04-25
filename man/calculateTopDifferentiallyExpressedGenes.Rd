@@ -7,7 +7,7 @@
 calculateTopDifferentiallyExpressedGenes(fit2, adjustment)
 }
 \arguments{
-\item{fit2}{An object containing the differentially expressed genes analysis that can be obtained from the calculateFit2() function}
+\item{fit2}{An object containing the differentially expressed genes analysis that can be obtained from the calculateDifferentialGeneExpression() function}
 
 \item{adjustment}{A string character containing the adjustment to the P-value. The values can be: "fdr", "BY", "bonferroni", "hochberg", "holm", "hommel" or "none"}
 }
@@ -16,6 +16,9 @@ This function creates a table of the top differentially expressed genes
 }
 \examples{
 tT <- calculateTopDifferentiallyExpressedGenes(fit2, "fdr")
+}
+\seealso{
+\code{\link[=calculateDifferentialGeneExpression]{calculateDifferentialGeneExpression()}} for differential gene expression object
 }
 \author{
 Guy Hunt

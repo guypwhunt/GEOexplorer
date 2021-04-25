@@ -7,13 +7,16 @@
 extractSampleNames(ex)
 }
 \arguments{
-\item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
+\item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 }
 \description{
 This function extracts the sample/column names from an expression object
 }
 \examples{
 columnNames <- extractSampleNames(expressionData)
+}
+\seealso{
+\code{\link[=extractExpressionData]{extractExpressionData()}} for expression object
 }
 \author{
 Guy Hunt

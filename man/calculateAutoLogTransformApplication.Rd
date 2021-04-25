@@ -7,13 +7,16 @@
 calculateAutoLogTransformApplication(ex)
 }
 \arguments{
-\item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
+\item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 }
 \description{
 This function allows you to determine if log transformation should be performed on an expression objects
 }
 \examples{
 autoLogInformation <- calculateAutoLogTransformApplication(expressionData)
+}
+\seealso{
+\code{\link[=extractExpressionData]{extractExpressionData()}} for expression object
 }
 \author{
 Guy Hunt

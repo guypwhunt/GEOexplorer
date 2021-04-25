@@ -1,13 +1,14 @@
 #' A Function to Log Transform an Expression Object
 #'
 #' This function allows you to log transform expression objects
-#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @param logTransformation Whether to auto-detect if log transformation is appropriate or to apply log transformation. Values can be "Auto-Detect" for auto detect, "Yes" to apply log transformation and "No" to not perform log transformation.
 #' @keywords GEO
 #' @export
 #' @import impute limma factoextra
 #' @examples dataInput <- calculateLogTransformation(expressionData, "Auto-Detect")
 #' @author Guy Hunt
+#' @seealso [extractExpressionData()] for expression object
 calculateLogTransformation <- function(ex, logTransformation = "Auto-Detect") {
   library(impute)
   library(limma)
@@ -37,12 +38,13 @@ calculateLogTransformation <- function(ex, logTransformation = "Auto-Detect") {
 #' A Function to Determine if Log Transformation should Automatically be Applied
 #'
 #' This function allows you to determine if log transformation should be performed on an expression objects
-#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
 #' @import impute limma factoextra
 #' @examples autoLogInformation <- calculateAutoLogTransformApplication(expressionData)
 #' @author Guy Hunt
+#' @seealso [extractExpressionData()] for expression object
 calculateAutoLogTransformApplication <- function(ex) {
   library(impute)
   library(limma)
@@ -62,13 +64,14 @@ calculateAutoLogTransformApplication <- function(ex) {
 #' A Function to Perform KNN Impute on an Expression Object
 #'
 #' A function to impute missing expression data, using nearest neighbor averaging.
-#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @param knnTransformation Whether to apply KNN impute. This can be "Yes" or "No"
 #' @keywords GEO
 #' @export
 #' @import impute limma factoextra
 #' @examples knnDataInput <- calculateKnnImpute(dataInput, "Yes")
 #' @author Guy Hunt
+#' @seealso [extractExpressionData()] for expression object
 calculateKnnImpute <- function(ex, knnTransformation) {
   library(impute)
   library(limma)
@@ -92,12 +95,13 @@ calculateKnnImpute <- function(ex, knnTransformation) {
 #' A Function to Perform Principle Component Analysis on an Expression Object
 #'
 #' A function to perform prcomp principle component analysis on an expression object.
-#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
 #' @import impute limma factoextra
 #' @examples pcaDataInput <- calculatePca(knnDataInput)
 #' @author Guy Hunt
+#' @seealso [extractExpressionData()] for expression object
 calculatePca <- function(ex){
   library(impute)
   library(limma)
@@ -109,12 +113,13 @@ calculatePca <- function(ex){
 #' A Function to Perform Principle Component Analysis on an Expression Object
 #'
 #' A function to perform Princomp principle component analysis on an expression object.
-#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
 #' @import impute limma factoextra
 #' @examples pcaPrincompDataInput <- calculatePrincompPca(knnDataInput)
 #' @author Guy Hunt
+#' @seealso [extractExpressionData()] for expression object
 calculatePrincompPca <- function(ex){
   library(impute)
   library(limma)
@@ -126,12 +131,13 @@ calculatePrincompPca <- function(ex){
 #' A Function to Removes Rows in an Expression Object that Contain Null Values
 #'
 #' A function to perform remove rows that contain a null value from an expression object.
-#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
 #' @import impute limma factoextra
 #' @examples naOmitInput <- calculateNaOmit(knnDataInput)
 #' @author Guy Hunt
+#' @seealso [extractExpressionData()] for expression object
 calculateNaOmit <- function(ex){
   library(impute)
   library(limma)

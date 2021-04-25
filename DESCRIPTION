@@ -1,15 +1,11 @@
 Package: geo2rShinyApp
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
-Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Title: An Interactive Shiny App for Exploratory Data Analysis and Differential Gene Expression of Gene Expression Data Held in the GEO Database. 
+Date: 2021/04/25
+Version: 1.0.0.0
+Authors: Guy Hunt with contributions from Fabrizio Smeraldi, Michael Barnes and Rafael Henkin
+Maintainer: Guy Hunt <g.p.w.hunt@se20.qmul.ac.uk>
+Description: The package contains a shiny app that enables users to perform exploratory data analysis and differential gene expression on gene expression data held in the GEO database. The outputs of exploratory data analysis and differential gene expression are presented in interactive visulisations. Additionally the package also contains all the data extraction, transformation and visulisation functions.
+License: use_mit_license()
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

@@ -7,7 +7,7 @@
 nonInteractiveCorrelationMatrixPlot(ex)
 }
 \arguments{
-\item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
+\item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 }
 \description{
 This function allows you to plot PCA expression results into an Scatter Plot contains both the Individuals and Variables

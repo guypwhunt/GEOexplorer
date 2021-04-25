@@ -7,7 +7,7 @@
 calculateKnnImpute(ex, knnTransformation)
 }
 \arguments{
-\item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
+\item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 
 \item{knnTransformation}{Whether to apply KNN impute. This can be "Yes" or "No"}
 }
@@ -16,6 +16,9 @@ A function to impute missing expression data, using nearest neighbor averaging.
 }
 \examples{
 knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+}
+\seealso{
+\code{\link[=extractExpressionData]{extractExpressionData()}} for expression object
 }
 \author{
 Guy Hunt

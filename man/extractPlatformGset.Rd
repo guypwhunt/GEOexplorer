@@ -7,7 +7,7 @@
 extractPlatformGset(gset, platform)
 }
 \arguments{
-\item{gset}{The GEO object}
+\item{gset}{The GEO object which can be obtained from the getGeoObject() function}
 
 \item{platform}{The platform code}
 }
@@ -16,6 +16,9 @@ This function allows you to extract a platform's GEO object from a GEO object
 }
 \examples{
 gsetData <- extractPlatformGset(gset, platforms[1])
+}
+\seealso{
+\code{\link[=getGeoObject]{getGeoObject()}} for GEO object
 }
 \author{
 Guy Hunt

@@ -11,13 +11,16 @@ nonInteractiveDesnityPlot(geoAccessionCode = "", platform = "", ex)
 
 \item{platform}{A character string representing the study's platform}
 
-\item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
+\item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 }
 \description{
 This function allows you to plot expression data into a Density Plot
 }
 \examples{
 fig <- nonInteractiveDesnityPlot(expressionData, "GSE18380", "GPL4694")
+}
+\seealso{
+\code{\link[=extractExpressionData]{extractExpressionData()}} for expression object
 }
 \author{
 Guy Hunt

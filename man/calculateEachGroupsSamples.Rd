@@ -7,7 +7,7 @@
 calculateEachGroupsSamples(columnNames, group1, group2)
 }
 \arguments{
-\item{columnNames}{All the sample names in the expression object which can be obtained from the extractColumns() function}
+\item{columnNames}{All the sample names in the expression object which can be obtained from the extractSampleNames() function}
 
 \item{group1}{The sample names in group 1. This must not contain any sample names that are in group2}
 
@@ -18,6 +18,9 @@ This function calculates the GSMS object for differential expression from the sa
 }
 \examples{
 gsms <- calculateEachGroupsSamples(columnNames,c("GSM455528", "GSM455541", "GSM455542", "GSM455543", "GSM455578", "GSM455610", "GSM455782"), c("GSM455783", "GSM455784", "GSM455785", "GSM455786", "GSM455787"))
+}
+\seealso{
+\code{\link[=extractSampleNames]{extractSampleNames()}} for all the sample names
 }
 \author{
 Guy Hunt

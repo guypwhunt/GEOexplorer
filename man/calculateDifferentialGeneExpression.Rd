@@ -13,21 +13,24 @@ calculateDifferentialGeneExpression(
 )
 }
 \arguments{
-\item{gsms}{A string of intgers indicating which group a sample belongs to}
+\item{gsms}{A string of integers indicating which group a sample belongs to, which can be calculated form the calculateEachGroupsSamples() function}
 
 \item{limmaPrecisionWeights}{Whether to apply limma precision weights (vooma)}
 
 \item{forceNormalization}{Whether to force normalization}
 
-\item{gset}{The GEO object}
+\item{gset}{The GEO object which can be obtained from the extractPlatformGset() function}
 
-\item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
+\item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 }
 \description{
 This function calculates the differential expression for two groups
 }
 \examples{
 fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gset, ex)
+}
+\seealso{
+\code{\link[=extractExpressionData]{extractExpressionData()}} for expression object, \code{\link[=extractPlatformGset]{extractPlatformGset()}} for GEO object, \code{\link[=calculateEachGroupsSamples]{calculateEachGroupsSamples()}} for the string of integers indicating which group a sample belongs to
 }
 \author{
 Guy Hunt

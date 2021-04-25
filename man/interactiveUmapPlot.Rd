@@ -7,7 +7,7 @@
 interactiveUmapPlot(ex, knn, geoAccessionCode)
 }
 \arguments{
-\item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
+\item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 
 \item{knn}{A integer representing the number of k nearest neighbor's to use}
 
@@ -18,6 +18,9 @@ This function allows you to plot expression data into an interactive UMAP Plot
 }
 \examples{
 fig <- interactiveUmapPlot(expressionData, 2, "GSE18380")
+}
+\seealso{
+\code{\link[=extractExpressionData]{extractExpressionData()}} for expression object
 }
 \author{
 Guy Hunt

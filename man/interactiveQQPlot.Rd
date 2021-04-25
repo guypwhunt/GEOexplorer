@@ -8,9 +8,9 @@
 interactiveQQPlot(fit2, dT, ct)
 }
 \arguments{
-\item{fit2}{An object containing the results of differential gene expression analysis which can be obtained from the calculateFit2() function}
+\item{fit2}{An object containing the results of differential gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function}
 
-\item{dT}{An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDT() function}
+\item{dT}{An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function}
 
 \item{ct}{A integer indicating the column to select from the dT object}
 }
@@ -19,6 +19,9 @@ This function allows you to plot an interactive QQ plot of the quantiles of a da
 }
 \examples{
 fig <- interactiveQQPlot(fit2, dT, ct)
+}
+\seealso{
+\code{\link[=calculateDifferentialGeneExpression]{calculateDifferentialGeneExpression()}} for differential gene expression object, \code{\link[=calculateDifferentialGeneExpressionSummary]{calculateDifferentialGeneExpressionSummary()}} for summary differential gene expression object
 }
 \author{
 Guy Hunt

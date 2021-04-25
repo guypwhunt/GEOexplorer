@@ -7,13 +7,16 @@
 nonInteractivePcaVariablesPlot(pcaEx)
 }
 \arguments{
-\item{pcaEx}{A PCA object which can be obtained from the pcaPrincompAnalysis() function}
+\item{pcaEx}{A PCA object which can be obtained from the calculatePrincompPca() function}
 }
 \description{
 This function allows you to plot PCA expression results into an Variables Scatter Plot
 }
 \examples{
 fig <- nonInteractivePcaVariablesPlot(pcaPrincompDataInput)
+}
+\seealso{
+\code{\link[=calculatePrincompPca]{calculatePrincompPca()}} for Princomp Pca expression object
 }
 \author{
 Guy Hunt

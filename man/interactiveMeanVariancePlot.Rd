@@ -7,17 +7,20 @@
 interactiveMeanVariancePlot(ex, geoAccessionCode, gset)
 }
 \arguments{
-\item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
+\item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 
 \item{geoAccessionCode}{A character string representing a GEO object for download and parsing}
 
-\item{gset}{The GEO object}
+\item{gset}{The GEO object which can be obtained from the extractPlatformGset() function}
 }
 \description{
 This function allows you to plot expression data into an interactive Mean Variance Plot
 }
 \examples{
 fig <- interactiveMeanVariancePlot(expressionData, "GSE18380", gset)
+}
+\seealso{
+\code{\link[=extractExpressionData]{extractExpressionData()}} for expression object, \code{\link[=extractPlatformGset]{extractPlatformGset()}} for GEO object
 }
 \author{
 Guy Hunt
