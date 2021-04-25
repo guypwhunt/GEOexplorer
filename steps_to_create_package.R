@@ -45,8 +45,30 @@ install.packages("devtools")
 library(devtools)
 
 # Test library
-install_github("guypwhunt/r_shiny_geo2r_visulisation", force = TRUE, ref = "master", auth_token = "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")
+install_github("guypwhunt/r_shiny_geo2r_visulisation", force = TRUE, ref = "master")
 library(geo2rShinyApp)
-pkgload::load_all(".")
-geo2rShinyApp::loadApp()
+help(package = "geo2rShinyApp")
+
+# Test functions
+geoAccessionCode <- "GSE18388"
+logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No"
+knnTransformation <- "No" # Values can also be "Yes"
+knn <- 2
+pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+limmaPrecisionWeights <- "No"
+forceNormalization <- "No"
+platformAnnotation <- "NCBI generated"
+significanceLevelCutOff <- 0.05
+
+allGset <- getGeoObject(geoAccessionCode)
+platforms <- extractPlatforms(allGset)
+gsetData <- extractPlatformGset(allGset, platforms[1])
+expressionData <- extractExpressionData(gsetData)
+logExpressionData <- calculateLogTransformation(expressionData, logTransformation)
+knnDataInput <- calculateKnnImpute(logExpressionData, knnTransformation)
+pcaPrincompExpressionData <- calculatePrincompPca(knnDataInput)
+fig <- interactivePrincompPcaScreePlot(pcaPrincompExpressionData, geoAccessionCode)
+fig
+
+
 
