@@ -44,12 +44,13 @@ getGeoObject <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platform
 #' A GEO Function to Obtain the Available Platforms of a GEO Object
 #'
 #' This function allows you to extract the platforms codes from a GEO object
-#' @param gset The GEO object
+#' @param gset The GEO object which can be obtained from the getGeoObject() function
 #' @keywords GEO
 #' @export
 #' @import GEOquery
 #' @examples platforms <- extractPlatforms(allGset)
 #' @author Guy Hunt
+#' @seealso [getGeoObject()] for GEO object
 extractPlatforms <- function(gset) {
   library(GEOquery)
   platforms <- c()
@@ -64,13 +65,14 @@ extractPlatforms <- function(gset) {
 #' A GEO Function to Obtain the GEO Object for a specific platform
 #'
 #' This function allows you to extract a platform's GEO object from a GEO object
-#' @param gset The GEO object
+#' @param gset The GEO object which can be obtained from the getGeoObject() function
 #' @param platform The platform code
 #' @keywords GEO
 #' @export
 #' @import GEOquery
 #' @examples gsetData <- extractPlatformGset(gset, platforms[1])
 #' @author Guy Hunt
+#' @seealso [getGeoObject()] for GEO object
 extractPlatformGset <- function(gset, platform) {
   library(GEOquery)
   if (length(gset) > 1) idx <- grep(platform[1], attr(gset, "names")) else idx <- 1
@@ -81,12 +83,13 @@ extractPlatformGset <- function(gset, platform) {
 #' A GEO Function to Obtain the Experiment Information from a GEO Object
 #'
 #' This function allows you to extract experiment information from a GEO object
-#' @param gset The GEO object
+#' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
 #' @export
 #' @import GEOquery
 #' @examples experimentInformation <- extractExperimentInformation(gsetData)
 #' @author Guy Hunt
+#' @seealso [extractPlatformGset()] for GEO object
 extractExperimentInformation <- function(gset) {
   library(GEOquery)
   experimentalData <- experimentData(gset)
@@ -100,8 +103,9 @@ extractExperimentInformation <- function(gset) {
 #' @keywords GEO
 #' @export
 #' @import GEOquery
-#' @examples convertExperimentInformation <- extractExperimentInformation(experimentInformation)
+#' @examples convertExperimentInformation <- convertExperimentInformation(experimentInformation)
 #' @author Guy Hunt
+#' @seealso [extractExperimentInformation()] for GEO object
 convertExperimentInformation <- function(experimentData) {
   library(GEOquery)
   name <- paste("<b>", "Author's Name:", "</b>", "<p>", experimentData@name, "</p>")
@@ -117,12 +121,13 @@ convertExperimentInformation <- function(experimentData) {
 #' A GEO Function to Extract Information on the Samples from a GEO object
 #'
 #' This function allows you to extract the studies sample information from a GEO object
-#' @param gset The GEO object
+#' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
 #' @export
 #' @import GEOquery
 #' @examples columnInfo <- extractSampleDetails(gsetData)
 #' @author Guy Hunt
+#' @seealso [extractPlatformGset()] for GEO object
 extractSampleDetails <- function(gset){
   library(GEOquery)
   phenoDataset <- phenoData(gset)
@@ -148,12 +153,13 @@ extractSampleDetails <- function(gset){
 #' A GEO Function to Extract Expression Data from a GEO object
 #'
 #' This function allows you to extract the studies expression object from a GEO object
-#' @param gset The GEO object
+#' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
 #' @export
 #' @import GEOquery
 #' @examples expressionData <- extractExpressionData(gsetData)
 #' @author Guy Hunt
+#' @seealso [extractPlatformGset()] for GEO object
 extractExpressionData <- function(gset) {
   library(GEOquery)
   ex <- exprs(gset)
@@ -162,11 +168,12 @@ extractExpressionData <- function(gset) {
 #' A GEO Function to Extract Information on the Samples from a GEO object
 #'
 #' This function allows you to extract the studies sample information from a GEO object
-#' @param gset The GEO object
+#' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
 #' @export
 #' @examples sampleInfo <- extractSampleInformation(gsetData)
 #' @author Guy Hunt
+#' @seealso [extractPlatformGset()] for GEO object
 extractSampleInformation <- function(gset) {
   library(GEOquery)
   sampleInfo <- pData(gset)

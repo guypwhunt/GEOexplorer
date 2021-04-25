@@ -2,12 +2,13 @@
 #'
 #' This function allows you to plot expression data into a Box and Whisker Plot
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
-#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2
 #' @examples fig <- nonInteractiveBoxAndWhiskerPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
+#' @seealso [extractExpressionData()] for expression object
 nonInteractiveBoxAndWhiskerPlot <- function(geoAccessionCode = "", platform ="", ex) {
   library(limma)
   library(umap)
@@ -23,12 +24,13 @@ nonInteractiveBoxAndWhiskerPlot <- function(geoAccessionCode = "", platform ="",
 #' This function allows you to plot expression data into a Density Plot
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
 #' @param platform A character string representing the study's platform
-#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2
 #' @examples fig <- nonInteractiveDesnityPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
+#' @seealso [extractExpressionData()] for expression object
 nonInteractiveDesnityPlot <- function(geoAccessionCode = "", platform = "", ex) {
   library(limma)
   library(umap)
@@ -44,12 +46,13 @@ nonInteractiveDesnityPlot <- function(geoAccessionCode = "", platform = "", ex) 
 #' This function allows you to plot expression data into a Mean Variance Plot
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
 #' @param platform A character string representing the study's platform
-#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2
 #' @examples fig <- nonInteractiveMeanVariancePlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
+#' @seealso [extractExpressionData()] for expression object
 nonInteractiveMeanVariancePlot <- function(geoAccessionCode = "", platform = "", ex) {
   library(limma)
   library(umap)
@@ -63,12 +66,13 @@ nonInteractiveMeanVariancePlot <- function(geoAccessionCode = "", platform = "",
 #' This function allows you to plot expression data into a UMAP Plot
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
 #' @param platform A character string representing the study's platform
-#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2
 #' @examples fig <- nonInteractiveUmapPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
+#' @seealso [extractExpressionData()] for expression object
 nonInteractiveUmapPlot <- function(geoAccessionCode = "", platform = "", ex, knn) {
   library(limma)
   library(umap)
@@ -89,6 +93,7 @@ nonInteractiveUmapPlot <- function(geoAccessionCode = "", platform = "", ex, knn
 #' @import impute umap maptools ggplot2 factoextra pheatmap
 #' @examples fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)
 #' @author Guy Hunt
+#' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaScreePlot <- function(pcaEx) {
   library(limma)
   library(umap)
@@ -108,6 +113,7 @@ nonInteractivePcaScreePlot <- function(pcaEx) {
 #' @import impute umap maptools ggplot2 factoextra pheatmap
 #' @examples fig <- nonInteractivePcaIndividualsPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
+#' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaIndividualsPlot <- function(pcaEx) {
   library(limma)
   library(umap)
@@ -132,6 +138,7 @@ nonInteractivePcaIndividualsPlot <- function(pcaEx) {
 #' @import impute umap maptools ggplot2 factoextra pheatmap
 #' @examples fig <- nonInteractivePcaVariablesPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
+#' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaVariablesPlot <- function(pcaEx) {
   library(limma)
   library(umap)
@@ -155,6 +162,7 @@ nonInteractivePcaVariablesPlot <- function(pcaEx) {
 #' @import impute umap maptools ggplot2 factoextra pheatmap
 #' @examples fig <- nonInteractivePcaBiplotPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
+#' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaBiplotPlot <- function(pcaEx) {
   library(limma)
   library(umap)
@@ -172,7 +180,7 @@ nonInteractivePcaBiplotPlot <- function(pcaEx) {
 #' A Function to Create a Correlation Matrix that contains both the Correlations between Samples
 #'
 #' This function allows you to plot PCA expression results into an Scatter Plot contains both the Individuals and Variables
-#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2 factoextra pheatmap
@@ -199,6 +207,7 @@ nonInteractiveCorrelationMatrixPlot <- function(ex){
 #' @import GEOquery limma umap data.table
 #' @examples fig <- nonInteractiveVennDiagramPlot(dT)
 #' @author Guy Hunt
+#' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object
 nonInteractiveVennDiagramPlot <- function(dT) {
   library(GEOquery)
   library(limma)
@@ -216,6 +225,7 @@ nonInteractiveVennDiagramPlot <- function(dT) {
 #' @examples fig <- nonInteractiveQQPlot(fit2)
 #' @import GEOquery limma umap data.table
 #' @author Guy Hunt
+#' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 nonInteractiveQQPlot <- function(fit2) {
   # create Q-Q plot for t-statistic
   t.good <- which(!is.na(fit2$F)) # filter out bad probes
@@ -233,6 +243,7 @@ nonInteractiveQQPlot <- function(fit2) {
 #' @examples fig <- nonInteractiveVolcanoPlot(fit2, dT, ct)
 #' @import GEOquery limma umap data.table
 #' @author Guy Hunt
+#' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object, [calculateDifferentialGeneExpression()] for differential gene expression object
 nonInteractiveVolcanoPlot <- function(fit2, dT, ct) {
   # volcano plot (log P-value vs log fold change)
   colnames(fit2) # list contrast names
@@ -251,6 +262,7 @@ nonInteractiveVolcanoPlot <- function(fit2, dT, ct) {
 #' @examples fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
 #' @import plotly ggplot2 limma scales
 #' @author Guy Hunt
+#' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object, [calculateDifferentialGeneExpression()] for differential gene expression object
 noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
   # MD plot (log fold change vs mean log expression)
   # highlight statistically significant (p-adj < 0.05) probes
@@ -268,6 +280,7 @@ noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
 #' @examples fig <- nonInteractiveHistogramPlot(fit2, adjustment)
 #' @import plotly ggplot2 limma scales
 #' @author Guy Hunt
+#' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 nonInteractiveHistogramPlot <- function(fit2, adjustment) {
   tT2 <- topTable(fit2, adjust=adjustment, sort.by="B", number=Inf)
   hist(tT2$adj.P.Val, col = "grey", border = "white", xlab = "P-adj",

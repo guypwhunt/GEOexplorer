@@ -8,6 +8,7 @@
 #' @examples fig <- interactiveHistogramPlot(fit2, adjustment)
 #' @import plotly ggplot2 limma scales
 #' @author Guy Hunt
+#' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 interactiveHistogramPlot <- function(fit2, adjustment) {
   library(plotly)
   library(ggplot2)
@@ -32,6 +33,7 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
 #' @examples fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
 #' @import plotly ggplot2 limma scales
 #' @author Guy Hunt
+#' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object, [calculateDifferentialGeneExpressionSummary()] for summary differential gene expression object
 interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
   library(plotly)
   library(ggplot2)
@@ -106,6 +108,7 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
 #' @examples fig <- interactiveVolcanoPlot(fit2, dT, ct)
 #' @import plotly ggplot2 limma scales
 #' @author Guy Hunt
+#' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object, [calculateDifferentialGeneExpressionSummary()] for summary differential gene expression object
 interactiveVolcanoPlot <- function(fit2, dT, ct) {
   library(plotly)
   library(ggplot2)
@@ -178,6 +181,7 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
 #' @examples fig <- interactiveQQPlot(fit2, dT, ct)
 #' @import plotly ggplot2 limma scales
 #' @author Guy Hunt
+#' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object, [calculateDifferentialGeneExpressionSummary()] for summary differential gene expression object
 interactiveQQPlot <- function(fit2, dT, ct) {
   library(plotly)
   library(ggplot2)

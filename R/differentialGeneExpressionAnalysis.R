@@ -1,11 +1,12 @@
 #' A Function to Extract the Sample/Columns Names from an Expression Object
 #'
 #' This function extracts the sample/column names from an expression object
-#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
 #' @examples columnNames <- extractSampleNames(expressionData)
 #' @author Guy Hunt
+#' @seealso [extractExpressionData()] for expression object
 extractSampleNames <- function(ex) {
   columnNames <- colnames(ex)
   return(columnNames)
@@ -22,6 +23,7 @@ extractSampleNames <- function(ex) {
 #' @import GEOquery limma umap data.table
 #' @examples gsms <- calculateEachGroupsSamples(columnNames,c("GSM455528", "GSM455541", "GSM455542", "GSM455543", "GSM455578", "GSM455610", "GSM455782"), c("GSM455783", "GSM455784", "GSM455785", "GSM455786", "GSM455787"))
 #' @author Guy Hunt
+#' @seealso [extractSampleNames()] for all the sample names
 calculateEachGroupsSamples <- function(columnNames, group1, group2){
   library(GEOquery)
   library(limma)
@@ -50,16 +52,17 @@ calculateEachGroupsSamples <- function(columnNames, group1, group2){
 #' A Function to Calculate the Differential Gene EXpression between two groups
 #'
 #' This function calculates the differential expression for two groups
-#' @param gsms A string of intgers indicating which group a sample belongs to
+#' @param gsms A string of integers indicating which group a sample belongs to, which can be calculated form the calculateEachGroupsSamples() function
 #' @param limmaPrecisionWeights Whether to apply limma precision weights (vooma)
 #' @param forceNormalization Whether to force normalization
-#' @param gset The GEO object
-#' @param ex A GEO expression object which can be obtained from the extractExpressionData() function
+#' @param gset The GEO object which can be obtained from the extractPlatformGset() function
+#' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
 #' @import GEOquery limma umap data.table
 #' @examples fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gset, ex)
 #' @author Guy Hunt
+#' @seealso [extractExpressionData()] for expression object, [extractPlatformGset()] for GEO object, [calculateEachGroupsSamples()] for the string of integers indicating which group a sample belongs to
 calculateDifferentialGeneExpression <- function(gsms, limmaPrecisionWeights, forceNormalization, gset, ex){
   library(GEOquery)
   library(limma)
@@ -163,6 +166,7 @@ convertAdjustment <- function(adjustment){
 #' @import GEOquery limma umap data.table
 #' @examples tT <- calculateTopDifferentiallyExpressedGenes(fit2, "fdr")
 #' @author Guy Hunt
+#' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 calculateTopDifferentiallyExpressedGenes <- function(fit2, adjustment) {
   library(GEOquery)
   library(limma)
@@ -221,6 +225,7 @@ calculateExclusiveColumns <- function(columns, inputColumns) {
 #' @import GEOquery limma umap data.table
 #' @examples dT <- calculateDifferentialGeneExpressionSummary(fit2, "fdr", 0.05)
 #' @author Guy Hunt
+#' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 calculateDifferentialGeneExpressionSummary <- function(fit2, adjustment, significanceLevelCutOff) {
   library(GEOquery)
   library(limma)
