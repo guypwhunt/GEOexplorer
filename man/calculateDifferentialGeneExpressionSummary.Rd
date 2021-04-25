@@ -11,7 +11,7 @@ calculateDifferentialGeneExpressionSummary(
 )
 }
 \arguments{
-\item{fit2}{An object containing the differentially expressed genes analysis that can be obtained from the calculateFit2() function}
+\item{fit2}{An object containing the differentially expressed genes analysis that can be obtained from the calculateDifferentialGeneExpression() function}
 
 \item{adjustment}{A string character containing the adjustment to the P-value. The values can be: "fdr", "BY", "bonferroni", "hochberg", "holm", "hommel" or "none"}
 

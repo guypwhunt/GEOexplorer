@@ -7,7 +7,7 @@
 nonInteractiveQQPlot(fit2)
 }
 \arguments{
-\item{fit2}{An object containing the results of differential gene expression analysis which can be obtained from the calculateFit2() function}
+\item{fit2}{An object containing the results of differential gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function}
 }
 \description{
 This function allows you to plot a QQ plot of the quantiles of a data sample against the theoretical quantiles of a Student's t distribution from differential gene expression analysis

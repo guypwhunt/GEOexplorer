@@ -212,7 +212,7 @@ interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
 #'
 #' This function allows you to plot PCA expression results into an interactive Histogram of the Principle Components
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
-#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the pcaAnalysis() function
+#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePca() function
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactivePcaScreePlot(pcaData, "GSE18380")
@@ -243,7 +243,7 @@ interactivePcaScreePlot <- function(pcaData, geoAccessionCode) {
 #'
 #' This function allows you to plot PCA expression results into an interactive Histogram of the Principle Components
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
-#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the pcaPrincompAnalysis() function
+#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactivePrincompPcaScreePlot(pcaData, "GSE18380")
@@ -273,7 +273,7 @@ interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
 #'
 #' This function allows you to plot PCA expression results into an interactive Scatter Plot
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
-#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the pcaPrincompAnalysis() function
+#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
 #' @param gset The GEO object
 #' @keywords GEO
 #' @export
@@ -356,7 +356,7 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
 #'
 #' This function allows you to plot PCA expression results into an interactive Scatter Plot
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
-#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the pcaPrincompAnalysis() function
+#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")

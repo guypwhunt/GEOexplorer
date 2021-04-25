@@ -7,7 +7,7 @@
 interactivePcaScreePlot(pcaData, geoAccessionCode)
 }
 \arguments{
-\item{pcaData}{An object containing the results of PCA on a Geo Expression object which can be obtained from the pcaAnalysis() function}
+\item{pcaData}{An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePca() function}
 
 \item{geoAccessionCode}{A character string representing a GEO object for download and parsing}
 }

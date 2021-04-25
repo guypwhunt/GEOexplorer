@@ -83,7 +83,7 @@ nonInteractiveUmapPlot <- function(geoAccessionCode = "", platform = "", ex, knn
 #' A Function to Create a Histogram of the Principle Components from the PCA outputs of an Expression Object
 #'
 #' This function allows you to plot PCA expression results into a Histogram of the Principle Components
-#' @param pcaEx A PCA object which can be obtained from the pcaPrincompAnalysis() function
+#' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2 factoextra pheatmap
@@ -102,7 +102,7 @@ nonInteractivePcaScreePlot <- function(pcaEx) {
 #' A Function to Create an Individuals Scatter Plot from the PCA outputs of an Expression Object
 #'
 #' This function allows you to plot PCA expression results into an Individuals Scatter Plot
-#' @param pcaEx A PCA object which can be obtained from the pcaPrincompAnalysis() function
+#' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2 factoextra pheatmap
@@ -126,7 +126,7 @@ nonInteractivePcaIndividualsPlot <- function(pcaEx) {
 #' A Function to Create an Variables Scatter Plot from the PCA outputs of an Expression Object
 #'
 #' This function allows you to plot PCA expression results into an Variables Scatter Plot
-#' @param pcaEx A PCA object which can be obtained from the pcaPrincompAnalysis() function
+#' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2 factoextra pheatmap
@@ -149,7 +149,7 @@ nonInteractivePcaVariablesPlot <- function(pcaEx) {
 #' A Function to Create a Scatter Plot that contains both the Individuals and Variables from the PCA outputs of an Expression Object
 #'
 #' This function allows you to plot PCA expression results into an Scatter Plot contains both the Individuals and Variables
-#' @param pcaEx A PCA object which can be obtained from the pcaPrincompAnalysis() function
+#' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @export
 #' @import impute umap maptools ggplot2 factoextra pheatmap
@@ -193,7 +193,7 @@ nonInteractiveCorrelationMatrixPlot <- function(ex){
 #' A Function to Plot a Venn Diagram with the Number of Genes that were and were not Differentially Expressed
 #'
 #' This function creates a venndigram containing the number of genes that were and were not differentially expressed
-#' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDT() function
+#' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @keywords GEO
 #' @export
 #' @import GEOquery limma umap data.table
@@ -210,7 +210,7 @@ nonInteractiveVennDiagramPlot <- function(dT) {
 #' A Function to Create a QQ Plot of the Quantiles of a Data Sample Against the Theoretical Quantiles of a Student's T Distribution from Differential Gene Expression Analysis
 #'
 #' This function allows you to plot a QQ plot of the quantiles of a data sample against the theoretical quantiles of a Student's t distribution from differential gene expression analysis
-#' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateFit2() function
+#' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function
 #' @keywords GEO
 #' @export
 #' @examples fig <- nonInteractiveQQPlot(fit2)
@@ -225,8 +225,8 @@ nonInteractiveQQPlot <- function(fit2) {
 #' A Function to Create a Volcano Plot of the Statistical Significance (-log10 P Value) Versus Magnitude of Change (log2 Fold Change) from Differential Gene Expression Analysis
 #'
 #' This function allows you to plot a volcano plot of the statistical significance (-log10 P value) versus magnitude of change (log2 fold change) from differential gene expression analysis
-#' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateFit2() function
-#' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDT() function
+#' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function
+#' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
 #' @export
@@ -243,8 +243,8 @@ nonInteractiveVolcanoPlot <- function(fit2, dT, ct) {
 #' A Function to Create a Mean Difference Plot of the log2 Fold Change Versus Average log2 Expression Values from Differential Gene Expression Analysis
 #'
 #' This function allows you to plot a mean difference plot of the log2 fold change versus average log2 expression values from differential gene expression analysis
-#' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateFit2() function
-#' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDT() function
+#' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function
+#' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
 #' @export
@@ -261,7 +261,7 @@ noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
 #' A Function to Create a Histogram of the P values from Differential Gene Expression Analysis
 #'
 #' This function allows you to plot a histogram of the P values from differential gene expression analysis
-#' @param fit2 An object containing the results of differntial gene expression analysis which can be obtained from the calculateFit2() function
+#' @param fit2 An object containing the results of differntial gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function
 #' @param adjustment A character string containing the adjustment to P-values
 #' @keywords GEO
 #' @export

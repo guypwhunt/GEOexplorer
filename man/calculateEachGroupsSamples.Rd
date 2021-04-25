@@ -7,7 +7,7 @@
 calculateEachGroupsSamples(columnNames, group1, group2)
 }
 \arguments{
-\item{columnNames}{All the sample names in the expression object which can be obtained from the extractColumns() function}
+\item{columnNames}{All the sample names in the expression object which can be obtained from the extractSampleNames() function}
 
 \item{group1}{The sample names in group 1. This must not contain any sample names that are in group2}
 

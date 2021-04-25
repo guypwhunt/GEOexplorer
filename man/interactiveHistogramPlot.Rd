@@ -8,7 +8,7 @@
 interactiveHistogramPlot(fit2, adjustment)
 }
 \arguments{
-\item{fit2}{An object containing the results of differntial gene expression analysis which can be obtained from the calculateFit2() function}
+\item{fit2}{An object containing the results of differential gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function}
 
 \item{adjustment}{A character string containing the adjustment to P-values}
 }

@@ -7,7 +7,7 @@
 nonInteractiveVennDiagramPlot(dT)
 }
 \arguments{
-\item{dT}{An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDT() function}
+\item{dT}{An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function}
 }
 \description{
 This function creates a venndigram containing the number of genes that were and were not differentially expressed
