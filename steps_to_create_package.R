@@ -45,7 +45,7 @@ install.packages("devtools")
 library(devtools)
 
 # Test library
-install_github("guypwhunt/r_shiny_geo2r_visulisation", force = TRUE)
+install_github("guypwhunt/r_shiny_geo2r_visulisation", force = TRUE, ref = "master", auth_token = "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")
 library(geo2rShinyApp)
 pkgload::load_all(".")
 geo2rShinyApp::loadApp()
