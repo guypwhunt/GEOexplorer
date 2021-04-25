@@ -17,6 +17,9 @@ This function allows you to plot a histogram of the P values from differential g
 \examples{
 fig <- nonInteractiveHistogramPlot(fit2, adjustment)
 }
+\seealso{
+\code{\link[=calculateDifferentialGeneExpression]{calculateDifferentialGeneExpression()}} for differential gene expression object
+}
 \author{
 Guy Hunt
 }

@@ -17,6 +17,9 @@ This function allows you to plot PCA expression results into an interactive Hist
 \examples{
 fig <- interactivePcaScreePlot(pcaData, "GSE18380")
 }
+\seealso{
+\code{\link[=calculatePca]{calculatePca()}} for PCA expression object
+}
 \author{
 Guy Hunt
 }

@@ -20,6 +20,9 @@ This function allows you to plot an interactive mean difference plot of the log2
 \examples{
 fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
 }
+\seealso{
+\code{\link[=calculateDifferentialGeneExpression]{calculateDifferentialGeneExpression()}} for differential gene expression object, \code{\link[=calculateDifferentialGeneExpressionSummary]{calculateDifferentialGeneExpressionSummary()}} for summary differential gene expression object
+}
 \author{
 Guy Hunt
 }

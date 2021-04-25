@@ -15,6 +15,9 @@ This function allows you to plot a QQ plot of the quantiles of a data sample aga
 \examples{
 fig <- nonInteractiveQQPlot(fit2)
 }
+\seealso{
+\code{\link[=calculateDifferentialGeneExpression]{calculateDifferentialGeneExpression()}} for differential gene expression object
+}
 \author{
 Guy Hunt
 }

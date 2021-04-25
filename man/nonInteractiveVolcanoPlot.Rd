@@ -19,6 +19,9 @@ This function allows you to plot a volcano plot of the statistical significance 
 \examples{
 fig <- nonInteractiveVolcanoPlot(fit2, dT, ct)
 }
+\seealso{
+\code{\link[=calculateDifferentialGeneExpressionSummary]{calculateDifferentialGeneExpressionSummary()}} for differential gene expression summary object, \code{\link[=calculateDifferentialGeneExpression]{calculateDifferentialGeneExpression()}} for differential gene expression object
+}
 \author{
 Guy Hunt
 }

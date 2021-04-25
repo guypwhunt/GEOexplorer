@@ -23,6 +23,9 @@ This function creates an object containing if each gene is unreguate, downregula
 \examples{
 dT <- calculateDifferentialGeneExpressionSummary(fit2, "fdr", 0.05)
 }
+\seealso{
+\code{\link[=calculateDifferentialGeneExpression]{calculateDifferentialGeneExpression()}} for differential gene expression object
+}
 \author{
 Guy Hunt
 }

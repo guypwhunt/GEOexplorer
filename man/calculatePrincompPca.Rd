@@ -7,13 +7,16 @@
 calculatePrincompPca(ex)
 }
 \arguments{
-\item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
+\item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 }
 \description{
 A function to perform Princomp principle component analysis on an expression object.
 }
 \examples{
 pcaPrincompDataInput <- calculatePrincompPca(knnDataInput)
+}
+\seealso{
+\code{\link[=extractExpressionData]{extractExpressionData()}} for expression object
 }
 \author{
 Guy Hunt

@@ -7,7 +7,7 @@
 calculateLogTransformation(ex, logTransformation = "Auto-Detect")
 }
 \arguments{
-\item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
+\item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 
 \item{logTransformation}{Whether to auto-detect if log transformation is appropriate or to apply log transformation. Values can be "Auto-Detect" for auto detect, "Yes" to apply log transformation and "No" to not perform log transformation.}
 }
@@ -16,6 +16,9 @@ This function allows you to log transform expression objects
 }
 \examples{
 dataInput <- calculateLogTransformation(expressionData, "Auto-Detect")
+}
+\seealso{
+\code{\link[=extractExpressionData]{extractExpressionData()}} for expression object
 }
 \author{
 Guy Hunt

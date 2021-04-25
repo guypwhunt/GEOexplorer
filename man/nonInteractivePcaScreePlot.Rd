@@ -15,6 +15,9 @@ This function allows you to plot PCA expression results into a Histogram of the 
 \examples{
 fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)
 }
+\seealso{
+\code{\link[=calculatePrincompPca]{calculatePrincompPca()}} for Princomp Pca expression object
+}
 \author{
 Guy Hunt
 }

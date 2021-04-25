@@ -20,6 +20,9 @@ This function allows you to plot an interactive volcano plot of the statistical 
 \examples{
 fig <- interactiveVolcanoPlot(fit2, dT, ct)
 }
+\seealso{
+\code{\link[=calculateDifferentialGeneExpression]{calculateDifferentialGeneExpression()}} for differential gene expression object, \code{\link[=calculateDifferentialGeneExpressionSummary]{calculateDifferentialGeneExpressionSummary()}} for summary differential gene expression object
+}
 \author{
 Guy Hunt
 }

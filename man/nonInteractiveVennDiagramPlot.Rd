@@ -15,6 +15,9 @@ This function creates a venndigram containing the number of genes that were and 
 \examples{
 fig <- nonInteractiveVennDiagramPlot(dT)
 }
+\seealso{
+\code{\link[=calculateDifferentialGeneExpressionSummary]{calculateDifferentialGeneExpressionSummary()}} for differential gene expression summary object
+}
 \author{
 Guy Hunt
 }

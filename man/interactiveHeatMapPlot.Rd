@@ -7,7 +7,7 @@
 interactiveHeatMapPlot(ex)
 }
 \arguments{
-\item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
+\item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 }
 \description{
 This function allows you to plot an interactive heat map of the correlations between samples in an expression object

@@ -7,13 +7,16 @@
 extractExperimentInformation(gset)
 }
 \arguments{
-\item{gset}{The GEO object}
+\item{gset}{The GEO object which can be obtained from the extractPlatformGset() function}
 }
 \description{
 This function allows you to extract experiment information from a GEO object
 }
 \examples{
 experimentInformation <- extractExperimentInformation(gsetData)
+}
+\seealso{
+\code{\link[=extractPlatformGset]{extractPlatformGset()}} for GEO object
 }
 \author{
 Guy Hunt

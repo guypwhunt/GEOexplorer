@@ -13,7 +13,10 @@ convertExperimentInformation(experimentData)
 This function allows you to convert experiment information into HTML
 }
 \examples{
-convertExperimentInformation <- extractExperimentInformation(experimentInformation)
+convertExperimentInformation <- convertExperimentInformation(experimentInformation)
+}
+\seealso{
+\code{\link[=extractExperimentInformation]{extractExperimentInformation()}} for GEO object
 }
 \author{
 Guy Hunt

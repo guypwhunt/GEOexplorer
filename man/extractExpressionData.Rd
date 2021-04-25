@@ -7,13 +7,16 @@
 extractExpressionData(gset)
 }
 \arguments{
-\item{gset}{The GEO object}
+\item{gset}{The GEO object which can be obtained from the extractPlatformGset() function}
 }
 \description{
 This function allows you to extract the studies expression object from a GEO object
 }
 \examples{
 expressionData <- extractExpressionData(gsetData)
+}
+\seealso{
+\code{\link[=extractPlatformGset]{extractPlatformGset()}} for GEO object
 }
 \author{
 Guy Hunt

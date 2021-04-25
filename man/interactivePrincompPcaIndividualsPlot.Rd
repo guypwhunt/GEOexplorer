@@ -11,13 +11,16 @@ interactivePrincompPcaIndividualsPlot(pcaData, geoAccessionCode, gset)
 
 \item{geoAccessionCode}{A character string representing a GEO object for download and parsing}
 
-\item{gset}{The GEO object}
+\item{gset}{The GEO object which can be obtained from the extractPlatformGset() function}
 }
 \description{
 This function allows you to plot PCA expression results into an interactive Scatter Plot
 }
 \examples{
 fig <- interactivePrincompPcaIndividualsPlot(pcaData, "GSE18380", gset)
+}
+\seealso{
+\code{\link[=calculatePrincompPca]{calculatePrincompPca()}} for Princomp PCA expression object, \code{\link[=extractPlatformGset]{extractPlatformGset()}} for GEO object
 }
 \author{
 Guy Hunt

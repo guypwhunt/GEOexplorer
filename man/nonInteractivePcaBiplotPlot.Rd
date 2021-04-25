@@ -15,6 +15,9 @@ This function allows you to plot PCA expression results into an Scatter Plot con
 \examples{
 fig <- nonInteractivePcaBiplotPlot(pcaPrincompDataInput)
 }
+\seealso{
+\code{\link[=calculatePrincompPca]{calculatePrincompPca()}} for Princomp Pca expression object
+}
 \author{
 Guy Hunt
 }

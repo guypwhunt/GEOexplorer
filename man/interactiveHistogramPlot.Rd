@@ -18,6 +18,9 @@ This function allows you to plot an interactive histogram of the P values from d
 \examples{
 fig <- interactiveHistogramPlot(fit2, adjustment)
 }
+\seealso{
+\code{\link[=calculateDifferentialGeneExpression]{calculateDifferentialGeneExpression()}} for differential gene expression object
+}
 \author{
 Guy Hunt
 }

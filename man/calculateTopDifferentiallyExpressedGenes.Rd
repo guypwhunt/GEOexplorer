@@ -17,6 +17,9 @@ This function creates a table of the top differentially expressed genes
 \examples{
 tT <- calculateTopDifferentiallyExpressedGenes(fit2, "fdr")
 }
+\seealso{
+\code{\link[=calculateDifferentialGeneExpression]{calculateDifferentialGeneExpression()}} for differential gene expression object
+}
 \author{
 Guy Hunt
 }

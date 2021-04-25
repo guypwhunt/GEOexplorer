@@ -7,13 +7,16 @@
 extractSampleInformation(gset)
 }
 \arguments{
-\item{gset}{The GEO object}
+\item{gset}{The GEO object which can be obtained from the extractPlatformGset() function}
 }
 \description{
 This function allows you to extract the studies sample information from a GEO object
 }
 \examples{
 sampleInfo <- extractSampleInformation(gsetData)
+}
+\seealso{
+\code{\link[=extractPlatformGset]{extractPlatformGset()}} for GEO object
 }
 \author{
 Guy Hunt

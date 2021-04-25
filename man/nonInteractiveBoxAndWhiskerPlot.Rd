@@ -9,13 +9,16 @@ nonInteractiveBoxAndWhiskerPlot(geoAccessionCode = "", platform = "", ex)
 \arguments{
 \item{geoAccessionCode}{A character string representing a GEO object for download and parsing}
 
-\item{ex}{A GEO expression object which can be obtained from the extractExpressionData() function}
+\item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 }
 \description{
 This function allows you to plot expression data into a Box and Whisker Plot
 }
 \examples{
 fig <- nonInteractiveBoxAndWhiskerPlot(expressionData, "GSE18380", "GPL4694")
+}
+\seealso{
+\code{\link[=extractExpressionData]{extractExpressionData()}} for expression object
 }
 \author{
 Guy Hunt

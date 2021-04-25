@@ -19,6 +19,9 @@ This function allows you to plot a mean difference plot of the log2 fold change 
 \examples{
 fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
 }
+\seealso{
+\code{\link[=calculateDifferentialGeneExpressionSummary]{calculateDifferentialGeneExpressionSummary()}} for differential gene expression summary object, \code{\link[=calculateDifferentialGeneExpression]{calculateDifferentialGeneExpression()}} for differential gene expression object
+}
 \author{
 Guy Hunt
 }
