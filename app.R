@@ -17,8 +17,8 @@ source("R/dataVisualizationFunctions.R")
 #myApp <- function() {
 
 ui <- fluidPage(
-  titlePanel("GEO2R Data Visualisation"),
-  helpText("GEO2R is an interactive web tool that allows users to compare two or more groups of samples in a GEO Series to identify genes that are differentially expressed across experimental conditions. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data."),
+  titlePanel("GEO Explorer"),
+  helpText("GEO2R is an interactive web tool that allows users to compare two or more groups of samples in a GEO Series to identify genes that are differentially expressed across experimental conditions. GEO Explorer extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data."),
   sidebarPanel(
     helpText("Input a GEO accession code to examine the gene expression data."),
     textInput("geoAccessionCode", "GEO accession code", "GSE18380"),
