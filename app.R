@@ -6,6 +6,7 @@ library(shinyHeatmaply)
 library(ggplot2)
 library(shinyBS)
 library(shinyjs)
+library(DT)
 
 source("R/geoIntegrationFunctions.R")
 source("R/dataTransformationFunctions.R")
@@ -66,22 +67,21 @@ ui <- fluidPage(
                                  tabsetPanel(type = "tabs",
                                              tabPanel("Set Parameters",
                                                       mainPanel(
+                                                        dataTableOutput('knnColumnTable'),
+                                                        verbatimTextOutput('sel'),
                                                         fluidRow(
                                                           column(6,
                                                                  br(),
                                                                  uiOutput("dyncolumns"),
-                                                                 selectInput("columns1", "Group 1 Columns", choices=c(), multiple = TRUE),
-                                                                 selectInput("columns2", "Group 2 Columns", choices=c(), multiple = TRUE),
                                                                  selectInput("pValueAdjustment", "Apply adjustment to the P-values:",
-                                                                             choices = c("Benjamini & Hochberg (False discovery rate)", "Benjamini & Yekutieli", "Bonferroni", "Holm", "None")) # "Hochberg" and "Hommel" were removed
-                                                                 #,radioButtons("platformAnnotation", label="Category of Platform annotation to display on results:",choices=list("Submitter supplied","NCBI generated"),selected="NCBI generated")
-                                                          ),
-                                                          br(),
-                                                          column(6,
+                                                                             choices = c("Benjamini & Hochberg (False discovery rate)", "Benjamini & Yekutieli", "Bonferroni", "Holm", "None")), # "Hochberg" and "Hommel" were removed
                                                                  radioButtons("limmaPrecisionWeights",
                                                                               label="Apply limma precision weights (vooma):",
                                                                               choices=list("Yes","No"),
-                                                                              selected="No"),
+                                                                              selected="No")
+                                                                 ),
+                                                          br(),
+                                                          column(6,
                                                                  radioButtons("forceNormalization",
                                                                               label="Force normalization:",
                                                                               choices=list("Yes","No"),
@@ -178,6 +178,29 @@ server <- function(input, output, session){
       columnInfo
     })
 
+    # KNN Column Set Plot
+    knnColumns <- extractSampleNames(knnDataInput)
+    knnColumnInfo <- extractSampleDetails(gsetData)
+
+    # Could turn the below into a function
+    knnColumnInfo <<- knnColumnInfo[knnColumns,]
+
+    for (i in 1:nrow(knnColumnInfo)) {
+      knnColumnInfo$group[i] <- as.character(selectInput(paste0("sel", i), "", choices = unique(c("N/A", "Group 1", "Group 2")), width = "100px"))
+    }
+
+    output$knnColumnTable <- renderDataTable(
+      knnColumnInfo, escape = FALSE, selection = 'none', server = FALSE,
+      options = list(dom = 't', paging = FALSE, ordering = FALSE),
+      callback = JS("table.rows().every(function(i, tab, row) {
+        var $this = $(this.node());
+        $this.attr('id', this.data()[0]);
+        $this.addClass('shiny-input-container');
+      });
+      Shiny.unbindAll(table.table().node());
+      Shiny.bindAll(table.table().node());")
+    )
+
     # Data Set Plot
     output$table <- renderDataTable({
       knnDataInput
@@ -227,28 +250,18 @@ server <- function(input, output, session){
     output$interactivePcaVariablesPlot <- renderPlotly({
       interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, input$geoAccessionCode)
     })
-
-    # Update Column on UI
-    columns1Observe <- observe({
-      updateSelectInput(session, "columns1",
-                        choices = columns)
-    })
-
-    columns2Observe <- observe({
-      updateSelectInput(session, "columns2",
-                        choices = calculateExclusiveColumns(columns,input$columns1))
-    })
   })
 
   # Differential Gene Expression Functions
   observeEvent(input$differentialExpressionButton, {
+
     # Differential gene expression analysis
     gsetData <- extractPlatformGset(allGset(), input$platform)
     expressionData <- extractExpressionData(gsetData)
     dataInput <- calculateLogTransformation(expressionData, input$logTransformation)
     knnDataInput <- calculateKnnImpute(dataInput, input$knnTransformation)
     columns <- extractSampleNames(knnDataInput)
-    gsms <- calculateEachGroupsSamples(columns,input$columns1, input$columns2)
+    gsms <- calculateEachGroupsSamplesFromDataFrame(as.data.frame(sapply(1:nrow(knnColumnInfo), function(a) input[[paste0("sel", a)]])))
     fit2 <- calculateDifferentialGeneExpression(gsms, input$limmaPrecisionWeights, input$forceNormalization, gsetData, knnDataInput)
     adjustment <- convertAdjustment(input$pValueAdjustment)
     tT <- calculateTopDifferentiallyExpressedGenes(fit2, adjustment)

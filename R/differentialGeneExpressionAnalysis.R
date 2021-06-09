@@ -234,3 +234,41 @@ calculateDifferentialGeneExpressionSummary <- function(fit2, adjustment, signifi
   dT <- decideTests(fit2, adjust.method=adjustment, p.value=significanceLevelCutOff)
   return(dT)
 }
+
+#' A Function to Calculate the Samples Selected in Each Group
+#'
+#' This function calculates the GSMS object for differential expression from a dataframe of the groups
+#' @param groupDataFrame A dataframe containing the row number and group selection
+#' @keywords GEO
+#' @export
+#' @import stringr
+#' @examples TBD
+#' @author Guy Hunt
+#' @seealso TBD
+calculateEachGroupsSamplesFromDataFrame <- function(groupDataFrame) {
+  library(stringr)
+  # Convert the input to a dataframe
+  groupDataFrame <- as.data.frame(groupDataFrame)
+
+  # For each row convert the UI codes to backend codes
+  for (val in 1:nrow(groupDataFrame)) {
+    if (groupDataFrame[val,1] == "N/A")
+    {
+      groupDataFrame[val,1] <- "X"
+    } else if (groupDataFrame[val,1] == "Group 1"){
+      groupDataFrame[val,1] <- 0
+    } else if (groupDataFrame[val,1] == "Group 2"){
+      groupDataFrame[val,1] <- 1
+    }
+  }
+
+  # Convert the outputs to a string
+  stringGroup <- toString(groupDataFrame[,1])
+
+  # Remove all commas and spaces in the string
+  stringGroup <- str_remove_all(str_remove_all(stringGroup, ",")," ")
+
+  #return(groupDataFrame)
+
+  return(stringGroup)
+}
