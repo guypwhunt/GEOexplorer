@@ -30,9 +30,9 @@ setwd("..")
 install("geo2rShinyApp")
 
 # Test cats worked
-library(geo2rShinyApp)
+library(GEOexplorer)
 pkgload::load_all(".")
-geo2rShinyApp::loadApp()
+GEOexplorer::loadApp()
 
 # Mack the package a github repo
 #setwd("./cats")

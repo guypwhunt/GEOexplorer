@@ -1,11 +1,11 @@
-Package: geo2rShinyApp
+Package: GEOexplorer
 Title: An Interactive Shiny App for Exploratory Data Analysis and Differential Gene Expression of Gene Expression Data Held in the GEO Database. 
 Date: 2021/04/25
 Version: 1.0.0.0
 Authors: Guy Hunt with contributions from Fabrizio Smeraldi, Michael Barnes and Rafael Henkin
 Maintainer: Guy Hunt <g.p.w.hunt@se20.qmul.ac.uk>
 Description: The package contains a shiny app that enables users to perform exploratory data analysis and differential gene expression on gene expression data held in the GEO database. The outputs of exploratory data analysis and differential gene expression are presented in interactive visulisations. Additionally the package also contains all the data extraction, transformation and visulisation functions.
-License: use_mit_license()
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -29,3 +29,5 @@ Imports:
   GEOquery,
   limma,
   impute
+Acknowledgements: The development of GEOexplorer was made possible because of the excellent code provided by GEO2R
+(https://www.ncbi.nlm.nih.gov/geo/geo2r/).
