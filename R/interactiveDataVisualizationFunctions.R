@@ -100,12 +100,13 @@ interactiveThreeDDesnityPlot <- function(ex, geoAccessionCode, platform) {
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactiveUmapPlot(expressionData, 2, "GSE18380")
-#' @import plotly ggplot2 limma
+#' @import plotly ggplot2 limma umap
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
+  library(umap)
   library(limma)
   ex <- ex[!duplicated(ex), ]  # remove duplicates
   ump <- umap(t(ex), n_neighbors = knn, random_state = 123)

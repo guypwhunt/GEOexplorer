@@ -268,7 +268,5 @@ calculateEachGroupsSamplesFromDataFrame <- function(groupDataFrame) {
   # Remove all commas and spaces in the string
   stringGroup <- str_remove_all(str_remove_all(stringGroup, ",")," ")
 
-  #return(groupDataFrame)
-
   return(stringGroup)
 }
