@@ -244,7 +244,6 @@ calculateDifferentialGeneExpressionSummary <- function(fit2, adjustment, signifi
 #' @import stringr
 #' @examples TBD
 #' @author Guy Hunt
-#' @seealso TBD
 calculateEachGroupsSamplesFromDataFrame <- function(groupDataFrame) {
   library(stringr)
   # Convert the input to a dataframe

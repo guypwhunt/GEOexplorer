@@ -1,0 +1,10 @@
+name: GEOexplorer
+title:
+username:
+account: geo2r-shiny-data-visualisation
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4258206
+bundleId: 4705414
+url: https://geoexplorer.shinyapps.io/GEOexplorer/
+when: 1623417304.15293

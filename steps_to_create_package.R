@@ -47,10 +47,10 @@ install_github("guypwhunt/r_shiny_geo2r_visulisation", force = TRUE, ref = "main
 
 
 # Test library
-install_github("guypwhunt/r_shiny_geo2r_visulisation", force = TRUE, ref = "master")
-library(geo2rShinyApp)
+install_github("guypwhunt/GEOexplorer", force = TRUE, ref = "master")
+library(GEOexplorer)
 geo2rShinyApp::loadApp()
-help(package = "geo2rShinyApp")
+help(package = "GEOexplorer")
 
 # Test functions
 geoAccessionCode <- "GSE18388"
