@@ -15,7 +15,6 @@ loadApp <- function() {
   library(ggplot2)
   library(shinyBS)
   library(shinyjs)
-  #library(fansi)
 
   ui <- fluidPage(
     titlePanel("GEO Explorer"),

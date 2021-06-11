@@ -6,7 +6,6 @@ library(shinyHeatmaply)
 library(ggplot2)
 library(shinyBS)
 library(shinyjs)
-library(DT)
 
 source("R/geoIntegrationFunctions.R")
 source("R/dataTransformationFunctions.R")
