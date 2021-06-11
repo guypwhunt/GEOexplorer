@@ -4,7 +4,7 @@
 #' @keywords GEO
 #' @export
 #' @examples loadApp()
-#' @import shiny plotly heatmaply shinyHeatmaply ggplot2 shinyBS shinyjs BiocManager
+#' @import shiny plotly heatmaply shinyHeatmaply ggplot2 shinyBS shinyjs BiocManager DT
 #' @author Guy Hunt
 loadApp <- function() {
   # Load Packages
@@ -15,6 +15,7 @@ loadApp <- function() {
   library(ggplot2)
   library(shinyBS)
   library(shinyjs)
+  library(DT)
 
   ui <- fluidPage(
     titlePanel("GEO Explorer"),
@@ -67,8 +68,7 @@ loadApp <- function() {
                                    tabsetPanel(type = "tabs",
                                                tabPanel("Set Parameters",
                                                         mainPanel(
-                                                          dataTableOutput('knnColumnTable'),
-                                                          verbatimTextOutput('sel'),
+                                                          DT::dataTableOutput('knnColumnTable'),
                                                           fluidRow(
                                                             column(6,
                                                                    br(),
@@ -189,8 +189,11 @@ loadApp <- function() {
         knnColumnInfo$group[i] <- as.character(selectInput(paste0("sel", i), "", choices = unique(c("N/A", "Group 1", "Group 2")), width = "100px"))
       }
 
-      output$knnColumnTable <- renderDataTable(
-        knnColumnInfo, escape = FALSE, selection = 'none', server = FALSE,
+      output$knnColumnTable <- DT::renderDataTable(
+        knnColumnInfo,
+        escape = FALSE,
+        selection = 'none',
+        server = FALSE,
         options = list(dom = 't', paging = FALSE, ordering = FALSE),
         callback = JS("table.rows().every(function(i, tab, row) {
         var $this = $(this.node());
