@@ -30,9 +30,9 @@ setwd("..")
 install("geo2rShinyApp")
 
 # Test cats worked
-library(geo2rShinyApp)
+library(GEOexplorer)
 pkgload::load_all(".")
-geo2rShinyApp::loadApp()
+GEOexplorer::loadApp()
 
 # Mack the package a github repo
 #setwd("./cats")
@@ -43,22 +43,19 @@ geo2rShinyApp::loadApp()
 # Install from GitHub
 install.packages("devtools")
 library(devtools)
+install_github("guypwhunt/r_shiny_geo2r_visulisation", force = TRUE, ref = "main")
+
 
 # Test library
-install_github("guypwhunt/r_shiny_geo2r_visulisation", force = TRUE, ref = "master")
-library(geo2rShinyApp)
-help(package = "geo2rShinyApp")
+install_github("guypwhunt/GEOexplorer", force = TRUE, ref = "master")
+library(GEOexplorer)
+geo2rShinyApp::loadApp()
+help(package = "GEOexplorer")
 
 # Test functions
 geoAccessionCode <- "GSE18388"
-logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No"
-knnTransformation <- "No" # Values can also be "Yes"
-knn <- 2
-pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
-limmaPrecisionWeights <- "No"
-forceNormalization <- "No"
-platformAnnotation <- "NCBI generated"
-significanceLevelCutOff <- 0.05
+logTransformation <- "Auto-Detect"
+knnTransformation <- "Yes"
 
 allGset <- getGeoObject(geoAccessionCode)
 platforms <- extractPlatforms(allGset)

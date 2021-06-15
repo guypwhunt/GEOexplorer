@@ -18,7 +18,7 @@ library(stringr)
 
 # Input Values
 logTransformation <- "Auto-Detect"  # Values can also be "Yes" or "No"
-knnTransformation <- "No" # Values can also be "Yes"
+knnTransformation <- "Yes" # Values can also be "Yes"
 knn <- 2
 geoAccessionCodes <- list("GSE18388")
 pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
@@ -32,7 +32,7 @@ badList <- list("GSE25758", "GSE25762", "GSE25723", "GSE18459") # The first two 
 
 #for(geoAccessionCode in geoAccessionCodes)
 #{
-geoAccessionCode <- "GSE50499"
+geoAccessionCode <- "GSE18380"
 #  tryCatch({
 
 # Get the GEO2R data for all platforms
@@ -72,6 +72,16 @@ dataInput
 
 # Perform KNN transformation on log expression data if necessary
 knnDataInput <- calculateKnnImpute(dataInput, knnTransformation)
+knnDataInput
+
+# Get a list of all the columns in the KNN output
+knnColumns <- extractSampleNames(knnDataInput)
+knnColumns
+
+# Get knn output column Details
+knnColumnInfo <- extractSampleDetails(gsetData)
+knnColumnInfo <- subset(knnColumnInfo, select=knnColumns)
+knnColumnInfo
 
 # Remove all incomplete rows
 naOmitInput <- calculateNaOmit(knnDataInput)

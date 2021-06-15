@@ -103,7 +103,6 @@ for (name in columnNames) {
   }
 }
 
-
 # Select columns in group2
 column2 <- calculateExclusiveColumns(columnNames, group1)
 
@@ -205,3 +204,11 @@ fig
 #    close(outputFile)
 #  })
 #}
+
+group <- c("Group 1", "Group 1", "Group 1", "Group 1", "Group 2", "Group 2", "Group 2", "Group 2", "Group 2", "N/A", "N/A", "N/A")
+groupDataFrame <- data.frame(group)
+
+group1 <- group1[-1]
+
+calculateEachGroupsSamplesFromDataFrame(groupDataFrame)
+calculateEachGroupsSamples(columnNames,group1, group2)

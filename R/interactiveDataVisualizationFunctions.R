@@ -100,12 +100,13 @@ interactiveThreeDDesnityPlot <- function(ex, geoAccessionCode, platform) {
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactiveUmapPlot(expressionData, 2, "GSE18380")
-#' @import plotly ggplot2 limma
+#' @import plotly ggplot2 limma umap
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
+  library(umap)
   library(limma)
   ex <- ex[!duplicated(ex), ]  # remove duplicates
   ump <- umap(t(ex), n_neighbors = knn, random_state = 123)
@@ -285,7 +286,7 @@ interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactivePrincompPcaIndividualsPlot(pcaData, "GSE18380", gset)
-#' @import plotly ggplot2 limma stringr
+#' @import plotly ggplot2 limma stringr scales
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
@@ -293,6 +294,7 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
   library(ggplot2)
   library(limma)
   library(stringr)
+  library(scales)
   pcaDf <- data.frame(pcaData$scores)
   pcaDf <- transform(pcaDf)
   pcaDf["ID"] <- rownames(pcaDf)
@@ -368,12 +370,13 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
-#' @import plotly ggplot2 limma
+#' @import plotly ggplot2 limma scales
 #' @author Guy Hunt
 interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
   library(limma)
+  library(scales)
   variableStats <- get_pca_var(pcaData)
   eigenValue <- get_eigenvalue(pcaData)
   pcaData <- as.data.frame(unclass(pcaData$loadings))
