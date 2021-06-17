@@ -22,8 +22,8 @@ loadApp <- function() {
     helpText("GEO2R is an interactive web tool that allows users to compare two or more groups of samples in a GEO Series to identify genes that are differentially expressed across experimental conditions. GEOexplorer extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data. The development of GEOexplorer was made possible because of the excellent code provided by GEO2R
 (https://www.ncbi.nlm.nih.gov/geo/geo2r/)."),
     sidebarPanel(
-      helpText("Input a GEO accession code to examine the gene expression data."),
-      textInput("geoAccessionCode", "GEO accession code", "GSE18380"),
+      helpText("Input a GEO series accession code (GSEXXXX format) to examine the gene expression data."),
+      textInput("geoAccessionCode", "GEO accession code", "GSE18388"),
       helpText("Select the platform of interest."),
       selectInput("platform", "Platform",c()),
       radioButtons("logTransformation",
@@ -110,8 +110,21 @@ loadApp <- function() {
 
   server <- function(input, output, session){
     # Data Extraction Functions
+
     # Get the GEO2R data for all platforms
-    allGset <- reactive({getGeoObject(input$geoAccessionCode)})
+      try({
+      allGset <- reactive({
+      # Error handling
+      if(substr(input$geoAccessionCode,1,3) != "GSE")
+      {
+        showNotification("Please input a GEO series accession code with the format GSEXXX", type = "error")
+      }
+      # Validate a GEO series data was input
+      validate(need(substr(input$geoAccessionCode,1,3) == "GSE", "Please input a GEO series accession code (GSEXXXX)"))
+
+      getGeoObject(input$geoAccessionCode)
+    })
+    })
 
     # Get a list of all the platforms
     platforms <- reactive({extractPlatforms(allGset())})
@@ -120,7 +133,6 @@ loadApp <- function() {
     platform <- reactive({
       platforms()[1]
     })
-
 
     # Update Platform Options
     platformObserve <- observe({
@@ -132,13 +144,18 @@ loadApp <- function() {
     # Exploratory data analysis visualisation
     observeEvent(input$exploratoryDataAnalysisButton, {
       # Extract the GEO2R data from the specified platform
-      gsetData <- extractPlatformGset(allGset(), input$platform)
+
+      if(input$platform != "") {
+      gsetData <<- extractPlatformGset(allGset(), input$platform)
+
+      # Extract expression data
+      expressionData <<- extractExpressionData(gsetData)
+
+      # Error handling
+      validate(need(ncol(expressionData) > 0, "The GEO series only has 0 samples and therefore can't be processed"))
 
       # Extract the experiment information
       experimentInformation <- extractExperimentInformation(gsetData)
-
-      # Extract expression data
-      expressionData <- extractExpressionData(gsetData)
 
       # Extract Column Information
       columnInfo <- extractSampleDetails(gsetData)
@@ -151,10 +168,10 @@ loadApp <- function() {
 
       # Data Transformation Functions
       # Apply log transformation to expression data if necessary
-      dataInput <- calculateLogTransformation(expressionData, input$logTransformation)
+      dataInput <<- calculateLogTransformation(expressionData, input$logTransformation)
 
       # Perform KNN transformation on log expression data if necessary
-      knnDataInput <- calculateKnnImpute(dataInput, input$knnTransformation)
+      knnDataInput <<- calculateKnnImpute(dataInput, input$knnTransformation)
 
       # Remove all incomplete rows
       naOmitInput <- calculateNaOmit(knnDataInput)
@@ -224,47 +241,53 @@ loadApp <- function() {
         interactiveThreeDDesnityPlot(naOmitInput, input$geoAccessionCode, input$platform)
       })
 
-      # Interactive UMAP Plot
-      output$interactiveUmapPlot <- renderPlotly({
-        interactiveUmapPlot(naOmitInput, input$knn, input$geoAccessionCode)
-      })
+      if(ncol(expressionData) > 1) {
+        # Interactive UMAP Plot
+        output$interactiveUmapPlot <- renderPlotly({
+          interactiveUmapPlot(naOmitInput, input$knn, input$geoAccessionCode)
+        })
 
-      # Heatmap Plot
-      output$interactiveHeatMapPlot <- renderPlotly({
-        interactiveHeatMapPlot(naOmitInput)
-      })
+        # Heatmap Plot
+        output$interactiveHeatMapPlot <- renderPlotly({
+          interactiveHeatMapPlot(naOmitInput)
+        })
 
-      # Interactive Mean Variance Plot
-      output$interactiveMeanVariancePlot <- renderPlotly({
-        interactiveMeanVariancePlot(naOmitInput,input$geoAccessionCode, gsetData)
-      })
+        # Interactive Mean Variance Plot
+        output$interactiveMeanVariancePlot <- renderPlotly({
+          interactiveMeanVariancePlot(naOmitInput,input$geoAccessionCode, gsetData)
+        })
 
-      # Interactive PCA Scree Plot
-      output$interactivePcaScreePlot <- renderPlotly({
-        interactivePrincompPcaScreePlot(pcaPrincompDataInput, input$geoAccessionCode)
-      })
+        # Interactive PCA Scree Plot
+        output$interactivePcaScreePlot <- renderPlotly({
+          interactivePrincompPcaScreePlot(pcaPrincompDataInput, input$geoAccessionCode)
+        })
 
-      # Interactive PCA Individual Plot
-      output$interactivePcaIndividualsPlot <- renderPlotly({
-        interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, input$geoAccessionCode, gsetData)
-      })
+        # Interactive PCA Individual Plot
+        output$interactivePcaIndividualsPlot <- renderPlotly({
+          interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, input$geoAccessionCode, gsetData)
+        })
 
-      # Interactive PCA Variables Plot
-      output$interactivePcaVariablesPlot <- renderPlotly({
-        interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, input$geoAccessionCode)
-      })
+        # Interactive PCA Variables Plot
+        output$interactivePcaVariablesPlot <- renderPlotly({
+          interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, input$geoAccessionCode)
+        })
+      } else{
+        showNotification("As the expression dataset had only one column only the Box-and-Whisper Plot and Expression Density Plots will be produced.", type = "warning")
+      }
+      } else {
+        showNotification("Please select a platform.", type = "error")
+      }
     })
 
     # Differential Gene Expression Functions
     observeEvent(input$differentialExpressionButton, {
 
       # Differential gene expression analysis
-      gsetData <- extractPlatformGset(allGset(), input$platform)
-      expressionData <- extractExpressionData(gsetData)
-      dataInput <- calculateLogTransformation(expressionData, input$logTransformation)
-      knnDataInput <- calculateKnnImpute(dataInput, input$knnTransformation)
-      columns <- extractSampleNames(knnDataInput)
       gsms <- calculateEachGroupsSamplesFromDataFrame(as.data.frame(sapply(1:nrow(knnColumnInfo), function(a) input[[paste0("sel", a)]])))
+
+      # Error handling
+      if((lengths(regmatches(gsms, gregexpr("0", gsms))) > 0 & lengths(regmatches(gsms, gregexpr("1", gsms))) > 1) | (lengths(regmatches(gsms, gregexpr("0", gsms))) > 1 & lengths(regmatches(gsms, gregexpr("1", gsms))) > 0))  {
+
       fit2 <- calculateDifferentialGeneExpression(gsms, input$limmaPrecisionWeights, input$forceNormalization, gsetData, knnDataInput)
       adjustment <- convertAdjustment(input$pValueAdjustment)
       tT <- calculateTopDifferentiallyExpressedGenes(fit2, adjustment)
@@ -310,6 +333,10 @@ loadApp <- function() {
           write.csv(tT, file, row.names = FALSE)
         }
       )
+      } else{
+        showNotification("One group needs at least 2 samples and the other group needs at least 1 sample", type = "error")
+      }
+
     })
   }
 
