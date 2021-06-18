@@ -36,13 +36,13 @@ badList <- list("GSE25758", "GSE25762", "GSE25723", "GSE18459", "GSE25743", "GSE
 #  tryCatch({
 
     # Get the GEO2R data for all platforms
-  tryCatch({
-    library(GEOquery)
-    #getGEO(geoAccessionCode)
+  allGset <- tryCatch({
     allGset <- getGeoObject(geoAccessionCode)
     }, error = function(err)
-      return("Hello")
+      return("")
     )
+
+  allGset
   help(package = "GEOquery")
 
   print(try(log("a"), TRUE))

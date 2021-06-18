@@ -112,46 +112,53 @@ loadApp <- function() {
     # Data Extraction Functions
 
     # Get the GEO2R data for all platforms
-      try({
-      allGset <- reactive({
-      # Error handling
+    allGset <- reactive({
+      tryCatch({
+      # Notify the user the GEO accession code is not a GEO series accession code
       if(substr(input$geoAccessionCode,1,3) != "GSE")
       {
         showNotification("Please input a GEO series accession code with the format GSEXXX", type = "error")
       }
-      # Validate a GEO series data was input
+      # Error handling preventing errors caused by non GEO series accession codes
       validate(need(substr(input$geoAccessionCode,1,3) == "GSE", "Please input a GEO series accession code (GSEXXXX)"))
 
       getGeoObject(input$geoAccessionCode)
-    })
-    })
+      }, error = function(err)
+        return(NULL)
+      )
+    }
+    )
 
-    # Get a list of all the platforms
-    platforms <- reactive({extractPlatforms(allGset())})
+    # Error handling to prevent non-GEO series accession codes being used
+    if(is.null(allGset) == FALSE){
+      # Get a list of all the platforms
+      platforms <- reactive({extractPlatforms(allGset())})
 
-    # Select the top platform
-    platform <- reactive({
-      platforms()[1]
-    })
+      # Select the top platform
+      platform <- reactive({
+        platforms()[1]
+      })
 
-    # Update Platform Options
-    platformObserve <- observe({
-      updateSelectInput(session, "platform",
-                        choices = platforms(),
-                        selected = platform())
-    })
+      # Update Platform Options
+      platformObserve <- observe({
+        updateSelectInput(session, "platform",
+                          choices = platforms(),
+                          selected = platform())
+      })
+    }
 
     # Exploratory data analysis visualisation
     observeEvent(input$exploratoryDataAnalysisButton, {
-      # Extract the GEO2R data from the specified platform
-
+      # Need to fix this
+      if(is.null(allGset) == FALSE){
       if(input$platform != "") {
+      # Extract the GEO2R data from the specified platform
       gsetData <<- extractPlatformGset(allGset(), input$platform)
 
       # Extract expression data
       expressionData <<- extractExpressionData(gsetData)
 
-      # Error handling
+      # Error handling to prevent issues due to expression data with no samples
       validate(need(ncol(expressionData) > 0, "The GEO series only has 0 samples and therefore can't be processed"))
 
       # Extract the experiment information
@@ -241,6 +248,7 @@ loadApp <- function() {
         interactiveThreeDDesnityPlot(naOmitInput, input$geoAccessionCode, input$platform)
       })
 
+      # Error handling to prevent errors caused by expression datasets with only one column
       if(ncol(expressionData) > 1) {
         # Interactive UMAP Plot
         output$interactiveUmapPlot <- renderPlotly({
@@ -272,12 +280,17 @@ loadApp <- function() {
           interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, input$geoAccessionCode)
         })
       } else{
+        # A notification to the user that only certain data visulisations will be created
         showNotification("As the expression dataset had only one column only the Box-and-Whisper Plot and Expression Density Plots will be produced.", type = "warning")
       }
       } else {
+        # A notification to tell the user to select a platform
         showNotification("Please select a platform.", type = "error")
       }
-    })
+      }
+      }
+      )
+
 
     # Differential Gene Expression Functions
     observeEvent(input$differentialExpressionButton, {
@@ -285,7 +298,7 @@ loadApp <- function() {
       # Differential gene expression analysis
       gsms <- calculateEachGroupsSamplesFromDataFrame(as.data.frame(sapply(1:nrow(knnColumnInfo), function(a) input[[paste0("sel", a)]])))
 
-      # Error handling
+      # Error handling to ensure at least one group has two samples and the other group has at least one sample
       if((lengths(regmatches(gsms, gregexpr("0", gsms))) > 0 & lengths(regmatches(gsms, gregexpr("1", gsms))) > 1) | (lengths(regmatches(gsms, gregexpr("0", gsms))) > 1 & lengths(regmatches(gsms, gregexpr("1", gsms))) > 0))  {
 
       fit2 <- calculateDifferentialGeneExpression(gsms, input$limmaPrecisionWeights, input$forceNormalization, gsetData, knnDataInput)

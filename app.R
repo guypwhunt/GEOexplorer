@@ -1,4 +1,4 @@
-# Source the app file
+# Source the files
 source("R/app.R")
 source("R/backendDifferentialGeneExpressionDataFunctions.R")
 source("R/backendExploratoryDataAnalysisDataFunctions.R")
