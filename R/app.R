@@ -124,13 +124,15 @@ loadApp <- function() {
 
       getGeoObject(input$geoAccessionCode)
       }, error = function(err)
+        # Return null if there is a error in the getGeoObject function
         return(NULL)
       )
     }
     )
 
-    # Error handling to prevent non-GEO series accession codes being used
-    if(is.null(allGset) == FALSE){
+    # Error handling to prevent invalid GEO series accession codes being used
+    errorCheck <- reactive({is.null(allGset())})
+
       # Get a list of all the platforms
       platforms <- reactive({extractPlatforms(allGset())})
 
@@ -145,148 +147,210 @@ loadApp <- function() {
                           choices = platforms(),
                           selected = platform())
       })
-    }
 
     # Exploratory data analysis visualisation
     observeEvent(input$exploratoryDataAnalysisButton, {
-      # Need to fix this
-      if(is.null(allGset) == FALSE){
-      if(input$platform != "") {
-      # Extract the GEO2R data from the specified platform
-      gsetData <<- extractPlatformGset(allGset(), input$platform)
 
-      # Extract expression data
-      expressionData <<- extractExpressionData(gsetData)
+      # Error handling to display a notification if an invalid GEO accession code is used.
+      if(errorCheck() == TRUE){
+      showNotification(paste0(paste0("The GEO accession code ", input$geoAccessionCode), " is not a valid GEO accession code. Please enter a valid GEO accession code"), type = "error")
+      } else {
+        # Extract the GEO2R data from the specified platform
+        gsetData <<- extractPlatformGset(allGset(), input$platform)
 
-      # Error handling to prevent issues due to expression data with no samples
-      validate(need(ncol(expressionData) > 0, "The GEO series only has 0 samples and therefore can't be processed"))
+        # Extract expression data
+        expressionData <<- extractExpressionData(gsetData)
 
-      # Extract the experiment information
-      experimentInformation <- extractExperimentInformation(gsetData)
+        # Error handling to prevent issues due to expression data with no samples
+        validate(need(ncol(expressionData) > 0, "The GEO series only has 0 samples and therefore can't be processed"))
 
-      # Extract Column Information
-      columnInfo <- extractSampleDetails(gsetData)
+        # Extract the experiment information
+        experimentInformation <- extractExperimentInformation(gsetData)
 
-      # Is log transformation auto applied
-      autoLogInformation <- calculateAutoLogTransformApplication(expressionData)
+        # Extract Column Information
+        columnInfo <- extractSampleDetails(gsetData)
 
-      # Get a list of all the columns
-      columns <- extractSampleNames(expressionData)
+        # Get a list of all the columns
+        columns <- extractSampleNames(expressionData)
 
-      # Data Transformation Functions
-      # Apply log transformation to expression data if necessary
-      dataInput <<- calculateLogTransformation(expressionData, input$logTransformation)
+        # Error handling to prevent non-microarray GEO accession codes from being used
+        if(typeof(expressionData) == "logical") {
+          showNotification(paste0(paste0("It appears that the GEO accession code ", input$geoAccessionCode), " is not a valid microarray gene expression GEO accession code. Please enter a valid microarray gene expression GEO accession code."), type = "error")
+          # Experimental Information Display
+          output$experimentInfo <- renderUI({
+            convertExperimentInformation(experimentInformation)
+          })
 
-      # Perform KNN transformation on log expression data if necessary
-      knnDataInput <<- calculateKnnImpute(dataInput, input$knnTransformation)
+          # Column Set Plot
+          output$columnTable <- renderDataTable({
+            columnInfo
+          })
 
-      # Remove all incomplete rows
-      naOmitInput <- calculateNaOmit(knnDataInput)
+          # Expression dataset table
+          output$table <- renderDataTable({
+            expressionData
+          })
 
-      # Perform PCA analysis on KNN transformation expression data using princomp
-      pcaPrincompDataInput <- calculatePrincompPca(naOmitInput)
+        } else {
 
-      # Data Visualisation Functions
-      # Update if log transformation took place
-      output$logTransformationText <- renderUI({
-        helpText(autoLogInformation)
-      })
+        # Data Transformation Functions
+        # Apply log transformation to expression data if necessary
+        dataInput <<- tryCatch({
+          calculateLogTransformation(expressionData, input$logTransformation)
+        }, error=function(cond) {
+            return(
+              NULL
+            )
+          }
+          )
 
-      # Experimental Information Display
-      output$experimentInfo <- renderUI({
-        convertExperimentInformation(experimentInformation)
-      })
+        # Error handling to display a notification if there was an error in log transformation
+        if(is.null(dataInput) == TRUE) {
+          showNotification("There was an error applying log transformation to the expression data. Therefore, the original dataset will be used.", type = "warning")
+          dataInput <<- expressionData
+        }
 
-      # Column Set Plot
-      output$columnTable <- renderDataTable({
-        columnInfo
-      })
+          # Is log transformation auto applied
+          autoLogInformation <- tryCatch({
+            calculateAutoLogTransformApplication(expressionData)
+            }, error=function(cond) {
+              return(
+                "There was an error calculating if log transformation would automatically be applied."
+              )
+            })
 
-      # KNN Column Set Plot
-      knnColumns <- extractSampleNames(knnDataInput)
-      knnColumnInfo <- extractSampleDetails(gsetData)
+        # Perform KNN transformation on log expression data if necessary
+        knnDataInput <<- tryCatch({
+          calculateKnnImpute(dataInput, input$knnTransformation)
+        }, error=function(cond) {
+          return(
+            NULL
+          )
+        }
+        )
 
-      # Could turn the below into a function
-      knnColumnInfo <<- knnColumnInfo[knnColumns,]
+        # Error handling to display a notification if there was an error in KNN imputation
+        if(is.null(knnDataInput) == TRUE) {
+          showNotification("There was an error applying KNN imputation to the expression data. Therefore, the log-transformed/original dataset will be used instead.", type = "warning")
+          knnDataInput <<- dataInput
+        }
+        # Remove all incomplete rows
+        naOmitInput <- calculateNaOmit(knnDataInput)
 
-      for (i in 1:nrow(knnColumnInfo)) {
-        knnColumnInfo$group[i] <- as.character(selectInput(paste0("sel", i), "", choices = unique(c("N/A", "Group 1", "Group 2")), width = "100px"))
-      }
+        # Perform PCA analysis on KNN transformation expression data using princomp
+        pcaPrincompDataInput <- tryCatch({
+          calculatePrincompPca(naOmitInput)
+        }, error=function(cond) {
+          return(
+            NULL
+          )
+        }
+        )
 
-      output$knnColumnTable <- DT::renderDataTable(
-        knnColumnInfo,
-        escape = FALSE,
-        selection = 'none',
-        server = FALSE,
-        options = list(dom = 't', paging = FALSE, ordering = FALSE),
-        callback = JS("table.rows().every(function(i, tab, row) {
+        # Data Visualisation Functions
+        # Update if log transformation took place
+        output$logTransformationText <- renderUI({
+          helpText(autoLogInformation)
+        })
+
+        # Experimental Information Display
+        output$experimentInfo <- renderUI({
+          convertExperimentInformation(experimentInformation)
+        })
+
+        # Column Set Plot
+        output$columnTable <- renderDataTable({
+          columnInfo
+        })
+
+        # KNN Column Set Plot
+        knnColumns <- extractSampleNames(knnDataInput)
+        knnColumnInfo <- extractSampleDetails(gsetData)
+
+        # Could turn the below into a function
+        knnColumnInfo <<- knnColumnInfo[knnColumns,]
+
+        for (i in 1:nrow(knnColumnInfo)) {
+          knnColumnInfo$group[i] <- as.character(selectInput(paste0("sel", i), "", choices = unique(c("N/A", "Group 1", "Group 2")), width = "100px"))
+        }
+
+        output$knnColumnTable <- DT::renderDataTable(
+          knnColumnInfo,
+          escape = FALSE,
+          selection = 'none',
+          server = FALSE,
+          options = list(dom = 't', paging = FALSE, ordering = FALSE),
+          callback = JS("table.rows().every(function(i, tab, row) {
         var $this = $(this.node());
         $this.attr('id', this.data()[0]);
         $this.addClass('shiny-input-container');
       });
       Shiny.unbindAll(table.table().node());
       Shiny.bindAll(table.table().node());")
-      )
+        )
 
-      # Data Set Plot
-      output$table <- renderDataTable({
-        knnDataInput
-      })
-
-      # Interactive Box-and-Whisker Plot
-      output$interactiveBoxAndWhiskerPlot <- renderPlotly({
-        interactiveBoxAndWhiskerPlot(naOmitInput, input$geoAccessionCode, input$platform)
-      })
-
-      # Interactive Density Plot
-      output$interactiveDensityPlot <- renderPlotly({
-        interactiveDensityPlot(naOmitInput, input$geoAccessionCode, input$platform)
-      })
-
-      # 3D Interactive Density Plot
-      output$interactiveThreeDDesnityPlot <- renderPlotly({
-        interactiveThreeDDesnityPlot(naOmitInput, input$geoAccessionCode, input$platform)
-      })
-
-      # Error handling to prevent errors caused by expression datasets with only one column
-      if(ncol(expressionData) > 1) {
-        # Interactive UMAP Plot
-        output$interactiveUmapPlot <- renderPlotly({
-          interactiveUmapPlot(naOmitInput, input$knn, input$geoAccessionCode)
+        # Expression dataset table
+        output$table <- renderDataTable({
+          knnDataInput
         })
 
-        # Heatmap Plot
-        output$interactiveHeatMapPlot <- renderPlotly({
-          interactiveHeatMapPlot(naOmitInput)
+        # Interactive Box-and-Whisker Plot
+        output$interactiveBoxAndWhiskerPlot <- renderPlotly({
+          interactiveBoxAndWhiskerPlot(naOmitInput, input$geoAccessionCode, input$platform)
         })
 
-        # Interactive Mean Variance Plot
-        output$interactiveMeanVariancePlot <- renderPlotly({
-          interactiveMeanVariancePlot(naOmitInput,input$geoAccessionCode, gsetData)
+        # Interactive Density Plot
+        output$interactiveDensityPlot <- renderPlotly({
+          interactiveDensityPlot(naOmitInput, input$geoAccessionCode, input$platform)
         })
 
-        # Interactive PCA Scree Plot
-        output$interactivePcaScreePlot <- renderPlotly({
-          interactivePrincompPcaScreePlot(pcaPrincompDataInput, input$geoAccessionCode)
+        # 3D Interactive Density Plot
+        output$interactiveThreeDDesnityPlot <- renderPlotly({
+          interactiveThreeDDesnityPlot(naOmitInput, input$geoAccessionCode, input$platform)
         })
 
-        # Interactive PCA Individual Plot
-        output$interactivePcaIndividualsPlot <- renderPlotly({
-          interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, input$geoAccessionCode, gsetData)
-        })
+        # Error handling to prevent errors caused by expression datasets with only one column
+        if(ncol(expressionData) > 1) {
+          # Interactive UMAP Plot
+          output$interactiveUmapPlot <- renderPlotly({
+            interactiveUmapPlot(naOmitInput, input$knn, input$geoAccessionCode)
+          })
 
-        # Interactive PCA Variables Plot
-        output$interactivePcaVariablesPlot <- renderPlotly({
-          interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, input$geoAccessionCode)
-        })
-      } else{
-        # A notification to the user that only certain data visulisations will be created
-        showNotification("As the expression dataset had only one column only the Box-and-Whisper Plot and Expression Density Plots will be produced.", type = "warning")
-      }
-      } else {
-        # A notification to tell the user to select a platform
-        showNotification("Please select a platform.", type = "error")
-      }
+          # Heatmap Plot
+          output$interactiveHeatMapPlot <- renderPlotly({
+            interactiveHeatMapPlot(naOmitInput)
+          })
+
+          # Interactive Mean Variance Plot
+          output$interactiveMeanVariancePlot <- renderPlotly({
+            interactiveMeanVariancePlot(naOmitInput,input$geoAccessionCode, gsetData)
+          })
+
+          # Error handling to display a notification if there was an error in PCA
+          if(is.null(pcaPrincompDataInput) == TRUE){
+            showNotification("There was an error performing principal component analysis on the expression data. Therefore the PCA visualisations will not be displayed.", type = "warning")
+          } else {
+
+          # Interactive PCA Scree Plot
+          output$interactivePcaScreePlot <- renderPlotly({
+            interactivePrincompPcaScreePlot(pcaPrincompDataInput, input$geoAccessionCode)
+          })
+
+          # Interactive PCA Individual Plot
+          output$interactivePcaIndividualsPlot <- renderPlotly({
+            interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, input$geoAccessionCode, gsetData)
+          })
+
+          # Interactive PCA Variables Plot
+          output$interactivePcaVariablesPlot <- renderPlotly({
+            interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, input$geoAccessionCode)
+          })
+          }
+        } else{
+          # A notification to the user that only certain data visulisations will be created
+          showNotification("As the expression dataset had only one column only the Box-and-Whisper Plot and Expression Density Plots will be produced.", type = "warning")
+        }
+        }
       }
       }
       )
@@ -294,6 +358,11 @@ loadApp <- function() {
 
     # Differential Gene Expression Functions
     observeEvent(input$differentialExpressionButton, {
+
+      # Error handling to prevent non-microarray datasets being used
+      if(typeof(expressionData) == "logical") {
+        showNotification(paste0(paste0("It appears that the GEO accession code ", input$geoAccessionCode), " is not a valid microarray gene expression GEO accession code. Please enter a valid microarray gene expression GEO accession code."), type = "error")
+      } else {
 
       # Differential gene expression analysis
       gsms <- calculateEachGroupsSamplesFromDataFrame(as.data.frame(sapply(1:nrow(knnColumnInfo), function(a) input[[paste0("sel", a)]])))
@@ -349,7 +418,7 @@ loadApp <- function() {
       } else{
         showNotification("One group needs at least 2 samples and the other group needs at least 1 sample", type = "error")
       }
-
+      }
     })
   }
 
