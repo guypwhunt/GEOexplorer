@@ -415,6 +415,7 @@ loadApp <- function() {
           write.csv(tT, file, row.names = FALSE)
         }
       )
+      showNotification("Differential gene expression analysis complete!", type = "message")
       } else{
         showNotification("One group needs at least 2 samples and the other group needs at least 1 sample", type = "error")
       }

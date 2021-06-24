@@ -47,6 +47,12 @@ platform <- platforms[1]
 # Extract the GEO2R data from the specified platform
 gsetData <- extractPlatformGset(allGset, platform)
 
+attributes(gsetData)
+attributes(gsetData@assayData)
+attributes(gsetData@phenoData)
+attributes(featureData(gsetData))
+attributes(protocolData(gsetData))
+
 # Extract the experiment information
 experimentInformation <- extractExperimentInformation(gsetData)
 
