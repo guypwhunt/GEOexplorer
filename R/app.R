@@ -156,7 +156,17 @@ loadApp <- function() {
       showNotification(paste0(paste0("The GEO accession code ", input$geoAccessionCode), " is not a valid GEO accession code. Please enter a valid GEO accession code"), type = "error")
       } else {
         # Extract the GEO2R data from the specified platform
-        gsetData <<- extractPlatformGset(allGset(), input$platform)
+        gsetData <<- tryCatch({
+          extractPlatformGset(allGset(), input$platform)
+        },error = function(err)
+          # Return null if there is a error in the getGeoObject function
+          return(NULL)
+        )
+
+        # Error handling to prevent users trying to run exploratory data analysis without selecting a platform
+        if(is.null(gsetData) == TRUE){
+          showNotification("Please select a platform.", type = "error")
+        } else {
 
         # Extract expression data
         expressionData <<- extractExpressionData(gsetData)
@@ -349,6 +359,7 @@ loadApp <- function() {
         } else{
           # A notification to the user that only certain data visulisations will be created
           showNotification("As the expression dataset had only one column only the Box-and-Whisper Plot and Expression Density Plots will be produced.", type = "warning")
+        }
         }
         }
       }
