@@ -6,11 +6,8 @@ try(source("R/interactiveDifferentialGeneExpressionDataVisualizationFunctions.R"
 try(source("R/interactiveExploratoryDataAnalysisDataVisualizationFunctions.R"))
 try(source("R/nonInteractiveDifferentialGeneExpressionDataVisualizationFunctions.R"))
 try(source("R/nonInteractiveExploratoryDataAnalysisDataVisualizationFunctions.R"))
-#try(source("R/appSideBarUi.R"))
-#try(source("R/appDatasetInformationUi.R"))
-#try(source("R/appExploratoryDataAnalysisUi.R"))
-#try(source("R/appDifferentialGeneExpressionAnalysisUi.R"))
 try(source("R/appUiComponents.R"))
+try(source("R/appServerComponents.R"))
 
 
 # Launch app
