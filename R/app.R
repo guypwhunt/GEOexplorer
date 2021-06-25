@@ -151,6 +151,29 @@ loadApp <- function() {
     # Exploratory data analysis visualisation
     observeEvent(input$exploratoryDataAnalysisButton, {
 
+      # Set all outputs to blank, this resets all the visualizations to blank after clicking analyse
+      output$experimentInfo <- renderUI({})
+      output$columnTable <- renderDataTable({})
+      output$table <- renderDataTable({})
+      output$logTransformationText <- renderUI({})
+      output$experimentInfo <- renderUI({})
+      output$knnColumnTable <- DT::renderDataTable({})
+      output$interactiveBoxAndWhiskerPlot <- renderPlotly({})
+      output$interactiveDensityPlot <- renderPlotly({})
+      output$interactiveThreeDDesnityPlot <- renderPlotly({})
+      output$interactiveUmapPlot <- renderPlotly({})
+      output$interactiveHeatMapPlot <- renderPlotly({})
+      output$interactiveMeanVariancePlot <- renderPlotly({})
+      output$interactivePcaScreePlot <- renderPlotly({})
+      output$interactivePcaIndividualsPlot <- renderPlotly({})
+      output$interactivePcaVariablesPlot <- renderPlotly({})
+      output$dETable <- renderDataTable({})
+      output$iDEHistogram <- renderPlotly({})
+      output$dEVennDiagram <- renderPlot({})
+      output$iDEQQ <- renderPlotly({})
+      output$iDEVolcano <- renderPlotly({})
+      output$iDEMd <- renderPlotly({})
+
       # Error handling to display a notification if an invalid GEO accession code is used.
       if(errorCheck() == TRUE){
       showNotification(paste0(paste0("The GEO accession code ", input$geoAccessionCode), " is not a valid GEO accession code. Please enter a valid GEO accession code"), type = "error")
@@ -369,6 +392,14 @@ loadApp <- function() {
 
     # Differential Gene Expression Functions
     observeEvent(input$differentialExpressionButton, {
+      # Set all differential gene expression analysis outputs to blank, this resets all the visualizations to blank after clicking analyse
+      output$dETable <- renderDataTable({})
+      output$iDEHistogram <- renderPlotly({})
+      output$dEVennDiagram <- renderPlot({})
+      output$iDEQQ <- renderPlotly({})
+      output$iDEVolcano <- renderPlotly({})
+      output$iDEMd <- renderPlotly({})
+
 
       # Error handling to prevent non-microarray datasets being used
       if(typeof(expressionData) == "logical") {
