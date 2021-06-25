@@ -47,7 +47,12 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
       final_attributes_list <- c(final_attributes_list, attribute)
   }
 
-  fit2Df <- data.frame(fit2$Amean, fit2$coefficients, dT[,ct], fit2$genes[final_attributes_list])
+  if (is.null(fit2$genes[final_attributes_list]) == TRUE) {
+    fit2Df <- data.frame(fit2$Amean, fit2$coefficients, dT[,ct])
+  } else {
+    fit2Df <- data.frame(fit2$Amean, fit2$coefficients, dT[,ct], fit2$genes[final_attributes_list])
+  }
+
   colnames(fit2Df) <- c("aMean", "coefficients", "regulation", final_attributes_list)
   fit2Df$regulation[fit2Df$regulation == "1"] <- "Upregulated"
   fit2Df$regulation[fit2Df$regulation == "0"] <- "Similar Expression"
@@ -121,7 +126,13 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
     if (attribute %in% colnames(fit2$genes))
       final_attributes_list <- c(final_attributes_list, attribute)
   }
-  fit2Df <- data.frame((0-log10(fit2$p.value)), fit2$coefficients, dT[,ct], fit2$genes[final_attributes_list])
+
+  if (is.null(fit2$genes[final_attributes_list]) == TRUE) {
+    fit2Df <- data.frame((0-log10(fit2$p.value)), fit2$coefficients, dT[,ct])
+  } else {
+    fit2Df <- data.frame((0-log10(fit2$p.value)), fit2$coefficients, dT[,ct], fit2$genes[final_attributes_list])
+  }
+
   colnames(fit2Df) <- c("pValues", "coefficients", "regulation", final_attributes_list)
   fit2Df$regulation[fit2Df$regulation == "1"] <- "Upregulated"
   fit2Df$regulation[fit2Df$regulation == "0"] <- "Similar Expression"
@@ -198,7 +209,12 @@ interactiveQQPlot <- function(fit2, dT, ct) {
       final_attributes_list <- c(final_attributes_list, attribute)
   }
 
-  qqData2 <- data.frame(qqData, dT[t.good,ct], fit2$genes[final_attributes_list][t.good,])
+  if (is.null(fit2$genes[final_attributes_list][t.good,]) == TRUE) {
+    qqData2 <- data.frame(qqData, dT[t.good,ct])
+  } else {
+    qqData2 <- data.frame(qqData, dT[t.good,ct], fit2$genes[final_attributes_list][t.good,])
+  }
+
 
   colnames(qqData2) <- c("x", "y", "regulation", final_attributes_list)
   qqData2$regulation <- as.character(qqData2$regulation)
