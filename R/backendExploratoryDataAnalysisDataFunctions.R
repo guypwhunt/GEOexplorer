@@ -259,7 +259,7 @@ calculateKnnImpute <- function(ex, knnTransformation) {
   library(limma)
   library(factoextra)
   if (knnTransformation == "Yes") {
-    if (ncol(ex) == 2) {
+    if (ncol(ex) < 3) {
       ex <- ex[complete.cases(ex), ] # KNN does not work when there are only 2 samples
     } else {
       ex <- ex[rowSums(is.na(ex)) != ncol(ex), ] # remove rows with missing data
