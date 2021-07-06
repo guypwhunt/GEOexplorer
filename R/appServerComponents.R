@@ -1,9 +1,9 @@
-#' A Function to Return the Dataset Information Server Component
+#' A Function to Return the Server Component
 #'
-#' A Function to Return the Dataset Information Server Component
+#' A Function to Return the Server Component
 #' @import shiny
 #' @author Guy Hunt
-sourceDatasetInformationServer <- function(input, output, session) {
+sourceServer <- function(input, output, session) {
   library(shiny)
   datasetInformationServer <-({
     # Data Extraction Functions
@@ -69,6 +69,11 @@ sourceDatasetInformationServer <- function(input, output, session) {
       output$iDEQQ <- renderPlotly({})
       output$iDEVolcano <- renderPlotly({})
       output$iDEMd <- renderPlotly({})
+
+      # Make Differential Gene Expression Action Button Appear, this prevents users trying to perform differetnial gene expression analysis prior to exploratory data analysis
+      output$differentialExpressionButton <- renderUI({
+        actionButton("differentialExpressionButton", "Analyse")
+      })
 
       # Error handling to display a notification if an invalid GEO accession code is used.
       if(errorCheck() == TRUE){
@@ -167,8 +172,8 @@ sourceDatasetInformationServer <- function(input, output, session) {
             naOmitInput <- calculateNaOmit(knnDataInput)
 
             # Perform PCA analysis on KNN transformation expression data using princomp
-            pcaPrincompDataInput <- tryCatch({
-              calculatePrincompPca(naOmitInput)
+            pcaPrcompDataInput <- tryCatch({
+              calculatePrcompPca(naOmitInput)
             }, error=function(cond) {
               return(
                 NULL
@@ -225,7 +230,7 @@ sourceDatasetInformationServer <- function(input, output, session) {
 
             # Interactive Box-and-Whisker Plot
             output$interactiveBoxAndWhiskerPlot <- renderPlotly({
-              interactiveBoxAndWhiskerPlot(naOmitInput, input$geoAccessionCode, input$platform)
+              interactiveBoxAndWhiskerPlot(knnDataInput, input$geoAccessionCode, input$platform)
             })
 
             # Interactive Density Plot
@@ -256,23 +261,23 @@ sourceDatasetInformationServer <- function(input, output, session) {
               })
 
               # Error handling to display a notification if there was an error in PCA
-              if(is.null(pcaPrincompDataInput) == TRUE){
+              if(is.null(pcaPrcompDataInput) == TRUE){
                 showNotification("There was an error performing principal component analysis on the expression data. Therefore the PCA visualisations will not be displayed.", type = "warning")
               } else {
 
                 # Interactive PCA Scree Plot
                 output$interactivePcaScreePlot <- renderPlotly({
-                  interactivePrincompPcaScreePlot(pcaPrincompDataInput, input$geoAccessionCode)
+                  interactivePrcompPcaScreePlot(pcaPrcompDataInput, input$geoAccessionCode)
                 })
 
                 # Interactive PCA Individual Plot
                 output$interactivePcaIndividualsPlot <- renderPlotly({
-                  interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, input$geoAccessionCode, gsetData)
+                  interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput, input$geoAccessionCode, gsetData)
                 })
 
                 # Interactive PCA Variables Plot
                 output$interactivePcaVariablesPlot <- renderPlotly({
-                  interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, input$geoAccessionCode)
+                  interactivePrincompPcaVariablesPlot(pcaPrcompDataInput, input$geoAccessionCode)
                 })
                 showNotification("Exploratory data analysis complete!", type = "message")
               }
@@ -359,7 +364,8 @@ sourceDatasetInformationServer <- function(input, output, session) {
           showNotification("One group needs at least 2 samples and the other group needs at least 1 sample", type = "error")
         }
       }
-    })
+    }
+      )
 
   })
   return(datasetInformationServer)

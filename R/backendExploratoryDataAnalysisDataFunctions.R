@@ -37,7 +37,12 @@ getGeoObject <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platform
   } else {
     platformAnnotation <- TRUE
   }
-  gset <- getGEO(geoAccessionCode, GSEMatrix=GSEMatrix, AnnotGPL=platformAnnotation) # getGPL=getGPL,
+  gset <- tryCatch({
+    getGEO(geoAccessionCode, GSEMatrix=GSEMatrix, AnnotGPL=platformAnnotation)
+                   }, error = function(x) {
+                     backupGset <- getGEO(geoAccessionCode, GSEMatrix=GSEMatrix, getGPL=FALSE)
+                     return(backupGset)
+                   })
   return(gset)
 }
 
@@ -164,6 +169,11 @@ extractSampleDetails <- function(gset){
 extractExpressionData <- function(gset) {
   library(GEOquery)
   ex <- exprs(gset)
+  # Deletes columns for which all values are na
+  ex <- ex[,colSums(is.na(ex))<nrow(ex)]
+  # Deletes rows for which all values are na
+  ex <- ex[rowSums(is.na(ex))<nrow(ex),]
+
   return(ex)}
 
 #' A GEO Function to Extract Information on the Samples from a GEO object
@@ -281,10 +291,10 @@ calculateKnnImpute <- function(ex, knnTransformation) {
 #' @keywords GEO
 #' @export
 #' @import impute limma factoextra
-#' @examples pcaDataInput <- calculatePca(knnDataInput)
+#' @examples pcaDataInput <- calculatePrcompPca(knnDataInput)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
-calculatePca <- function(ex){
+calculatePrcompPca <- function(ex){
   library(impute)
   library(limma)
   library(factoextra)

@@ -141,11 +141,16 @@ interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
   ex <- lmFit(ex)
   ex <- as.data.frame(ex)
   ex["ID"] <- rownames(ex)
-  geneData <- gset@featureData@data
-  geneData <- as.data.frame(geneData)
-  combineData <- merge(ex, geneData, by = "ID")
-  colnames(combineData) <- str_replace_all(colnames(combineData), " ", ".")
-  combineData %>% filter(ID %in% c(rownames(ex)))
+  geneData <- gsetData@featureData@data
+  # Error handling to catch gset without featureData
+  if(ncol(geneData) > 0){
+    geneData <- as.data.frame(geneData)
+    combineData <- merge(ex, geneData, by = "ID")
+    colnames(combineData) <- str_replace_all(colnames(combineData), " ", ".")
+    combineData %>% filter(ID %in% c(rownames(ex)))
+  } else{
+    combineData <- ex
+  }
 
   if('ID' %in% colnames(combineData)){
     if('Gene.symbol' %in% colnames(combineData)){
@@ -214,18 +219,18 @@ interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
   fig
 }
 
-#' A Function to Create an Interactive Histogram of the Principle Components from the PCA outputs of an Expression Object
+#' A Function to Create an Interactive Histogram of the Prcomp Principle Components from the PCA outputs of an Expression Object
 #'
-#' This function allows you to plot PCA expression results into an interactive Histogram of the Principle Components
+#' This function allows you to plot Prcomp PCA expression results into an interactive Histogram of the Principle Components
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
 #' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePca() function
 #' @keywords GEO
 #' @export
-#' @examples fig <- interactivePcaScreePlot(pcaData, "GSE18380")
+#' @examples fig <- interactivePrcompPcaScreePlot(pcaData, "GSE18380")
 #' @import plotly ggplot2 limma
 #' @author Guy Hunt
 #' @seealso [calculatePca()] for PCA expression object
-interactivePcaScreePlot <- function(pcaData, geoAccessionCode) {
+interactivePrcompPcaScreePlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
   library(limma)
@@ -246,9 +251,9 @@ interactivePcaScreePlot <- function(pcaData, geoAccessionCode) {
   fig
 }
 
-#' A Function to Create an Interactive Histogram of the Principle Components from the PCA outputs of an Expression Object
+#' A Function to Create an Interactive Histogram of the princomp Principle Components from the PCA outputs of an Expression Object
 #'
-#' This function allows you to plot PCA expression results into an interactive Histogram of the Principle Components
+#' This function allows you to plot princomp PCA expression results into an interactive Histogram of the Principle Components
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
 #' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
@@ -277,9 +282,9 @@ interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
   fig
 }
 
-#' A Function to Create an Interactive Scatter Plot of the Principle Components Analysis of each of the Genes in an Expression Object
+#' A Function to Create an Interactive Scatter Plot of the princomp Principle Components Analysis of each of the Genes in an Expression Object
 #'
-#' This function allows you to plot PCA expression results into an interactive Scatter Plot
+#' This function allows you to plot princomp PCA expression results into an interactive Scatter Plot
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
 #' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
 #' @param gset The GEO object which can be obtained from the extractPlatformGset() function
@@ -299,10 +304,16 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
   pcaDf <- transform(pcaDf)
   pcaDf["ID"] <- rownames(pcaDf)
   geneData <- gset@featureData@data
+  # Error handling for gset without featureData@data
+  if(ncol(geneData) > 0){
   geneData <- as.data.frame(geneData)
   combineData <- merge(pcaDf, geneData, by = "ID")
   combineData %>% filter(ID %in% c(rownames(pcaDf)))
   colnames(combineData) <- str_replace_all(colnames(combineData), " ", ".")
+  } else {
+    combineData <- pcaDf
+  }
+
 
   individualsStats <- get_pca_ind(pcaData)
   eigenValue <- get_eigenvalue(pcaData)
@@ -362,9 +373,9 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
 
 }
 
-#' A Function to Create an Interactive Scatter Plot of the Principle Components Analysis of each of the Samples in an Expression Object
+#' A Function to Create an Interactive Scatter Plot of the princomp Principle Components Analysis of each of the Samples in an Expression Object
 #'
-#' This function allows you to plot PCA expression results into an interactive Scatter Plot
+#' This function allows you to plot princomp PCA expression results into an interactive Scatter Plot
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
 #' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
@@ -417,5 +428,125 @@ interactiveHeatMapPlot <- function(ex) {
   }
   colnames(df) <- colnames(corMatrix)
   fig <- heatmaply(df)
+  fig
+}
+
+#' A Function to Create an Interactive Scatter Plot of the prcomp Principle Components Analysis of each of the Genes in an Expression Object
+#'
+#' This function allows you to plot prcomp PCA expression results into an interactive Scatter Plot
+#' @param geoAccessionCode A character string representing a GEO object for download and parsing
+#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
+#' @param gset The GEO object which can be obtained from the extractPlatformGset() function
+#' @keywords GEO
+#' @export
+#' @examples fig <- interactiveprcompPcaIndividualsPlot(pcaData, "GSE18380", gset)
+#' @import plotly ggplot2 limma stringr scales
+#' @author Guy Hunt
+#' @seealso [calculatePrcompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
+interactivePrcompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
+  library(plotly)
+  library(ggplot2)
+  library(limma)
+  library(stringr)
+  library(scales)
+  pcaDf <- data.frame(pcaData$x)
+  pcaDf <- transform(pcaDf)
+  pcaDf["ID"] <- rownames(pcaDf)
+  geneData <- gset@featureData@data
+  # Error handling for gset without featureData@data
+  if(ncol(geneData) > 0){
+    geneData <- as.data.frame(geneData)
+    combineData <- merge(pcaDf, geneData, by = "ID")
+    combineData %>% filter(ID %in% c(rownames(pcaDf)))
+    colnames(combineData) <- str_replace_all(colnames(combineData), " ", ".")
+  } else {
+    combineData <- pcaDf
+  }
+
+
+  individualsStats <- get_pca_ind(pcaData)
+  eigenValue <- get_eigenvalue(pcaData)
+
+
+  if('ID' %in% colnames(combineData)){
+    if('Gene.symbol' %in% colnames(combineData)){
+      if('Gene.title' %in% colnames(combineData)){
+        if('Gene.ID' %in% colnames(combineData)){
+          fig <- plot_ly(combineData,x=~PC1,y=~PC2, mode="markers", type = 'scatter',
+                         text = ~paste('ID: ', ID, '<br></br>', 'Gene Symbol: ', Gene.symbol, '<br></br>', 'Gene Title: ', Gene.title, '<br></br>', 'Gene ID: ', Gene.ID, '<br></br>', 'Dimension 1: ', PC1, '<br></br>', 'Dimension 2: ', PC2),
+                         hoverinfo = text,
+                         marker = list(
+                           color = ~individualsStats$cos2[,1],
+                           size = 3
+                         ))
+        } else {
+          fig <- plot_ly(combineData,x=~PC1,y=~PC2, mode="markers", type = 'scatter',
+                         text = ~paste('ID: ', ID, '<br></br>', 'Gene Symbol: ', Gene.symbol, '<br></br>', 'Gene Title: ', Gene.title, '<br></br>', 'Dimension 1: ', PC1, '<br></br>', 'Dimension 2: ', PC2),
+                         hoverinfo = text,
+                         marker = list(
+                           color = ~individualsStats$cos2[,1],
+                           size = 3
+                         ))
+        }
+      } else {
+        fig <- plot_ly(combineData,x=~PC1,y=~PC2, mode="markers", type = 'scatter',
+                       text = ~paste('ID: ', ID, '<br></br>', 'Gene Symbol: ', Gene.symbol, '<br></br>', 'Dimension 1: ', PC1, '<br></br>', 'Dimension 2: ', PC2),
+                       hoverinfo = text,
+                       marker = list(
+                         color = ~individualsStats$cos2[,1],
+                         size = 3
+                       ))
+      }
+    } else{
+      fig <- plot_ly(combineData,x=~PC1,y=~PC2, mode="markers", type = 'scatter',
+                     text = ~paste('ID: ', ID, '<br></br>', 'Dimension 1: ', PC1, '<br></br>', 'Dimension 2: ', PC2),
+                     hoverinfo = text,
+                     marker = list(
+                       color = ~individualsStats$cos2[,1],
+                       size = 3
+                     ))
+    }
+  } else{
+    fig <- plot_ly(combineData,x=~PC1,y=~PC2, mode="markers", type = 'scatter',
+                   text = ~paste('Dimension 1: ', PC1, '<br></br>', 'Dimension 2: ', PC2),
+                   hoverinfo = text,
+                   marker = list(
+                     color = ~individualsStats$cos2[,1],
+                     size = 3
+                   ))
+  }
+
+
+  fig <- layout(fig,title= paste(geoAccessionCode, "PCA Individuals Plot"),
+                xaxis=list(title=paste("PC1", label_percent(accuracy=0.1)(eigenValue[1,2]/100))),
+                yaxis=list(title=paste("PC2", label_percent(accuracy=0.1)(eigenValue[2,2]/100))))
+  fig
+}
+
+#' A Function to Create an Interactive Scatter Plot of the Principle Components Analysis of each of the Samples in an Expression Object
+#'
+#' This function allows you to plot PCA expression results into an interactive Scatter Plot
+#' @param geoAccessionCode A character string representing a GEO object for download and parsing
+#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
+#' @keywords GEO
+#' @export
+#' @examples fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
+#' @import plotly ggplot2 limma scales
+#' @author Guy Hunt
+interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
+  library(plotly)
+  library(ggplot2)
+  library(limma)
+  library(scales)
+  variableStats <- get_pca_var(pcaData)
+  eigenValue <- get_eigenvalue(pcaData)
+  pcaData <- as.data.frame(unclass(pcaData$rotation))
+
+  fig <- plot_ly(pcaData,x=~PC1,y=~PC2,text=rownames(pcaData), mode="markers", type = 'scatter'
+                 ,marker=list(size=10, color = ~variableStats$contrib[,1]), name = rownames(pcaData))
+
+  fig <- layout(fig,title= paste(geoAccessionCode, "PCA Variables Plot"),
+                xaxis=list(title=paste("PC1", label_percent(accuracy=0.1)(eigenValue[1,2]/100))),
+                yaxis=list(title=paste("PC2", label_percent(accuracy=0.1)(eigenValue[2,2]/100))))
   fig
 }
