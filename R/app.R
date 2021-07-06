@@ -36,7 +36,7 @@ loadApp <- function() {
 
   server <- function(input, output, session){
     # Source Server Components
-    sourceDatasetInformationServer(input, output, session)
+    sourceServer(input, output, session)
   }
 
   shinyApp(ui, server)
