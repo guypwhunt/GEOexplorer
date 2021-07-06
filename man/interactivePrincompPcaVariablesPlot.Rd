@@ -3,7 +3,7 @@
 %   R/interactiveExploratoryDataAnalysisDataVisualizationFunctions.R
 \name{interactivePrincompPcaVariablesPlot}
 \alias{interactivePrincompPcaVariablesPlot}
-\title{A Function to Create an Interactive Scatter Plot of the Principle Components Analysis of each of the Samples in an Expression Object}
+\title{A Function to Create an Interactive Scatter Plot of the princomp Principle Components Analysis of each of the Samples in an Expression Object}
 \usage{
 interactivePrincompPcaVariablesPlot(pcaData, geoAccessionCode)
 }
@@ -13,10 +13,13 @@ interactivePrincompPcaVariablesPlot(pcaData, geoAccessionCode)
 \item{geoAccessionCode}{A character string representing a GEO object for download and parsing}
 }
 \description{
-This function allows you to plot PCA expression results into an interactive Scatter Plot
+This function allows you to plot princomp PCA expression results into an interactive Scatter Plot
 }
 \examples{
 fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
+}
+\seealso{
+\code{\link[=calculatePrincompPca]{calculatePrincompPca()}} for Princomp PCA expression object, \code{\link[=extractPlatformGset]{extractPlatformGset()}} for GEO object
 }
 \author{
 Guy Hunt

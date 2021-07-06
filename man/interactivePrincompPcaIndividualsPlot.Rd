@@ -3,7 +3,7 @@
 %   R/interactiveExploratoryDataAnalysisDataVisualizationFunctions.R
 \name{interactivePrincompPcaIndividualsPlot}
 \alias{interactivePrincompPcaIndividualsPlot}
-\title{A Function to Create an Interactive Scatter Plot of the Principle Components Analysis of each of the Genes in an Expression Object}
+\title{A Function to Create an Interactive Scatter Plot of the princomp Principle Components Analysis of each of the Genes in an Expression Object}
 \usage{
 interactivePrincompPcaIndividualsPlot(pcaData, geoAccessionCode, gset)
 }
@@ -15,7 +15,7 @@ interactivePrincompPcaIndividualsPlot(pcaData, geoAccessionCode, gset)
 \item{gset}{The GEO object which can be obtained from the extractPlatformGset() function}
 }
 \description{
-This function allows you to plot PCA expression results into an interactive Scatter Plot
+This function allows you to plot princomp PCA expression results into an interactive Scatter Plot
 }
 \examples{
 fig <- interactivePrincompPcaIndividualsPlot(pcaData, "GSE18380", gset)

@@ -383,6 +383,7 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
 #' @examples fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
 #' @import plotly ggplot2 limma scales
 #' @author Guy Hunt
+#' @seealso [calculatePrincompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
@@ -530,10 +531,11 @@ interactivePrcompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset)
 #' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @export
-#' @examples fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
+#' @examples fig <- interactivePrcompPcaVariablesPlot(pcaData, "GSE18380")
 #' @import plotly ggplot2 limma scales
 #' @author Guy Hunt
-interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
+#' @seealso [calculatePrcompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
+interactivePrcompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
   library(ggplot2)
   library(limma)

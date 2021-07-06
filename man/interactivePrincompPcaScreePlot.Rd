@@ -3,7 +3,7 @@
 %   R/interactiveExploratoryDataAnalysisDataVisualizationFunctions.R
 \name{interactivePrincompPcaScreePlot}
 \alias{interactivePrincompPcaScreePlot}
-\title{A Function to Create an Interactive Histogram of the Principle Components from the PCA outputs of an Expression Object}
+\title{A Function to Create an Interactive Histogram of the princomp Principle Components from the PCA outputs of an Expression Object}
 \usage{
 interactivePrincompPcaScreePlot(pcaData, geoAccessionCode)
 }
@@ -13,7 +13,7 @@ interactivePrincompPcaScreePlot(pcaData, geoAccessionCode)
 \item{geoAccessionCode}{A character string representing a GEO object for download and parsing}
 }
 \description{
-This function allows you to plot PCA expression results into an interactive Histogram of the Principle Components
+This function allows you to plot princomp PCA expression results into an interactive Histogram of the Principle Components
 }
 \examples{
 fig <- interactivePrincompPcaScreePlot(pcaData, "GSE18380")
