@@ -277,7 +277,7 @@ sourceServer <- function(input, output, session) {
 
                 # Interactive PCA Variables Plot
                 output$interactivePcaVariablesPlot <- renderPlotly({
-                  interactivePrincompPcaVariablesPlot(pcaPrcompDataInput, input$geoAccessionCode)
+                  interactivePrcompPcaVariablesPlot(pcaPrcompDataInput, input$geoAccessionCode)
                 })
                 showNotification("Exploratory data analysis complete!", type = "message")
               }
