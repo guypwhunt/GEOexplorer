@@ -1,15 +1,33 @@
 Package: GEOexplorer
-Title: An Interactive Shiny App for Exploratory Data Analysis and Differential Gene Expression of Gene Expression Data Held in the GEO Database. 
-Date: 2021/04/25
-Version: 1.0.0.0
-Authors: Guy Hunt with contributions from Fabrizio Smeraldi, Michael Barnes and Rafael Henkin.
+Title: An Interactive Shiny App for Exploratory Data Analysis and Differential Gene Expression of Microarray Gene Expression Data Held in the GEO Database. 
+Date: 2021/07/07
+Version: 0.1.0
+Authors@R: 
+  c(person(given = "Guy",
+           family = "Hunt",
+           role = c("aut", "cre"),
+           email = "guypwhunt1992@gmail.com",
+           comment = c(ORCID = "0000-0002-5217-2678")),
+    person(given = "Fabrizio",
+           family = "Smeraldi",
+           role = c("ctb", "ths")),
+    person(given = "Michael",
+           family = "Barnes",
+           role = c("ctb", "ths")),
+    person(given = "Rafael",
+           family = "Henkin",
+           role = c("ctb", "ths"))
+           )
+Authors: Guy Hunt with contributions from Dr Fabrizio Smeraldi, Professor Michael Barnes and Dr Rafael Henkin.
 Maintainer: Guy Hunt <g.p.w.hunt@se20.qmul.ac.uk>
 Description: GEOexplorer enables exploratory data analysis and differential gene expression of gene expression analysis to be performed on data held in the GEO database. The outputs are interactive graphs. GEOexplorer also contains a shiny app that can be used to perform exploratory data analysis and differential gene expression of gene expression analysis. The development of GEOexplorer was made possible because of the excellent code provided by GEO2R
-(https://www.ncbi.nlm.nih.gov/geo/geo2r/).
+(https: //www.ncbi.nlm.nih.gov/geo/geo2r/).
 License: `use_gpl3_license()
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
+URL: https://github.com/guypwhunt/GEOexplorer/
+BugReports: https://github.com/guypwhunt/GEOexplorer/issues
 RoxygenNote: 7.1.1.9001
 biocViews: GEOquery, limma, impute
 Imports: 
@@ -30,3 +48,7 @@ Imports:
   GEOquery,
   limma,
   impute
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr
