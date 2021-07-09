@@ -5,7 +5,6 @@
 #' @param platform The study's platform
 #' @keywords GEO
 #' @export
-#' @import GEOquery
 #' @examples extractGeoData("GSE18380", "GPL4694")
 #' @author Guy Hunt
 extractGeoData <- function(geoAccessionCode, platform) {
@@ -25,7 +24,6 @@ extractGeoData <- function(geoAccessionCode, platform) {
 #' @param platformAnnotation A string defaulting to "NCBI generated" meaning true as to whether or not to use the Annotation GPL information. These files are nice to use because they contain up-to-date information remapped from Entrez Gene on a regular basis. However, they do not exist for all GPLs; in general, they are only available for GPLs referenced by a GDS. Input "Submitter supplied" for FALSE
 #' @keywords GEO
 #' @export
-#' @import GEOquery
 #' @examples allGset <- getGeoObject("GSE18380", GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated")
 #' @author Guy Hunt
 getGeoObject <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated") {
@@ -52,7 +50,6 @@ getGeoObject <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platform
 #' @param gset The GEO object which can be obtained from the getGeoObject() function
 #' @keywords GEO
 #' @export
-#' @import GEOquery
 #' @examples platforms <- extractPlatforms(allGset)
 #' @author Guy Hunt
 #' @seealso [getGeoObject()] for GEO object
@@ -74,7 +71,6 @@ extractPlatforms <- function(gset) {
 #' @param platform The platform code
 #' @keywords GEO
 #' @export
-#' @import GEOquery
 #' @examples gsetData <- extractPlatformGset(gset, platforms[1])
 #' @author Guy Hunt
 #' @seealso [getGeoObject()] for GEO object
@@ -91,7 +87,6 @@ extractPlatformGset <- function(gset, platform) {
 #' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
 #' @export
-#' @import GEOquery
 #' @examples experimentInformation <- extractExperimentInformation(gsetData)
 #' @author Guy Hunt
 #' @seealso [extractPlatformGset()] for GEO object
@@ -107,7 +102,6 @@ extractExperimentInformation <- function(gset) {
 #' @param experimentData The experiment object obtained from the extractExperimentInformation() function
 #' @keywords GEO
 #' @export
-#' @import GEOquery
 #' @importFrom htmltools HTML
 #' @examples convertExperimentInformation <- convertExperimentInformation(experimentInformation)
 #' @author Guy Hunt
@@ -131,7 +125,6 @@ convertExperimentInformation <- function(experimentData) {
 #' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
 #' @export
-#' @import GEOquery
 #' @examples columnInfo <- extractSampleDetails(gsetData)
 #' @author Guy Hunt
 #' @seealso [extractPlatformGset()] for GEO object
@@ -163,7 +156,6 @@ extractSampleDetails <- function(gset){
 #' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
 #' @export
-#' @import GEOquery
 #' @examples expressionData <- extractExpressionData(gsetData)
 #' @author Guy Hunt
 #' @seealso [extractPlatformGset()] for GEO object
@@ -198,7 +190,6 @@ extractSampleInformation <- function(gset) {
 #' @param logTransformation Whether to auto-detect if log transformation is appropriate or to apply log transformation. Values can be "Auto-Detect" for auto detect, "Yes" to apply log transformation and "No" to not perform log transformation.
 #' @keywords GEO
 #' @export
-#' @import limma
 #' @examples dataInput <- calculateLogTransformation(expressionData, "Auto-Detect")
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
@@ -234,7 +225,6 @@ calculateLogTransformation <- function(ex, logTransformation = "Auto-Detect") {
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
-#' @import limma
 #' @examples autoLogInformation <- calculateAutoLogTransformApplication(expressionData)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
@@ -261,7 +251,6 @@ calculateAutoLogTransformApplication <- function(ex) {
 #' @param knnTransformation Whether to apply KNN impute. This can be "Yes" or "No"
 #' @keywords GEO
 #' @export
-#' @import impute
 #' @examples knnDataInput <- calculateKnnImpute(dataInput, "Yes")
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
