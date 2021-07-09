@@ -293,10 +293,12 @@ calculatePrincompPca <- function(ex){
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import factoextra
 #' @examples naOmitInput <- calculateNaOmit(knnDataInput)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculateNaOmit <- function(ex){
   library(limma)
+  library(factoextra)
   ex <- na.omit(ex)
   return(ex)}
