@@ -107,7 +107,8 @@ extractExperimentInformation <- function(gset) {
 #' @param experimentData The experiment object obtained from the extractExperimentInformation() function
 #' @keywords GEO
 #' @export
-#' @import GEOquery htmltools
+#' @import GEOquery
+#' @importFrom htmltools HTML
 #' @examples convertExperimentInformation <- convertExperimentInformation(experimentInformation)
 #' @author Guy Hunt
 #' @seealso [extractExperimentInformation()] for GEO object
@@ -197,14 +198,14 @@ extractSampleInformation <- function(gset) {
 #' @param logTransformation Whether to auto-detect if log transformation is appropriate or to apply log transformation. Values can be "Auto-Detect" for auto detect, "Yes" to apply log transformation and "No" to not perform log transformation.
 #' @keywords GEO
 #' @export
-#' @import impute limma factoextra
+#' @import limma
 #' @examples dataInput <- calculateLogTransformation(expressionData, "Auto-Detect")
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculateLogTransformation <- function(ex, logTransformation = "Auto-Detect") {
-  library(impute)
+  #library(impute)
   library(limma)
-  library(factoextra)
+  #library(factoextra)
   # If log transformation is set to auto-detect
   if (logTransformation == "Auto-Detect"){
     # log2 transform
@@ -233,14 +234,14 @@ calculateLogTransformation <- function(ex, logTransformation = "Auto-Detect") {
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
-#' @import impute limma factoextra
+#' @import limma
 #' @examples autoLogInformation <- calculateAutoLogTransformApplication(expressionData)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculateAutoLogTransformApplication <- function(ex) {
-  library(impute)
+  #library(impute)
   library(limma)
-  library(factoextra)
+  #library(factoextra)
   # If log transformation is set to auto-detect
   qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
   LogC <- (qx[5] > 100) ||
@@ -260,22 +261,20 @@ calculateAutoLogTransformApplication <- function(ex) {
 #' @param knnTransformation Whether to apply KNN impute. This can be "Yes" or "No"
 #' @keywords GEO
 #' @export
-#' @import impute limma factoextra
+#' @import impute
 #' @examples knnDataInput <- calculateKnnImpute(dataInput, "Yes")
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculateKnnImpute <- function(ex, knnTransformation) {
   library(impute)
-  library(limma)
-  library(factoextra)
+  #library(limma)
+  #library(factoextra)
   if (knnTransformation == "Yes") {
     if (ncol(ex) < 3) {
       ex <- ex[complete.cases(ex), ] # KNN does not work when there are only 2 samples
     } else {
       ex <- ex[rowSums(is.na(ex)) != ncol(ex), ] # remove rows with missing data
     }
-    # remove all zeros (this was originally imported from GeoDrive but seems to be broken)
-    # ex <- ex[rowSums(ex != 0) != 0,]
 
     # Replace missing value with calculated KNN value
     imputation <- impute.knn(ex)
@@ -290,14 +289,13 @@ calculateKnnImpute <- function(ex, knnTransformation) {
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
-#' @import impute limma factoextra
 #' @examples pcaDataInput <- calculatePrcompPca(knnDataInput)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculatePrcompPca <- function(ex){
-  library(impute)
-  library(limma)
-  library(factoextra)
+  #library(impute)
+  #library(limma)
+  #library(factoextra)
   pca <- prcomp(ex, scale = TRUE)
   return(pca)
 }
@@ -308,14 +306,13 @@ calculatePrcompPca <- function(ex){
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
-#' @import impute limma factoextra
 #' @examples pcaPrincompDataInput <- calculatePrincompPca(knnDataInput)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculatePrincompPca <- function(ex){
-  library(impute)
-  library(limma)
-  library(factoextra)
+  #library(impute)
+  #library(limma)
+  #library(factoextra)
   pca <- princomp(ex, cor = TRUE)
   return(pca)
 }
@@ -326,13 +323,14 @@ calculatePrincompPca <- function(ex){
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
-#' @import impute limma factoextra
+#' @importFrom photobiology na.omit
 #' @examples naOmitInput <- calculateNaOmit(knnDataInput)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculateNaOmit <- function(ex){
-  library(impute)
-  library(limma)
-  library(factoextra)
+  library(photobiology)
+  #library(impute)
+  #library(limma)
+  #library(factoextra)
   ex <- na.omit(ex)
   return(ex)}
