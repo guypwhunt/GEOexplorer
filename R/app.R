@@ -4,7 +4,7 @@
 #' @keywords GEO
 #' @export
 #' @examples loadApp()
-#' @import shiny plotly heatmaply shinyHeatmaply ggplot2 shinyBS shinyjs BiocManager DT
+#' @import shiny plotly heatmaply shinyHeatmaply ggplot2 shinyBS shinyjs DT
 #' @author Guy Hunt
 loadApp <- function() {
   # Load Packages
