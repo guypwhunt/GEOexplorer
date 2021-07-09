@@ -298,6 +298,7 @@ calculatePrincompPca <- function(ex){
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculateNaOmit <- function(ex){
+  library(impute)
   library(limma)
   library(factoextra)
   ex <- na.omit(ex)
