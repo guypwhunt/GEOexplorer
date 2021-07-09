@@ -126,7 +126,6 @@ fig
 
 # summarize test results as "up", "down" or "not expressed"
 dT <- calculateDifferentialGeneExpressionSummary(fit2, adjustment, significanceLevelCutOff)
-
 ct <- 1
 
 # Non-Interactive Venn diagram
@@ -146,7 +145,6 @@ fig <- nonInteractiveVolcanoPlot(fit2, dT, ct)
 fig <- interactiveVolcanoPlot(fit2, dT, ct)
 fig
 
-# Fix this
 # MD plot (log fold change vs mean log expression)
 fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
 

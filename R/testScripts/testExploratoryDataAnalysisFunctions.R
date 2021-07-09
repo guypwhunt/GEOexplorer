@@ -150,8 +150,8 @@ fig <- interactivePrincompPcaScreePlot(pcaPrincompDataInput, geoAccessionCode)
 fig
 
 # Non-Interactive Princomp PCA Individual Plot
-nonInteractivePcaIndividualsPlot(pcaPrincompDataInput)
-fig
+fig <- nonInteractivePcaIndividualsPlot(pcaPrincompDataInput)
+
 
 # Interactive Princomp PCA Individual Plot
 fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, geoAccessionCode, gsetData)
@@ -181,7 +181,7 @@ fig <- interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput, geoAccessionCode,
 fig
 
 # Interactive Prcomp PCA Variables Plot
-fig <- interactivePrincompPcaVariablesPlot(pcaPrcompDataInput, geoAccessionCode)
+fig <- interactivePrcompPcaVariablesPlot(pcaPrcompDataInput, geoAccessionCode)
 fig
 
 

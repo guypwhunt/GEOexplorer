@@ -18,8 +18,6 @@ Authors@R:
            family = "Henkin",
            role = c("ctb", "ths"))
            )
-Authors: Guy Hunt with contributions from Dr Fabrizio Smeraldi, Professor Michael Barnes and Dr Rafael Henkin.
-Maintainer: Guy Hunt <g.p.w.hunt@se20.qmul.ac.uk>
 Description: GEOexplorer enables exploratory data analysis and differential gene expression of gene expression analysis to be performed on data held in the GEO database. The outputs are interactive graphs. GEOexplorer also contains a shiny app that can be used to perform exploratory data analysis and differential gene expression of gene expression analysis. The development of GEOexplorer was made possible because of the excellent code provided by GEO2R
 (https: //www.ncbi.nlm.nih.gov/geo/geo2r/).
 License: `use_gpl3_license()

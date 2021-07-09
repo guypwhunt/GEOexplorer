@@ -12,8 +12,19 @@ The development of GEOexplorer was made possible because of the excellent code p
 Use the devtools install_github function for installation e.g.
 
 ```R
-library(devtools)
-install_github("guypwhunt/GEOexplorer")
+if (!requireNamespace("devtools", quietly = TRUE))
+  install.packages("devtools")
+
+devtools::install_github("guypwhunt/GEOexplorer")
+```
+
+Or install from BioConductor
+
+```R
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("GEOexplorer")
 ```
 
 ## Usage
