@@ -54,7 +54,6 @@ getGeoObject <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platform
 #' @author Guy Hunt
 #' @seealso [getGeoObject()] for GEO object
 extractPlatforms <- function(gset) {
-  library(GEOquery)
   platforms <- c()
   i <-1
   for(dataset in gset) {
@@ -75,7 +74,6 @@ extractPlatforms <- function(gset) {
 #' @author Guy Hunt
 #' @seealso [getGeoObject()] for GEO object
 extractPlatformGset <- function(gset, platform) {
-  library(GEOquery)
   if (length(gset) > 1) idx <- grep(platform[1], attr(gset, "names")) else idx <- 1
   gset <- gset[[idx]]
   return(gset)
@@ -91,7 +89,6 @@ extractPlatformGset <- function(gset, platform) {
 #' @author Guy Hunt
 #' @seealso [extractPlatformGset()] for GEO object
 extractExperimentInformation <- function(gset) {
-  library(GEOquery)
   experimentalData <- experimentData(gset)
   return(experimentalData)
 }
@@ -107,7 +104,6 @@ extractExperimentInformation <- function(gset) {
 #' @author Guy Hunt
 #' @seealso [extractExperimentInformation()] for GEO object
 convertExperimentInformation <- function(experimentData) {
-  library(GEOquery)
   library(htmltools)
   name <- paste("<b>", "Author's Name:", "</b>", "<p>", experimentData@name, "</p>")
   lab <- paste("<b>", "Laboratory:", "</b>", "<p>", experimentData@lab, "</p>")
@@ -125,13 +121,10 @@ convertExperimentInformation <- function(experimentData) {
 #' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
 #' @export
-#' @import data.table
 #' @examples columnInfo <- extractSampleDetails(gsetData)
 #' @author Guy Hunt
 #' @seealso [extractPlatformGset()] for GEO object
 extractSampleDetails <- function(gset){
-  library(GEOquery)
-  library(data.table)
   phenoDataset <- phenoData(gset)
   phenoData <- phenoDataset@data
   columnNames <- c("title", "source_name_ch1", "characteristics_ch1", "characteristics_ch1.1")
@@ -162,7 +155,6 @@ extractSampleDetails <- function(gset){
 #' @author Guy Hunt
 #' @seealso [extractPlatformGset()] for GEO object
 extractExpressionData <- function(gset) {
-  library(GEOquery)
   ex <- exprs(gset)
   # Deletes columns for which all values are na
   ex <- ex[,colSums(is.na(ex))<nrow(ex)]
@@ -181,7 +173,6 @@ extractExpressionData <- function(gset) {
 #' @author Guy Hunt
 #' @seealso [extractPlatformGset()] for GEO object
 extractSampleInformation <- function(gset) {
-  library(GEOquery)
   sampleInfo <- pData(gset)
   return(sampleInfo)}
 
@@ -197,8 +188,6 @@ extractSampleInformation <- function(gset) {
 #' @seealso [extractExpressionData()] for expression object
 calculateLogTransformation <- function(ex, logTransformation = "Auto-Detect") {
   library(limma)
-  library(impute)
-  library(factoextra)
   # If log transformation is set to auto-detect
   if (logTransformation == "Auto-Detect"){
     # log2 transform
@@ -232,8 +221,6 @@ calculateLogTransformation <- function(ex, logTransformation = "Auto-Detect") {
 #' @seealso [extractExpressionData()] for expression object
 calculateAutoLogTransformApplication <- function(ex) {
   library(limma)
-  library(impute)
-  library(factoextra)
   # If log transformation is set to auto-detect
   qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
   LogC <- (qx[5] > 100) ||
@@ -257,9 +244,8 @@ calculateAutoLogTransformApplication <- function(ex) {
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculateKnnImpute <- function(ex, knnTransformation) {
-  library(limma)
   library(impute)
-  library(factoextra)
+  library(limma)
   if (knnTransformation == "Yes") {
     if (ncol(ex) < 3) {
       ex <- ex[complete.cases(ex), ] # KNN does not work when there are only 2 samples
@@ -284,9 +270,6 @@ calculateKnnImpute <- function(ex, knnTransformation) {
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculatePrcompPca <- function(ex){
-  library(impute)
-  library(limma)
-  library(factoextra)
   pca <- prcomp(ex, scale = TRUE)
   return(pca)
 }
@@ -301,9 +284,6 @@ calculatePrcompPca <- function(ex){
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculatePrincompPca <- function(ex){
-  library(impute)
-  library(limma)
-  library(factoextra)
   pca <- princomp(ex, cor = TRUE)
   return(pca)
 }
@@ -314,13 +294,10 @@ calculatePrincompPca <- function(ex){
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
-#' @import factoextra
 #' @examples naOmitInput <- calculateNaOmit(knnDataInput)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculateNaOmit <- function(ex){
-  library(impute)
   library(limma)
-  library(factoextra)
   ex <- na.omit(ex)
   return(ex)}

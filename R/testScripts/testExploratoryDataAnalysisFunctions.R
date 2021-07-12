@@ -17,6 +17,9 @@ library(ggplot2)
 library(stringr)
 
 # Input Values
+#logTransformation <- "Auto-Detect"
+#knnTransformation <- "Yes"# Values can also be "Yes"
+
 logTransformations <- list("Auto-Detect", "No")  #
 knnTransformations <- list("Yes", "No") # Values can also be "Yes"
 knn <- 2
@@ -46,7 +49,7 @@ for(geoAccessionCode in listEleven) {
     for(knnTransformation in knnTransformations) {
   tryCatch({
 # Get the GEO2R data for all platforms
-#geoAccessionCode <- "GSE178351"
+#geoAccessionCode <- "GSE18388"
 allGset <- getGeoObject(geoAccessionCode)
 
 # Get a list of all the platforms
@@ -193,3 +196,6 @@ fig
     }
   }
 }
+
+library(GEOexplorer)
+GEOexplorer::loadApp()
