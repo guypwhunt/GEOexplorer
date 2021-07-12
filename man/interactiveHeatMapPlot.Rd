@@ -14,7 +14,7 @@ interactiveHeatMapPlot(ex)
 This function allows you to plot an interactive heat map of the correlations between samples in an expression object
 }
 \examples{
-fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
+fig <- interactiveHeatMapPlot(expressionData)
 }
 \author{
 Guy Hunt

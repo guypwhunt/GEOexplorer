@@ -277,13 +277,14 @@ interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactivePrincompPcaIndividualsPlot(pcaData, "GSE18380", gset)
-#' @import plotly stringr factoextra
+#' @import plotly stringr factoextra scales
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
   library(plotly)
   library(stringr)
   library(factoextra)
+  library(scales)
 
   pcaDf <- data.frame(pcaData$scores)
   pcaDf <- transform(pcaDf)
@@ -366,12 +367,13 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
-#' @import plotly factoextra
+#' @import plotly factoextra scales
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
   library(factoextra)
+  library(scales)
 
   variableStats <- get_pca_var(pcaData)
   eigenValue <- get_eigenvalue(pcaData)
@@ -392,7 +394,7 @@ interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
-#' @examples fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
+#' @examples fig <- interactiveHeatMapPlot(expressionData)
 #' @import plotly heatmaply
 #' @author Guy Hunt
 interactiveHeatMapPlot <- function(ex) {
@@ -420,13 +422,14 @@ interactiveHeatMapPlot <- function(ex) {
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactiveprcompPcaIndividualsPlot(pcaData, "GSE18380", gset)
-#' @import plotly stringr factoextra
+#' @import plotly stringr factoextra scales
 #' @author Guy Hunt
 #' @seealso [calculatePrcompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrcompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
   library(plotly)
   library(factoextra)
   library(stringr)
+  library(scales)
   pcaDf <- data.frame(pcaData$x)
   pcaDf <- transform(pcaDf)
   pcaDf["ID"] <- rownames(pcaDf)
@@ -509,12 +512,13 @@ interactivePrcompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset)
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactivePrcompPcaVariablesPlot(pcaData, "GSE18380")
-#' @import plotly factoextra
+#' @import plotly factoextra scales
 #' @author Guy Hunt
 #' @seealso [calculatePrcompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrcompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
   library(factoextra)
+  library(scales)
   variableStats <- get_pca_var(pcaData)
   eigenValue <- get_eigenvalue(pcaData)
   pcaData <- as.data.frame(unclass(pcaData$rotation))
