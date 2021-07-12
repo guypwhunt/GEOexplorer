@@ -12,8 +12,6 @@
 #' @seealso [extractExpressionData()] for expression object
 interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
   library(plotly)
-  #library(ggplot2)
-  #library(limma)
   ex <- as.data.frame(ex)
   fig <- plot_ly(type = "box", quartilemethod="linear")
   i = 1
@@ -39,8 +37,6 @@ interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
 #' @seealso [extractExpressionData()] for expression object
 interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
   library(plotly)
-  #library(ggplot2)
-  #library(limma)
   ex <- as.data.frame(ex)
   fig <- plot_ly(type = 'scatter', mode = 'lines', name = (paste(paste(geoAccessionCode,platform),'value distribution')))
   i <- 1
@@ -70,8 +66,6 @@ interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
 #' @seealso [extractExpressionData()] for expression object
 interactiveThreeDDesnityPlot <- function(ex, geoAccessionCode, platform) {
   library(plotly)
-  #library(ggplot2)
-  #library(limma)
   ex <- as.data.frame(ex)
   fig <- plot_ly(type = 'scatter3d', mode = 'lines', name = (paste(paste(geoAccessionCode,platform),'value distribution')))
   i <- 1
@@ -105,9 +99,7 @@ interactiveThreeDDesnityPlot <- function(ex, geoAccessionCode, platform) {
 #' @seealso [extractExpressionData()] for expression object
 interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
   library(plotly)
-  #library(ggplot2)
   library(umap)
-  #library(limma)
   ex <- ex[!duplicated(ex), ]  # remove duplicates
   ump <- umap(t(ex), n_neighbors = knn, random_state = 123)
   i <- 1
@@ -135,9 +127,7 @@ interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
 #' @seealso [extractExpressionData()] for expression object, [extractPlatformGset()] for GEO object
 interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
   library(plotly)
-  #library(ggplot2)
   library(limma)
-  #library(stringr)
   exData <- lmFit(ex)
   exData <- as.data.frame(exData)
   exData["ID"] <- rownames(ex)
@@ -232,8 +222,6 @@ interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
 #' @seealso [calculatePca()] for PCA expression object
 interactivePrcompPcaScreePlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
-  #library(ggplot2)
-  #library(limma)
   columnNames <- colnames(pcaData$x)
   proportionOfVariance <- pcaData$sdev^2/sum(pcaData$sdev^2)
   pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
@@ -264,8 +252,6 @@ interactivePrcompPcaScreePlot <- function(pcaData, geoAccessionCode) {
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object
 interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
-  #library(ggplot2)
-  #library(limma)
   columnNames <-   colnames(pcaData$loadings)
   proportionOfVariance <- pcaData$sdev^2/sum(pcaData$sdev^2)
   pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
@@ -291,15 +277,13 @@ interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactivePrincompPcaIndividualsPlot(pcaData, "GSE18380", gset)
-#' @import plotly stringr
+#' @import plotly stringr factoextra
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
   library(plotly)
-  #library(ggplot2)
-  #library(limma)
   library(stringr)
-  #library(scales)
+  library(factoextra)
 
   pcaDf <- data.frame(pcaData$scores)
   pcaDf <- transform(pcaDf)
@@ -382,14 +366,13 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
-#' @import plotly
+#' @import plotly factoextra
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
-  #library(ggplot2)
-  #library(limma)
-  #library(scales)
+  library(factoextra)
+
   variableStats <- get_pca_var(pcaData)
   eigenValue <- get_eigenvalue(pcaData)
   pcaData <- as.data.frame(unclass(pcaData$loadings))
@@ -414,12 +397,7 @@ interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
 #' @author Guy Hunt
 interactiveHeatMapPlot <- function(ex) {
   library(plotly)
-  #library(ggplot2)
-  #library(limma)
-  #library(scales)
-  #library(pheatmap)
   library(heatmaply)
-  #library(stringr)
   corMatrix <- cor(ex,use="c")
   df <- data.frame(corMatrix[1,])
   df <- df[-c(1)]
@@ -442,15 +420,13 @@ interactiveHeatMapPlot <- function(ex) {
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactiveprcompPcaIndividualsPlot(pcaData, "GSE18380", gset)
-#' @import plotly stringr
+#' @import plotly stringr factoextra
 #' @author Guy Hunt
 #' @seealso [calculatePrcompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrcompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
   library(plotly)
-  #library(ggplot2)
-  #library(limma)
+  library(factoextra)
   library(stringr)
-  #library(scales)
   pcaDf <- data.frame(pcaData$x)
   pcaDf <- transform(pcaDf)
   pcaDf["ID"] <- rownames(pcaDf)
@@ -538,10 +514,7 @@ interactivePrcompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset)
 #' @seealso [calculatePrcompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrcompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
   library(plotly)
-  #library(ggplot2)
-  #library(limma)
   library(factoextra)
-  library(scales)
   variableStats <- get_pca_var(pcaData)
   eigenValue <- get_eigenvalue(pcaData)
   pcaData <- as.data.frame(unclass(pcaData$rotation))
