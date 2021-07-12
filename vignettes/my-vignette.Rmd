@@ -27,6 +27,14 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("GEOexplorer")
 ```
 
+Or GEOexplorer can be installed from GitHub
+```{r eval=FALSE}
+if (!requireNamespace("devtools", quietly = TRUE))
+  install.packages("devtools")
+
+devtools::install_github("guypwhunt/GEOexplorer")
+```
+
 # Getting Started using GEOexplorer Shiny App
 
 Getting started with the GEOexplorer Shiny App is relatively easy and can be performed in a number of steps.
