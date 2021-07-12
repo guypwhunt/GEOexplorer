@@ -214,7 +214,7 @@ calculateDifferentialGeneExpressionSummary <- function(fit2, adjustment, signifi
 #' @param groupDataFrame A dataframe containing the row number and group selection
 #' @keywords GEO
 #' @export
-#' @import stringr
+#' @importFrom stringr str_remove_all
 #' @examples TBD
 #' @author Guy Hunt
 calculateEachGroupsSamplesFromDataFrame <- function(groupDataFrame) {

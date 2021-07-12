@@ -123,11 +123,13 @@ interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
 #' @export
 #' @examples fig <- interactiveMeanVariancePlot(expressionData, "GSE18380", gset)
 #' @import plotly
+#' @importFrom stringr str_replace_all
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object, [extractPlatformGset()] for GEO object
 interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
   library(plotly)
   library(limma)
+  library(stringr)
   exData <- lmFit(ex)
   exData <- as.data.frame(exData)
   exData["ID"] <- rownames(ex)
@@ -277,7 +279,10 @@ interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactivePrincompPcaIndividualsPlot(pcaData, "GSE18380", gset)
-#' @import plotly stringr factoextra scales
+#' @import plotly
+#' @importFrom stringr str_replace_all
+#' @importFrom factoextra get_pca_ind get_eigenvalue
+#' @importFrom scales label_percent
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
@@ -367,7 +372,9 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
-#' @import plotly factoextra scales
+#' @import plotly
+#' @importFrom factoextra get_pca_var get_eigenvalue
+#' @importFrom scales label_percent
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
@@ -422,7 +429,10 @@ interactiveHeatMapPlot <- function(ex) {
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactiveprcompPcaIndividualsPlot(pcaData, "GSE18380", gset)
-#' @import plotly stringr factoextra scales
+#' @import plotly
+#' @importFrom stringr str_replace_all
+#' @importFrom factoextra get_pca_ind get_eigenvalue
+#' @importFrom scales label_percent
 #' @author Guy Hunt
 #' @seealso [calculatePrcompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrcompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
@@ -512,7 +522,9 @@ interactivePrcompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset)
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactivePrcompPcaVariablesPlot(pcaData, "GSE18380")
-#' @import plotly factoextra scales
+#' @import plotly
+#' @importFrom factoextra get_pca_var get_eigenvalue
+#' @importFrom scales label_percent
 #' @author Guy Hunt
 #' @seealso [calculatePrcompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrcompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {

@@ -76,7 +76,7 @@ nonInteractiveUmapPlot <- function(ex, knn, geoAccessionCode = "", platform = ""
 #' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @export
-#' @import factoextra
+#' @importFrom factoextra fviz_eig
 #' @examples fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
@@ -91,7 +91,7 @@ nonInteractivePcaScreePlot <- function(pcaEx) {
 #' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @export
-#' @import factoextra
+#' @importFrom factoextra fviz_pca_ind
 #' @examples fig <- nonInteractivePcaIndividualsPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
@@ -111,7 +111,7 @@ nonInteractivePcaIndividualsPlot <- function(pcaEx) {
 #' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @export
-#' @import factoextra
+#' @importFrom factoextra fviz_pca_var
 #' @examples fig <- nonInteractivePcaVariablesPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
@@ -130,7 +130,7 @@ nonInteractivePcaVariablesPlot <- function(pcaEx) {
 #' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @export
-#' @import factoextra
+#' @importFrom factoextra fviz_pca_biplot
 #' @examples fig <- nonInteractivePcaBiplotPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
