@@ -130,7 +130,7 @@ interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactiveMeanVariancePlot(expressionData, "GSE18380", gset)
-#' @import plotly ggplot2 limma stringr data.table
+#' @import plotly ggplot2 limma stringr
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object, [extractPlatformGset()] for GEO object
 interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
@@ -138,19 +138,18 @@ interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
   library(ggplot2)
   library(limma)
   library(stringr)
-  library(data.table)
-  ex <- lmFit(ex)
-  ex <- as.data.frame(ex)
-  ex["ID"] <- rownames(ex)
+  exData <- lmFit(ex)
+  exData <- as.data.frame(exData)
+  exData["ID"] <- rownames(ex)
   geneData <- gsetData@featureData@data
   # Error handling to catch gset without featureData
   if(ncol(geneData) > 0){
     geneData <- as.data.frame(geneData)
-    combineData <- merge(ex, geneData, by = "ID")
+    combineData <- merge(exData, geneData, by = "ID")
     colnames(combineData) <- str_replace_all(colnames(combineData), " ", ".")
-    combineData %>% filter(ID %in% c(rownames(ex)))
+    combineData %>% filter(ID %in% c(rownames(exData)))
   } else{
-    combineData <- ex
+    combineData <- exData
   }
 
   if('ID' %in% colnames(combineData)){
