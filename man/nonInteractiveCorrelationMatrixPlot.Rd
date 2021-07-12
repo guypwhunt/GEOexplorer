@@ -11,7 +11,7 @@ nonInteractiveCorrelationMatrixPlot(ex)
 \item{ex}{The GEO expression object which can be obtained from the extractExpressionData() function}
 }
 \description{
-This function allows you to plot PCA expression results into an Scatter Plot contains both the Individuals and Variables
+This function allows you to plot a heatmap of the correlations between experimental conditions
 }
 \examples{
 fig <- nonInteractiveCorrelationMatrixPlot(expressionData)
