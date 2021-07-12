@@ -14,8 +14,8 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
   library(limma)
   tT2 <- topTable(fit2, adjust=adjustment, sort.by="B", number=Inf)
   fig <- plot_ly(x = tT2$adj.P.Val, type = "histogram", nbinsx = 30)
-  fig <- fig %>% layout(title = 'P-adj value distribution',
-                        xaxis = list(title = 'P-adj'),
+  fig <- fig %>% layout(title = 'Adjusted P-value distribution',
+                        xaxis = list(title = 'Adjusted P-value'),
                         yaxis = list(title = 'Number of genes'))
   fig
 }
