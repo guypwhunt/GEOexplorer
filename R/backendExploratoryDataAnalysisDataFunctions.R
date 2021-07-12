@@ -187,7 +187,7 @@ extractSampleInformation <- function(gset) {
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculateLogTransformation <- function(ex, logTransformation = "Auto-Detect") {
-  library(limma)
+  #library(limma)
   # If log transformation is set to auto-detect
   if (logTransformation == "Auto-Detect"){
     # log2 transform
@@ -220,7 +220,7 @@ calculateLogTransformation <- function(ex, logTransformation = "Auto-Detect") {
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculateAutoLogTransformApplication <- function(ex) {
-  library(limma)
+  #library(limma)
   # If log transformation is set to auto-detect
   qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
   LogC <- (qx[5] > 100) ||
@@ -245,7 +245,7 @@ calculateAutoLogTransformApplication <- function(ex) {
 #' @seealso [extractExpressionData()] for expression object
 calculateKnnImpute <- function(ex, knnTransformation) {
   library(impute)
-  library(limma)
+  #library(limma)
   if (knnTransformation == "Yes") {
     if (ncol(ex) < 3) {
       ex <- ex[complete.cases(ex), ] # KNN does not work when there are only 2 samples
@@ -298,6 +298,6 @@ calculatePrincompPca <- function(ex){
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculateNaOmit <- function(ex){
-  library(limma)
+  #library(limma)
   ex <- na.omit(ex)
   return(ex)}

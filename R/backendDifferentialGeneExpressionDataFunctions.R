@@ -24,7 +24,6 @@ extractSampleNames <- function(ex) {
 #' @author Guy Hunt
 #' @seealso [extractSampleNames()] for all the sample names
 calculateEachGroupsSamples <- function(columnNames, group1, group2){
-  #library(limma)
   lengthOfColumns <- sum(unlist(lapply(columnNames, length)))
   gsmsList <- vector(mode = "list", length = lengthOfColumns)
   i <- 1
@@ -123,7 +122,6 @@ calculateDifferentialGeneExpression <- function(gsms, limmaPrecisionWeights, for
 #' @examples adjustment <- convertAdjustment("Benjamini & Hochberg (False discovery rate)")
 #' @author Guy Hunt
 convertAdjustment <- function(adjustment){
-  #library(limma)
   if (adjustment == "Benjamini & Hochberg (False discovery rate)"){
     adjustment <- "fdr"
   } else if (adjustment == "Benjamini & Yekutieli"){
