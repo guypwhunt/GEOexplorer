@@ -12,7 +12,8 @@ nonInteractiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode = "", platform 
   library(limma)
   par(mar=c(7,4,2,1))
   title <- paste (geoAccessionCode, "/", platform, sep ="")
-  boxplot(ex, boxwex=0.7, notch=T, main=title, outline=FALSE, las=2)
+  fig <- boxplot(ex, boxwex=0.7, notch=T, main=title, outline=FALSE, las=2)
+  return(fig)
 }
 
 #' A Function to Create a Density Plot from an Expression Object
@@ -30,7 +31,8 @@ nonInteractiveDesnityPlot <- function(ex, geoAccessionCode = "", platform = "") 
   library(limma)
   par(mar=c(4,4,2,1))
   title <- paste(geoAccessionCode, "/", platform, " value distribution", sep ="")
-  plotDensities(ex, main=title, legend=F)
+  fig <- plotDensities(ex, main=title, legend=F)
+  return(fig)
 }
 
 #' A Function to Create a Mean Variance Plot from an Expression Object
@@ -46,7 +48,8 @@ nonInteractiveDesnityPlot <- function(ex, geoAccessionCode = "", platform = "") 
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveMeanVariancePlot <- function(ex, geoAccessionCode = "", platform = "") {
   library(limma)
-  plotSA(lmFit(ex), main= paste("Mean variance trend,", geoAccessionCode))
+  fig <- plotSA(lmFit(ex), main= paste("Mean variance trend,", geoAccessionCode))
+  return(fig)
 }
 
 #' A Function to Create a UMAP Plot from an Expression Object
@@ -58,16 +61,19 @@ nonInteractiveMeanVariancePlot <- function(ex, geoAccessionCode = "", platform =
 #' @keywords GEO
 #' @export
 #' @import umap
+#' @importFrom maptools pointLabel
 #' @examples fig <- nonInteractiveUmapPlot(expressionData, 3, "GSE18380", "GPL4694")
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveUmapPlot <- function(ex, knn, geoAccessionCode = "", platform = "") {
   library(limma)
   library(umap)
+  library(maptools)
   ex <- ex[!duplicated(ex), ]  # remove duplicates
   ump <- umap(t(ex), n_neighbors = knn, random_state = 123)
   plot(ump$layout, main=paste("UMAP plot, number of nearest neighbors used =", knn), xlab="", ylab="", pch=20, cex=1.5)
-  pointLabel(ump$layout, labels = rownames(ump$layout), method="SANN", cex=0.6)
+  fig <- pointLabel(ump$layout, labels = rownames(ump$layout), method="SANN", cex=0.6)
+  return(fig)
 }
 
 #' A Function to Create a Histogram of the Principle Components from the PCA outputs of an Expression Object
@@ -82,7 +88,8 @@ nonInteractiveUmapPlot <- function(ex, knn, geoAccessionCode = "", platform = ""
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaScreePlot <- function(pcaEx) {
   library(factoextra)
-  fviz_eig(pcaEx)
+  fig <- fviz_eig(pcaEx)
+  return(fig)
 }
 
 #' A Function to Create an Individuals Scatter Plot from the PCA outputs of an Expression Object
@@ -97,12 +104,13 @@ nonInteractivePcaScreePlot <- function(pcaEx) {
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaIndividualsPlot <- function(pcaEx) {
   library(factoextra)
-  fviz_pca_ind(pcaEx,
+  fig <- fviz_pca_ind(pcaEx,
                col.ind = "cos2", # Color by the quality of representation
                gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
                geom = "point",
                repel = TRUE     # Avoid text overlapping
   )
+  return(fig)
 }
 
 #' A Function to Create an Variables Scatter Plot from the PCA outputs of an Expression Object
@@ -117,11 +125,12 @@ nonInteractivePcaIndividualsPlot <- function(pcaEx) {
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaVariablesPlot <- function(pcaEx) {
   library(factoextra)
-  fviz_pca_var(pcaEx,
+  fig <- fviz_pca_var(pcaEx,
                col.var = "contrib", # Color by contributions to the PC
                gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
                repel = TRUE     # Avoid text overlapping
   )
+  return(fig)
 }
 
 #' A Function to Create a Scatter Plot that contains both the Individuals and Variables from the PCA outputs of an Expression Object
@@ -136,11 +145,12 @@ nonInteractivePcaVariablesPlot <- function(pcaEx) {
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaBiplotPlot <- function(pcaEx) {
   library(factoextra)
-  fviz_pca_biplot(pcaEx, repel = TRUE,
+  fig <- fviz_pca_biplot(pcaEx, repel = TRUE,
                   col.var = "#2E9FDF", # Variables color
                   geom = "point",
                   col.ind = "#696969",  # Individuals color
   )
+  return(fig)
 }
 
 #' A Function to Create a Correlation Matrix that contains both the Correlations between Samples

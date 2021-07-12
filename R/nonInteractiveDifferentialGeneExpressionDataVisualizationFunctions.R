@@ -10,7 +10,8 @@
 #' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object
 nonInteractiveVennDiagramPlot <- function(dT) {
   library(limma)
-  vennDiagram(dT, circle.col=palette())
+  fig <- vennDiagram(dT, circle.col=palette())
+  return(fig)
 }
 
 #' A Function to Create a QQ Plot of the Quantiles of a Data Sample Against the Theoretical Quantiles of a Student's T Distribution from Differential Gene Expression Analysis
@@ -26,7 +27,8 @@ nonInteractiveQQPlot <- function(fit2) {
   library(limma)
   # create Q-Q plot for t-statistic
   t.good <- which(!is.na(fit2$F)) # filter out bad probes
-  qqt(fit2$t[t.good], fit2$df.total[t.good], main="Moderated t statistic")
+  fig <- qqt(fit2$t[t.good], fit2$df.total[t.good], main="Moderated t statistic")
+  return(fig)
 }
 
 #' A Function to Create a Volcano Plot of the Statistical Significance (-log10 P Value) Versus Magnitude of Change (log2 Fold Change) from Differential Gene Expression Analysis
@@ -44,8 +46,9 @@ nonInteractiveVolcanoPlot <- function(fit2, dT, ct) {
   library(limma)
   # volcano plot (log P-value vs log fold change)
   colnames(fit2) # list contrast names
-  volcanoplot(fit2, coef=ct, main=colnames(fit2)[ct], pch=20,
+  fig <- volcanoplot(fit2, coef=ct, main=colnames(fit2)[ct], pch=20,
               highlight=length(which(dT[,ct]!=0)), names=rep('+', nrow(fit2)))
+  return(fig)
 }
 
 #' A Function to Create a Mean Difference Plot of the log2 Fold Change Versus Average log2 Expression Values from Differential Gene Expression Analysis
@@ -63,8 +66,9 @@ noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
   library(limma)
   # MD plot (log fold change vs mean log expression)
   # highlight statistically significant (p-adj < 0.05) probes
-  plotMD(fit2, column=ct, status=dT[,ct], legend=F, pch=20, cex=1)
+  fig <- plotMD(fit2, column=ct, status=dT[,ct], legend=F, pch=20, cex=1)
   abline(h=0)
+  return(fig)
 }
 
 #' A Function to Create a Histogram of the P values from Differential Gene Expression Analysis
@@ -80,6 +84,7 @@ noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
 nonInteractiveHistogramPlot <- function(fit2, adjustment) {
   library(limma)
   tT2 <- topTable(fit2, adjust=adjustment, sort.by="B", number=Inf)
-  hist(tT2$adj.P.Val, col = "grey", border = "white", xlab = "P-adj",
+  fig <- hist(tT2$adj.P.Val, col = "grey", border = "white", xlab = "P-adj",
        ylab = "Number of genes", main = "P-adj value distribution")
+  return(fig)
 }
