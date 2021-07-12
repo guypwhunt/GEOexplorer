@@ -6,14 +6,13 @@
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactiveHistogramPlot(fit2, adjustment)
-#' @import plotly ggplot2
+#' @import plotly
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 interactiveHistogramPlot <- function(fit2, adjustment) {
   library(plotly)
-  library(ggplot2)
+  #library(ggplot2)
   library(limma)
-  #library(scales)
   tT2 <- topTable(fit2, adjust=adjustment, sort.by="B", number=Inf)
   fig <- plot_ly(x = tT2$adj.P.Val, type = "histogram", nbinsx = 30)
   fig <- fig %>% layout(title = 'P-adj value distribution',
@@ -36,9 +35,7 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object, [calculateDifferentialGeneExpressionSummary()] for summary differential gene expression object
 interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
   library(plotly)
-  library(ggplot2)
-  #library(limma)
-  #library(scales)
+  #library(ggplot2)
   attributes_list <- c('ID', 'Gene.symbol', 'Gene.title', 'Gene.ID')
   final_attributes_list <- c()
 
@@ -116,9 +113,7 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object, [calculateDifferentialGeneExpressionSummary()] for summary differential gene expression object
 interactiveVolcanoPlot <- function(fit2, dT, ct) {
   library(plotly)
-  library(ggplot2)
-  #library(limma)
-  #library(scales)
+  #library(ggplot2)
   attributes_list <- c('ID', 'Gene.symbol', 'Gene.title', 'Gene.ID')
   final_attributes_list <- c()
 
@@ -195,9 +190,8 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object, [calculateDifferentialGeneExpressionSummary()] for summary differential gene expression object
 interactiveQQPlot <- function(fit2, dT, ct) {
   library(plotly)
-  library(ggplot2)
+  #library(ggplot2)
   library(limma)
-  #library(scales)
   t.good <- which(!is.na(fit2$F)) # filter out bad probes
   qqData <- qqt(fit2$t[t.good], fit2$df.total[t.good], main="Moderated t statistic", plot.it = FALSE)
 

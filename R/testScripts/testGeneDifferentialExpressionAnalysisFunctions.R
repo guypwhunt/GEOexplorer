@@ -151,11 +151,14 @@ fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
 # Plot Interactive Mean Difference of fit 2 data
 fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
 fig
+gc()
 
   }, error = function(e) {
     outputFile <-file(paste0(geoAccessionCode,"DGEAOutput.txt"))
     write(as.character(paste0(paste0(paste0(paste0(paste0(paste0(paste0(paste0(paste0(paste0(paste0("logTransformation: ", logTransformation), ", knnTransformation: "), knnTransformation), ", pValueAdjustment: "), pValueAdjustment), ", limmaPrecisionWeights: "), limmaPrecisionWeights), ", forceNormalization: "), forceNormalization), ", significanceLevelCutOff: "), significanceLevelCutOff)),file = outputFile, append = TRUE, sep = "\n")
     close(outputFile)
+    gc()
+
   })
 }
   }

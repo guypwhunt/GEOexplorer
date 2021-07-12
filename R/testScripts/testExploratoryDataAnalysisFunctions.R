@@ -187,11 +187,15 @@ fig
 fig <- interactivePrcompPcaVariablesPlot(pcaPrcompDataInput, geoAccessionCode)
 fig
 
+gc()
+
 
   }, error = function(e) {
     outputFile <-file(paste0(geoAccessionCode,"EDAOutput.txt"))
     write(as.character(geoAccessionCode),file = outputFile, append = TRUE, sep = "\n")
     close(outputFile)
+    gc()
+
   })
     }
   }
