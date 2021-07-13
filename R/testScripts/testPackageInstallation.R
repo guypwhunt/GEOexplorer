@@ -4,7 +4,7 @@ if (!requireNamespace("devtools", quietly = TRUE))
 gc()
 
 
-devtools::install_github("guypwhunt/GEOexplorer", ref = "master")
+devtools::install_github("guypwhunt/GEOexplorer")
 
 gc()
 
