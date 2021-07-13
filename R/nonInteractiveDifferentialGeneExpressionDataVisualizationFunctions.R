@@ -5,6 +5,7 @@
 #' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @keywords GEO
 #' @export
+#' @import limma
 #' @examples fig <- nonInteractiveVennDiagramPlot(dT)
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object
@@ -20,6 +21,7 @@ nonInteractiveVennDiagramPlot <- function(dT) {
 #' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function
 #' @keywords GEO
 #' @export
+#' @import limma
 #' @examples fig <- nonInteractiveQQPlot(fit2)
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
@@ -39,6 +41,7 @@ nonInteractiveQQPlot <- function(fit2) {
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
 #' @export
+#' @import limma
 #' @examples fig <- nonInteractiveVolcanoPlot(fit2, dT, ct)
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object, [calculateDifferentialGeneExpression()] for differential gene expression object
@@ -59,6 +62,7 @@ nonInteractiveVolcanoPlot <- function(fit2, dT, ct) {
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
 #' @export
+#' @import limma
 #' @examples fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object, [calculateDifferentialGeneExpression()] for differential gene expression object
@@ -78,6 +82,7 @@ noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
 #' @param adjustment A character string containing the adjustment to P-values
 #' @keywords GEO
 #' @export
+#' @import limma
 #' @examples fig <- nonInteractiveHistogramPlot(fit2, adjustment)
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object

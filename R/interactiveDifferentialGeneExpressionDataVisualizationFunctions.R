@@ -6,7 +6,7 @@
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactiveHistogramPlot(fit2, adjustment)
-#' @import plotly
+#' @import plotly limma
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 interactiveHistogramPlot <- function(fit2, adjustment) {
@@ -182,7 +182,7 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactiveQQPlot(fit2, dT, ct)
-#' @import plotly
+#' @import plotly limma
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object, [calculateDifferentialGeneExpressionSummary()] for summary differential gene expression object
 interactiveQQPlot <- function(fit2, dT, ct) {

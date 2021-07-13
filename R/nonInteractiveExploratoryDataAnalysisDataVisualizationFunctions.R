@@ -5,6 +5,7 @@
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import limma
 #' @examples fig <- nonInteractiveBoxAndWhiskerPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
@@ -24,6 +25,7 @@ nonInteractiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode = "", platform 
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import limma
 #' @examples fig <- nonInteractiveDesnityPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
@@ -43,6 +45,7 @@ nonInteractiveDesnityPlot <- function(ex, geoAccessionCode = "", platform = "") 
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
+#' @import limma
 #' @examples fig <- nonInteractiveMeanVariancePlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
@@ -60,7 +63,7 @@ nonInteractiveMeanVariancePlot <- function(ex, geoAccessionCode = "", platform =
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
-#' @import umap
+#' @import umap limma
 #' @importFrom maptools pointLabel
 #' @examples fig <- nonInteractiveUmapPlot(expressionData, 3, "GSE18380", "GPL4694")
 #' @author Guy Hunt

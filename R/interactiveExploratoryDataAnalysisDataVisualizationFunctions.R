@@ -122,7 +122,7 @@ interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactiveMeanVariancePlot(expressionData, "GSE18380", gset)
-#' @import plotly
+#' @import plotly limma
 #' @importFrom stringr str_replace_all
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object, [extractPlatformGset()] for GEO object

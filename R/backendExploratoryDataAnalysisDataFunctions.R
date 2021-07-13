@@ -5,6 +5,7 @@
 #' @param platform The study's platform
 #' @keywords GEO
 #' @export
+#' @importFrom GEOquery getGEO
 #' @examples extractGeoData("GSE18380", "GPL4694")
 #' @author Guy Hunt
 extractGeoData <- function(geoAccessionCode, platform) {
@@ -24,6 +25,7 @@ extractGeoData <- function(geoAccessionCode, platform) {
 #' @param platformAnnotation A string defaulting to "NCBI generated" meaning true as to whether or not to use the Annotation GPL information. These files are nice to use because they contain up-to-date information remapped from Entrez Gene on a regular basis. However, they do not exist for all GPLs; in general, they are only available for GPLs referenced by a GDS. Input "Submitter supplied" for FALSE
 #' @keywords GEO
 #' @export
+#' @importFrom GEOquery getGEO
 #' @examples allGset <- getGeoObject("GSE18380", GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated")
 #' @author Guy Hunt
 getGeoObject <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated") {
@@ -238,6 +240,7 @@ calculateAutoLogTransformApplication <- function(ex) {
 #' @param knnTransformation Whether to apply KNN impute. This can be "Yes" or "No"
 #' @keywords GEO
 #' @export
+#' @import impute
 #' @examples knnDataInput <- calculateKnnImpute(dataInput, "Yes")
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
