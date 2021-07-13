@@ -41,7 +41,8 @@ Imports:
   shinyHeatmaply,
   umap,
   limma,
-  impute
+  impute,
+  GEOquery
 Suggests: 
     rmarkdown,
     knitr
