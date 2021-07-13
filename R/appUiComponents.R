@@ -2,7 +2,7 @@
 #'
 #' A Function to Return the Side Bar Ui Component
 #' @import shiny
-#' @import shinyBS bsTooltip
+#' @importFrom shinyBS bsTooltip
 #' @author Guy Hunt
 sourceSideBarUi <- function() {
   library(shiny)
