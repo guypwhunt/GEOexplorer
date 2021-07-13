@@ -40,7 +40,10 @@ Imports:
   shinyBS,
   shinyHeatmaply,
   stringr,
-  umap
+  umap,
+  GEOquery,
+  limma,
+  impute
 Suggests: 
     rmarkdown,
     knitr
