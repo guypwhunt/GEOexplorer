@@ -54,7 +54,7 @@ loadApp()
 Getting started with the GEOexplorer exploratory data analysis functions is slightly more complicated than the shiny app but can still be performed in a number of steps.
 
 Step 1: Load the package
-```{r loadLibrary}
+```{r}
 library(GEOexplorer)
 ```
 
@@ -221,7 +221,7 @@ fig
 Getting started with the GEOexplorer differential gene expression analysis functions is slightly more complicated than the shiny app but can still be performed in a number of steps.
 
 Step 1: Load the package
-```{r loadLibrary}
+```{r}
 library(GEOexplorer)
 ```
 

@@ -27,8 +27,15 @@ Roxygen: list(markdown = TRUE)
 URL: https://github.com/guypwhunt/GEOexplorer/
 BugReports: https://github.com/guypwhunt/GEOexplorer/issues
 RoxygenNote: 7.1.1.9001
-biocViews: Software
+biocViews: 
+  Software,
+  GeneExpression,
+  mRNAMicroarray,
+  DifferentialExpression,
+  Microarray
 Imports: 
+  DT,
+  htmltools,
   factoextra,
   ggplot2,
   heatmaply,
