@@ -4,13 +4,11 @@
 #' @keywords GEO
 #' @export
 #' @examples loadApp()
-#' @import shiny plotly heatmaply shinyHeatmaply ggplot2
+#' @import shiny shinyHeatmaply ggplot2
 #' @author Guy Hunt
 loadApp <- function() {
   # Load Packages
   library(shiny)
-  library(plotly)
-  library(heatmaply)
   library(shinyHeatmaply)
   library(ggplot2)
 

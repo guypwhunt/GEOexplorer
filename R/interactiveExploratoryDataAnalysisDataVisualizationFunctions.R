@@ -402,7 +402,8 @@ interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
 #' @keywords GEO
 #' @export
 #' @examples fig <- interactiveHeatMapPlot(expressionData)
-#' @import plotly heatmaply
+#' @import plotly
+#' @importFrom heatmaply heatmaply
 #' @author Guy Hunt
 interactiveHeatMapPlot <- function(ex) {
   library(plotly)
