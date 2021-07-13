@@ -29,7 +29,6 @@ BugReports: https://github.com/guypwhunt/GEOexplorer/issues
 RoxygenNote: 7.1.1.9001
 biocViews: GEOquery, limma, impute
 Imports: 
-  data.table, 
   factoextra,
   ggplot2,
   heatmaply,
@@ -40,7 +39,6 @@ Imports:
   shiny,
   shinyBS,
   shinyHeatmaply,
-  shinyjs,
   stringr,
   umap,
   GEOquery,
