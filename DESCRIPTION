@@ -34,21 +34,12 @@ biocViews:
   DifferentialExpression,
   Microarray
 Imports: 
-  DT,
-  htmltools,
-  factoextra,
   ggplot2,
-  heatmaply,
-  maptools,
   pheatmap,
   plotly,
-  scales,
   shiny,
-  shinyBS,
   shinyHeatmaply,
-  stringr,
   umap,
-  GEOquery,
   limma,
   impute
 Suggests: 

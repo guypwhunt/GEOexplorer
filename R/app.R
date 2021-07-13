@@ -1,6 +1,6 @@
-#' A Function to Load the GEO2R Data Visualisation Shiny App
+#' A Function to Load the GEOexplorer Shiny App
 #'
-#' This function loads the GEO2R Data Visualisation Shiny App. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data.
+#' This function loads the GEOexplorer Shiny App. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data.
 #' @keywords GEO
 #' @export
 #' @examples loadApp()

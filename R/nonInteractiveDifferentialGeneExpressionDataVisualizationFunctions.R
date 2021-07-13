@@ -70,7 +70,7 @@ noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
   library(limma)
   # MD plot (log fold change vs mean log expression)
   # highlight statistically significant (p-adj < 0.05) probes
-  fig <- plotMD(fit2, column=ct, status=dT[,ct], legend=F, pch=20, cex=1)
+  fig <- plotMD(fit2, column=ct, status=dT[,ct], legend=FALSE, pch=20, cex=1)
   abline(h=0)
   return(fig)
 }

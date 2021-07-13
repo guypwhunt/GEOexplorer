@@ -13,7 +13,7 @@ nonInteractiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode = "", platform 
   library(limma)
   par(mar=c(7,4,2,1))
   title <- paste (geoAccessionCode, "/", platform, sep ="")
-  fig <- boxplot(ex, boxwex=0.7, notch=T, main=title, outline=FALSE, las=2)
+  fig <- boxplot(ex, boxwex=0.7, notch=TRUE, main=title, outline=FALSE, las=2)
   return(fig)
 }
 
@@ -33,7 +33,7 @@ nonInteractiveDesnityPlot <- function(ex, geoAccessionCode = "", platform = "") 
   library(limma)
   par(mar=c(4,4,2,1))
   title <- paste(geoAccessionCode, "/", platform, " value distribution", sep ="")
-  fig <- plotDensities(ex, main=title, legend=F)
+  fig <- plotDensities(ex, main=title, legend=FALSE)
   return(fig)
 }
 

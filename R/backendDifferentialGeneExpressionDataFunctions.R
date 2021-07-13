@@ -93,7 +93,7 @@ calculateDifferentialGeneExpression <- function(gsms, limmaPrecisionWeights, for
     gset <- gset[complete.cases(exprs(gset)), ]
 
     # calculate precision weights and show plot of mean-variance trend
-    v <- vooma(gset, design, plot=T)
+    v <- vooma(gset, design, plot=TRUE)
     # OR weights by group
     # v <- voomaByGroup(gset, group=groups, design, plot=T, cex=0.1, pch=".", col=1:nlevels(gs))
     v$genes <- fData(gset) # attach gene annotations
