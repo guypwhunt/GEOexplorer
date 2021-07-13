@@ -27,7 +27,7 @@ Roxygen: list(markdown = TRUE)
 URL: https://github.com/guypwhunt/GEOexplorer/
 BugReports: https://github.com/guypwhunt/GEOexplorer/issues
 RoxygenNote: 7.1.1.9001
-biocViews: GEOquery, limma, impute
+biocViews: Software
 Imports: 
   factoextra,
   ggplot2,
