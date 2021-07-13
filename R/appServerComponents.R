@@ -2,7 +2,7 @@
 #'
 #' A Function to Return the Server Component
 #' @import shiny
-#' @importFrom DT renderDataTable
+#' @importFrom DT renderDataTable JS
 #' @author Guy Hunt
 sourceServer <- function(input, output, session) {
   library(shiny)
