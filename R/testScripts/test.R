@@ -135,6 +135,7 @@ extractedExperimentInformation <- convertExperimentInformation(experimentInforma
 
 # Non-Interactive Princomp PCA Individual Plot
 #fig <- nonInteractivePcaIndividualsPlot(pcaPrincompDataInput)
+#fig
 
 # Interactive Princomp PCA Individual Plot
 #fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, geoAccessionCode, gsetData)
@@ -142,6 +143,7 @@ extractedExperimentInformation <- convertExperimentInformation(experimentInforma
 
 # Non-Interactive Princomp PCA Variables Plot
 #fig <- nonInteractivePcaVariablesPlot(pcaPrincompDataInput)
+#fig
 
 # Interactive Princomp PCA Variables Plot
 #fig <- interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, geoAccessionCode)

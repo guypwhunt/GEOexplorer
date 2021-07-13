@@ -48,7 +48,8 @@ sourceDatasetInformationUi <- function() {
 #' A Function to Return the Differential Gene Expression Analysis Ui Component
 #'
 #' A Function to Return the Differential Gene Expression Analysis Ui Component
-#' @import shiny plotly DT
+#' @import shiny plotly
+#' @importFrom DT dataTableOutput
 #' @author Guy Hunt
 sourceDifferentialGeneExpressionAnalysisUi <- function() {
   library(shiny)
