@@ -2,9 +2,11 @@
 #'
 #' A Function to Return the Server Component
 #' @import shiny
+#' @importFrom DT renderDataTable JS
 #' @author Guy Hunt
 sourceServer <- function(input, output, session) {
   library(shiny)
+  library(DT)
   datasetInformationServer <-({
     # Data Extraction Functions
     # Get the GEO2R data for all platforms

@@ -20,15 +20,10 @@ extractSampleNames <- function(ex) {
 #' @param group2 The sample names in group 2. This must not contain any sample names that are in group1
 #' @keywords GEO
 #' @export
-#' @import GEOquery limma umap data.table
 #' @examples gsms <- calculateEachGroupsSamples(columnNames,c("GSM455528", "GSM455541", "GSM455542", "GSM455543", "GSM455578", "GSM455610", "GSM455782"), c("GSM455783", "GSM455784", "GSM455785", "GSM455786", "GSM455787"))
 #' @author Guy Hunt
 #' @seealso [extractSampleNames()] for all the sample names
 calculateEachGroupsSamples <- function(columnNames, group1, group2){
-  library(GEOquery)
-  library(limma)
-  library(umap)
-  library(data.table)
   lengthOfColumns <- sum(unlist(lapply(columnNames, length)))
   gsmsList <- vector(mode = "list", length = lengthOfColumns)
   i <- 1
@@ -59,15 +54,12 @@ calculateEachGroupsSamples <- function(columnNames, group1, group2){
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
-#' @import GEOquery limma umap data.table
+#' @import limma
 #' @examples fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gset, ex)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object, [extractPlatformGset()] for GEO object, [calculateEachGroupsSamples()] for the string of integers indicating which group a sample belongs to
 calculateDifferentialGeneExpression <- function(gsms, limmaPrecisionWeights, forceNormalization, gset, ex){
-  library(GEOquery)
   library(limma)
-  library(umap)
-  library(data.table)
   # make proper column names to match toptable
   fvarLabels(gset) <- make.names(fvarLabels(gset))
 
@@ -101,7 +93,7 @@ calculateDifferentialGeneExpression <- function(gsms, limmaPrecisionWeights, for
     gset <- gset[complete.cases(exprs(gset)), ]
 
     # calculate precision weights and show plot of mean-variance trend
-    v <- vooma(gset, design, plot=T)
+    v <- vooma(gset, design, plot=TRUE)
     # OR weights by group
     # v <- voomaByGroup(gset, group=groups, design, plot=T, cex=0.1, pch=".", col=1:nlevels(gs))
     v$genes <- fData(gset) # attach gene annotations
@@ -128,14 +120,9 @@ calculateDifferentialGeneExpression <- function(gsms, limmaPrecisionWeights, for
 #' @param adjustment A string character containing the adjustment to the P-value. The values can be: "Benjamini & Hochberg (False discovery rate)", "Benjamini & Yekutieli", "Bonferroni", "Hochberg", "Holm", "Hommel"or "None"
 #' @keywords GEO
 #' @export
-#' @import GEOquery limma umap data.table
 #' @examples adjustment <- convertAdjustment("Benjamini & Hochberg (False discovery rate)")
 #' @author Guy Hunt
 convertAdjustment <- function(adjustment){
-  library(GEOquery)
-  library(limma)
-  library(umap)
-  library(data.table)
   if (adjustment == "Benjamini & Hochberg (False discovery rate)"){
     adjustment <- "fdr"
   } else if (adjustment == "Benjamini & Yekutieli"){
@@ -163,15 +150,12 @@ convertAdjustment <- function(adjustment){
 #' @param adjustment A string character containing the adjustment to the P-value. The values can be: "fdr", "BY", "bonferroni", "hochberg", "holm", "hommel" or "none"
 #' @keywords GEO
 #' @export
-#' @import GEOquery limma umap data.table
+#' @import limma
 #' @examples tT <- calculateTopDifferentiallyExpressedGenes(fit2, "fdr")
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 calculateTopDifferentiallyExpressedGenes <- function(fit2, adjustment) {
-  library(GEOquery)
   library(limma)
-  library(umap)
-  library(data.table)
   tT <- topTable(fit2, adjust=adjustment, sort.by="B", number=250)
   columnNamesList <- c()
   optionalColumnNamesList <- c("ID","adj.P.Val","P.Value","t","B","logFC","Gene.symbol","Gene.title", "Gene.ID", "GB_LIST", "SPOT_ID", "RANGE_GB", "RANGE_STRAND", "RANGE_START", "GB_ACC", "GB_RANGE", "SEQUENCE")
@@ -195,14 +179,9 @@ calculateTopDifferentiallyExpressedGenes <- function(fit2, adjustment) {
 #' @param inputColumns A list of the columns that have been selected
 #' @keywords GEO
 #' @export
-#' @import GEOquery limma umap data.table
 #' @examples column2 <- calculateExclusiveColumns(c("GSM455528", "GSM455541", "GSM455542", "GSM455543"), c("GSM455528", "GSM455541"))
 #' @author Guy Hunt
 calculateExclusiveColumns <- function(columns, inputColumns) {
-  library(GEOquery)
-  library(limma)
-  library(umap)
-  library(data.table)
   columns1Input <- c()
   for (value in columns) {
     if(value %in% inputColumns) {
@@ -222,15 +201,12 @@ calculateExclusiveColumns <- function(columns, inputColumns) {
 #' @param significanceLevelCutOff A float indicating the P-value cutoff. The values can be between 0 and 1
 #' @keywords GEO
 #' @export
-#' @import GEOquery limma umap data.table
 #' @examples dT <- calculateDifferentialGeneExpressionSummary(fit2, "fdr", 0.05)
 #' @author Guy Hunt
+#' @import limma
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 calculateDifferentialGeneExpressionSummary <- function(fit2, adjustment, significanceLevelCutOff) {
-  library(GEOquery)
   library(limma)
-  library(umap)
-  library(data.table)
   dT <- decideTests(fit2, adjust.method=adjustment, p.value=significanceLevelCutOff)
   return(dT)
 }
@@ -241,7 +217,7 @@ calculateDifferentialGeneExpressionSummary <- function(fit2, adjustment, signifi
 #' @param groupDataFrame A dataframe containing the row number and group selection
 #' @keywords GEO
 #' @export
-#' @import stringr
+#' @importFrom stringr str_remove_all
 #' @examples TBD
 #' @author Guy Hunt
 calculateEachGroupsSamplesFromDataFrame <- function(groupDataFrame) {

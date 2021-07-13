@@ -1,0 +1,378 @@
+---
+title: "Using the GEOexplorer Package"
+author: "Guy Hunt"
+date: "July 07, 2021"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+GEOexplorer enables exploratory data analysis and differential gene expression of gene expression analysis to be performed on data held in the GEO database. The outputs are both non-interactive and interactive visulisations. GEOexplorer also contains a shiny app that can be used to perform exploratory data analysis and differential gene expression of gene expression analysis.
+
+# Installation
+```{r eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("GEOexplorer")
+```
+
+Or GEOexplorer can be installed from GitHub
+```{r eval=FALSE}
+if (!requireNamespace("devtools", quietly = TRUE))
+  install.packages("devtools")
+
+devtools::install_github("guypwhunt/GEOexplorer")
+```
+
+# Getting Started using GEOexplorer Shiny App
+
+Getting started with the GEOexplorer Shiny App is relatively easy and can be performed in a number of steps.
+
+Step 1: Load the package
+```{r loadLibrary}
+library(GEOexplorer)
+```
+
+Step 2: Launch the shiny app in a browser.
+```{r}
+loadApp()
+```
+
+# Getting Started using GEOexplorer Exploratory Data Analysis Functions
+
+Getting started with the GEOexplorer exploratory data analysis functions is slightly more complicated than the shiny app but can still be performed in a number of steps.
+
+Step 1: Load the package
+```{r}
+library(GEOexplorer)
+```
+
+Step 2: Download a GEO series data set from GEO. For downstream functions to work, the input must be a valid microarray GEO series GEO accession code with the format GSEXXXX.
+
+```{r}
+geoAccessionCode <- "GSE18388"
+
+allGset <- getGeoObject(geoAccessionCode)
+
+```
+
+Step 3: As the allGset may contain multiple datasets from different platforms, the next step is to extract the platforms from allGset.
+
+```{r}
+platforms <- extractPlatforms(allGset)
+
+# This extracts the first platform value
+platform <- platforms[1]
+```
+
+Step 4: Involves extracting the gene expression GEO series for a specific platform
+```{r}
+gsetData <- extractPlatformGset(allGset, platform)
+```
+
+Step 5: Involves extracting the expression data from the gsetData object.
+```{r}
+expressionData <- extractExpressionData(gsetData)
+```
+
+Step 6: Involves applying log transformation to the gene expression data. By inputting "Auto-Detect" the function will automatically detect if log transformation should be applied or not, and subsequently apply log transformation if appropriate. This value could also be "Yes" or "No". 
+```{r}
+dataInput <- calculateLogTransformation(expressionData, "Auto-Detect")
+```
+
+Step 8: Involves applying KNN imputation to fill in missing values in he gene expression data set. The value "Yes" indicates KNN imputation should be performed, whilst the value "No" indicates KNN imputation should not be performed.
+```{r}
+knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+```
+
+Step 9: Involves removing rows with missing values from the gene expression data set.
+```{r}
+naOmitInput <- calculateNaOmit(knnDataInput)
+```
+
+Step 10: Involves performing PCA analysis on the gene expression data set.
+```{r}
+# This function calculates PCA using the princomp function
+pcaPrincompDataInput <- calculatePrincompPca(naOmitInput)
+
+# This function calculates PCA using the prcomp function
+pcaPrcompDataInput <- calculatePrcompPca(naOmitInput)
+
+```
+
+Step 11: Involves creating non-interactive exploratory data analysis visualisations from the gene expression data set. 
+```{r}
+# Non-Interactive Box-and-Whisker Plot
+fig <- nonInteractiveBoxAndWhiskerPlot(ex = knnDataInput, geoAccessionCode = geoAccessionCode, platform = platform)
+
+# Non-Interactive Density Plot
+fig <- nonInteractiveDesnityPlot(ex = naOmitInput, geoAccessionCode = geoAccessionCode, platform = platform)
+
+# Non-Interactive UMAP
+fig <- nonInteractiveUmapPlot(naOmitInput, 2, geoAccessionCode)
+
+# Non-Interactive Mean Variance Plot
+fig <- nonInteractiveMeanVariancePlot(naOmitInput, geoAccessionCode)
+```
+
+Step 12: Involves creating non-interactive exploratory data analysis visualisations from the PCA.
+```{r}
+# Non-Interactive Princomp PCA Scree Plot
+fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)
+fig
+
+# Non-Interactive Princomp PCA Individual Plot
+fig <- nonInteractivePcaIndividualsPlot(pcaPrincompDataInput)
+fig
+
+# Non-Interactive Princomp PCA Variables Plot
+fig <- nonInteractivePcaVariablesPlot(pcaPrincompDataInput)
+fig
+
+# Non-Interactive Princomp PCA Individual and Variables Bilot
+fig <- nonInteractivePcaBiplotPlot(pcaPrincompDataInput)
+fig
+
+
+# Non-Interactive prcomp PCA Scree Plot
+fig <- nonInteractivePcaScreePlot(pcaPrcompDataInput)
+fig
+
+# Non-Interactive prcomp PCA Individual Plot
+fig <- nonInteractivePcaIndividualsPlot(pcaPrcompDataInput)
+fig
+
+# Non-Interactive prcomp PCA Variables Plot
+fig <- nonInteractivePcaVariablesPlot(pcaPrcompDataInput)
+fig
+
+# Non-Interactive prcomp PCA Individual and Variables Bilot
+fig <- nonInteractivePcaBiplotPlot(pcaPrcompDataInput)
+fig
+```
+
+Step 13: Involves creating interactive exploratory data analysis visualisations from the gene expression data set. 
+```{r}
+# Interactive Box-and-Whisker Plot
+fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform)
+fig
+
+# Interactive Density Plot
+fig <- interactiveDensityPlot(naOmitInput, geoAccessionCode, platform)
+fig
+
+# 3D Interactive Density Plot
+fig <- interactiveThreeDDesnityPlot(naOmitInput, geoAccessionCode, platform)
+fig
+
+# Interactive UMAP
+fig <- interactiveUmapPlot(naOmitInput, 2, geoAccessionCode)
+fig
+
+# Interactive Mean Variance Plot
+fig <- interactiveMeanVariancePlot(naOmitInput, geoAccessionCode, gsetData)
+fig
+
+# Correlation Matrix of samples
+fig <- interactiveHeatMapPlot(naOmitInput)
+fig
+```
+
+Step 14: Involves creating interactive exploratory data analysis visualisations from the PCA.
+```{r}
+# Interactive Princomp PCA Scree Plot
+fig <- interactivePrincompPcaScreePlot(pcaPrincompDataInput, geoAccessionCode)
+fig
+
+# Interactive Princomp PCA Individual Plot
+fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, geoAccessionCode, gsetData)
+fig
+
+# Interactive Princomp PCA Variables Plot
+fig <- interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, geoAccessionCode)
+fig
+
+# Interactive Prcomp PCA Scree Plot
+fig <- interactivePrcompPcaScreePlot(pcaPrcompDataInput, geoAccessionCode)
+fig
+
+# Interactive Prcomp PCA Individual Plot
+fig <- interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput, geoAccessionCode, gsetData)
+fig
+
+# Interactive Prcomp PCA Variables Plot
+fig <- interactivePrcompPcaVariablesPlot(pcaPrcompDataInput, geoAccessionCode)
+fig
+```
+
+# Getting Started using GEOexplorer Differential Gene Expression Analysis Functions
+
+Getting started with the GEOexplorer differential gene expression analysis functions is slightly more complicated than the shiny app but can still be performed in a number of steps.
+
+Step 1: Load the package
+```{r}
+library(GEOexplorer)
+```
+
+Step 2: Download a GEO series data set from GEO. For downstream functions to work, the input must be a valid microarray GEO series GEO accession code with the format GSEXXXX.
+
+```{r}
+geoAccessionCode <- "GSE18388"
+
+allGset <- getGeoObject(geoAccessionCode)
+
+```
+
+Step 3: As the allGset may contain multiple datasets from different platforms, the next step is to extract the platforms from allGset.
+
+```{r}
+platforms <- extractPlatforms(allGset)
+
+# This extracts the first platform value
+platform <- platforms[1]
+```
+
+Step 4: Involves extracting the gene expression GEO series for a specific platform
+```{r}
+gsetData <- extractPlatformGset(allGset, platform)
+```
+
+Step 5: Involves extracting the expression data from the gsetData object.
+```{r}
+expressionData <- extractExpressionData(gsetData)
+```
+
+Step 6: Involves applying log transformation to the gene expression data. By inputting "Auto-Detect" the function will automatically detect if log transformation should be applied or not, and subsequently apply log transformation if appropriate. This value could also be "Yes" or "No". 
+```{r}
+expressionData <- calculateLogTransformation(expressionData, "Auto-Detect")
+```
+
+Step 8: Involves applying KNN imputation to fill in missing values in he gene expression data set. The value "Yes" indicates KNN imputation should be performed, whilst the value "No" indicates KNN imputation should not be performed.
+```{r}
+expressionData <- calculateKnnImpute(dataInput, "Yes")
+```
+
+Step 10: Involves assigning the experimental conditions in the gene expression data set to either group1 or group2. group1 and group2 will later be compared to identify differentially expressed genes.
+```{r}
+# Get column names
+columnNames <- extractSampleNames(expressionData)
+
+# Define Groups
+numberOfColumns <- length(columnNames)
+numberOfColumns <- numberOfColumns
+halfNumberOfColumns <- ceiling(numberOfColumns/2)
+i <- 0
+
+group1 <- c()
+group2 <- c()
+
+for (name in columnNames) {
+  if (i < halfNumberOfColumns) {
+    group1 <- c(group1, name)
+    i <- i +1
+  } else {
+    group2 <- c(group2, name)
+    i <- i +1
+  }
+}
+
+group1
+group2
+```
+
+Step 11: Involves converting the groups into the structure required for differential gene expression analysis.
+```{r}
+# Calculate gsms
+gsms <- calculateEachGroupsSamples(columnNames,group1, group2)
+
+gsms
+```
+Step 12: Involves performing differential gene expression analysis.
+```{r}
+limmaPrecisionWeights <- "Yes"
+forceNormalization <- "Yes"
+
+# Get fit 2
+fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gsetData, expressionData)
+```
+
+Step 13: Involves displaying the top 250 differentially expressed genes.
+```{r}
+# Convert P value adjustment
+pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+adjustment <- convertAdjustment(pValueAdjustment)
+
+# Print Top deferentially expressed genes
+tT <- calculateTopDifferentiallyExpressedGenes(fit2, adjustment)
+
+tT
+```
+
+Step 14: Involves displaying non-interactive visulisations of the outputs of differentially gene expression analysis. 
+```{r}
+# Non-Interactive Histogram
+fig <- nonInteractiveHistogramPlot(fit2, adjustment)
+
+# summarize test results as "up", "down" or "not expressed"
+significanceLevelCutOff <- 0.05
+dT <- calculateDifferentialGeneExpressionSummary(fit2, adjustment, significanceLevelCutOff)
+ct <- 1
+
+# Non-Interactive Venn diagram
+fig <- nonInteractiveVennDiagramPlot(dT)
+
+# Non-Interactive Q-Q plot
+fig <- nonInteractiveQQPlot(fit2)
+
+# Non-Interactive volcano plot (log P-value vs log fold change)
+fig <- nonInteractiveVolcanoPlot(fit2, dT, ct)
+
+# MD plot (log fold change vs mean log expression)
+fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
+```
+
+Step 15: Involves displaying interactive visulisations of the outputs of differentially gene expression analysis. 
+```{r}
+# Interactive Histogram
+fig <- interactiveHistogramPlot(fit2, adjustment)
+fig
+
+# Interactive Q-Q plot
+fig <- interactiveQQPlot(fit2, dT, ct)
+fig
+
+# Interactive volcano plot (log P-value vs log fold change)
+fig <- interactiveVolcanoPlot(fit2, dT, ct)
+fig
+
+# Plot Interactive Mean Difference of fit 2 data
+fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
+fig
+```
+
+# Conclusion
+
+The GEOexplorer package provides an easy way to perform exploratory data analysis and differential gene expression analysis on microarray gene expression data sets and provide the outputs as interactive and non-interacive visulisations.
+
+# Reporting problems or bugs
+
+If you run into problems using GEOquery, the [Bioconductor Support site](https://support.bioconductor.org/) is a good first place to ask for help. If you are convinced that there is a bug in GEOquery (this is pretty unusual, but not unheard of), feel free to submit an issue on the [GEOexplorer github site](https://github.com/guypwhunt/GEOexplorer).
+
+# Session info
+
+The following package and versions were used in the production of this vignette.
+
+```{r echo=FALSE}
+sessionInfo()
+```

@@ -1,10 +1,12 @@
 #' A Function to Return the Side Bar Ui Component
 #'
 #' A Function to Return the Side Bar Ui Component
-#' import shiny
+#' @import shiny
+#' @importFrom shinyBS bsTooltip
 #' @author Guy Hunt
 sourceSideBarUi <- function() {
   library(shiny)
+  library(shinyBS)
 
   sideBarUi <- sidebarPanel(
     helpText("Input a GEO series accession code (GSEXXXX format) to examine the gene expression data."),
@@ -48,7 +50,8 @@ sourceDatasetInformationUi <- function() {
 #' A Function to Return the Differential Gene Expression Analysis Ui Component
 #'
 #' A Function to Return the Differential Gene Expression Analysis Ui Component
-#' @import shiny plotly DT
+#' @import shiny plotly
+#' @importFrom DT dataTableOutput
 #' @author Guy Hunt
 sourceDifferentialGeneExpressionAnalysisUi <- function() {
   library(shiny)

@@ -8,7 +8,6 @@ sourceSideBarUi()
 }
 \description{
 A Function to Return the Side Bar Ui Component
-import shiny
 }
 \author{
 Guy Hunt

@@ -1,21 +1,16 @@
-#' A Function to Load the GEO2R Data Visualisation Shiny App
+#' A Function to Load the GEOexplorer Shiny App
 #'
-#' This function loads the GEO2R Data Visualisation Shiny App. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data.
+#' This function loads the GEOexplorer Shiny App. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data.
 #' @keywords GEO
 #' @export
 #' @examples loadApp()
-#' @import shiny plotly heatmaply shinyHeatmaply ggplot2 shinyBS shinyjs BiocManager DT
+#' @import shiny shinyHeatmaply ggplot2
 #' @author Guy Hunt
 loadApp <- function() {
   # Load Packages
   library(shiny)
-  library(plotly)
-  library(heatmaply)
   library(shinyHeatmaply)
   library(ggplot2)
-  library(shinyBS)
-  library(shinyjs)
-  library(DT)
 
   ui <- fluidPage(
     titlePanel("GEO Explorer"),

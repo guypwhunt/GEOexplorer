@@ -5,16 +5,14 @@
 #' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @keywords GEO
 #' @export
-#' @import GEOquery limma umap data.table
+#' @import limma
 #' @examples fig <- nonInteractiveVennDiagramPlot(dT)
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object
 nonInteractiveVennDiagramPlot <- function(dT) {
-  library(GEOquery)
   library(limma)
-  library(umap)
-  library(data.table)
-  vennDiagram(dT, circle.col=palette())
+  fig <- vennDiagram(dT, circle.col=palette())
+  return(fig)
 }
 
 #' A Function to Create a QQ Plot of the Quantiles of a Data Sample Against the Theoretical Quantiles of a Student's T Distribution from Differential Gene Expression Analysis
@@ -23,14 +21,16 @@ nonInteractiveVennDiagramPlot <- function(dT) {
 #' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function
 #' @keywords GEO
 #' @export
+#' @import limma
 #' @examples fig <- nonInteractiveQQPlot(fit2)
-#' @import GEOquery limma umap data.table
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 nonInteractiveQQPlot <- function(fit2) {
+  library(limma)
   # create Q-Q plot for t-statistic
   t.good <- which(!is.na(fit2$F)) # filter out bad probes
-  qqt(fit2$t[t.good], fit2$df.total[t.good], main="Moderated t statistic")
+  fig <- qqt(fit2$t[t.good], fit2$df.total[t.good], main="Moderated t statistic")
+  return(fig)
 }
 
 #' A Function to Create a Volcano Plot of the Statistical Significance (-log10 P Value) Versus Magnitude of Change (log2 Fold Change) from Differential Gene Expression Analysis
@@ -41,15 +41,17 @@ nonInteractiveQQPlot <- function(fit2) {
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
 #' @export
+#' @import limma
 #' @examples fig <- nonInteractiveVolcanoPlot(fit2, dT, ct)
-#' @import GEOquery limma umap data.table
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object, [calculateDifferentialGeneExpression()] for differential gene expression object
 nonInteractiveVolcanoPlot <- function(fit2, dT, ct) {
+  library(limma)
   # volcano plot (log P-value vs log fold change)
   colnames(fit2) # list contrast names
-  volcanoplot(fit2, coef=ct, main=colnames(fit2)[ct], pch=20,
+  fig <- volcanoplot(fit2, coef=ct, main=colnames(fit2)[ct], pch=20,
               highlight=length(which(dT[,ct]!=0)), names=rep('+', nrow(fit2)))
+  return(fig)
 }
 
 #' A Function to Create a Mean Difference Plot of the log2 Fold Change Versus Average log2 Expression Values from Differential Gene Expression Analysis
@@ -60,15 +62,17 @@ nonInteractiveVolcanoPlot <- function(fit2, dT, ct) {
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
 #' @export
+#' @import limma
 #' @examples fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
-#' @import plotly ggplot2 limma scales
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object, [calculateDifferentialGeneExpression()] for differential gene expression object
 noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
+  library(limma)
   # MD plot (log fold change vs mean log expression)
   # highlight statistically significant (p-adj < 0.05) probes
-  plotMD(fit2, column=ct, status=dT[,ct], legend=F, pch=20, cex=1)
+  fig <- plotMD(fit2, column=ct, status=dT[,ct], legend=FALSE, pch=20, cex=1)
   abline(h=0)
+  return(fig)
 }
 
 #' A Function to Create a Histogram of the P values from Differential Gene Expression Analysis
@@ -78,12 +82,14 @@ noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
 #' @param adjustment A character string containing the adjustment to P-values
 #' @keywords GEO
 #' @export
+#' @import limma
 #' @examples fig <- nonInteractiveHistogramPlot(fit2, adjustment)
-#' @import plotly ggplot2 limma scales
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 nonInteractiveHistogramPlot <- function(fit2, adjustment) {
+  library(limma)
   tT2 <- topTable(fit2, adjust=adjustment, sort.by="B", number=Inf)
-  hist(tT2$adj.P.Val, col = "grey", border = "white", xlab = "P-adj",
+  fig <- hist(tT2$adj.P.Val, col = "grey", border = "white", xlab = "P-adj",
        ylab = "Number of genes", main = "P-adj value distribution")
+  return(fig)
 }
