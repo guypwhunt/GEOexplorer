@@ -92,82 +92,80 @@ pcaPrcompDataInput <- calculatePrcompPca(naOmitInput)
 extractedExperimentInformation <- convertExperimentInformation(experimentInformation)
 
 # Non-Interactive Box-and-Whisker Plot
-#fig <- nonInteractiveBoxAndWhiskerPlot(ex = knnDataInput, geoAccessionCode = geoAccessionCode, platform = platform)
+fig <- nonInteractiveBoxAndWhiskerPlot(ex = knnDataInput, geoAccessionCode = geoAccessionCode, platform = platform)
 
 # Interactive Box-and-Whisker Plot
-#fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform)
-#fig
+fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform)
+fig
 
 # Non-Interactive Density Plot
-#fig <- nonInteractiveDesnityPlot(ex = naOmitInput, geoAccessionCode = geoAccessionCode, platform = platform)
-
+fig <- nonInteractiveDesnityPlot(ex = naOmitInput, geoAccessionCode = geoAccessionCode, platform = platform)
 
 # Interactive Density Plot
-#fig <- interactiveDensityPlot(naOmitInput, geoAccessionCode, platform)
-#fig
+fig <- interactiveDensityPlot(naOmitInput, geoAccessionCode, platform)
+fig
 
 # 3D Interactive Density Plot
-#fig <- interactiveThreeDDesnityPlot(naOmitInput, geoAccessionCode, platform)
-#fig
+fig <- interactiveThreeDDesnityPlot(naOmitInput, geoAccessionCode, platform)
+fig
 
 # Non-Interactive UMAP
-#fig <- nonInteractiveUmapPlot(naOmitInput, knn, geoAccessionCode)
-
+fig <- nonInteractiveUmapPlot(naOmitInput, knn, geoAccessionCode)
 
 # Interactive UMAP
-#fig <- interactiveUmapPlot(naOmitInput, knn, geoAccessionCode)
-#fig
+fig <- interactiveUmapPlot(naOmitInput, knn, geoAccessionCode)
+fig
 
 # Non-Interactive Mean Variance Plot
-#fig <- nonInteractiveMeanVariancePlot(naOmitInput, geoAccessionCode)
+fig <- nonInteractiveMeanVariancePlot(naOmitInput, geoAccessionCode)
 
 # Interactive Mean Variance Plot
-#fig <- interactiveMeanVariancePlot(naOmitInput, geoAccessionCode, gsetData)
-#fig
+fig <- interactiveMeanVariancePlot(naOmitInput, geoAccessionCode, gsetData)
+fig
 
 # Non-Interactive Princomp PCA Scree Plot
-#fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)
-#fig
+fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)
+fig
 
 # Interactive Princomp PCA Scree Plot
-#fig <- interactivePrincompPcaScreePlot(pcaPrincompDataInput, geoAccessionCode)
-#fig
+fig <- interactivePrincompPcaScreePlot(pcaPrincompDataInput, geoAccessionCode)
+fig
 
 # Non-Interactive Princomp PCA Individual Plot
-#fig <- nonInteractivePcaIndividualsPlot(pcaPrincompDataInput)
-#fig
+fig <- nonInteractivePcaIndividualsPlot(pcaPrincompDataInput)
+fig
 
 # Interactive Princomp PCA Individual Plot
-#fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, geoAccessionCode, gsetData)
-#fig
+fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput, geoAccessionCode, gsetData)
+fig
 
 # Non-Interactive Princomp PCA Variables Plot
-#fig <- nonInteractivePcaVariablesPlot(pcaPrincompDataInput)
-#fig
+fig <- nonInteractivePcaVariablesPlot(pcaPrincompDataInput)
+fig
 
 # Interactive Princomp PCA Variables Plot
-#fig <- interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, geoAccessionCode)
-#fig
+fig <- interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, geoAccessionCode)
+fig
 
 # Non-Interactive Princomp PCA Individual and Variables Bilot
-#fig <- nonInteractivePcaBiplotPlot(pcaPrincompDataInput)
-#fig
+fig <- nonInteractivePcaBiplotPlot(pcaPrincompDataInput)
+fig
 
 # Correlation Matrix of samples
-#fig <- interactiveHeatMapPlot(naOmitInput)
-#fig
+fig <- interactiveHeatMapPlot(naOmitInput)
+fig
 
 # Interactive Prcomp PCA Scree Plot
-#fig <- interactivePrcompPcaScreePlot(pcaPrcompDataInput, geoAccessionCode)
-#fig
+fig <- interactivePrcompPcaScreePlot(pcaPrcompDataInput, geoAccessionCode)
+fig
 
 # Interactive Prcomp PCA Individual Plot
-#fig <- interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput, geoAccessionCode, gsetData)
-#fig
+fig <- interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput, geoAccessionCode, gsetData)
+fig
 
 # Interactive Prcomp PCA Variables Plot
-#fig <- interactivePrcompPcaVariablesPlot(pcaPrcompDataInput, geoAccessionCode)
-#fig
+fig <- interactivePrcompPcaVariablesPlot(pcaPrcompDataInput, geoAccessionCode)
+fig
 
 #######
 # Differential gene expression analysis functions
@@ -238,7 +236,6 @@ fig <- nonInteractiveVolcanoPlot(fit2, dT, ct)
 fig <- interactiveVolcanoPlot(fit2, dT, ct)
 fig
 
-# Fix this
 # MD plot (log fold change vs mean log expression)
 fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
 
