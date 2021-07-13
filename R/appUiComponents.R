@@ -1,10 +1,12 @@
 #' A Function to Return the Side Bar Ui Component
 #'
 #' A Function to Return the Side Bar Ui Component
-#' import shiny
+#' @import shiny
+#' @import shinyBS bsTooltip
 #' @author Guy Hunt
 sourceSideBarUi <- function() {
   library(shiny)
+  library(shinyBS)
 
   sideBarUi <- sidebarPanel(
     helpText("Input a GEO series accession code (GSEXXXX format) to examine the gene expression data."),

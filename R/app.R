@@ -4,7 +4,7 @@
 #' @keywords GEO
 #' @export
 #' @examples loadApp()
-#' @import shiny plotly heatmaply shinyHeatmaply ggplot2 shinyBS shinyjs
+#' @import shiny plotly heatmaply shinyHeatmaply ggplot2
 #' @author Guy Hunt
 loadApp <- function() {
   # Load Packages
@@ -13,8 +13,6 @@ loadApp <- function() {
   library(heatmaply)
   library(shinyHeatmaply)
   library(ggplot2)
-  library(shinyBS)
-  library(shinyjs)
 
   ui <- fluidPage(
     titlePanel("GEO Explorer"),
