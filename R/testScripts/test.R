@@ -1,7 +1,7 @@
 # The purpose of this script is to test all the functions used in the shiny app
 
 # Change the below file path to the file path you save the repo to
-setwd('C:/Users/guypw/OneDrive/Documents/geo2rShinyApp')
+setwd('C:/Users/guypw/OneDrive/Documents/GEOexplorer')
 
 # Import Functions
 source("R/backendDifferentialGeneExpressionDataFunctions.R")
@@ -30,7 +30,7 @@ goodList <- list("GSE18385", "GSE18397", "GSE18400", "GSE18408", "GSE18423", "GS
 badList <- list("GSE25758", "GSE25762", "GSE25723", "GSE18459", "GSE178351") # The first two have only 1 column, the third is just massive and the fourth errors on GEO2R
 
 # Get the GEO2R data for all platforms
-geoAccessionCode <- "GSE18385"
+geoAccessionCode <- "GSE18388"
 allGset <- getGeoObject(geoAccessionCode)
 
 # Get a list of all the platforms
@@ -77,6 +77,11 @@ knnColumns <- extractSampleNames(knnDataInput)
 # Get knn output column Details
 knnColumnInfo <- extractSampleDetails(gsetData)
 knnColumnInfo <- knnColumnInfo[knnColumns,]
+
+1:nrow(knnColumnInfo)
+
+seq_len(nrow(knnColumnInfo))
+seq_along(nrow(knnColumnInfo))
 
 # Remove all incomplete rows
 naOmitInput <- calculateNaOmit(knnDataInput)

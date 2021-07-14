@@ -206,7 +206,7 @@ sourceServer <- function(input, output, session) {
             # Could turn the below into a function
             knnColumnInfo <<- knnColumnInfo[knnColumns,]
 
-            for (i in 1:nrow(knnColumnInfo)) {
+            for (i in seq_len(nrow(knnColumnInfo))) {
               knnColumnInfo$group[i] <- as.character(selectInput(paste0("sel", i), "", choices = unique(c("N/A", "Group 1", "Group 2")), width = "100px"))
             }
 
@@ -311,7 +311,7 @@ sourceServer <- function(input, output, session) {
       } else {
 
         # Differential gene expression analysis
-        gsms <- calculateEachGroupsSamplesFromDataFrame(as.data.frame(sapply(1:nrow(knnColumnInfo), function(a) input[[paste0("sel", a)]])))
+        gsms <- calculateEachGroupsSamplesFromDataFrame(as.data.frame(sapply(seq_len(nrow(knnColumnInfo)), function(a) input[[paste0("sel", a)]])))
 
         # Error handling to ensure at least one group has two samples and the other group has at least one sample
         if((lengths(regmatches(gsms, gregexpr("0", gsms))) > 0 & lengths(regmatches(gsms, gregexpr("1", gsms))) > 1) | (lengths(regmatches(gsms, gregexpr("0", gsms))) > 1 & lengths(regmatches(gsms, gregexpr("1", gsms))) > 0))  {

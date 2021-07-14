@@ -226,7 +226,7 @@ calculateEachGroupsSamplesFromDataFrame <- function(groupDataFrame) {
   groupDataFrame <- as.data.frame(groupDataFrame)
 
   # For each row convert the UI codes to backend codes
-  for (val in 1:nrow(groupDataFrame)) {
+  for (val in seq_len(nrow(groupDataFrame))) {
     if (groupDataFrame[val,1] == "N/A")
     {
       groupDataFrame[val,1] <- "X"
