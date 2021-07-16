@@ -118,7 +118,7 @@ fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform)
 fig
 
 # Non-Interactive Density Plot
-fig <- nonInteractiveDesnityPlot(ex = naOmitInput, geoAccessionCode = geoAccessionCode, platform = platform)
+fig <- nonInteractiveDensityPlot(ex = naOmitInput, geoAccessionCode = geoAccessionCode, platform = platform)
 
 
 # Interactive Density Plot
@@ -126,7 +126,7 @@ fig <- interactiveDensityPlot(naOmitInput, geoAccessionCode, platform)
 fig
 
 # 3D Interactive Density Plot
-fig <- interactiveThreeDDesnityPlot(naOmitInput, geoAccessionCode, platform)
+fig <- interactiveThreeDDensityPlot(naOmitInput, geoAccessionCode, platform)
 fig
 
 # Non-Interactive UMAP

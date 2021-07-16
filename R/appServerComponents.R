@@ -58,7 +58,7 @@ sourceServer <- function(input, output, session) {
       output$knnColumnTable <- DT::renderDataTable({})
       output$interactiveBoxAndWhiskerPlot <- renderPlotly({})
       output$interactiveDensityPlot <- renderPlotly({})
-      output$interactiveThreeDDesnityPlot <- renderPlotly({})
+      output$interactiveThreeDDensityPlot <- renderPlotly({})
       output$interactiveUmapPlot <- renderPlotly({})
       output$interactiveHeatMapPlot <- renderPlotly({})
       output$interactiveMeanVariancePlot <- renderPlotly({})
@@ -241,8 +241,8 @@ sourceServer <- function(input, output, session) {
             })
 
             # 3D Interactive Density Plot
-            output$interactiveThreeDDesnityPlot <- renderPlotly({
-              interactiveThreeDDesnityPlot(naOmitInput, input$geoAccessionCode, input$platform)
+            output$interactiveThreeDDensityPlot <- renderPlotly({
+              interactiveThreeDDensityPlot(naOmitInput, input$geoAccessionCode, input$platform)
             })
 
             # Error handling to prevent errors caused by expression datasets with only one column

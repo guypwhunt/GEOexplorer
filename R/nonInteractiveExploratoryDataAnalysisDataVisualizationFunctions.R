@@ -26,10 +26,10 @@ nonInteractiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode = "", platform 
 #' @keywords GEO
 #' @export
 #' @import limma
-#' @examples fig <- nonInteractiveDesnityPlot(expressionData, "GSE18380", "GPL4694")
+#' @examples fig <- nonInteractiveDensityPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
-nonInteractiveDesnityPlot <- function(ex, geoAccessionCode = "", platform = "") {
+nonInteractiveDensityPlot <- function(ex, geoAccessionCode = "", platform = "") {
   library(limma)
   par(mar=c(4,4,2,1))
   title <- paste(geoAccessionCode, "/", platform, " value distribution", sep ="")

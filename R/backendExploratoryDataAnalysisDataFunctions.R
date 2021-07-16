@@ -247,10 +247,12 @@ calculateAutoLogTransformApplication <- function(ex) {
 calculateKnnImpute <- function(ex, knnTransformation) {
   library(impute)
   if (knnTransformation == "Yes") {
+    # Check if there are less than 3 samples
     if (ncol(ex) < 3) {
-      ex <- ex[complete.cases(ex), ] # KNN does not work when there are only 2 samples
+      ex <- ex[complete.cases(ex), ]
     } else {
-      ex <- ex[rowSums(is.na(ex)) != ncol(ex), ] # remove rows with missing data
+      # If there are less than three samples remove rows with blank values
+      ex <- ex[rowSums(is.na(ex)) != ncol(ex), ]
     }
 
     # Replace missing value with calculated KNN value
