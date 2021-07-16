@@ -7,7 +7,8 @@
 loadApp()
 }
 \description{
-This function loads the GEOexplorer Shiny App. GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the GEO2R gene expression data.
+This function loads the GEOexplorer Shiny App.
+GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the gene expression data.
 }
 \examples{
 loadApp()

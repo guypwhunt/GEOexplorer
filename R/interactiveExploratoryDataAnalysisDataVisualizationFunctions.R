@@ -60,11 +60,11 @@ interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @export
-#' @examples fig <- interactiveThreeDDesnityPlot(expressionData, "GSE18380", "GPL4694")
+#' @examples fig <- interactiveThreeDDensityPlot(expressionData, "GSE18380", "GPL4694")
 #' @import plotly
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
-interactiveThreeDDesnityPlot <- function(ex, geoAccessionCode, platform) {
+interactiveThreeDDensityPlot <- function(ex, geoAccessionCode, platform) {
   library(plotly)
   ex <- as.data.frame(ex)
   fig <- plot_ly(type = 'scatter3d', mode = 'lines', name = (paste(paste(geoAccessionCode,platform),'value distribution')))
