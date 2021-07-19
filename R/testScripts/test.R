@@ -142,17 +142,6 @@ fig
 fig <- nonInteractivePcaBiplotPlot(pcaPrincompDataInput)
 fig
 
-##################################################
-attributes(fig)
-expect_type(fig$data, "list")
-expect_type(fig$layers, "list")
-expect_type(fig$scales, "environment")
-expect_type(fig$mapping, "list")
-expect_type(fig$theme, "list")
-expect_type(fig$coordinates, "environment")
-expect_type(fig$facet, "environment")
-expect_type(fig$plot_env, "environment")
-expect_type(fig$labels, "list")
 # Differential gene expression analysis functions
 # Get column names
 columnNames <- extractSampleNames(expressionData)
@@ -202,8 +191,6 @@ fig
 # summarize test results as "up", "down" or "not expressed"
 dT <- calculateDifferentialGeneExpressionSummary(fit2, adjustment, significanceLevelCutOff)
 
-ct <- 1
-
 # Non-Interactive Venn diagram
 fig <- nonInteractiveVennDiagramPlot(dT)
 
@@ -211,10 +198,12 @@ fig <- nonInteractiveVennDiagramPlot(dT)
 fig <- nonInteractiveQQPlot(fit2)
 
 # Interactive Q-Q plot
+ct <- 1
 fig <- interactiveQQPlot(fit2, dT, ct)
 fig
 
 # Non-Interactive volcano plot (log P-value vs log fold change)
+# Unit testing not added
 fig <- nonInteractiveVolcanoPlot(fit2, dT, ct)
 
 # Interactive volcano plot (log P-value vs log fold change)
@@ -227,4 +216,3 @@ fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
 # Plot Interactive Mean Difference of fit 2 data
 fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
 fig
-
