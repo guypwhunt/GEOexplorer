@@ -1,4 +1,4 @@
-library(GEOexplorer)
+#library(GEOexplorer)
 
 source("R/backendDifferentialGeneExpressionDataFunctions.R")
 source("R/backendExploratoryDataAnalysisDataFunctions.R")
@@ -19,7 +19,7 @@ platformAnnotation <- "NCBI generated"
 significanceLevelCutOff <- 0.05
 
 # Get the GEO2R data for all platforms
-geoAccessionCode <- "GSE25758"
+geoAccessionCode <- "GSE18388"
 allGset <- getGeoObject(geoAccessionCode)
 
 # Extract platforms

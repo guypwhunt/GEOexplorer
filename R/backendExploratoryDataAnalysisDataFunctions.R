@@ -160,10 +160,10 @@ extractExpressionData <- function(gset) {
   ex <- exprs(gset)
 
   # Transform into data frame
-  ex <- as.data.frame(ex)
+  #ex <- as.data.frame(ex)
 
   # Delete columns that are all na unless there is only one column
-  try(
+  #try(
     if(ncol(ex)>1){
       # Deletes columns for which all values are na
       try(ex <- ex[,colSums(is.na(ex))<nrow(ex)])
@@ -172,10 +172,10 @@ extractExpressionData <- function(gset) {
       try(ex <- ex[rowSums(is.na(ex))<nrow(ex),])
 
     }
-  )
+  #)
 
   # Ensure ex is a dataframe
-  ex <- as.data.frame(ex)
+  # ex <- as.data.frame(ex)
 
   return(ex)
   }
@@ -264,7 +264,6 @@ calculateKnnImpute <- function(ex, knnTransformation) {
 
   if (knnTransformation == "Yes") {
     # Check if there are less than 3 samples
-    try(
       if (ncol(ex) > 3) {
         # If there are less than three samples remove rows with blank values
         try(ex <- ex[rowSums(is.na(ex)) != ncol(ex), ])
@@ -277,7 +276,6 @@ calculateKnnImpute <- function(ex, knnTransformation) {
       } else {
         stop("At least 3 columns are required for KNN imputation")
       }
-    )
     }
     return(ex)}
 
