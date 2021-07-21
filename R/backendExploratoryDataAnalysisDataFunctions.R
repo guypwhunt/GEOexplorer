@@ -158,12 +158,27 @@ extractSampleDetails <- function(gset){
 #' @seealso [extractPlatformGset()] for GEO object
 extractExpressionData <- function(gset) {
   ex <- exprs(gset)
-  # Deletes columns for which all values are na
-  ex <- ex[,colSums(is.na(ex))<nrow(ex)]
-  # Deletes rows for which all values are na
-  ex <- ex[rowSums(is.na(ex))<nrow(ex),]
 
-  return(ex)}
+  # Transform into data frame
+  ex <- as.data.frame(ex)
+
+  # Delete columns that are all na unless there is only one column
+  try(
+    if(ncol(ex)>1){
+      # Deletes columns for which all values are na
+      try(ex <- ex[,colSums(is.na(ex))<nrow(ex)])
+
+      # Deletes rows for which all values are na
+      try(ex <- ex[rowSums(is.na(ex))<nrow(ex),])
+
+    }
+  )
+
+  # Ensure ex is a dataframe
+  ex <- as.data.frame(ex)
+
+  return(ex)
+  }
 
 #' A GEO Function to Extract Information on the Samples from a GEO object
 #'
@@ -246,21 +261,25 @@ calculateAutoLogTransformApplication <- function(ex) {
 #' @seealso [extractExpressionData()] for expression object
 calculateKnnImpute <- function(ex, knnTransformation) {
   library(impute)
+
   if (knnTransformation == "Yes") {
     # Check if there are less than 3 samples
-    if (ncol(ex) < 3) {
-      ex <- ex[complete.cases(ex), ]
-    } else {
-      # If there are less than three samples remove rows with blank values
-      ex <- ex[rowSums(is.na(ex)) != ncol(ex), ]
+    try(
+      if (ncol(ex) > 3) {
+        # If there are less than three samples remove rows with blank values
+        try(ex <- ex[rowSums(is.na(ex)) != ncol(ex), ])
+
+        # Replace missing value with calculated KNN value
+        imputation <- impute.knn(ex)
+
+        # Extract data from imputation object
+        ex <- imputation$data
+      } else {
+        stop("At least 3 columns are required for KNN imputation")
+      }
+    )
     }
-
-    # Replace missing value with calculated KNN value
-    imputation <- impute.knn(ex)
-
-    ex <- imputation$data
     return(ex)}
-  else if (knnTransformation == "No") {return(ex)}}
 
 #' A Function to Perform Principle Component Analysis on an Expression Object
 #'

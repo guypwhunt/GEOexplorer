@@ -1,5 +1,13 @@
 library(GEOexplorer)
 
+source("R/backendDifferentialGeneExpressionDataFunctions.R")
+source("R/backendExploratoryDataAnalysisDataFunctions.R")
+source("R/interactiveDifferentialGeneExpressionDataVisualizationFunctions.R")
+source("R/interactiveExploratoryDataAnalysisDataVisualizationFunctions.R")
+source("R/nonInteractiveDifferentialGeneExpressionDataVisualizationFunctions.R")
+source("R/nonInteractiveExploratoryDataAnalysisDataVisualizationFunctions.R")
+
+
 # Input Values
 logTransformation <- "Auto-Detect"  #
 knnTransformation <- "Yes" # Values can also be "Yes"
@@ -11,7 +19,7 @@ platformAnnotation <- "NCBI generated"
 significanceLevelCutOff <- 0.05
 
 # Get the GEO2R data for all platforms
-geoAccessionCode <- "GSE18388"
+geoAccessionCode <- "GSE25758"
 allGset <- getGeoObject(geoAccessionCode)
 
 # Extract platforms
@@ -43,11 +51,10 @@ columns <- extractSampleNames(expressionData)
 dataInput <- calculateLogTransformation(expressionData, logTransformation)
 
 # Perform KNN transformation on log expression data if necessary
-knnDataInput <- calculateKnnImpute(dataInput, "No")
+knnDataInput <- calculateKnnImpute(dataInput, "Yes")
 
 # Get a list of all the columns in the KNN output
 knnColumns <- extractSampleNames(knnDataInput)
-
 
 # Get knn output column Details
 knnColumnInfo <- extractSampleDetails(gsetData)
