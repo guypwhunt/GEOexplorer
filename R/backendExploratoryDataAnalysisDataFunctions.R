@@ -168,7 +168,7 @@ extractExpressionData <- function(gset) {
     try(ex <- ex[rowSums(is.na(ex))<nrow(ex),])
 
     # Convert to double
-    try(ex <- as.double(ex))
+    #try(ex <- as.double(ex))
   }
 
   return(ex)
