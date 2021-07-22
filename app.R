@@ -11,4 +11,4 @@ try(source("R/appServerComponents.R"))
 
 
 # Launch app
-loadApp()
+GEOexplorer::loadApp()

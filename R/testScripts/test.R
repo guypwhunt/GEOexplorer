@@ -7,6 +7,7 @@ source("R/interactiveExploratoryDataAnalysisDataVisualizationFunctions.R")
 source("R/nonInteractiveDifferentialGeneExpressionDataVisualizationFunctions.R")
 source("R/nonInteractiveExploratoryDataAnalysisDataVisualizationFunctions.R")
 
+library(GEOexplorer)
 
 # Input Values
 logTransformation <- "Auto-Detect"  #
@@ -19,7 +20,7 @@ platformAnnotation <- "NCBI generated"
 significanceLevelCutOff <- 0.05
 
 # Get the GEO2R data for all platforms
-geoAccessionCode <- "GSE18388"
+geoAccessionCode <- "GSE18380"
 allGset <- getGeoObject(geoAccessionCode)
 
 # Extract platforms
@@ -37,6 +38,7 @@ sampleInfo <- extractSampleInformation(gsetData)
 
 # Extract expression data
 expressionData <- extractExpressionData(gsetData)
+typeof(expressionData)
 
 # Get column Details
 columnInfo <- extractSampleDetails(gsetData)

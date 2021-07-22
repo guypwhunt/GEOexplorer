@@ -159,23 +159,16 @@ extractSampleDetails <- function(gset){
 extractExpressionData <- function(gset) {
   ex <- exprs(gset)
 
-  # Transform into data frame
-  #ex <- as.data.frame(ex)
-
   # Delete columns that are all na unless there is only one column
-  #try(
-    if(ncol(ex)>1){
-      # Deletes columns for which all values are na
-      try(ex <- ex[,colSums(is.na(ex))<nrow(ex)])
+  if(ncol(ex)>1){
+    # Deletes columns for which all values are na
+    try(ex <- ex[,colSums(is.na(ex))<nrow(ex)])
 
-      # Deletes rows for which all values are na
-      try(ex <- ex[rowSums(is.na(ex))<nrow(ex),])
+    # Deletes rows for which all values are na
+    #try(ex <- ex[rowSums(is.na(ex))<nrow(ex),])
 
+    #try(ex <- as.double(expressionData))
     }
-  #)
-
-  # Ensure ex is a dataframe
-  # ex <- as.data.frame(ex)
 
   return(ex)
   }
