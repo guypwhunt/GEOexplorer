@@ -169,7 +169,7 @@ extractExpressionData <- function(gset) {
   }
 
   # Convert to double
-  try(ex <- as.double(expressionData))
+  ex <- as.double(expressionData)
 
   return(ex)
   }
