@@ -4,7 +4,6 @@
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
 #' @param platform The study's platform
 #' @keywords GEO
-#' @export
 #' @importFrom GEOquery getGEO
 #' @examples extractGeoData("GSE18380", "GPL4694")
 #' @author Guy Hunt
@@ -24,7 +23,6 @@ extractGeoData <- function(geoAccessionCode, platform) {
 #' @param getGPL A boolean defaulting to TRUE as to whether or not to download and include GPL information when getting a GSEMatrix file. You may want to set this to FALSE if you know that you are going to annotate your featureData using Bioconductor tools rather than relying on information provided through NCBI GEO. Download times can also be greatly reduced by specifying FALSE.
 #' @param platformAnnotation A string defaulting to "NCBI generated" meaning true as to whether or not to use the Annotation GPL information. These files are nice to use because they contain up-to-date information remapped from Entrez Gene on a regular basis. However, they do not exist for all GPLs; in general, they are only available for GPLs referenced by a GDS. Input "Submitter supplied" for FALSE
 #' @keywords GEO
-#' @export
 #' @importFrom GEOquery getGEO
 #' @examples allGset <- getGeoObject("GSE18380", GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated")
 #' @author Guy Hunt
@@ -51,7 +49,6 @@ getGeoObject <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platform
 #' This function allows you to extract the platforms codes from a GEO object
 #' @param gset The GEO object which can be obtained from the getGeoObject() function
 #' @keywords GEO
-#' @export
 #' @examples platforms <- extractPlatforms(allGset)
 #' @author Guy Hunt
 #' @seealso [getGeoObject()] for GEO object
@@ -71,7 +68,6 @@ extractPlatforms <- function(gset) {
 #' @param gset The GEO object which can be obtained from the getGeoObject() function
 #' @param platform The platform code
 #' @keywords GEO
-#' @export
 #' @examples gsetData <- extractPlatformGset(gset, platforms[1])
 #' @author Guy Hunt
 #' @seealso [getGeoObject()] for GEO object
@@ -86,7 +82,6 @@ extractPlatformGset <- function(gset, platform) {
 #' This function allows you to extract experiment information from a GEO object
 #' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
-#' @export
 #' @examples experimentInformation <- extractExperimentInformation(gsetData)
 #' @author Guy Hunt
 #' @seealso [extractPlatformGset()] for GEO object
@@ -100,7 +95,6 @@ extractExperimentInformation <- function(gset) {
 #' This function allows you to convert experiment information into HTML
 #' @param experimentData The experiment object obtained from the extractExperimentInformation() function
 #' @keywords GEO
-#' @export
 #' @importFrom htmltools HTML
 #' @examples convertExperimentInformation <- convertExperimentInformation(experimentInformation)
 #' @author Guy Hunt
@@ -122,7 +116,6 @@ convertExperimentInformation <- function(experimentData) {
 #' This function allows you to extract the studies sample information from a GEO object
 #' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
-#' @export
 #' @examples columnInfo <- extractSampleDetails(gsetData)
 #' @author Guy Hunt
 #' @seealso [extractPlatformGset()] for GEO object
@@ -152,7 +145,6 @@ extractSampleDetails <- function(gset){
 #' This function allows you to extract the studies expression object from a GEO object
 #' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
-#' @export
 #' @examples expressionData <- extractExpressionData(gsetData)
 #' @author Guy Hunt
 #' @seealso [extractPlatformGset()] for GEO object
@@ -179,7 +171,6 @@ extractExpressionData <- function(gset) {
 #' This function allows you to extract the studies sample information from a GEO object
 #' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
-#' @export
 #' @examples sampleInfo <- extractSampleInformation(gsetData)
 #' @author Guy Hunt
 #' @seealso [extractPlatformGset()] for GEO object
@@ -193,7 +184,6 @@ extractSampleInformation <- function(gset) {
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @param logTransformation Whether to auto-detect if log transformation is appropriate or to apply log transformation. Values can be "Auto-Detect" for auto detect, "Yes" to apply log transformation and "No" to not perform log transformation.
 #' @keywords GEO
-#' @export
 #' @examples dataInput <- calculateLogTransformation(expressionData, "Auto-Detect")
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
@@ -225,7 +215,6 @@ calculateLogTransformation <- function(ex, logTransformation = "Auto-Detect") {
 #' This function allows you to determine if log transformation should be performed on an expression objects
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @examples autoLogInformation <- calculateAutoLogTransformApplication(expressionData)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
@@ -248,7 +237,6 @@ calculateAutoLogTransformApplication <- function(ex) {
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @param knnTransformation Whether to apply KNN impute. This can be "Yes" or "No"
 #' @keywords GEO
-#' @export
 #' @import impute
 #' @examples knnDataInput <- calculateKnnImpute(dataInput, "Yes")
 #' @author Guy Hunt
@@ -278,7 +266,6 @@ calculateKnnImpute <- function(ex, knnTransformation) {
 #' A function to perform prcomp principle component analysis on an expression object.
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @examples pcaDataInput <- calculatePrcompPca(knnDataInput)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
@@ -292,7 +279,6 @@ calculatePrcompPca <- function(ex){
 #' A function to perform Princomp principle component analysis on an expression object.
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @examples pcaPrincompDataInput <- calculatePrincompPca(knnDataInput)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
@@ -306,7 +292,6 @@ calculatePrincompPca <- function(ex){
 #' A function to perform remove rows that contain a null value from an expression object.
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @examples naOmitInput <- calculateNaOmit(knnDataInput)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object

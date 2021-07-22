@@ -1,11 +1,11 @@
 #' A Function to Load the GEOexplorer Shiny App
 #'
 #' This function loads the GEOexplorer Shiny App.
-#' GEO2R Data Visualisation extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the gene expression data.
+#' The GEOexplorer Shiny App extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the gene expression data.
 #' @keywords GEO
 #' @export
 #' @examples loadApp()
-#' @import shiny shinyHeatmaply ggplot2
+#' @import shiny shinyHeatmaply ggplot2 Biobase
 #' @author Guy Hunt
 loadApp <- function() {
   # Load Packages

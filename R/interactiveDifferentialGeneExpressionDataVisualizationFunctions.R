@@ -4,7 +4,6 @@
 #' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function
 #' @param adjustment A character string containing the adjustment to P-values
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactiveHistogramPlot(fit2, adjustment)
 #' @import plotly limma
 #' @author Guy Hunt
@@ -27,7 +26,6 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
 #' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
 #' @import plotly
 #' @author Guy Hunt
@@ -104,7 +102,6 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
 #' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactiveVolcanoPlot(fit2, dT, ct)
 #' @import plotly
 #' @author Guy Hunt
@@ -180,7 +177,6 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
 #' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactiveQQPlot(fit2, dT, ct)
 #' @import plotly limma
 #' @author Guy Hunt

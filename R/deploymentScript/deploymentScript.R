@@ -1,6 +1,0 @@
-#install.packages('rsconnect')
-library(rsconnect)
-rsconnect::setAccountInfo(name='GEOexplorer', token='0495C06EF4D78607202154CB2C603266', secret='FLzkd5VS0pHAoH7A9zbWgkb1aj/Ltm2dJveefq2V')
-options(repos = BiocManager::repositories())
-#rsconnect::deployApp('C:/Users/guypw/OneDrive/Documents/GEOexplorer', appName = "GEOexplorer")
-rsconnect::deployApp('C:/Users/guypw/OneDrive/Documents/GEOexplorer', appName = "geo2r_data_visulisation")
