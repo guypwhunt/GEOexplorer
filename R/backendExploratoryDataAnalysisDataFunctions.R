@@ -166,9 +166,10 @@ extractExpressionData <- function(gset) {
 
     # Deletes rows for which all values are na
     try(ex <- ex[rowSums(is.na(ex))<nrow(ex),])
+  }
 
-    try(ex <- as.double(expressionData))
-    }
+  # Convert to double
+  try(ex <- as.double(expressionData))
 
   return(ex)
   }
