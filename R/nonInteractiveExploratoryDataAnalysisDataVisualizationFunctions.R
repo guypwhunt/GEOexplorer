@@ -9,7 +9,6 @@
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode = "", platform ="") {
-  library(limma)
   par(mar=c(7,4,2,1))
   title <- paste (geoAccessionCode, "/", platform, sep ="")
   fig <- boxplot(ex, boxwex=0.7, notch=TRUE, main=title, outline=FALSE, las=2)
@@ -28,7 +27,6 @@ nonInteractiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode = "", platform 
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveDensityPlot <- function(ex, geoAccessionCode = "", platform = "") {
-  library(limma)
   par(mar=c(4,4,2,1))
   title <- paste(geoAccessionCode, "/", platform, " value distribution", sep ="")
   fig <- plotDensities(ex, main=title, legend=FALSE)
@@ -47,7 +45,6 @@ nonInteractiveDensityPlot <- function(ex, geoAccessionCode = "", platform = "") 
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveMeanVariancePlot <- function(ex, geoAccessionCode = "", platform = "") {
-  library(limma)
   fig <- plotSA(lmFit(ex), main= paste("Mean variance trend,", geoAccessionCode))
   return(fig)
 }
@@ -65,9 +62,6 @@ nonInteractiveMeanVariancePlot <- function(ex, geoAccessionCode = "", platform =
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveUmapPlot <- function(ex, knn, geoAccessionCode = "", platform = "") {
-  library(limma)
-  library(umap)
-  library(maptools)
   ex <- ex[!duplicated(ex), ]  # remove duplicates
   ump <- umap(t(ex), n_neighbors = knn, random_state = 123)
   plot(ump$layout, main=paste("UMAP plot, number of nearest neighbors used =", knn), xlab="", ylab="", pch=20, cex=1.5)
@@ -85,7 +79,6 @@ nonInteractiveUmapPlot <- function(ex, knn, geoAccessionCode = "", platform = ""
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaScreePlot <- function(pcaEx) {
-  library(factoextra)
   fig <- fviz_eig(pcaEx)
   return(fig)
 }
@@ -100,7 +93,6 @@ nonInteractivePcaScreePlot <- function(pcaEx) {
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaIndividualsPlot <- function(pcaEx) {
-  library(factoextra)
   fig <- fviz_pca_ind(pcaEx,
                col.ind = "cos2", # Color by the quality of representation
                gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
@@ -120,7 +112,6 @@ nonInteractivePcaIndividualsPlot <- function(pcaEx) {
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaVariablesPlot <- function(pcaEx) {
-  library(factoextra)
   fig <- fviz_pca_var(pcaEx,
                col.var = "contrib", # Color by contributions to the PC
                gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
@@ -139,7 +130,6 @@ nonInteractivePcaVariablesPlot <- function(pcaEx) {
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaBiplotPlot <- function(pcaEx) {
-  library(factoextra)
   fig <- fviz_pca_biplot(pcaEx, repel = TRUE,
                   col.var = "#2E9FDF", # Variables color
                   geom = "point",
@@ -157,7 +147,6 @@ nonInteractivePcaBiplotPlot <- function(pcaEx) {
 #' @examples fig <- nonInteractiveCorrelationMatrixPlot(expressionData)
 #' @author Guy Hunt
 nonInteractiveCorrelationMatrixPlot <- function(ex){
-  library(pheatmap)
   corMatrix <- cor(ex,use="c")
   fig <- pheatmap(corMatrix)
   return(fig)

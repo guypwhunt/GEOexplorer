@@ -9,7 +9,6 @@
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object
 nonInteractiveVennDiagramPlot <- function(dT) {
-  library(limma)
   fig <- vennDiagram(dT, circle.col=palette())
   return(fig)
 }
@@ -24,7 +23,6 @@ nonInteractiveVennDiagramPlot <- function(dT) {
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 nonInteractiveQQPlot <- function(fit2) {
-  library(limma)
   # create Q-Q plot for t-statistic
   t.good <- which(!is.na(fit2$F)) # filter out bad probes
   fig <- qqt(fit2$t[t.good], fit2$df.total[t.good], main="Moderated t statistic")
@@ -43,7 +41,6 @@ nonInteractiveQQPlot <- function(fit2) {
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object, [calculateDifferentialGeneExpression()] for differential gene expression object
 nonInteractiveVolcanoPlot <- function(fit2, dT, ct) {
-  library(limma)
   # volcano plot (log P-value vs log fold change)
   colnames(fit2) # list contrast names
   fig <- volcanoplot(fit2, coef=ct, main=colnames(fit2)[ct], pch=20,
@@ -63,7 +60,6 @@ nonInteractiveVolcanoPlot <- function(fit2, dT, ct) {
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object, [calculateDifferentialGeneExpression()] for differential gene expression object
 noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
-  library(limma)
   # MD plot (log fold change vs mean log expression)
   # highlight statistically significant (p-adj < 0.05) probes
   fig <- plotMD(fit2, column=ct, status=dT[,ct], legend=FALSE, pch=20, cex=1)
@@ -82,7 +78,6 @@ noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 nonInteractiveHistogramPlot <- function(fit2, adjustment) {
-  library(limma)
   tT2 <- topTable(fit2, adjust=adjustment, sort.by="B", number=Inf)
   fig <- hist(tT2$adj.P.Val, col = "grey", border = "white", xlab = "P-adj",
        ylab = "Number of genes", main = "P-adj value distribution")

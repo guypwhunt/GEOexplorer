@@ -5,9 +5,6 @@
 #' @importFrom shinyBS bsTooltip
 #' @author Guy Hunt
 sourceSideBarUi <- function() {
-  library(shiny)
-  library(shinyBS)
-
   sideBarUi <- sidebarPanel(
     helpText("Input a GEO series accession code (GSEXXXX format) to examine the gene expression data."),
     textInput("geoAccessionCode", "GEO accession code", "GSE18388"),
@@ -36,8 +33,6 @@ sourceSideBarUi <- function() {
 #' @import shiny
 #' @author Guy Hunt
 sourceDatasetInformationUi <- function() {
-  library(shiny)
-
   datasetInformationUi <- tabPanel("Dataset Information",
                                    tabsetPanel(type = "tabs",
                                                tabPanel("Experiment Information", br(), htmlOutput('experimentInfo')),
@@ -54,10 +49,6 @@ sourceDatasetInformationUi <- function() {
 #' @importFrom DT dataTableOutput
 #' @author Guy Hunt
 sourceDifferentialGeneExpressionAnalysisUi <- function() {
-  library(shiny)
-  library(plotly)
-  library(DT)
-
   differentialGeneExpressionAnalysisUi <- tabPanel("Differential Gene Expression Analysis",
                                                    tabsetPanel(type = "tabs",
                                                                tabPanel("Set Parameters",
@@ -106,9 +97,6 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
 #' @import shiny plotly
 #' @author Guy Hunt
 sourceExploratoryDataAnalysisUi <- function() {
-  library(shiny)
-  library(plotly)
-
   exploratoryDataAnalysisUi <- tabPanel("Exploratory Data Analysis",
                                         tabsetPanel(type = "tabs",
                                                     tabPanel("Box-and-Whisper Plot", br(), span("Generated using R plotly. The plot below displays the distribution of the values of the genes in the dataset. The quartiles are calculated using the linear method. Viewing the distribution can be useful for determining if the data in the dataset is suitable for differential expression analysis. Generally, median-centred values are indicative that the data is normalized and cross-comparable. The plot shows data after log and KNN transformation if they were performed."), br(), br(), plotlyOutput('interactiveBoxAndWhiskerPlot')),

@@ -10,7 +10,6 @@
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
-  library(plotly)
   ex <- as.data.frame(ex)
   fig <- plot_ly(type = "box", quartilemethod="linear")
   i = 1
@@ -34,7 +33,6 @@ interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
-  library(plotly)
   ex <- as.data.frame(ex)
   fig <- plot_ly(type = 'scatter', mode = 'lines', name = (paste(paste(geoAccessionCode,platform),'value distribution')))
   i <- 1
@@ -62,7 +60,6 @@ interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 interactiveThreeDDensityPlot <- function(ex, geoAccessionCode, platform) {
-  library(plotly)
   ex <- as.data.frame(ex)
   fig <- plot_ly(type = 'scatter3d', mode = 'lines', name = (paste(paste(geoAccessionCode,platform),'value distribution')))
   i <- 1
@@ -94,8 +91,6 @@ interactiveThreeDDensityPlot <- function(ex, geoAccessionCode, platform) {
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
-  library(plotly)
-  library(umap)
   ex <- ex[!duplicated(ex), ]  # remove duplicates
   ump <- umap(t(ex), n_neighbors = knn, random_state = 123)
   i <- 1
@@ -122,9 +117,6 @@ interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object, [extractPlatformGset()] for GEO object
 interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
-  library(plotly)
-  library(limma)
-  library(stringr)
   exData <- lmFit(ex)
   exData <- as.data.frame(exData)
   exData["ID"] <- rownames(ex)
@@ -217,7 +209,6 @@ interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
 #' @author Guy Hunt
 #' @seealso [calculatePca()] for PCA expression object
 interactivePrcompPcaScreePlot <- function(pcaData, geoAccessionCode) {
-  library(plotly)
   columnNames <- colnames(pcaData$x)
   proportionOfVariance <- pcaData$sdev^2/sum(pcaData$sdev^2)
   pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
@@ -246,7 +237,6 @@ interactivePrcompPcaScreePlot <- function(pcaData, geoAccessionCode) {
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object
 interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
-  library(plotly)
   columnNames <-   colnames(pcaData$loadings)
   proportionOfVariance <- pcaData$sdev^2/sum(pcaData$sdev^2)
   pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
@@ -278,11 +268,6 @@ interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
-  library(plotly)
-  library(stringr)
-  library(factoextra)
-  library(scales)
-
   pcaDf <- data.frame(pcaData$scores)
   pcaDf <- transform(pcaDf)
   pcaDf["ID"] <- rownames(pcaDf)
@@ -369,10 +354,6 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
-  library(plotly)
-  library(factoextra)
-  library(scales)
-
   variableStats <- get_pca_var(pcaData)
   eigenValue <- get_eigenvalue(pcaData)
   pcaData <- as.data.frame(unclass(pcaData$loadings))
@@ -396,8 +377,6 @@ interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
 #' @importFrom heatmaply heatmaply
 #' @author Guy Hunt
 interactiveHeatMapPlot <- function(ex) {
-  library(plotly)
-  library(heatmaply)
   corMatrix <- cor(ex,use="c")
   df <- data.frame(corMatrix[1,])
   df <- df[-c(1)]
@@ -426,10 +405,6 @@ interactiveHeatMapPlot <- function(ex) {
 #' @author Guy Hunt
 #' @seealso [calculatePrcompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrcompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
-  library(plotly)
-  library(factoextra)
-  library(stringr)
-  library(scales)
   pcaDf <- data.frame(pcaData$x)
   pcaDf <- transform(pcaDf)
   pcaDf["ID"] <- rownames(pcaDf)
@@ -517,9 +492,6 @@ interactivePrcompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset)
 #' @author Guy Hunt
 #' @seealso [calculatePrcompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrcompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
-  library(plotly)
-  library(factoextra)
-  library(scales)
   variableStats <- get_pca_var(pcaData)
   eigenValue <- get_eigenvalue(pcaData)
   pcaData <- as.data.frame(unclass(pcaData$rotation))
