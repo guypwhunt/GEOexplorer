@@ -4,3 +4,10 @@
 .Ruserdata
 inst/doc
 GEOexplorer.Rproj
+app.R
+errors/
+rsconnect/
+r/bioChecks/
+r/createPackageScript/
+r/deploymentScript/
+r/testScripts/

@@ -12,6 +12,7 @@ loadApp <- function() {
   library(shiny)
   library(shinyHeatmaply)
   library(ggplot2)
+  library(Biobase)
 
   ui <- fluidPage(
     titlePanel("GEO Explorer"),

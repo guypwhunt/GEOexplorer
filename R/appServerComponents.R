@@ -51,8 +51,8 @@ sourceServer <- function(input, output, session) {
 
       # Set all outputs to blank, this resets all the visualizations to blank after clicking analyse
       output$experimentInfo <- renderUI({})
-      output$columnTable <- renderDataTable({})
-      output$table <- renderDataTable({})
+      output$columnTable <- DT::renderDataTable({})
+      output$table <- DT::renderDataTable({})
       output$logTransformationText <- renderUI({})
       output$experimentInfo <- renderUI({})
       output$knnColumnTable <- DT::renderDataTable({})
@@ -118,12 +118,12 @@ sourceServer <- function(input, output, session) {
             })
 
             # Column Set Plot
-            output$columnTable <- renderDataTable({
+            output$columnTable <- DT::renderDataTable({
               columnInfo
             })
 
             # Expression dataset table
-            output$table <- renderDataTable({
+            output$table <- DT::renderDataTable({
               expressionData
             })
 
@@ -195,7 +195,7 @@ sourceServer <- function(input, output, session) {
             })
 
             # Column Set Plot
-            output$columnTable <- renderDataTable({
+            output$columnTable <- DT::renderDataTable({
               columnInfo
             })
 
@@ -226,7 +226,7 @@ sourceServer <- function(input, output, session) {
             )
 
             # Expression dataset table
-            output$table <- renderDataTable({
+            output$table <- DT::renderDataTable({
               knnDataInput
             })
 
