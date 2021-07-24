@@ -4,7 +4,6 @@
 #' This function creates a venndigram containing the number of genes that were and were not differentially expressed
 #' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @keywords GEO
-#' @export
 #' @import limma
 #' @examples fig <- nonInteractiveVennDiagramPlot(dT)
 #' @author Guy Hunt
@@ -20,7 +19,6 @@ nonInteractiveVennDiagramPlot <- function(dT) {
 #' This function allows you to plot a QQ plot of the quantiles of a data sample against the theoretical quantiles of a Student's t distribution from differential gene expression analysis
 #' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function
 #' @keywords GEO
-#' @export
 #' @import limma
 #' @examples fig <- nonInteractiveQQPlot(fit2)
 #' @author Guy Hunt
@@ -40,7 +38,6 @@ nonInteractiveQQPlot <- function(fit2) {
 #' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
-#' @export
 #' @import limma
 #' @examples fig <- nonInteractiveVolcanoPlot(fit2, dT, ct)
 #' @author Guy Hunt
@@ -61,7 +58,6 @@ nonInteractiveVolcanoPlot <- function(fit2, dT, ct) {
 #' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
-#' @export
 #' @import limma
 #' @examples fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
 #' @author Guy Hunt
@@ -81,7 +77,6 @@ noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
 #' @param fit2 An object containing the results of differntial gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function
 #' @param adjustment A character string containing the adjustment to P-values
 #' @keywords GEO
-#' @export
 #' @import limma
 #' @examples fig <- nonInteractiveHistogramPlot(fit2, adjustment)
 #' @author Guy Hunt

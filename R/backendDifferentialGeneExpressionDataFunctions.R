@@ -3,7 +3,6 @@
 #' This function extracts the sample/column names from an expression object
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @examples columnNames <- extractSampleNames(expressionData)
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
@@ -19,7 +18,6 @@ extractSampleNames <- function(ex) {
 #' @param group1 The sample names in group 1. This must not contain any sample names that are in group2
 #' @param group2 The sample names in group 2. This must not contain any sample names that are in group1
 #' @keywords GEO
-#' @export
 #' @examples gsms <- calculateEachGroupsSamples(columnNames,c("GSM455528", "GSM455541", "GSM455542", "GSM455543", "GSM455578", "GSM455610", "GSM455782"), c("GSM455783", "GSM455784", "GSM455785", "GSM455786", "GSM455787"))
 #' @author Guy Hunt
 #' @seealso [extractSampleNames()] for all the sample names
@@ -53,7 +51,6 @@ calculateEachGroupsSamples <- function(columnNames, group1, group2){
 #' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @import limma
 #' @examples fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gset, ex)
 #' @author Guy Hunt
@@ -119,7 +116,6 @@ calculateDifferentialGeneExpression <- function(gsms, limmaPrecisionWeights, for
 #' This function converts the P-value adjustment value from the UI into the value required by the backend
 #' @param adjustment A string character containing the adjustment to the P-value. The values can be: "Benjamini & Hochberg (False discovery rate)", "Benjamini & Yekutieli", "Bonferroni", "Hochberg", "Holm", "Hommel"or "None"
 #' @keywords GEO
-#' @export
 #' @examples adjustment <- convertAdjustment("Benjamini & Hochberg (False discovery rate)")
 #' @author Guy Hunt
 convertAdjustment <- function(adjustment){
@@ -149,7 +145,6 @@ convertAdjustment <- function(adjustment){
 #' @param fit2 An object containing the differentially expressed genes analysis that can be obtained from the calculateDifferentialGeneExpression() function
 #' @param adjustment A string character containing the adjustment to the P-value. The values can be: "fdr", "BY", "bonferroni", "hochberg", "holm", "hommel" or "none"
 #' @keywords GEO
-#' @export
 #' @import limma
 #' @examples tT <- calculateTopDifferentiallyExpressedGenes(fit2, "fdr")
 #' @author Guy Hunt
@@ -178,7 +173,6 @@ calculateTopDifferentiallyExpressedGenes <- function(fit2, adjustment) {
 #' @param columns A list of all columns within the expression object
 #' @param inputColumns A list of the columns that have been selected
 #' @keywords GEO
-#' @export
 #' @examples column2 <- calculateExclusiveColumns(c("GSM455528", "GSM455541", "GSM455542", "GSM455543"), c("GSM455528", "GSM455541"))
 #' @author Guy Hunt
 calculateExclusiveColumns <- function(columns, inputColumns) {
@@ -200,7 +194,6 @@ calculateExclusiveColumns <- function(columns, inputColumns) {
 #' @param adjustment A string character containing the adjustment to the P-value. The values can be: "fdr", "BY", "bonferroni", "hochberg", "holm", "hommel" or "none"
 #' @param significanceLevelCutOff A float indicating the P-value cutoff. The values can be between 0 and 1
 #' @keywords GEO
-#' @export
 #' @examples dT <- calculateDifferentialGeneExpressionSummary(fit2, "fdr", 0.05)
 #' @author Guy Hunt
 #' @import limma
@@ -216,7 +209,6 @@ calculateDifferentialGeneExpressionSummary <- function(fit2, adjustment, signifi
 #' This function calculates the GSMS object for differential expression from a dataframe of the groups
 #' @param groupDataFrame A dataframe containing the row number and group selection
 #' @keywords GEO
-#' @export
 #' @importFrom stringr str_remove_all
 #' @examples TBD
 #' @author Guy Hunt

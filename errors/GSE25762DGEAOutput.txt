@@ -1,1 +1,0 @@
-logTransformation: Auto-Detect, knnTransformation: Yes, pValueAdjustment: Benjamini & Yekutieli, limmaPrecisionWeights: Yes, forceNormalization: Yes, significanceLevelCutOff: 0.5

@@ -5,7 +5,6 @@
 #' @param platform A character string representing the study's platform
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactiveBoxAndWhiskerPlot(expressionData, "GSE18380", "GPL4694")
 #' @import plotly
 #' @author Guy Hunt
@@ -30,7 +29,6 @@ interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
 #' @param platform A character string representing the study's platform
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactiveDensityPlot(expressionData, "GSE18380", "GPL4694")
 #' @import plotly
 #' @author Guy Hunt
@@ -59,7 +57,6 @@ interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
 #' @param platform A character string representing the study's platform
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactiveThreeDDensityPlot(expressionData, "GSE18380", "GPL4694")
 #' @import plotly
 #' @author Guy Hunt
@@ -92,7 +89,6 @@ interactiveThreeDDensityPlot <- function(ex, geoAccessionCode, platform) {
 #' @param knn A integer representing the number of k nearest neighbor's to use
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactiveUmapPlot(expressionData, 2, "GSE18380")
 #' @import plotly umap
 #' @author Guy Hunt
@@ -120,7 +116,6 @@ interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
 #' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactiveMeanVariancePlot(expressionData, "GSE18380", gset)
 #' @import plotly limma
 #' @importFrom stringr str_replace_all
@@ -217,7 +212,6 @@ interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
 #' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePca() function
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactivePrcompPcaScreePlot(pcaData, "GSE18380")
 #' @import plotly
 #' @author Guy Hunt
@@ -247,7 +241,6 @@ interactivePrcompPcaScreePlot <- function(pcaData, geoAccessionCode) {
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
 #' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactivePrincompPcaScreePlot(pcaData, "GSE18380")
 #' @import plotly
 #' @author Guy Hunt
@@ -277,7 +270,6 @@ interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
 #' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
 #' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactivePrincompPcaIndividualsPlot(pcaData, "GSE18380", gset)
 #' @import plotly
 #' @importFrom stringr str_replace_all
@@ -370,7 +362,6 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
 #' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
 #' @import plotly
 #' @importFrom factoextra get_pca_var get_eigenvalue
@@ -400,7 +391,6 @@ interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
 #' This function allows you to plot an interactive heat map of the correlations between samples in an expression object
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactiveHeatMapPlot(expressionData)
 #' @import plotly
 #' @importFrom heatmaply heatmaply
@@ -428,7 +418,6 @@ interactiveHeatMapPlot <- function(ex) {
 #' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
 #' @param gset The GEO object which can be obtained from the extractPlatformGset() function
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactiveprcompPcaIndividualsPlot(pcaData, "GSE18380", gset)
 #' @import plotly
 #' @importFrom stringr str_replace_all
@@ -521,7 +510,6 @@ interactivePrcompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset)
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
 #' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
-#' @export
 #' @examples fig <- interactivePrcompPcaVariablesPlot(pcaData, "GSE18380")
 #' @import plotly
 #' @importFrom factoextra get_pca_var get_eigenvalue

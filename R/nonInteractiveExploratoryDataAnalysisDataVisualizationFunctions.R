@@ -4,7 +4,6 @@
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @import limma
 #' @examples fig <- nonInteractiveBoxAndWhiskerPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
@@ -24,7 +23,6 @@ nonInteractiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode = "", platform 
 #' @param platform A character string representing the study's platform
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @import limma
 #' @examples fig <- nonInteractiveDensityPlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
@@ -44,7 +42,6 @@ nonInteractiveDensityPlot <- function(ex, geoAccessionCode = "", platform = "") 
 #' @param platform A character string representing the study's platform
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @import limma
 #' @examples fig <- nonInteractiveMeanVariancePlot(expressionData, "GSE18380", "GPL4694")
 #' @author Guy Hunt
@@ -62,7 +59,6 @@ nonInteractiveMeanVariancePlot <- function(ex, geoAccessionCode = "", platform =
 #' @param platform A character string representing the study's platform
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @import umap limma
 #' @importFrom maptools pointLabel
 #' @examples fig <- nonInteractiveUmapPlot(expressionData, 3, "GSE18380", "GPL4694")
@@ -84,7 +80,6 @@ nonInteractiveUmapPlot <- function(ex, knn, geoAccessionCode = "", platform = ""
 #' This function allows you to plot PCA expression results into a Histogram of the Principle Components
 #' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
-#' @export
 #' @importFrom factoextra fviz_eig
 #' @examples fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)
 #' @author Guy Hunt
@@ -100,7 +95,6 @@ nonInteractivePcaScreePlot <- function(pcaEx) {
 #' This function allows you to plot PCA expression results into an Individuals Scatter Plot
 #' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
-#' @export
 #' @importFrom factoextra fviz_pca_ind
 #' @examples fig <- nonInteractivePcaIndividualsPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
@@ -121,7 +115,6 @@ nonInteractivePcaIndividualsPlot <- function(pcaEx) {
 #' This function allows you to plot PCA expression results into an Variables Scatter Plot
 #' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
-#' @export
 #' @importFrom factoextra fviz_pca_var
 #' @examples fig <- nonInteractivePcaVariablesPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
@@ -141,7 +134,6 @@ nonInteractivePcaVariablesPlot <- function(pcaEx) {
 #' This function allows you to plot PCA expression results into an Scatter Plot contains both the Individuals and Variables
 #' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
-#' @export
 #' @importFrom factoextra fviz_pca_biplot
 #' @examples fig <- nonInteractivePcaBiplotPlot(pcaPrincompDataInput)
 #' @author Guy Hunt
@@ -161,7 +153,6 @@ nonInteractivePcaBiplotPlot <- function(pcaEx) {
 #' This function allows you to plot a heatmap of the correlations between experimental conditions
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @export
 #' @import pheatmap
 #' @examples fig <- nonInteractiveCorrelationMatrixPlot(expressionData)
 #' @author Guy Hunt
