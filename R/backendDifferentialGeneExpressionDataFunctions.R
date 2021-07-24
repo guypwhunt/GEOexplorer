@@ -56,7 +56,6 @@ calculateEachGroupsSamples <- function(columnNames, group1, group2){
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object, [extractPlatformGset()] for GEO object, [calculateEachGroupsSamples()] for the string of integers indicating which group a sample belongs to
 calculateDifferentialGeneExpression <- function(gsms, limmaPrecisionWeights, forceNormalization, gset, ex){
-  library(limma)
   # make proper column names to match toptable
   fvarLabels(gset) <- make.names(fvarLabels(gset))
 
@@ -119,24 +118,20 @@ calculateDifferentialGeneExpression <- function(gsms, limmaPrecisionWeights, for
 #' @examples adjustment <- convertAdjustment("Benjamini & Hochberg (False discovery rate)")
 #' @author Guy Hunt
 convertAdjustment <- function(adjustment){
-  if (adjustment == "Benjamini & Hochberg (False discovery rate)"){
-    adjustment <- "fdr"
-  } else if (adjustment == "Benjamini & Yekutieli"){
-    adjustment <- "BY"
-  } else if (adjustment == "Bonferroni"){
-    adjustment <- "bonferroni"
-  } else if (adjustment == "Hochberg"){
-    adjustment <- "hochberg"
-  } else if (adjustment == "Holm"){
-    adjustment <- "holm"
-  } else if (adjustment == "Hommel"){
-    adjustment <- "hommel"
-  } else if (adjustment == "None"){
-    adjustment <- "none"
-  } else {
-    adjustment <- "none"
-  }
-  return(adjustment)
+  # List of UI P value adjustments
+  uiAdjustment <- c('Benjamini & Hochberg (False discovery rate)','Benjamini & Yekutieli','Bonferroni','Hochberg','Holm','None')
+
+  # List of Backend P value adjustments
+  backendAdjustment <- c("fdr", "BY", "bonferroni",'hochberg','holm','none')
+
+  # Lookup table of UI and Backend P value adjustments
+  adjustments <- backendAdjustment
+  names(adjustments) <- uiAdjustment
+
+  # Adjustment value
+  adjustmentResult <- unname(adjustments[adjustment])
+
+  return(adjustmentResult)
 }
 
 #' A Function to Create a Table of the Top Differentially Expressed Genes
@@ -150,7 +145,6 @@ convertAdjustment <- function(adjustment){
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 calculateTopDifferentiallyExpressedGenes <- function(fit2, adjustment) {
-  library(limma)
   tT <- topTable(fit2, adjust=adjustment, sort.by="B", number=250)
   columnNamesList <- c()
   optionalColumnNamesList <- c("ID","adj.P.Val","P.Value","t","B","logFC","Gene.symbol","Gene.title", "Gene.ID", "GB_LIST", "SPOT_ID", "RANGE_GB", "RANGE_STRAND", "RANGE_START", "GB_ACC", "GB_RANGE", "SEQUENCE")
@@ -199,7 +193,6 @@ calculateExclusiveColumns <- function(columns, inputColumns) {
 #' @import limma
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 calculateDifferentialGeneExpressionSummary <- function(fit2, adjustment, significanceLevelCutOff) {
-  library(limma)
   dT <- decideTests(fit2, adjust.method=adjustment, p.value=significanceLevelCutOff)
   return(dT)
 }
@@ -213,7 +206,6 @@ calculateDifferentialGeneExpressionSummary <- function(fit2, adjustment, signifi
 #' @examples TBD
 #' @author Guy Hunt
 calculateEachGroupsSamplesFromDataFrame <- function(groupDataFrame) {
-  library(stringr)
   # Convert the input to a dataframe
   groupDataFrame <- as.data.frame(groupDataFrame)
 

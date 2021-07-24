@@ -8,7 +8,6 @@
 #' @examples extractGeoData("GSE18380", "GPL4694")
 #' @author Guy Hunt
 extractGeoData <- function(geoAccessionCode, platform) {
-  library(GEOquery)
   gset <- getGEO(geoAccessionCode, GSEMatrix =TRUE, getGPL=FALSE)
   if (length(gset) > 1) idx <- grep(platform, attr(gset, "names")) else idx <- 1
   gset <- gset[[idx]]
@@ -27,7 +26,6 @@ extractGeoData <- function(geoAccessionCode, platform) {
 #' @examples allGset <- getGeoObject("GSE18380", GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated")
 #' @author Guy Hunt
 getGeoObject <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated") {
-  library(GEOquery)
   if (platformAnnotation == "Submitter supplied") {
     platformAnnotation <- FALSE
   } else if (platformAnnotation == "NCBI generated") {
@@ -100,7 +98,6 @@ extractExperimentInformation <- function(gset) {
 #' @author Guy Hunt
 #' @seealso [extractExperimentInformation()] for GEO object
 convertExperimentInformation <- function(experimentData) {
-  library(htmltools)
   name <- paste("<b>", "Author's Name:", "</b>", "<p>", experimentData@name, "</p>")
   lab <- paste("<b>", "Laboratory:", "</b>", "<p>", experimentData@lab, "</p>")
   contact <- paste("<b>", "Contact Information:", "</b>", "<p>", experimentData@contact, "</p>")
@@ -158,9 +155,11 @@ extractExpressionData <- function(gset) {
 
     # Deletes rows for which all values are na
     try(ex <- ex[rowSums(is.na(ex))<nrow(ex),])
+  }
 
-    # Convert to double
-    #try(ex <- as.double(ex))
+  # Ensure the expression data contains numerical data
+  if(typeof(ex) != "double"){
+    try(ex <- apply(ex, 2, as.double))
   }
 
   return(ex)
@@ -242,8 +241,6 @@ calculateAutoLogTransformApplication <- function(ex) {
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 calculateKnnImpute <- function(ex, knnTransformation) {
-  library(impute)
-
   if (knnTransformation == "Yes") {
     # Check if there are less than 3 samples
       if (ncol(ex) > 3) {

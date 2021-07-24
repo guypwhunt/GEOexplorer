@@ -5,8 +5,6 @@
 #' @importFrom DT renderDataTable JS
 #' @author Guy Hunt
 sourceServer <- function(input, output, session) {
-  library(shiny)
-  library(DT)
   datasetInformationServer <-({
     # Data Extraction Functions
     # Get the GEO2R data for all platforms
@@ -79,7 +77,7 @@ sourceServer <- function(input, output, session) {
 
       # Error handling to display a notification if an invalid GEO accession code is used.
       if(errorCheck() == TRUE){
-        showNotification(paste0(paste0("The GEO accession code ", input$geoAccessionCode), " is not a valid GEO accession code. Please enter a valid GEO accession code"), type = "error")
+        showNotification(paste0(paste0("The GEO accession code ", input$geoAccessionCode), " is not a valid microarray accession code. Please enter a valid microarray accession code"), type = "error")
       } else {
         # Extract the GEO2R data from the specified platform
         gsetData <<- tryCatch({
@@ -98,8 +96,9 @@ sourceServer <- function(input, output, session) {
           expressionData <<- extractExpressionData(gsetData)
 
           # Error handling to prevent issues due to expression data with no samples
-          validate(need(ncol(expressionData) > 0, "The GEO series only has 0 samples and therefore can't be processed"))
-
+          if(length(expressionData) == 0 ){
+            showNotification("The expression data is empty and therefore can not be analysed. This may indicate the GEO accession code relates to an RNA sequence experiment rather than a microarray experiment.", type = "error")
+          } else {
           # Extract the experiment information
           experimentInformation <- extractExperimentInformation(gsetData)
 
@@ -110,7 +109,7 @@ sourceServer <- function(input, output, session) {
           columns <- extractSampleNames(expressionData)
 
           # Error handling to prevent non-microarray GEO accession codes from being used
-          if(typeof(expressionData) == "logical") {
+          if(is.double(expressionData) == FALSE) {
             showNotification(paste0(paste0("It appears that the GEO accession code ", input$geoAccessionCode), " is not a valid microarray gene expression GEO accession code. Please enter a valid microarray gene expression GEO accession code."), type = "error")
             # Experimental Information Display
             output$experimentInfo <- renderUI({
@@ -288,7 +287,8 @@ sourceServer <- function(input, output, session) {
               showNotification("As the expression dataset had only one column only the Box-and-Whisper Plot and Expression Density Plots will be produced.", type = "warning")
             }
           }
-        }
+          }
+          }
       }
     }
     )
@@ -306,7 +306,7 @@ sourceServer <- function(input, output, session) {
 
 
       # Error handling to prevent non-microarray datasets being used
-      if(typeof(expressionData) != "double") {
+      if(is.double(expressionData) == FALSE) {
         showNotification(paste0(paste0("It appears that the GEO accession code ", input$geoAccessionCode), " is not a valid microarray gene expression GEO accession code. Or the expression data is not in a numerical format."), type = "error")
       } else {
 

@@ -8,12 +8,6 @@
 #' @import shiny shinyHeatmaply ggplot2 Biobase
 #' @author Guy Hunt
 loadApp <- function() {
-  # Load Packages
-  library(shiny)
-  library(shinyHeatmaply)
-  library(ggplot2)
-  library(Biobase)
-
   ui <- fluidPage(
     titlePanel("GEO Explorer"),
     helpText("GEO2R is an interactive web tool that allows users to compare two or more groups of experimental conditions in a GEO Series to identify genes that are differentially expressed across experimental conditions.
