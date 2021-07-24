@@ -306,8 +306,8 @@ sourceServer <- function(input, output, session) {
 
 
       # Error handling to prevent non-microarray datasets being used
-      if(typeof(expressionData) == "logical") {
-        showNotification(paste0(paste0("It appears that the GEO accession code ", input$geoAccessionCode), " is not a valid microarray gene expression GEO accession code. Please enter a valid microarray gene expression GEO accession code."), type = "error")
+      if(typeof(expressionData) != "double") {
+        showNotification(paste0(paste0("It appears that the GEO accession code ", input$geoAccessionCode), " is not a valid microarray gene expression GEO accession code. Or the expression data is not in a numerical format."), type = "error")
       } else {
 
         # Differential gene expression analysis
