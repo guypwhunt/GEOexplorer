@@ -40,7 +40,8 @@ biocViews:
   GeneExpression,
   mRNAMicroarray,
   DifferentialExpression,
-  Microarray
+  Microarray,
+  MicroRNAArray
 Depends: shiny, limma, Biobase
 Imports: 
   DT,

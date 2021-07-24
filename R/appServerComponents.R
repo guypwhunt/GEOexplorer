@@ -47,6 +47,9 @@ sourceServer <- function(input, output, session) {
     # Exploratory data analysis visualisation
     observeEvent(input$exploratoryDataAnalysisButton, {
 
+      # Clear unused memory
+      gc()
+
       # Set all outputs to blank, this resets all the visualizations to blank after clicking analyse
       output$experimentInfo <- renderUI({})
       output$columnTable <- DT::renderDataTable({})
@@ -296,6 +299,9 @@ sourceServer <- function(input, output, session) {
 
     # Differential Gene Expression Functions
     observeEvent(input$differentialExpressionButton, {
+      # Clear unused memory
+      gc()
+
       # Set all differential gene expression analysis outputs to blank, this resets all the visualizations to blank after clicking analyse
       output$dETable <- renderDataTable({})
       output$iDEHistogram <- renderPlotly({})
@@ -316,7 +322,15 @@ sourceServer <- function(input, output, session) {
         # Error handling to ensure at least one group has two samples and the other group has at least one sample
         if((lengths(regmatches(gsms, gregexpr("0", gsms))) > 0 & lengths(regmatches(gsms, gregexpr("1", gsms))) > 1) | (lengths(regmatches(gsms, gregexpr("0", gsms))) > 1 & lengths(regmatches(gsms, gregexpr("1", gsms))) > 0))  {
 
-          fit2 <- calculateDifferentialGeneExpression(gsms, input$limmaPrecisionWeights, input$forceNormalization, gsetData, knnDataInput)
+          fit2 <- tryCatch({calculateDifferentialGeneExpression(gsms, input$limmaPrecisionWeights, input$forceNormalization, gsetData, knnDataInput)}
+                           ,error=function(cond) {
+                             return(NULL)
+                           })
+
+          # Error handling to ensure Differential Gene Expression Analysis worked
+          if(is.null(fit2)){
+            showNotification("There was an error calculating the differential gene expression analysis!", type = "error")
+            } else {
           adjustment <- convertAdjustment(input$pValueAdjustment)
           tT <- calculateTopDifferentiallyExpressedGenes(fit2, adjustment)
           dT <- calculateDifferentialGeneExpressionSummary(fit2, adjustment, input$significanceLevelCutOff)
@@ -362,7 +376,8 @@ sourceServer <- function(input, output, session) {
             }
           )
           showNotification("Differential gene expression analysis complete!", type = "message")
-        } else{
+        }
+          } else{
           showNotification("One group needs at least 2 samples and the other group needs at least 1 sample", type = "error")
         }
       }
