@@ -158,11 +158,9 @@ extractExpressionData <- function(gset) {
 
     # Deletes rows for which all values are na
     try(ex <- ex[rowSums(is.na(ex))<nrow(ex),])
-
-    # Convert to double
-    #try(ex <- as.double(ex))
   }
 
+  # Ensure the expression data contains numerical data
   if(typeof(ex != "double")){
     try(ex <- apply(ex, 2, as.double))
   }
