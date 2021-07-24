@@ -161,7 +161,7 @@ extractExpressionData <- function(gset) {
   }
 
   # Ensure the expression data contains numerical data
-  if(typeof(ex != "double")){
+  if(typeof(ex) != "double"){
     try(ex <- apply(ex, 2, as.double))
   }
 
