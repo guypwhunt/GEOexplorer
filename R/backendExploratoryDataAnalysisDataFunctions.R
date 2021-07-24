@@ -163,6 +163,10 @@ extractExpressionData <- function(gset) {
     #try(ex <- as.double(ex))
   }
 
+  if(typeof(ex != "double")){
+    try(ex <- apply(ex, 2, as.double))
+  }
+
   return(ex)
   }
 
