@@ -178,9 +178,9 @@ and non-interactive visualisations.
 
 If you run into problems using GEOexplorer, the [Bioconductor Support
 site](https://support.bioconductor.org/) is a good first place to ask
-for help. If you are convinced that there is a bug in GEOexplorer(this
-is pretty unusual, but not unheard of), feel free to submit an issue on
-the [GEOexplorer github site](https://github.com/guypwhunt/GEOexplorer).
+for help. If you are convinced that there is a bug in GEOexplorer, feel free to submit an issue on
+the [GEOexplorer github site](https://github.com/guypwhunt/GEOexplorer). Please include the GEO accession code that
+errors and the operating system
 
 # Session info
 
