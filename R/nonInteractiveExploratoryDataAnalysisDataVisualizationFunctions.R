@@ -31,7 +31,7 @@
 #' fig <- nonInteractiveBoxAndWhiskerPlot(ex = knnDataInput, geoAccessionCode = geoAccessionCode, platform = platform)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode = "", platform ="") {
   par(mar=c(7,4,2,1))
@@ -77,7 +77,7 @@ nonInteractiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode = "", platform 
 #' fig <- nonInteractiveDensityPlot(ex = naOmitInput, geoAccessionCode = geoAccessionCode, platform = platform)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveDensityPlot <- function(ex, geoAccessionCode = "", platform = "") {
   par(mar=c(4,4,2,1))
@@ -123,7 +123,7 @@ nonInteractiveDensityPlot <- function(ex, geoAccessionCode = "", platform = "") 
 #' fig <- nonInteractiveMeanVariancePlot(naOmitInput, geoAccessionCode)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveMeanVariancePlot <- function(ex, geoAccessionCode = "", platform = "") {
   fig <- plotSA(lmFit(ex), main= paste("Mean variance trend,", geoAccessionCode))
@@ -169,7 +169,7 @@ nonInteractiveMeanVariancePlot <- function(ex, geoAccessionCode = "", platform =
 #' fig <- nonInteractiveUmapPlot(naOmitInput, knn, geoAccessionCode)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveUmapPlot <- function(ex, knn, geoAccessionCode = "", platform = "") {
   ex <- ex[!duplicated(ex), ]  # remove duplicates
@@ -218,7 +218,7 @@ nonInteractiveUmapPlot <- function(ex, knn, geoAccessionCode = "", platform = ""
 #' fig
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaScreePlot <- function(pcaEx) {
   fig <- fviz_eig(pcaEx)
@@ -264,7 +264,7 @@ nonInteractivePcaScreePlot <- function(pcaEx) {
 #' fig
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaIndividualsPlot <- function(pcaEx) {
   fig <- fviz_pca_ind(pcaEx,
@@ -315,7 +315,7 @@ nonInteractivePcaIndividualsPlot <- function(pcaEx) {
 #' fig
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaVariablesPlot <- function(pcaEx) {
   fig <- fviz_pca_var(pcaEx,
@@ -365,7 +365,7 @@ nonInteractivePcaVariablesPlot <- function(pcaEx) {
 #' fig
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaBiplotPlot <- function(pcaEx) {
   fig <- fviz_pca_biplot(pcaEx, repel = TRUE,
@@ -411,7 +411,7 @@ nonInteractivePcaBiplotPlot <- function(pcaEx) {
 #' fig <- nonInteractiveCorrelationMatrixPlot(naOmitInput)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 nonInteractiveCorrelationMatrixPlot <- function(ex){
   corMatrix <- cor(ex,use="c")
   fig <- pheatmap(corMatrix)

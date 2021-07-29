@@ -33,7 +33,7 @@
 #'
 #' @import plotly
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
   ex <- as.data.frame(ex)
@@ -85,7 +85,7 @@ interactiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode, platform) {
 #'
 #' @import plotly
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
   ex <- as.data.frame(ex)
@@ -141,7 +141,7 @@ interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
 #'
 #' @import plotly
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 interactiveThreeDDensityPlot <- function(ex, geoAccessionCode, platform) {
   ex <- as.data.frame(ex)
@@ -202,7 +202,7 @@ interactiveThreeDDensityPlot <- function(ex, geoAccessionCode, platform) {
 #'
 #' @import plotly umap
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
   ex <- ex[!duplicated(ex), ]  # remove duplicates
@@ -257,13 +257,13 @@ interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
 #' @import plotly limma
 #' @importFrom stringr str_replace_all
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object, [extractPlatformGset()] for GEO object
 interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
   exData <- lmFit(ex)
   exData <- as.data.frame(exData)
   exData["ID"] <- rownames(ex)
-  geneData <- gsetData@featureData@data
+  geneData <- gset@featureData@data
   # Error handling to catch gset without featureData
   if(ncol(geneData) > 0){
     geneData <- as.data.frame(geneData)
@@ -345,7 +345,7 @@ interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
 #'
 #' This function allows you to plot Prcomp PCA expression results into an interactive Histogram of the Principle Components
 #' @param geoAccessionCode A character string representing a GEO object for download and parsing
-#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePca() function
+#' @param pcaData An object containing the results of PCA on a Geo Expression object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @examples
 #' # Get the GEO data for all platforms
@@ -381,8 +381,8 @@ interactiveMeanVariancePlot <- function(ex, geoAccessionCode, gset) {
 #'
 #' @import plotly
 #' @author Guy Hunt
-#' @keywords internal
-#' @seealso [calculatePca()] for PCA expression object
+#' @noRd
+#' @seealso [calculatePrincompPca()] for PCA expression object
 interactivePrcompPcaScreePlot <- function(pcaData, geoAccessionCode) {
   columnNames <- colnames(pcaData$x)
   proportionOfVariance <- pcaData$sdev^2/sum(pcaData$sdev^2)
@@ -441,7 +441,7 @@ interactivePrcompPcaScreePlot <- function(pcaData, geoAccessionCode) {
 #'
 #' @import plotly
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object
 interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
   columnNames <-   colnames(pcaData$loadings)
@@ -504,7 +504,7 @@ interactivePrincompPcaScreePlot <- function(pcaData, geoAccessionCode) {
 #' @importFrom factoextra get_pca_ind get_eigenvalue
 #' @importFrom scales label_percent
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
   pcaDf <- data.frame(pcaData$scores)
@@ -622,7 +622,7 @@ interactivePrincompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gse
 #' @importFrom factoextra get_pca_var get_eigenvalue
 #' @importFrom scales label_percent
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
   variableStats <- get_pca_var(pcaData)
@@ -675,7 +675,7 @@ interactivePrincompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
 #' @import plotly
 #' @importFrom heatmaply heatmaply
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 interactiveHeatMapPlot <- function(ex) {
   corMatrix <- cor(ex,use="c")
   df <- data.frame(corMatrix[1,])
@@ -734,7 +734,7 @@ interactiveHeatMapPlot <- function(ex) {
 #' @importFrom factoextra get_pca_ind get_eigenvalue
 #' @importFrom scales label_percent
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [calculatePrcompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrcompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset) {
   pcaDf <- data.frame(pcaData$x)
@@ -852,6 +852,7 @@ interactivePrcompPcaIndividualsPlot <- function(pcaData, geoAccessionCode, gset)
 #' @importFrom factoextra get_pca_var get_eigenvalue
 #' @importFrom scales label_percent
 #' @author Guy Hunt
+#' @noRd
 #' @seealso [calculatePrcompPca()] for Princomp PCA expression object, [extractPlatformGset()] for GEO object
 interactivePrcompPcaVariablesPlot <- function(pcaData, geoAccessionCode) {
   variableStats <- get_pca_var(pcaData)

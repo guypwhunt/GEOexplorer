@@ -72,7 +72,7 @@
 #' fig <- nonInteractiveVennDiagramPlot(dT)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object
 nonInteractiveVennDiagramPlot <- function(dT) {
   fig <- vennDiagram(dT, circle.col=palette())
@@ -148,7 +148,7 @@ nonInteractiveVennDiagramPlot <- function(dT) {
 #' fig <- nonInteractiveQQPlot(fit2)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 nonInteractiveQQPlot <- function(fit2) {
   # create Q-Q plot for t-statistic
@@ -233,7 +233,7 @@ nonInteractiveQQPlot <- function(fit2) {
 #'fig <- nonInteractiveVolcanoPlot(fit2, dT, ct)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object, [calculateDifferentialGeneExpression()] for differential gene expression object
 nonInteractiveVolcanoPlot <- function(fit2, dT, ct) {
   # volcano plot (log P-value vs log fold change)
@@ -319,7 +319,7 @@ nonInteractiveVolcanoPlot <- function(fit2, dT, ct) {
 #' fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [calculateDifferentialGeneExpressionSummary()] for differential gene expression summary object, [calculateDifferentialGeneExpression()] for differential gene expression object
 noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
   # MD plot (log fold change vs mean log expression)
@@ -405,7 +405,7 @@ noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
 #'
 #' fig <- nonInteractiveHistogramPlot(fit2, adjustment)
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 nonInteractiveHistogramPlot <- function(fit2, adjustment) {
   tT2 <- topTable(fit2, adjust=adjustment, sort.by="B", number=Inf)

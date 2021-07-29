@@ -1,7 +1,7 @@
 Package: GEOexplorer
 Title: An Interactive Shiny App for Exploratory Data Analysis 
   and Differential Gene Expression of Microarray Gene 
-  Expression Data Held in the GEO Database. 
+  Expression Data Held in the GEO Database
 Date: 2021/07/29
 Version: 0.99.5
 Authors@R: 

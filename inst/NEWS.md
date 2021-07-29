@@ -12,4 +12,8 @@ Changes in version 0.99.4 (2021-07-29)
 
 Changes in version 0.99.5 (2021-07-29)
 + Bioconductor check updates
-- Updating internal documentation
++ Updating internal documentation
+
+Changes in version 0.99.6 (2021-07-29)
++ Bioconductor check updates
+- Removing internal documentation

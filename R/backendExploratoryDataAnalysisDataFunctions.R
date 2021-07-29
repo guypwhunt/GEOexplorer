@@ -7,7 +7,7 @@
 #' @importFrom GEOquery getGEO
 #' @examples extractGeoData("GSE18380", "GPL4694")
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 extractGeoData <- function(geoAccessionCode, platform) {
   gset <- getGEO(geoAccessionCode, GSEMatrix =TRUE, getGPL=FALSE)
   if (length(gset) > 1) idx <- grep(platform, attr(gset, "names")) else idx <- 1
@@ -30,7 +30,7 @@ extractGeoData <- function(geoAccessionCode, platform) {
 #' allGset <- getGeoObject(geoAccessionCode)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 getGeoObject <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated") {
   if (platformAnnotation == "Submitter supplied") {
     platformAnnotation <- FALSE
@@ -63,7 +63,7 @@ getGeoObject <- function(geoAccessionCode, GSEMatrix=TRUE, getGPL=TRUE, platform
 #' platform <- platforms[1]
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [getGeoObject()] for GEO object
 extractPlatforms <- function(gset) {
   platforms <- c()
@@ -94,7 +94,7 @@ extractPlatforms <- function(gset) {
 #' gsetData <- extractPlatformGset(allGset, platform)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [getGeoObject()] for GEO object
 extractPlatformGset <- function(gset, platform) {
   if (length(gset) > 1) idx <- grep(platform[1], attr(gset, "names")) else idx <- 1
@@ -123,7 +123,7 @@ extractPlatformGset <- function(gset, platform) {
 #' experimentInformation <- extractExperimentInformation(gsetData)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractPlatformGset()] for GEO object
 extractExperimentInformation <- function(gset) {
   experimentalData <- experimentData(gset)
@@ -155,7 +155,7 @@ extractExperimentInformation <- function(gset) {
 #' extractedExperimentInformation <- convertExperimentInformation(experimentInformation)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractExperimentInformation()] for GEO object
 convertExperimentInformation <- function(experimentData) {
   name <- paste("<b>", "Author's Name:", "</b>", "<p>", experimentData@name, "</p>")
@@ -189,7 +189,7 @@ convertExperimentInformation <- function(experimentData) {
 #' columnInfo <- extractSampleDetails(gsetData)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractPlatformGset()] for GEO object
 extractSampleDetails <- function(gset){
   phenoDataset <- phenoData(gset)
@@ -233,7 +233,7 @@ extractSampleDetails <- function(gset){
 #' expressionData <- extractExpressionData(gsetData)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractPlatformGset()] for GEO object
 extractExpressionData <- function(gset) {
   ex <- exprs(gset)
@@ -278,7 +278,7 @@ extractExpressionData <- function(gset) {
 #' sampleInfo <- extractSampleInformation(gsetData)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractPlatformGset()] for GEO object
 extractSampleInformation <- function(gset) {
   sampleInfo <- pData(gset)
@@ -310,7 +310,7 @@ extractSampleInformation <- function(gset) {
 #' dataInput <- calculateLogTransformation(expressionData, logTransformation)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 calculateLogTransformation <- function(ex, logTransformation = "Auto-Detect") {
   # If log transformation is set to auto-detect
@@ -359,7 +359,7 @@ calculateLogTransformation <- function(ex, logTransformation = "Auto-Detect") {
 #' autoLogInformation <- calculateAutoLogTransformApplication(expressionData)
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 calculateAutoLogTransformApplication <- function(ex) {
   # If log transformation is set to auto-detect
@@ -404,7 +404,7 @@ calculateAutoLogTransformApplication <- function(ex) {
 #' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
 #'
 #' @author Guy Hunt
-#' @keywords internal
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 calculateKnnImpute <- function(ex, knnTransformation) {
   if (knnTransformation == "Yes") {
@@ -458,6 +458,7 @@ calculateKnnImpute <- function(ex, knnTransformation) {
 #' pcaPrcompDataInput <- calculatePrcompPca(naOmitInput)
 #'
 #' @author Guy Hunt
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 calculatePrcompPca <- function(ex){
   pca <- prcomp(ex, scale = TRUE)
@@ -498,6 +499,7 @@ calculatePrcompPca <- function(ex){
 #' pcaPrincompDataInput <- calculatePrincompPca(naOmitInput)
 #'
 #' @author Guy Hunt
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 calculatePrincompPca <- function(ex){
   pca <- princomp(ex, cor = TRUE)
@@ -535,6 +537,7 @@ calculatePrincompPca <- function(ex){
 #' naOmitInput <- calculateNaOmit(knnDataInput)
 #'
 #' @author Guy Hunt
+#' @noRd
 #' @seealso [extractExpressionData()] for expression object
 calculateNaOmit <- function(ex){
   ex <- na.omit(ex)

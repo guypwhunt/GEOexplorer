@@ -4,7 +4,8 @@
 #' The GEOexplorer Shiny App extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the gene expression data.
 #' @keywords GEO
 #' @export
-#' @examples loadApp()
+#' @examples
+#' app <- loadApp()
 #' @import shiny shinyHeatmaply ggplot2 Biobase
 #' @author Guy Hunt
 loadApp <- function() {

@@ -15,7 +15,7 @@ test_that("Microarray GSE without missing values is handled correctly by the int
   logTransformation <- "Auto-Detect"
   dataInput <- calculateLogTransformation(expressionData, logTransformation)
 
-  knnDataInput <- calculateKnnImpute(dataInput, "No")
+  knnDataInput <- calculateKnnImpute(dataInput, "Yes")
 
   naOmitInput <- calculateNaOmit(knnDataInput)
 
@@ -47,7 +47,7 @@ test_that("Microarray GSE with missing values  is handled correctly by the inter
   logTransformation <- "Auto-Detect"
   dataInput <- calculateLogTransformation(expressionData, logTransformation)
 
-  knnDataInput <- calculateKnnImpute(dataInput, "No")
+  knnDataInput <- calculateKnnImpute(dataInput, "Yes")
 
   naOmitInput <- calculateNaOmit(knnDataInput)
 
