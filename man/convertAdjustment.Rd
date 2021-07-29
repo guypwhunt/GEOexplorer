@@ -14,7 +14,10 @@ convertAdjustment(adjustment)
 This function converts the P-value adjustment value from the UI into the value required by the backend
 }
 \examples{
-adjustment <- convertAdjustment("Benjamini & Hochberg (False discovery rate)")
+ # Convert P value adjustment
+ pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+ adjustment <- convertAdjustment(pValueAdjustment)
+
 }
 \author{
 Guy Hunt

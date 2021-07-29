@@ -2,6 +2,7 @@
 #'
 #' A Function to Return the Side Bar Ui Component
 #' @import shiny
+#' @examples sourceSideBarUi()
 #' @importFrom shinyBS bsTooltip
 #' @author Guy Hunt
 sourceSideBarUi <- function() {
@@ -31,6 +32,7 @@ sourceSideBarUi <- function() {
 #'
 #' A Function to Return the Dataset Information Ui Component
 #' @import shiny
+#' @examples sourceDatasetInformationUi()
 #' @author Guy Hunt
 sourceDatasetInformationUi <- function() {
   datasetInformationUi <- tabPanel("Dataset Information",
@@ -46,6 +48,7 @@ sourceDatasetInformationUi <- function() {
 #'
 #' A Function to Return the Differential Gene Expression Analysis Ui Component
 #' @import shiny plotly
+#' @examples sourceDifferentialGeneExpressionAnalysisUi()
 #' @importFrom DT dataTableOutput
 #' @author Guy Hunt
 sourceDifferentialGeneExpressionAnalysisUi <- function() {
@@ -95,6 +98,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
 #'
 #' A Function to Return the Exploratory Data Analysis Ui Component
 #' @import shiny plotly
+#' @examples sourceExploratoryDataAnalysisUi()
 #' @author Guy Hunt
 sourceExploratoryDataAnalysisUi <- function() {
   exploratoryDataAnalysisUi <- tabPanel("Exploratory Data Analysis",

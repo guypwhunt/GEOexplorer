@@ -9,6 +9,9 @@ sourceSideBarUi()
 \description{
 A Function to Return the Side Bar Ui Component
 }
+\examples{
+sourceSideBarUi()
+}
 \author{
 Guy Hunt
 }

@@ -18,7 +18,35 @@ interactiveUmapPlot(ex, knn, geoAccessionCode)
 This function allows you to plot expression data into an interactive UMAP Plot
 }
 \examples{
-fig <- interactiveUmapPlot(expressionData, 2, "GSE18380")
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract expression data
+expressionData <- extractExpressionData(gsetData)
+
+# Apply log transformation to expression data if necessary
+logTransformation <- "Auto-Detect"
+dataInput <- calculateLogTransformation(expressionData, logTransformation)
+
+# Perform KNN transformation on log expression data if necessary
+knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+
+# Remove all incomplete rows
+naOmitInput <- calculateNaOmit(knnDataInput)
+
+# Interactive UMAP
+knn <- 2
+fig <- interactiveUmapPlot(naOmitInput, knn, geoAccessionCode)
+fig
+
 }
 \seealso{
 \code{\link[=extractExpressionData]{extractExpressionData()}} for expression object

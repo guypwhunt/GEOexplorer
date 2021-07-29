@@ -4,7 +4,69 @@
 #' @param fit2 An object containing the results of differential gene expression analysis which can be obtained from the calculateDifferentialGeneExpression() function
 #' @param adjustment A character string containing the adjustment to P-values
 #' @keywords GEO
-#' @examples fig <- interactiveHistogramPlot(fit2, adjustment)
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Extract experimental condition/sample names
+#' columnNames <- extractSampleNames(expressionData)
+#'
+#' # Define Groups
+#' numberOfColumns <- length(columnNames)
+#' numberOfColumns <- numberOfColumns + 1
+#' halfNumberOfColumns <- ceiling(numberOfColumns/2)
+#' i <- 0
+#'
+#' group1 <- c()
+#' group2 <- c()
+#'
+#' for (name in columnNames) {
+#'   if (i < halfNumberOfColumns) {
+#'     group1 <- c(group1, name)
+#'     i <- i +1
+#'   } else {
+#'     group2 <- c(group2, name)
+#'     i <- i +1
+#'   }
+#' }
+#'
+#' # Select columns in group2
+#' column2 <- calculateExclusiveColumns(columnNames, group1)
+#'
+#' # Calculate gsms
+#' gsms <- calculateEachGroupsSamples(columnNames,group1, group2)
+#'
+#' # Convert P value adjustment
+#' pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+#' adjustment <- convertAdjustment(pValueAdjustment)
+#'
+#' # Get fit 2
+#' limmaPrecisionWeights <- "Yes"
+#' forceNormalization <- "Yes"
+#' fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gsetData, knnDataInput)
+#'
+#' # Interactive Histogram
+#' fig <- interactiveHistogramPlot(fit2, adjustment)
+#' fig
+#'
 #' @import plotly limma
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
@@ -24,7 +86,75 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
 #' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
-#' @examples fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Extract experimental condition/sample names
+#' columnNames <- extractSampleNames(expressionData)
+#'
+#' # Define Groups
+#' numberOfColumns <- length(columnNames)
+#' numberOfColumns <- numberOfColumns + 1
+#' halfNumberOfColumns <- ceiling(numberOfColumns/2)
+#' i <- 0
+#'
+#' group1 <- c()
+#' group2 <- c()
+#'
+#' for (name in columnNames) {
+#'   if (i < halfNumberOfColumns) {
+#'     group1 <- c(group1, name)
+#'     i <- i +1
+#'   } else {
+#'     group2 <- c(group2, name)
+#'     i <- i +1
+#'   }
+#' }
+#'
+#' # Select columns in group2
+#' column2 <- calculateExclusiveColumns(columnNames, group1)
+#'
+#' # Calculate gsms
+#' gsms <- calculateEachGroupsSamples(columnNames,group1, group2)
+#'
+#' # Convert P value adjustment
+#' pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+#' adjustment <- convertAdjustment(pValueAdjustment)
+#'
+#' # Get fit 2
+#' limmaPrecisionWeights <- "Yes"
+#' forceNormalization <- "Yes"
+#' fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gsetData, knnDataInput)
+#'
+#' # Summarize test results as "up", "down" or "not expressed"
+#' significanceLevelCutOff <- 0.05
+#' dT <- calculateDifferentialGeneExpressionSummary(fit2, adjustment, significanceLevelCutOff)
+#'
+#' # Plot Interactive Mean Difference of fit 2 data
+#' ct <- 1
+#' fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
+#' fig
+#'
+#' fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
 #' @import plotly
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object, [calculateDifferentialGeneExpressionSummary()] for summary differential gene expression object
@@ -99,7 +229,74 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
 #' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
-#' @examples fig <- interactiveVolcanoPlot(fit2, dT, ct)
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Extract experimental condition/sample names
+#' columnNames <- extractSampleNames(expressionData)
+#'
+#' # Define Groups
+#' numberOfColumns <- length(columnNames)
+#' numberOfColumns <- numberOfColumns + 1
+#' halfNumberOfColumns <- ceiling(numberOfColumns/2)
+#' i <- 0
+#'
+#' group1 <- c()
+#' group2 <- c()
+#'
+#' for (name in columnNames) {
+#'   if (i < halfNumberOfColumns) {
+#'     group1 <- c(group1, name)
+#'     i <- i +1
+#'   } else {
+#'     group2 <- c(group2, name)
+#'     i <- i +1
+#'   }
+#' }
+#'
+#' # Select columns in group2
+#' column2 <- calculateExclusiveColumns(columnNames, group1)
+#'
+#' # Calculate gsms
+#' gsms <- calculateEachGroupsSamples(columnNames,group1, group2)
+#'
+#' # Convert P value adjustment
+#' pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+#' adjustment <- convertAdjustment(pValueAdjustment)
+#'
+#' # Get fit 2
+#' limmaPrecisionWeights <- "Yes"
+#' forceNormalization <- "Yes"
+#' fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gsetData, knnDataInput)
+#'
+#' # Summarize test results as "up", "down" or "not expressed"
+#' significanceLevelCutOff <- 0.05
+#' dT <- calculateDifferentialGeneExpressionSummary(fit2, adjustment, significanceLevelCutOff)
+#' ct <- 1
+#'
+#' # Interactive volcano plot (log P-value vs log fold change)
+#' fig <- interactiveVolcanoPlot(fit2, dT, ct)
+#' fig
+#'
 #' @import plotly
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object, [calculateDifferentialGeneExpressionSummary()] for summary differential gene expression object
@@ -173,7 +370,74 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
 #' @param dT An object that summarises if each gene is unregulated, down regulated or has a similar level of expression which can be obtained from the calculateDifferentialGeneExpressionSummary() function
 #' @param ct A integer indicating the column to select from the dT object
 #' @keywords GEO
-#' @examples fig <- interactiveQQPlot(fit2, dT, ct)
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Extract experimental condition/sample names
+#' columnNames <- extractSampleNames(expressionData)
+#'
+#' # Define Groups
+#' numberOfColumns <- length(columnNames)
+#' numberOfColumns <- numberOfColumns + 1
+#' halfNumberOfColumns <- ceiling(numberOfColumns/2)
+#' i <- 0
+#'
+#' group1 <- c()
+#' group2 <- c()
+#'
+#' for (name in columnNames) {
+#'   if (i < halfNumberOfColumns) {
+#'     group1 <- c(group1, name)
+#'     i <- i +1
+#'   } else {
+#'     group2 <- c(group2, name)
+#'     i <- i +1
+#'   }
+#' }
+#'
+#' # Select columns in group2
+#' column2 <- calculateExclusiveColumns(columnNames, group1)
+#'
+#' # Calculate gsms
+#' gsms <- calculateEachGroupsSamples(columnNames,group1, group2)
+#'
+#' # Convert P value adjustment
+#' pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+#' adjustment <- convertAdjustment(pValueAdjustment)
+#'
+#' # Get fit 2
+#' limmaPrecisionWeights <- "Yes"
+#' forceNormalization <- "Yes"
+#' fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gsetData, knnDataInput)
+#'
+#' # Summarize test results as "up", "down" or "not expressed"
+#' significanceLevelCutOff <- 0.05
+#' dT <- calculateDifferentialGeneExpressionSummary(fit2, adjustment, significanceLevelCutOff)
+#'
+#' # Interactive Q-Q plot
+#' ct <- 1
+#' fig <- interactiveQQPlot(fit2, dT, ct)
+#' fig
+#'
 #' @import plotly limma
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object, [calculateDifferentialGeneExpressionSummary()] for summary differential gene expression object

@@ -18,7 +18,31 @@ interactiveBoxAndWhiskerPlot(ex, geoAccessionCode, platform)
 This function allows you to plot expression data into an interactive Box and Whisker Plot
 }
 \examples{
-fig <- interactiveBoxAndWhiskerPlot(expressionData, "GSE18380", "GPL4694")
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract expression data
+expressionData <- extractExpressionData(gsetData)
+
+# Apply log transformation to expression data if necessary
+logTransformation <- "Auto-Detect"
+dataInput <- calculateLogTransformation(expressionData, logTransformation)
+
+# Perform KNN transformation on log expression data if necessary
+knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+
+# Interactive Box-and-Whisker Plot
+fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform)
+fig
+
 }
 \seealso{
 \code{\link[=extractExpressionData]{extractExpressionData()}} for expression object

@@ -3,7 +3,24 @@
 #' This function extracts the sample/column names from an expression object
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
-#' @examples columnNames <- extractSampleNames(expressionData)
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Extract experimental condition/sample names
+#' columnNames <- extractSampleNames(expressionData)
+#'
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 extractSampleNames <- function(ex) {
@@ -18,7 +35,47 @@ extractSampleNames <- function(ex) {
 #' @param group1 The sample names in group 1. This must not contain any sample names that are in group2
 #' @param group2 The sample names in group 2. This must not contain any sample names that are in group1
 #' @keywords GEO
-#' @examples gsms <- calculateEachGroupsSamples(columnNames,c("GSM455528", "GSM455541", "GSM455542", "GSM455543", "GSM455578", "GSM455610", "GSM455782"), c("GSM455783", "GSM455784", "GSM455785", "GSM455786", "GSM455787"))
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Extract experimental condition/sample names
+#' columnNames <- extractSampleNames(expressionData)
+#'
+#' # Define Groups
+#' numberOfColumns <- length(columnNames)
+#' numberOfColumns <- numberOfColumns + 1
+#' halfNumberOfColumns <- ceiling(numberOfColumns/2)
+#' i <- 0
+#' group1 <- c()
+#' group2 <- c()
+#' for (name in columnNames) {
+#' if (i < halfNumberOfColumns) {
+#'     group1 <- c(group1, name)
+#'         i <- i +1
+#'           } else {
+#'           group2 <- c(group2, name)
+#'           i <- i +1
+#'           }
+#'           }
+#'
+#' # Select columns in group2
+#' column2 <- calculateExclusiveColumns(columnNames, group1)
+#'
+#' # Calculate gsms
+#' gsms <- calculateEachGroupsSamples(columnNames,group1, group2)
+#'
 #' @author Guy Hunt
 #' @seealso [extractSampleNames()] for all the sample names
 calculateEachGroupsSamples <- function(columnNames, group1, group2){
@@ -52,7 +109,63 @@ calculateEachGroupsSamples <- function(columnNames, group1, group2){
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @import limma
-#' @examples fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gset, ex)
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Extract experimental condition/sample names
+#' columnNames <- extractSampleNames(expressionData)
+#'
+#' # Define Groups
+#' numberOfColumns <- length(columnNames)
+#' numberOfColumns <- numberOfColumns + 1
+#' halfNumberOfColumns <- ceiling(numberOfColumns/2)
+#' i <- 0
+#' group1 <- c()
+#' group2 <- c()
+#'
+#' for (name in columnNames) {
+#' if (i < halfNumberOfColumns) {
+#' group1 <- c(group1, name)
+#'  i <- i +1
+#'  } else {
+#'  group2 <- c(group2, name)
+#'  i <- i +1
+#'  }
+#'  }
+#'
+#'  # Select columns in group2
+#'  column2 <- calculateExclusiveColumns(columnNames, group1)
+#'
+#'  # Calculate gsms
+#'  gsms <- calculateEachGroupsSamples(columnNames,group1, group2)
+#'
+#'  # Convert P value adjustment
+#'  pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+#'  adjustment <- convertAdjustment(pValueAdjustment)
+#'  # Get fit 2
+#'  limmaPrecisionWeights <- "Yes"
+#'  forceNormalization <- "Yes"
+#'  fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gsetData, knnDataInput)
+#'
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object, [extractPlatformGset()] for GEO object, [calculateEachGroupsSamples()] for the string of integers indicating which group a sample belongs to
 calculateDifferentialGeneExpression <- function(gsms, limmaPrecisionWeights, forceNormalization, gset, ex){
@@ -115,7 +228,11 @@ calculateDifferentialGeneExpression <- function(gsms, limmaPrecisionWeights, for
 #' This function converts the P-value adjustment value from the UI into the value required by the backend
 #' @param adjustment A string character containing the adjustment to the P-value. The values can be: "Benjamini & Hochberg (False discovery rate)", "Benjamini & Yekutieli", "Bonferroni", "Hochberg", "Holm", "Hommel"or "None"
 #' @keywords GEO
-#' @examples adjustment <- convertAdjustment("Benjamini & Hochberg (False discovery rate)")
+#' @examples
+#'  # Convert P value adjustment
+#'  pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+#'  adjustment <- convertAdjustment(pValueAdjustment)
+#'
 #' @author Guy Hunt
 convertAdjustment <- function(adjustment){
   # List of UI P value adjustments
@@ -141,7 +258,65 @@ convertAdjustment <- function(adjustment){
 #' @param adjustment A string character containing the adjustment to the P-value. The values can be: "fdr", "BY", "bonferroni", "hochberg", "holm", "hommel" or "none"
 #' @keywords GEO
 #' @import limma
-#' @examples tT <- calculateTopDifferentiallyExpressedGenes(fit2, "fdr")
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Extract experimental condition/sample names
+#' columnNames <- extractSampleNames(expressionData)
+#'
+#' # Define Groups
+#' numberOfColumns <- length(columnNames)
+#' numberOfColumns <- numberOfColumns + 1
+#' halfNumberOfColumns <- ceiling(numberOfColumns/2)
+#' i <- 0
+#' group1 <- c()
+#' group2 <- c()
+#' for (name in columnNames) {
+#' if (i < halfNumberOfColumns) {
+#' group1 <- c(group1, name)
+#' i <- i +1
+#' } else {
+#' group2 <- c(group2, name)
+#' i <- i +1
+#' }
+#' }
+#'
+#' # Select columns in group2
+#' column2 <- calculateExclusiveColumns(columnNames, group1)
+#'
+#' # Calculate gsms
+#' gsms <- calculateEachGroupsSamples(columnNames,group1, group2)
+#' # Convert P value adjustment
+#' pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+#' adjustment <- convertAdjustment(pValueAdjustment)
+#'
+#' # Get fit 2
+#' limmaPrecisionWeights <- "Yes"
+#' forceNormalization <- "Yes"
+#' fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gsetData, knnDataInput)
+#'
+#' # Print Top deferentially expressed genes
+#' tT <- calculateTopDifferentiallyExpressedGenes(fit2, adjustment)
+#'
 #' @author Guy Hunt
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 calculateTopDifferentiallyExpressedGenes <- function(fit2, adjustment) {
@@ -167,7 +342,51 @@ calculateTopDifferentiallyExpressedGenes <- function(fit2, adjustment) {
 #' @param columns A list of all columns within the expression object
 #' @param inputColumns A list of the columns that have been selected
 #' @keywords GEO
-#' @examples column2 <- calculateExclusiveColumns(c("GSM455528", "GSM455541", "GSM455542", "GSM455543"), c("GSM455528", "GSM455541"))
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Extract experimental condition/sample names
+#' columnNames <- extractSampleNames(expressionData)
+#'
+#' # Define Groups
+#' numberOfColumns <- length(columnNames)
+#' numberOfColumns <- numberOfColumns + 1
+#' halfNumberOfColumns <- ceiling(numberOfColumns/2)
+#' i <- 0
+#' group1 <- c()
+#' group2 <- c()
+#' for (name in columnNames) {
+#' if (i < halfNumberOfColumns) {
+#' group1 <- c(group1, name)
+#' i <- i +1
+#' } else {
+#' group2 <- c(group2, name)
+#' i <- i +1
+#' }
+#' }
+#'
+#' # Select columns in group2
+#' column2 <- calculateExclusiveColumns(columnNames, group1)
+#'
 #' @author Guy Hunt
 calculateExclusiveColumns <- function(columns, inputColumns) {
   columns1Input <- c()
@@ -188,7 +407,66 @@ calculateExclusiveColumns <- function(columns, inputColumns) {
 #' @param adjustment A string character containing the adjustment to the P-value. The values can be: "fdr", "BY", "bonferroni", "hochberg", "holm", "hommel" or "none"
 #' @param significanceLevelCutOff A float indicating the P-value cutoff. The values can be between 0 and 1
 #' @keywords GEO
-#' @examples dT <- calculateDifferentialGeneExpressionSummary(fit2, "fdr", 0.05)
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Extract experimental condition/sample names
+#' columnNames <- extractSampleNames(expressionData)
+#'
+#' # Define Groups
+#' numberOfColumns <- length(columnNames)
+#' numberOfColumns <- numberOfColumns + 1
+#' halfNumberOfColumns <- ceiling(numberOfColumns/2)
+#' i <- 0
+#' group1 <- c()
+#' group2 <- c()
+#' for (name in columnNames) {
+#' if (i < halfNumberOfColumns) {
+#' group1 <- c(group1, name)
+#' i <- i +1
+#' } else {
+#' group2 <- c(group2, name)
+#' i <- i +1
+#' }
+#' }
+#'
+#' # Select columns in group2
+#' column2 <- calculateExclusiveColumns(columnNames, group1)
+#' # Calculate gsms
+#' gsms <- calculateEachGroupsSamples(columnNames,group1, group2)
+#'
+#' # Convert P value adjustment
+#' pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+#' adjustment <- convertAdjustment(pValueAdjustment)
+#'
+#' # Get fit 2
+#' limmaPrecisionWeights <- "Yes"
+#' forceNormalization <- "Yes"
+#' fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gsetData, knnDataInput)
+#'
+#' # Summarize test results as "up", "down" or "not expressed"
+#' significanceLevelCutOff <- 0.05
+#' dT <- calculateDifferentialGeneExpressionSummary(fit2, adjustment, significanceLevelCutOff)
+#'
 #' @author Guy Hunt
 #' @import limma
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
@@ -203,7 +481,6 @@ calculateDifferentialGeneExpressionSummary <- function(fit2, adjustment, signifi
 #' @param groupDataFrame A dataframe containing the row number and group selection
 #' @keywords GEO
 #' @importFrom stringr str_remove_all
-#' @examples TBD
 #' @author Guy Hunt
 calculateEachGroupsSamplesFromDataFrame <- function(groupDataFrame) {
   # Convert the input to a dataframe

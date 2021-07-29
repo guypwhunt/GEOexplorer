@@ -13,7 +13,20 @@ extractExperimentInformation(gset)
 This function allows you to extract experiment information from a GEO object
 }
 \examples{
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract the experiment information
 experimentInformation <- extractExperimentInformation(gsetData)
+
 }
 \seealso{
 \code{\link[=extractPlatformGset]{extractPlatformGset()}} for GEO object

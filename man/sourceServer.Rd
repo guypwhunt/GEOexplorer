@@ -9,6 +9,9 @@ sourceServer(input, output, session)
 \description{
 A Function to Return the Server Component
 }
+\examples{
+sourceServer()
+}
 \author{
 Guy Hunt
 }

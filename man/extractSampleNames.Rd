@@ -14,7 +14,23 @@ extractSampleNames(ex)
 This function extracts the sample/column names from an expression object
 }
 \examples{
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract expression data
+expressionData <- extractExpressionData(gsetData)
+
+# Extract experimental condition/sample names
 columnNames <- extractSampleNames(expressionData)
+
 }
 \seealso{
 \code{\link[=extractExpressionData]{extractExpressionData()}} for expression object

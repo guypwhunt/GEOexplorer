@@ -18,7 +18,37 @@ interactivePrcompPcaIndividualsPlot(pcaData, geoAccessionCode, gset)
 This function allows you to plot prcomp PCA expression results into an interactive Scatter Plot
 }
 \examples{
-fig <- interactiveprcompPcaIndividualsPlot(pcaData, "GSE18380", gset)
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract expression data
+expressionData <- extractExpressionData(gsetData)
+
+# Apply log transformation to expression data if necessary
+logTransformation <- "Auto-Detect"
+dataInput <- calculateLogTransformation(expressionData, logTransformation)
+
+# Perform KNN transformation on log expression data if necessary
+knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+
+# Remove all incomplete rows
+naOmitInput <- calculateNaOmit(knnDataInput)
+
+# Perform Prcomp PCA analysis on KNN transformation expression data
+pcaPrcompDataInput <- calculatePrcompPca(naOmitInput)
+
+# Interactive Prcomp PCA Individual Plot
+fig <- interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput, geoAccessionCode, gsetData)
+fig
+
 }
 \seealso{
 \code{\link[=calculatePrcompPca]{calculatePrcompPca()}} for Princomp PCA expression object, \code{\link[=extractPlatformGset]{extractPlatformGset()}} for GEO object

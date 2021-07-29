@@ -16,7 +16,37 @@ interactivePrincompPcaVariablesPlot(pcaData, geoAccessionCode)
 This function allows you to plot princomp PCA expression results into an interactive Scatter Plot
 }
 \examples{
-fig <- interactivePrincompPcaVariablesPlot(pcaData, "GSE18380")
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract expression data
+expressionData <- extractExpressionData(gsetData)
+
+# Apply log transformation to expression data if necessary
+logTransformation <- "Auto-Detect"
+dataInput <- calculateLogTransformation(expressionData, logTransformation)
+
+# Perform KNN transformation on log expression data if necessary
+knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+
+# Remove all incomplete rows
+naOmitInput <- calculateNaOmit(knnDataInput)
+
+# Perform Princomp PCA analysis on KNN transformation expression data#
+pcaPrincompDataInput <- calculatePrincompPca(naOmitInput)
+
+# Interactive Princomp PCA Variables Plot
+fig <- interactivePrincompPcaVariablesPlot(pcaPrincompDataInput, geoAccessionCode)
+fig
+
 }
 \seealso{
 \code{\link[=calculatePrincompPca]{calculatePrincompPca()}} for Princomp PCA expression object, \code{\link[=extractPlatformGset]{extractPlatformGset()}} for GEO object

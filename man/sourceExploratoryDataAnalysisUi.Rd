@@ -9,6 +9,9 @@ sourceExploratoryDataAnalysisUi()
 \description{
 A Function to Return the Exploratory Data Analysis Ui Component
 }
+\examples{
+sourceExploratoryDataAnalysisUi()
+}
 \author{
 Guy Hunt
 }

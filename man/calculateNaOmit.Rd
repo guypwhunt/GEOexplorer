@@ -13,7 +13,30 @@ calculateNaOmit(ex)
 A function to perform remove rows that contain a null value from an expression object.
 }
 \examples{
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract expression data
+expressionData <- extractExpressionData(gsetData)
+
+# Apply log transformation to expression data if necessary
+logTransformation <- "Auto-Detect"
+dataInput <- calculateLogTransformation(expressionData, logTransformation)
+
+# Perform KNN transformation on log expression data if necessary
+knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+
+# Remove all incomplete rows
 naOmitInput <- calculateNaOmit(knnDataInput)
+
 }
 \seealso{
 \code{\link[=extractExpressionData]{extractExpressionData()}} for expression object

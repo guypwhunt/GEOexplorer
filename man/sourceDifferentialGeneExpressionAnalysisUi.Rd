@@ -9,6 +9,9 @@ sourceDifferentialGeneExpressionAnalysisUi()
 \description{
 A Function to Return the Differential Gene Expression Analysis Ui Component
 }
+\examples{
+sourceDifferentialGeneExpressionAnalysisUi()
+}
 \author{
 Guy Hunt
 }

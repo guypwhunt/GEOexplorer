@@ -13,9 +13,6 @@ calculateEachGroupsSamplesFromDataFrame(groupDataFrame)
 \description{
 This function calculates the GSMS object for differential expression from a dataframe of the groups
 }
-\examples{
-TBD
-}
 \author{
 Guy Hunt
 }

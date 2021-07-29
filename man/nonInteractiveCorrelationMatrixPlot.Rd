@@ -14,7 +14,33 @@ nonInteractiveCorrelationMatrixPlot(ex)
 This function allows you to plot a heatmap of the correlations between experimental conditions
 }
 \examples{
-fig <- nonInteractiveCorrelationMatrixPlot(expressionData)
+#' # Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract expression data
+expressionData <- extractExpressionData(gsetData)
+
+# Apply log transformation to expression data if necessary
+logTransformation <- "Auto-Detect"
+dataInput <- calculateLogTransformation(expressionData, logTransformation)
+
+# Perform KNN transformation on log expression data if necessary
+knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+
+# Remove all incomplete rows
+naOmitInput <- calculateNaOmit(knnDataInput)
+
+# Non-Interactive Heatmap
+fig <- nonInteractiveCorrelationMatrixPlot(naOmitInput)
+
 }
 \author{
 Guy Hunt

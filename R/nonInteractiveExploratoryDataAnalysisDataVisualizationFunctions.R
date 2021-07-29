@@ -5,7 +5,31 @@
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @import limma
-#' @examples fig <- nonInteractiveBoxAndWhiskerPlot(expressionData, "GSE18380", "GPL4694")
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Non-Interactive Box-and-Whisker Plot
+#' fig <- nonInteractiveBoxAndWhiskerPlot(ex = knnDataInput, geoAccessionCode = geoAccessionCode, platform = platform)
+#'
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode = "", platform ="") {
@@ -23,7 +47,34 @@ nonInteractiveBoxAndWhiskerPlot <- function(ex, geoAccessionCode = "", platform 
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @import limma
-#' @examples fig <- nonInteractiveDensityPlot(expressionData, "GSE18380", "GPL4694")
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Remove all incomplete rows
+#' naOmitInput <- calculateNaOmit(knnDataInput)
+#'
+#' # Non-Interactive Density Plot
+#' fig <- nonInteractiveDensityPlot(ex = naOmitInput, geoAccessionCode = geoAccessionCode, platform = platform)
+#'
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveDensityPlot <- function(ex, geoAccessionCode = "", platform = "") {
@@ -41,7 +92,34 @@ nonInteractiveDensityPlot <- function(ex, geoAccessionCode = "", platform = "") 
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @import limma
-#' @examples fig <- nonInteractiveMeanVariancePlot(expressionData, "GSE18380", "GPL4694")
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Remove all incomplete rows
+#' naOmitInput <- calculateNaOmit(knnDataInput)
+#'
+#' # Non-Interactive Mean Variance Plot
+#' fig <- nonInteractiveMeanVariancePlot(naOmitInput, geoAccessionCode)
+#'
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveMeanVariancePlot <- function(ex, geoAccessionCode = "", platform = "") {
@@ -58,7 +136,35 @@ nonInteractiveMeanVariancePlot <- function(ex, geoAccessionCode = "", platform =
 #' @keywords GEO
 #' @import umap limma
 #' @importFrom maptools pointLabel
-#' @examples fig <- nonInteractiveUmapPlot(expressionData, 3, "GSE18380", "GPL4694")
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Remove all incomplete rows
+#' naOmitInput <- calculateNaOmit(knnDataInput)
+#'
+#' # Non-Interactive UMAP
+#' knn <- 2
+#' fig <- nonInteractiveUmapPlot(naOmitInput, knn, geoAccessionCode)
+#'
 #' @author Guy Hunt
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveUmapPlot <- function(ex, knn, geoAccessionCode = "", platform = "") {
@@ -75,7 +181,38 @@ nonInteractiveUmapPlot <- function(ex, knn, geoAccessionCode = "", platform = ""
 #' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @importFrom factoextra fviz_eig
-#' @examples fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Remove all incomplete rows
+#' naOmitInput <- calculateNaOmit(knnDataInput)
+#'
+#' # Perform Princomp PCA analysis on KNN transformation expression data
+#' pcaPrincompDataInput <- calculatePrincompPca(naOmitInput)
+#'
+#' # Non-Interactive Princomp PCA Scree Plot
+#' fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)
+#' fig
+#'
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaScreePlot <- function(pcaEx) {
@@ -89,7 +226,38 @@ nonInteractivePcaScreePlot <- function(pcaEx) {
 #' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @importFrom factoextra fviz_pca_ind
-#' @examples fig <- nonInteractivePcaIndividualsPlot(pcaPrincompDataInput)
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Remove all incomplete rows
+#' naOmitInput <- calculateNaOmit(knnDataInput)
+#'
+#' # Perform Princomp PCA analysis on KNN transformation expression data
+#' pcaPrincompDataInput <- calculatePrincompPca(naOmitInput)
+#'
+#' # Non-Interactive Princomp PCA Individual Plot
+#' fig <- nonInteractivePcaIndividualsPlot(pcaPrincompDataInput)
+#' fig
+#'
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaIndividualsPlot <- function(pcaEx) {
@@ -108,7 +276,38 @@ nonInteractivePcaIndividualsPlot <- function(pcaEx) {
 #' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @importFrom factoextra fviz_pca_var
-#' @examples fig <- nonInteractivePcaVariablesPlot(pcaPrincompDataInput)
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Remove all incomplete rows
+#' naOmitInput <- calculateNaOmit(knnDataInput)
+#'
+#' # Perform Princomp PCA analysis on KNN transformation expression data
+#' pcaPrincompDataInput <- calculatePrincompPca(naOmitInput)
+#'
+#' # Non-Interactive Princomp PCA Variables Plot
+#' fig <- nonInteractivePcaVariablesPlot(pcaPrincompDataInput)
+#' fig
+#'
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaVariablesPlot <- function(pcaEx) {
@@ -126,7 +325,38 @@ nonInteractivePcaVariablesPlot <- function(pcaEx) {
 #' @param pcaEx A PCA object which can be obtained from the calculatePrincompPca() function
 #' @keywords GEO
 #' @importFrom factoextra fviz_pca_biplot
-#' @examples fig <- nonInteractivePcaBiplotPlot(pcaPrincompDataInput)
+#' @examples
+#' #' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Remove all incomplete rows
+#' naOmitInput <- calculateNaOmit(knnDataInput)
+#'
+#' # Perform Princomp PCA analysis on KNN transformation expression data
+#' pcaPrincompDataInput <- calculatePrincompPca(naOmitInput)
+#'
+#' # Non-Interactive Princomp PCA Variables Plot
+#' fig <- nonInteractivePcaBiplotPlot(pcaPrincompDataInput)
+#' fig
+#'
 #' @author Guy Hunt
 #' @seealso [calculatePrincompPca()] for Princomp Pca expression object
 nonInteractivePcaBiplotPlot <- function(pcaEx) {
@@ -144,7 +374,34 @@ nonInteractivePcaBiplotPlot <- function(pcaEx) {
 #' @param ex The GEO expression object which can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @import pheatmap
-#' @examples fig <- nonInteractiveCorrelationMatrixPlot(expressionData)
+#' @examples
+#' #' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Remove all incomplete rows
+#' naOmitInput <- calculateNaOmit(knnDataInput)
+#'
+#' # Non-Interactive Heatmap
+#' fig <- nonInteractiveCorrelationMatrixPlot(naOmitInput)
+#'
 #' @author Guy Hunt
 nonInteractiveCorrelationMatrixPlot <- function(ex){
   corMatrix <- cor(ex,use="c")

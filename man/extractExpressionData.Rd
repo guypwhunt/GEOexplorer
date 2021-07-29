@@ -13,7 +13,20 @@ extractExpressionData(gset)
 This function allows you to extract the studies expression object from a GEO object
 }
 \examples{
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract expression data
 expressionData <- extractExpressionData(gsetData)
+
 }
 \seealso{
 \code{\link[=extractPlatformGset]{extractPlatformGset()}} for GEO object

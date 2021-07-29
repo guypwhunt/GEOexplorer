@@ -24,7 +24,10 @@ getGeoObject(
 This function allows you to source a GEO Object from GEO when you only know the Geo Accession code
 }
 \examples{
-allGset <- getGeoObject("GSE18380", GSEMatrix=TRUE, getGPL=TRUE, platformAnnotation = "NCBI generated")
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
 }
 \author{
 Guy Hunt

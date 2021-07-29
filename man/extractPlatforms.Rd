@@ -13,7 +13,14 @@ extractPlatforms(gset)
 This function allows you to extract the platforms codes from a GEO object
 }
 \examples{
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
 platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
 }
 \seealso{
 \code{\link[=getGeoObject]{getGeoObject()}} for GEO object

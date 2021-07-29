@@ -18,7 +18,34 @@ interactiveMeanVariancePlot(ex, geoAccessionCode, gset)
 This function allows you to plot expression data into an interactive Mean Variance Plot
 }
 \examples{
-fig <- interactiveMeanVariancePlot(expressionData, "GSE18380", gset)
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract expression data
+expressionData <- extractExpressionData(gsetData)
+
+# Apply log transformation to expression data if necessary
+logTransformation <- "Auto-Detect"
+dataInput <- calculateLogTransformation(expressionData, logTransformation)
+
+# Perform KNN transformation on log expression data if necessary
+knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+
+# Remove all incomplete rows
+naOmitInput <- calculateNaOmit(knnDataInput)
+
+# Interactive Mean Variance Plot
+fig <- interactiveMeanVariancePlot(naOmitInput, geoAccessionCode, gsetData)
+fig
+
 }
 \seealso{
 \code{\link[=extractExpressionData]{extractExpressionData()}} for expression object, \code{\link[=extractPlatformGset]{extractPlatformGset()}} for GEO object

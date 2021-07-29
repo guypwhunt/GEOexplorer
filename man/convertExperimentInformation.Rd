@@ -13,7 +13,23 @@ convertExperimentInformation(experimentData)
 This function allows you to convert experiment information into HTML
 }
 \examples{
-convertExperimentInformation <- convertExperimentInformation(experimentInformation)
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract the experiment information
+experimentInformation <- extractExperimentInformation(gsetData)
+
+# Extract Experiment Information
+extractedExperimentInformation <- convertExperimentInformation(experimentInformation)
+
 }
 \seealso{
 \code{\link[=extractExperimentInformation]{extractExperimentInformation()}} for GEO object

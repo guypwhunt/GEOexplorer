@@ -13,7 +13,23 @@ calculateAutoLogTransformApplication(ex)
 This function allows you to determine if log transformation should be performed on an expression objects
 }
 \examples{
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract expression data
+expressionData <- extractExpressionData(gsetData)
+
+# Is log transformation auto applied
 autoLogInformation <- calculateAutoLogTransformApplication(expressionData)
+
 }
 \seealso{
 \code{\link[=extractExpressionData]{extractExpressionData()}} for expression object

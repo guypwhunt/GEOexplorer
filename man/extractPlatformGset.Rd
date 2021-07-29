@@ -15,7 +15,17 @@ extractPlatformGset(gset, platform)
 This function allows you to extract a platform's GEO object from a GEO object
 }
 \examples{
-gsetData <- extractPlatformGset(gset, platforms[1])
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
 }
 \seealso{
 \code{\link[=getGeoObject]{getGeoObject()}} for GEO object

@@ -18,7 +18,46 @@ calculateEachGroupsSamples(columnNames, group1, group2)
 This function calculates the GSMS object for differential expression from the sample names and samples in each group
 }
 \examples{
-gsms <- calculateEachGroupsSamples(columnNames,c("GSM455528", "GSM455541", "GSM455542", "GSM455543", "GSM455578", "GSM455610", "GSM455782"), c("GSM455783", "GSM455784", "GSM455785", "GSM455786", "GSM455787"))
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract expression data
+expressionData <- extractExpressionData(gsetData)
+
+# Extract experimental condition/sample names
+columnNames <- extractSampleNames(expressionData)
+
+# Define Groups
+numberOfColumns <- length(columnNames)
+numberOfColumns <- numberOfColumns + 1
+halfNumberOfColumns <- ceiling(numberOfColumns/2)
+i <- 0
+group1 <- c()
+group2 <- c()
+for (name in columnNames) {
+if (i < halfNumberOfColumns) {
+    group1 <- c(group1, name)
+        i <- i +1
+          } else {
+          group2 <- c(group2, name)
+          i <- i +1
+          }
+          }
+
+# Select columns in group2
+column2 <- calculateExclusiveColumns(columnNames, group1)
+
+# Calculate gsms
+gsms <- calculateEachGroupsSamples(columnNames,group1, group2)
+
 }
 \seealso{
 \code{\link[=extractSampleNames]{extractSampleNames()}} for all the sample names

@@ -9,6 +9,9 @@ sourceDatasetInformationUi()
 \description{
 A Function to Return the Dataset Information Ui Component
 }
+\examples{
+sourceDatasetInformationUi()
+}
 \author{
 Guy Hunt
 }

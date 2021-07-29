@@ -18,7 +18,72 @@ noninteractiveMeanDifferencePlot(fit2, dT, ct)
 This function allows you to plot a mean difference plot of the log2 fold change versus average log2 expression values from differential gene expression analysis
 }
 \examples{
+# Get the GEO data for all platforms
+geoAccessionCode <- "GSE18388"
+allGset <- getGeoObject(geoAccessionCode)
+
+# Extract platforms
+platforms <- extractPlatforms(allGset)
+platform <- platforms[1]
+
+# Extract the GEO2R data from the specified platform
+gsetData <- extractPlatformGset(allGset, platform)
+
+# Extract expression data
+expressionData <- extractExpressionData(gsetData)
+
+# Apply log transformation to expression data if necessary
+logTransformation <- "Auto-Detect"
+dataInput <- calculateLogTransformation(expressionData, logTransformation)
+
+# Perform KNN transformation on log expression data if necessary
+knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+
+# Extract experimental condition/sample names
+columnNames <- extractSampleNames(expressionData)
+
+# Define Groups
+numberOfColumns <- length(columnNames)
+numberOfColumns <- numberOfColumns + 1
+halfNumberOfColumns <- ceiling(numberOfColumns/2)
+i <- 0
+
+group1 <- c()
+group2 <- c()
+
+for (name in columnNames) {
+  if (i < halfNumberOfColumns) {
+    group1 <- c(group1, name)
+    i <- i +1
+  } else {
+    group2 <- c(group2, name)
+    i <- i +1
+  }
+}
+
+# Select columns in group2
+column2 <- calculateExclusiveColumns(columnNames, group1)
+
+# Calculate gsms
+gsms <- calculateEachGroupsSamples(columnNames,group1, group2)
+
+# Convert P value adjustment
+pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+adjustment <- convertAdjustment(pValueAdjustment)
+
+# Get fit 2
+limmaPrecisionWeights <- "Yes"
+forceNormalization <- "Yes"
+fit2 <- calculateDifferentialGeneExpression(gsms, limmaPrecisionWeights, forceNormalization, gsetData, knnDataInput)
+
+# Summarize test results as "up", "down" or "not expressed"
+significanceLevelCutOff <- 0.05
+dT <- calculateDifferentialGeneExpressionSummary(fit2, adjustment, significanceLevelCutOff)
+ct <- 1
+
+# MD plot (log fold change vs mean log expression)
 fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
+
 }
 \seealso{
 \code{\link[=calculateDifferentialGeneExpressionSummary]{calculateDifferentialGeneExpressionSummary()}} for differential gene expression summary object, \code{\link[=calculateDifferentialGeneExpression]{calculateDifferentialGeneExpression()}} for differential gene expression object
