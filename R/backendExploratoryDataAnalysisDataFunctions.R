@@ -241,7 +241,9 @@ extractExpressionData <- function(gset) {
 
   # Ensure the expression data contains numerical data
   if(typeof(ex) != "double"){
-    try(ex <- apply(ex, 2, as.double))
+    try(ex2 <- apply(ex, 2, as.double))
+    try(row.names(ex2) <- row.names(ex))
+    try(ex <- ex2)
   }
 
   return(ex)
