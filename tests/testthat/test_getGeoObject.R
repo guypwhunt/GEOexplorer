@@ -1,27 +1,6 @@
 library(GEOexplorer)
 context("getGeoObject")
 
-test_that("Empty GSE is handled correctly", {
-  allGset <- getGeoObject('GSE11413')
-
-  expect_type(allGset, 'list')
-  expect_type(allGset[[1]], 'S4')
-  expect_s4_class(allGset[[1]], 'ExpressionSet')
-  expect_equal(nrow(pData(allGset[[1]])),12)
-  expect_equal(nrow(fData(allGset[[1]])),0)
-})
-
-
-test_that("Microarray GSE is handled correctly", {
-  allGset <- getGeoObject('GSE18388')
-
-  expect_type(allGset, 'list')
-  expect_type(allGset[[1]], 'S4')
-  expect_s4_class(allGset[[1]], 'ExpressionSet')
-  expect_equal(nrow(pData(allGset[[1]])),8)
-  expect_equal(nrow(fData(allGset[[1]])),35557)
-})
-
 test_that("Microarray GSE has populated experimentData", {
   allGset <- getGeoObject("GSE18388")
 

@@ -17,3 +17,6 @@ Changes in version 0.99.5 (2021-07-29)
 Changes in version 0.99.6 (2021-07-29)
 + Bioconductor check updates
 - Removing internal documentation
+
+Changes in version 0.99.7 (2021-07-29)
+- Removed unnecessary unit testing
