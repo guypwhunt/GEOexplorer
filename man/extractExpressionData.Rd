@@ -35,3 +35,4 @@ expressionData <- extractExpressionData(gsetData)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

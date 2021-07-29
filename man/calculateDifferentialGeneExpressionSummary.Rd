@@ -89,3 +89,4 @@ dT <- calculateDifferentialGeneExpressionSummary(fit2, adjustment, significanceL
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

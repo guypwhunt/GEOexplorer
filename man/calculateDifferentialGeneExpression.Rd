@@ -92,3 +92,4 @@ group1 <- c(group1, name)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

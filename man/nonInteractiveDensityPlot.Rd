@@ -53,3 +53,4 @@ fig <- nonInteractiveDensityPlot(ex = naOmitInput, geoAccessionCode = geoAccessi
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

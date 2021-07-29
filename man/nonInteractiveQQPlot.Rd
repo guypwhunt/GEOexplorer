@@ -83,3 +83,4 @@ fig <- nonInteractiveQQPlot(fit2)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

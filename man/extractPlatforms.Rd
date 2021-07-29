@@ -29,3 +29,4 @@ platform <- platforms[1]
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

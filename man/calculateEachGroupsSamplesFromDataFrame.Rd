@@ -17,3 +17,4 @@ This function calculates the GSMS object for differential expression from a data
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

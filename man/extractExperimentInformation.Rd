@@ -35,3 +35,4 @@ experimentInformation <- extractExperimentInformation(gsetData)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

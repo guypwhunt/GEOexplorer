@@ -38,3 +38,4 @@ autoLogInformation <- calculateAutoLogTransformApplication(expressionData)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

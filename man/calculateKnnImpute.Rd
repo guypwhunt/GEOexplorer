@@ -44,3 +44,4 @@ knnDataInput <- calculateKnnImpute(dataInput, "Yes")
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

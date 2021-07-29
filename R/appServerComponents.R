@@ -5,6 +5,7 @@
 #' @examples sourceServer()
 #' @importFrom DT renderDataTable JS
 #' @author Guy Hunt
+#' @keywords internal
 sourceServer <- function(input, output, session) {
   datasetInformationServer <-({
     # Data Extraction Functions

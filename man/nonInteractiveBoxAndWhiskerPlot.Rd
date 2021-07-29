@@ -48,3 +48,4 @@ fig <- nonInteractiveBoxAndWhiskerPlot(ex = knnDataInput, geoAccessionCode = geo
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

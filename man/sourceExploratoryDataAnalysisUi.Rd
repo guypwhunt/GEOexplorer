@@ -15,3 +15,4 @@ sourceExploratoryDataAnalysisUi()
 \author{
 Guy Hunt
 }
+\keyword{internal}

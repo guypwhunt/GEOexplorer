@@ -66,3 +66,4 @@ gsms <- calculateEachGroupsSamples(columnNames,group1, group2)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

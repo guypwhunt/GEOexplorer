@@ -15,3 +15,4 @@ sourceSideBarUi()
 \author{
 Guy Hunt
 }
+\keyword{internal}

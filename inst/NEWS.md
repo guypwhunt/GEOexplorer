@@ -9,3 +9,7 @@ Changes in version 0.99.3 (2021-07-26)
 
 Changes in version 0.99.4 (2021-07-29)
 + Bioconductor check updates
+
+Changes in version 0.99.5 (2021-07-29)
++ Bioconductor check updates
+- Updating internal documentation

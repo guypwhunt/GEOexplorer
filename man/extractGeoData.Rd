@@ -21,3 +21,4 @@ extractGeoData("GSE18380", "GPL4694")
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

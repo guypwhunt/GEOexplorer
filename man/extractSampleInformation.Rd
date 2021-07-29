@@ -35,3 +35,4 @@ sampleInfo <- extractSampleInformation(gsetData)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

@@ -23,3 +23,4 @@ This function converts the P-value adjustment value from the UI into the value r
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

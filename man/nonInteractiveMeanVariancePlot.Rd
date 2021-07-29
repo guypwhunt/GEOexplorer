@@ -53,3 +53,4 @@ fig <- nonInteractiveMeanVariancePlot(naOmitInput, geoAccessionCode)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

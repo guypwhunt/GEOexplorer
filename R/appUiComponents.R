@@ -5,6 +5,7 @@
 #' @examples sourceSideBarUi()
 #' @importFrom shinyBS bsTooltip
 #' @author Guy Hunt
+#' @keywords internal
 sourceSideBarUi <- function() {
   sideBarUi <- sidebarPanel(
     helpText("Input a GEO series accession code (GSEXXXX format) to examine the gene expression data."),
@@ -34,6 +35,7 @@ sourceSideBarUi <- function() {
 #' @import shiny
 #' @examples sourceDatasetInformationUi()
 #' @author Guy Hunt
+#' @keywords internal
 sourceDatasetInformationUi <- function() {
   datasetInformationUi <- tabPanel("Dataset Information",
                                    tabsetPanel(type = "tabs",
@@ -51,6 +53,7 @@ sourceDatasetInformationUi <- function() {
 #' @examples sourceDifferentialGeneExpressionAnalysisUi()
 #' @importFrom DT dataTableOutput
 #' @author Guy Hunt
+#' @keywords internal
 sourceDifferentialGeneExpressionAnalysisUi <- function() {
   differentialGeneExpressionAnalysisUi <- tabPanel("Differential Gene Expression Analysis",
                                                    tabsetPanel(type = "tabs",
@@ -100,6 +103,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
 #' @import shiny plotly
 #' @examples sourceExploratoryDataAnalysisUi()
 #' @author Guy Hunt
+#' @keywords internal
 sourceExploratoryDataAnalysisUi <- function() {
   exploratoryDataAnalysisUi <- tabPanel("Exploratory Data Analysis",
                                         tabsetPanel(type = "tabs",

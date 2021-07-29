@@ -46,3 +46,4 @@ fig <- nonInteractiveCorrelationMatrixPlot(naOmitInput)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

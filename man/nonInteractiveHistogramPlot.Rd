@@ -91,3 +91,4 @@ fig <- nonInteractiveHistogramPlot(fit2, adjustment)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

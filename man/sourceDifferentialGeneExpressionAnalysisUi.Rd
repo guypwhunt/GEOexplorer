@@ -15,3 +15,4 @@ sourceDifferentialGeneExpressionAnalysisUi()
 \author{
 Guy Hunt
 }
+\keyword{internal}

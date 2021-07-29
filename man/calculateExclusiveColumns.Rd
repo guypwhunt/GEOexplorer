@@ -65,3 +65,4 @@ column2 <- calculateExclusiveColumns(columnNames, group1)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

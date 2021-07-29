@@ -69,6 +69,7 @@
 #'
 #' @import plotly limma
 #' @author Guy Hunt
+#' @keywords internal
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object
 interactiveHistogramPlot <- function(fit2, adjustment) {
   tT2 <- topTable(fit2, adjust=adjustment, sort.by="B", number=Inf)
@@ -157,6 +158,7 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
 #' fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
 #' @import plotly
 #' @author Guy Hunt
+#' @keywords internal
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object, [calculateDifferentialGeneExpressionSummary()] for summary differential gene expression object
 interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
   attributes_list <- c('ID', 'Gene.symbol', 'Gene.title', 'Gene.ID')
@@ -299,6 +301,7 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
 #'
 #' @import plotly
 #' @author Guy Hunt
+#' @keywords internal
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object, [calculateDifferentialGeneExpressionSummary()] for summary differential gene expression object
 interactiveVolcanoPlot <- function(fit2, dT, ct) {
   attributes_list <- c('ID', 'Gene.symbol', 'Gene.title', 'Gene.ID')
@@ -440,6 +443,7 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
 #'
 #' @import plotly limma
 #' @author Guy Hunt
+#' @keywords internal
 #' @seealso [calculateDifferentialGeneExpression()] for differential gene expression object, [calculateDifferentialGeneExpressionSummary()] for summary differential gene expression object
 interactiveQQPlot <- function(fit2, dT, ct) {
   t.good <- which(!is.na(fit2$F)) # filter out bad probes

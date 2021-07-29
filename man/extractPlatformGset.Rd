@@ -34,3 +34,4 @@ gsetData <- extractPlatformGset(allGset, platform)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

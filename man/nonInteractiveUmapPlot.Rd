@@ -54,3 +54,4 @@ fig <- nonInteractiveUmapPlot(naOmitInput, knn, geoAccessionCode)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

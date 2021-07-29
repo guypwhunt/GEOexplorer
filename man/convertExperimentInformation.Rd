@@ -38,3 +38,4 @@ extractedExperimentInformation <- convertExperimentInformation(experimentInforma
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}

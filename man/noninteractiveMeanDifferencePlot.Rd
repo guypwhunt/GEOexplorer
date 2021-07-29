@@ -92,3 +92,4 @@ fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
 Guy Hunt
 }
 \keyword{GEO}
+\keyword{internal}
