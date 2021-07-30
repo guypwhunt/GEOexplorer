@@ -119,7 +119,7 @@ test_that("Microarray GSE with missing values is handled correctly by all functi
   # Extract Experiment Information
   extractedExperimentInformation <- convertExperimentInformation(experimentInformation)
   expect_type(extractedExperimentInformation, 'character')
-  expect_equal(extractedExperimentInformation[1], "<b> Paper Title: </b> <p> Cerebellar development </p><b> Author's Name: </b> <p> Yoshihiro,,Kagami </p><b> Laboratory: </b> <p>  </p><b> Contact Information: </b> <p> ykagami@brain.riken.go.jp </p><b> Paper URL: </b> <p> https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE2 </p><b> PubMed ID: </b> <p>  </p><b> Abstract: </b> <p> The Affymetrix GeneChip Mu11K was used to analyze the gene expression profile in developing mouse cerebellum (two GeneChips per E18, P7, P14, P21, and P56) to assist in the understanding of the genetic basis of cerebellar development in mice.\nThe analysis showed 81.6% (10,321/12,654) of the genes represented on the GeneChip were expressed in the postnatal cerebellum, and among those, 8.7% (897/10,321) were differentially expressed with more than a two-fold change in their maximum and minimum expression levels during the developmental time course.\nThe expression data (mean signal in relative unit) of all of these 897 differentially expressed genes were listed in GSM50(for E18), GSM51(for P7), GSM52(for P14), GSM53(for P21), and GSM54(for P56)  as well as our homepage at http://www.brain.riken.go.jp/labs/lm\nKeywords = mouse cerebellum development\nKeywords: time-course </p>")
+  expect_equal(nchar(extractedExperimentInformation[1]), 1216)
 
   # Non-Interactive Box-and-Whisker Plot
   fig <- nonInteractiveBoxAndWhiskerPlot(ex = knnDataInput, geoAccessionCode = geoAccessionCode, platform = platform)
