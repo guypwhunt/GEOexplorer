@@ -6,9 +6,14 @@
 \usage{
 loadApp()
 }
+\value{
+Large Shiny App
+}
 \description{
 This function loads the GEOexplorer Shiny App.
-The GEOexplorer Shiny App extends GEO2R's functionalities by enabling a richer set of analysis and graphics to be performed/generated from the gene expression data.
+The GEOexplorer Shiny App extends GEO2R's functionalities
+by enabling a richer set of analysis and graphics to be
+performed/generated from the gene expression data.
 }
 \examples{
 app <- loadApp()

@@ -2,8 +2,8 @@ Package: GEOexplorer
 Title: An Interactive Shiny App for Exploratory Data Analysis 
   and Differential Gene Expression of Microarray Gene 
   Expression Data Held in the GEO Database
-Date: 2021/07/29
-Version: 0.99.8
+Date: 2021/07/30
+Version: 0.99.9
 Authors@R: 
   c(person(given = "Guy",
            family = "Hunt",
@@ -58,7 +58,10 @@ Imports:
   stringr,
   umap,
   GEOquery,
-  impute
+  impute,
+  grDevices,
+  stats,
+  graphics
 Suggests: 
     rmarkdown,
     knitr,
