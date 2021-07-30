@@ -20,3 +20,6 @@ Changes in version 0.99.6 (2021-07-29)
 
 Changes in version 0.99.7 (2021-07-29)
 - Removed unnecessary unit testing
+
+Changes in version 0.99.8 (2021-07-30)
++ Unit testing update
