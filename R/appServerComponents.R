@@ -67,10 +67,10 @@ sourceServer <- function(input, output, session) {
       output$experimentInfo <- renderUI({
 
       })
-      output$columnTable <- DT::renderDataTable({
+      output$columnTable <- renderDataTable({
 
       })
-      output$table <- DT::renderDataTable({
+      output$table <- renderDataTable({
 
       })
       output$logTransformationText <- renderUI({
@@ -79,7 +79,7 @@ sourceServer <- function(input, output, session) {
       output$experimentInfo <- renderUI({
 
       })
-      output$knnColumnTable <- DT::renderDataTable({
+      output$knnColumnTable <- renderDataTable({
 
       })
       output$interactiveBoxAndWhiskerPlot <- renderPlotly({
@@ -210,12 +210,12 @@ sourceServer <- function(input, output, session) {
               })
 
               # Column Set Plot
-              output$columnTable <- DT::renderDataTable({
+              output$columnTable <- renderDataTable({
                 columnInfo
               })
 
               # Expression dataset table
-              output$table <- DT::renderDataTable({
+              output$table <- renderDataTable({
                 expressionData
               })
 
@@ -296,7 +296,7 @@ sourceServer <- function(input, output, session) {
               })
 
               # Column Set Plot
-              output$columnTable <- DT::renderDataTable({
+              output$columnTable <- renderDataTable({
                 columnInfo
               })
 
@@ -318,7 +318,7 @@ sourceServer <- function(input, output, session) {
                 ))
               }
 
-              output$knnColumnTable <- DT::renderDataTable(
+              output$knnColumnTable <- renderDataTable(
                 knnColumnInfo,
                 escape = FALSE,
                 selection = 'none',
@@ -341,7 +341,7 @@ sourceServer <- function(input, output, session) {
               )
 
               # Expression dataset table
-              output$table <- DT::renderDataTable({
+              output$table <- renderDataTable({
                 knnDataInput
               })
 

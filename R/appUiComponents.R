@@ -79,9 +79,9 @@ sourceDatasetInformationUi <- function() {
                                        htmlOutput('experimentInfo')
                                      ),
                                      tabPanel("Column Details",
-                                              DT::dataTableOutput('columnTable')),
+                                              dataTableOutput('columnTable')),
                                      tabPanel("Dataset",
-                                              DT::dataTableOutput('table'))
+                                              dataTableOutput('table'))
                                    ))
   return(datasetInformationUi)
 }
@@ -104,7 +104,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
         tabPanel(
           "Set Parameters",
           mainPanel(
-            DT::dataTableOutput('knnColumnTable'),
+            dataTableOutput('knnColumnTable'),
             fluidRow(
               column(
                 6,
