@@ -11,3 +11,4 @@ r/bioChecks/
 r/createPackageScript/
 r/deploymentScript/
 r/testScripts/
+tests/testthat/test_microarrayGseWithPoorDataQuality.R

@@ -31,5 +31,8 @@ Changes in version 0.99.9 (2021-07-30)
 Changes in version 0.99.10 (2021-07-30)
 + Unit testing update
 
-Changes in version 0.99.10 (2021-08-02)
+Changes in version 0.99.11 (2021-08-02)
++ Unit testing update
+
+Changes in version 0.99.12 (2021-08-02)
 + Unit testing update

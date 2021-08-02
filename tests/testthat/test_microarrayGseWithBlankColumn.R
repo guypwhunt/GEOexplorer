@@ -1,7 +1,7 @@
 library(GEOexplorer)
 context("With Blank Column")
 
-test_that("Microarray GSE with blank column is handled correctly by all
+test_that("Microarray GSE with a blank column is handled correctly by all
           functions",
           {
             # Input Values

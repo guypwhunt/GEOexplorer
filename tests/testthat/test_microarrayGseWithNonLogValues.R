@@ -1,7 +1,7 @@
 library(GEOexplorer)
-context("Missing Values")
+context("Non-Log Values")
 
-test_that("Microarray GSE with missing values is handled correctly
+test_that("Microarray GSE with non-log values is handled correctly
           by all functions",
           {
             # Input Values

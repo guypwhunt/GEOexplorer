@@ -1,7 +1,7 @@
 library(GEOexplorer)
 context("With Single Column")
 
-test_that("Microarray GSE with single column is handled correctly by all
+test_that("Microarray GSE with a single column is handled correctly by all
           functions",
           {
             logTransformation <- "Auto-Detect"
