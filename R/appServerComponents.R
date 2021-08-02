@@ -1,7 +1,7 @@
 #' A Function to Return the Server Component
 #'
 #' A Function to Return the Server Component
-#' @import shiny
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceServer()
 #' @importFrom DT renderDataTable JS
 #' @author Guy Hunt

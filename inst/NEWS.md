@@ -39,3 +39,9 @@ Changes in version 0.99.12 (2021-08-02)
 
 Changes in version 0.99.13 (2021-08-02)
 + Bioconductor feedback
+
+Changes in version 0.99.14 (2021-08-02)
++ Bioconductor feedback
+
+Changes in version 0.99.15 (2021-08-02)
++ Bioconductor feedback

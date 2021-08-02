@@ -3,7 +3,7 @@ Title: An Interactive Shiny App for Exploratory Data Analysis
   and Differential Gene Expression of Microarray Gene 
   Expression Data Held in the GEO Database
 Date: 2021/08/02
-Version: 0.99.13
+Version: 0.99.15
 Authors@R: 
   c(person(given = "Guy",
            family = "Hunt",
@@ -28,7 +28,7 @@ Description: GEOexplorer is a Shiny app that enables
   results of the analysis. The development of GEOexplorer 
   was made possible because of the excellent code provided 
   by GEO2R (https: //www.ncbi.nlm.nih.gov/geo/geo2r/).
-License: `GPL (>=3)
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -42,12 +42,11 @@ biocViews:
   DifferentialExpression,
   Microarray,
   MicroRNAArray
-Depends: shiny, limma, Biobase
+Depends: shiny, limma, Biobase, plotly
 Imports: 
   DT,
   htmltools,
   factoextra,
-  ggplot2,
   heatmaply,
   maptools,
   pheatmap,
@@ -55,6 +54,7 @@ Imports:
   scales,
   shinyBS,
   shinyHeatmaply,
+  ggplot2,
   stringr,
   umap,
   GEOquery,

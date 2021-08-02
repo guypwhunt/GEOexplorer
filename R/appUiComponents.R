@@ -1,7 +1,7 @@
 #' A Function to Return the Side Bar Ui Component
 #'
 #' A Function to Return the Side Bar Ui Component
-#' @import shiny
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceSideBarUi()
 #' @importFrom shinyBS bsTooltip
 #' @author Guy Hunt
@@ -64,7 +64,8 @@ sourceSideBarUi <- function() {
 #' A Function to Return the Dataset Information Ui Component
 #'
 #' A Function to Return the Dataset Information Ui Component
-#' @import shiny
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @importFrom DT dataTableOutput
 #' @examples sourceDatasetInformationUi()
 #' @author Guy Hunt
 #' @noRd
@@ -88,7 +89,8 @@ sourceDatasetInformationUi <- function() {
 #' A Function to Return the Differential Gene Expression Analysis Ui Component
 #'
 #' A Function to Return the Differential Gene Expression Analysis Ui Component
-#' @import shiny plotly
+#' @import plotly
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceDifferentialGeneExpressionAnalysisUi()
 #' @importFrom DT dataTableOutput
 #' @author Guy Hunt
@@ -281,7 +283,8 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
 #' A Function to Return the Exploratory Data Analysis Ui Component
 #'
 #' A Function to Return the Exploratory Data Analysis Ui Component
-#' @import shiny plotly
+#' @import plotly
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceExploratoryDataAnalysisUi()
 #' @author Guy Hunt
 #' @noRd

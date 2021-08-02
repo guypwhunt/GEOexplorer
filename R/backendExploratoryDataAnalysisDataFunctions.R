@@ -340,8 +340,7 @@ extractSampleDetails <- function(gset) {
 extractExpressionData <- function(gset) {
   ex <- exprs(gset)
 
-  # Delete columns that are all na unless there is only one
-  column
+  # Delete columns that are all na unless there is only one column
   if (ncol(ex) > 1) {
     # Deletes columns for which all values are na
     try(ex <- ex[, colSums(is.na(ex)) < nrow(ex)])

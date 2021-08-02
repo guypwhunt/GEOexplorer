@@ -8,7 +8,9 @@
 #' @export
 #' @examples
 #' app <- loadApp()
-#' @import shiny shinyHeatmaply ggplot2 Biobase
+#' @import shinyHeatmaply Biobase
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @rawNamespace import(ggplot2, except = c(last_plot))
 #' @importFrom grDevices palette
 #' @importFrom graphics abline boxplot hist par text
 #' @importFrom stats complete.cases cor model.matrix
