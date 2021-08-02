@@ -1,8 +1,8 @@
 library(GEOexplorer)
-context("Missing Values")
+context("With Two Columns")
 
-test_that("Microarray GSE with missing values is handled correctly
-          by all functions",
+test_that("Microarray GSE with two columns is handled correctly by
+          all functions",
           {
             # Input Values
             logTransformation <- "Auto-Detect"
@@ -16,96 +16,100 @@ test_that("Microarray GSE with missing values is handled correctly
             significanceLevelCutOff <- 0.05
 
             # Get the GEO data for all platforms
-            geoAccessionCode <- "GSE2"
+            geoAccessionCode <- "GSE25743"
             allGset <- getGeoObject(geoAccessionCode)
             ed <- experimentData(allGset[[1]])
-            expect_equal(pubMedIds(ed), "")
+            expect_equal(pubMedIds(ed), "21281469")
             ei <- expinfo(ed)
-            expect_equal(ei[1], "Yoshihiro,,Kagami", ignore_attr = TRUE)
+            expect_equal(ei[1], "Gilbert ,,Spizzo", ignore_attr = TRUE)
             expect_equal(ei[2], "", ignore_attr = TRUE) #lab
-            expect_equal(ei[3], "ykagami@brain.riken.go.jp",
+            expect_equal(ei[3], "", ignore_attr = TRUE)
+            expect_equal(ei[4], "EpCAM expressing Hs578T cells",
                          ignore_attr = TRUE)
-            expect_equal(ei[4], "Cerebellar development", ignore_attr = TRUE)
             expect_equal(
               ei[5],
-              "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE2",
-              ignore_attr = TRUE)
+              "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25743",
+              ignore_attr = TRUE
+            )
 
             # Extract platforms
             platforms <- extractPlatforms(allGset)
             platform <- platforms[1]
             expect_type(platforms, 'character')
             expect_type(platform, 'character')
-            expect_equal(platform, "GPL8")
+            expect_equal(platform, "GPL570")
 
             # Extract the GEO2R data from the specified platform
             gsetData <- extractPlatformGset(allGset, platform)
             expect_type(gsetData, 'S4')
             expect_s4_class(gsetData, 'ExpressionSet')
-            expect_equal(nrow(pData(gsetData)), 5)
-            expect_equal(nrow(fData(gsetData)), 897)
+            expect_equal(nrow(pData(gsetData)), 2)
+            expect_equal(nrow(fData(gsetData)), 54675)
 
             # Extract the experiment information
             experimentInformation <-
               extractExperimentInformation(gsetData)
             expect_type(experimentInformation, 'S4')
             expect_s4_class(experimentInformation, 'MIAME')
-            expect_equal(experimentInformation@name, "Yoshihiro,,Kagami")
+            expect_equal(experimentInformation@name, "Gilbert ,,Spizzo")
             expect_equal(experimentInformation@lab, "")
-            expect_equal(experimentInformation@contact,
-                         "ykagami@brain.riken.go.jp")
-            expect_equal(experimentInformation@title, "Cerebellar development")
-            expect_equal(nchar(experimentInformation@title), 22)
+            expect_equal(experimentInformation@contact, "")
+            expect_equal(experimentInformation@title,
+            "EpCAM expressing Hs578T cells")
+            expect_equal(nchar(experimentInformation@title), 29)
             expect_equal(
               experimentInformation@url,
-              "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE2"
+              "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25743"
             )
-            expect_equal(experimentInformation@pubMedIds, "")
+            expect_equal(experimentInformation@pubMedIds, "21281469")
 
             # Extract Sample Information
             sampleInfo <- extractSampleInformation(gsetData)
             expect_type(sampleInfo, 'list')
-            expect_equal(nrow(sampleInfo), 5)
-            expect_equal(ncol(sampleInfo), 30)
+            expect_equal(nrow(sampleInfo), 2)
+            expect_equal(ncol(sampleInfo), 37)
 
             # Extract expression data
             expressionData <- extractExpressionData(gsetData)
             expect_type(expressionData, 'double')
-            expect_equal(ncol(expressionData), 5)
-            expect_equal(nrow(expressionData), 897)
+            expect_equal(ncol(expressionData), 2)
+            expect_equal(nrow(expressionData), 54675)
 
             # Get column Details
             columnInfo <- extractSampleDetails(gsetData)
             expect_type(columnInfo, 'list')
-            expect_equal(ncol(columnInfo), 3)
-            expect_equal(nrow(columnInfo), 5)
+            expect_equal(ncol(columnInfo), 5)
+            expect_equal(nrow(columnInfo), 2)
 
             # Is log transformation auto applied
             autoLogInformation <-
               calculateAutoLogTransformApplication(expressionData)
             expect_type(autoLogInformation, 'character')
-            expect_equal(autoLogInformation,
-                         "The auto-detect option applied log transformation.")
+            expect_equal(
+              autoLogInformation,
+              "The auto-detect option did not apply log transformation.")
 
             # Get a list of all the columns
             columns <- extractSampleNames(expressionData)
             expect_type(columns, 'character')
-            expect_equal(columns[1], "GSM50")
+            expect_equal(columns[1], "GSM632607")
 
             # Apply log transformation to expression data if necessary
             dataInput <-
               calculateLogTransformation(expressionData, logTransformation)
             expect_type(dataInput, 'double')
-            expect_equal(ncol(dataInput), 5)
-            expect_equal(nrow(dataInput), 897)
-            expect_equal(dataInput[1, 1], 6.5833085)
+            expect_equal(ncol(dataInput), 2)
+            expect_equal(nrow(dataInput), 54675)
+            expect_equal(dataInput[1, 1], 7.7585824)
 
             # Perform KNN transformation on log expression data if necessary
-            knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+            expect_error(knnDataInput <-
+                           calculateKnnImpute(dataInput, "Yes"))
+            knnDataInput <- calculateKnnImpute(dataInput, "No")
             expect_type(knnDataInput, 'double')
-            expect_equal(ncol(knnDataInput), 5)
-            expect_equal(nrow(knnDataInput), 897)
-            expect_equal(knnDataInput[1, 1], 6.5833085)
+            expect_equal(ncol(knnDataInput), 2)
+            expect_equal(nrow(knnDataInput), 54675)
+            expect_equal(knnDataInput[1, 1], 7.7585824)
 
             # Get a list of all the columns in the KNN output
             knnColumns <- extractSampleNames(knnDataInput)
@@ -117,9 +121,9 @@ test_that("Microarray GSE with missing values is handled correctly
             # Remove all incomplete rows
             naOmitInput <- calculateNaOmit(knnDataInput)
             expect_type(naOmitInput, 'double')
-            expect_equal(ncol(naOmitInput), 5)
-            expect_equal(nrow(naOmitInput), 897)
-            expect_equal(naOmitInput[1, 1], 6.5833085)
+            expect_equal(ncol(naOmitInput), 2)
+            expect_equal(nrow(naOmitInput), 54675)
+            expect_equal(naOmitInput[1, 1], 7.7585824)
 
             # Perform Princomp PCA analysis on KNN transformation
             # expression data
@@ -137,7 +141,6 @@ test_that("Microarray GSE with missing values is handled correctly
             extractedExperimentInformation <-
               convertExperimentInformation(experimentInformation)
             expect_type(extractedExperimentInformation, 'character')
-            expect_equal(nchar(extractedExperimentInformation[1]), 1216)
 
             # Non-Interactive Box-and-Whisker Plot
             fig <-
@@ -420,18 +423,15 @@ test_that("Microarray GSE with missing values is handled correctly
             # Select columns in group2
             column2 <-
               calculateExclusiveColumns(columnNames, group1)
-            expect_type(column2, "character")
-            expect_equal(column2[1], "GSM53")
-            expect_equal(column2[2], "GSM54")
-            expect_equal(column2[3], "NA")
-            expect_equal(length(column2), 2)
+            expect_type(column2, "NULL")
+            expect_equal(length(column2), 0)
 
             # Calculate gsms
             gsms <-
               calculateEachGroupsSamples(columnNames, group1, group2)
             expect_type(gsms, "character")
-            expect_equal(gsms, "00011")
-            expect_equal(nchar(gsms), 5)
+            expect_equal(gsms, "00")
+            expect_equal(nchar(gsms), 2)
 
             # Convert P value adjustment
             pValueAdjustment <-
@@ -463,137 +463,14 @@ test_that("Microarray GSE with missing values is handled correctly
             adjustment <- convertAdjustment(pValueAdjustment)
 
             # Get fit 2
-            fit2 <-
-              calculateDifferentialGeneExpression(gsms,
-                                                  limmaPrecisionWeights,
-                                                  forceNormalization,
-                                                  gsetData,
-                                                  expressionData)
-            expect_type(fit2, "list")
-            expect_type(fit2$coefficients, "double")
-            expect_type(fit2$sigma, "double")
-            expect_type(fit2$cov.coefficients, "double")
-            expect_type(fit2$rank, "integer")
-            expect_type(fit2$Amean, "double")
-            expect_type(fit2$design, "double")
-            expect_type(fit2$df.prior, "double")
-            expect_type(fit2$var.prior, "double")
-            expect_type(fit2$s2.post, "double")
-            expect_type(fit2$df.total, "double")
-            expect_type(fit2$lods, "double")
-            expect_type(fit2$F.p.value, "double")
-            expect_type(fit2$stdev.unscaled, "double")
-            expect_type(fit2$df.residual, "double")
-            expect_type(fit2$pivot, "integer")
-            expect_type(fit2$genes, "list")
-            expect_type(fit2$method, "character")
-            expect_type(fit2$contrasts, "double")
-            expect_type(fit2$s2.prior, "double")
-            expect_type(fit2$proportion, "double")
-            expect_type(fit2$t, "double")
-            expect_type(fit2$p.value, "double")
-            expect_type(fit2$F, "double")
-
-            # Print Top deferentially expressed genes
-            tT <-
-              calculateTopDifferentiallyExpressedGenes(fit2, adjustment)
-            expect_type(tT, "list")
-            expect_type(tT$ID, "character")
-            expect_type(tT$t, "double")
-            expect_type(tT$Gene.symbol, "character")
-            expect_type(tT$adj.P.Val, "double")
-            expect_type(tT$B, "double")
-            expect_type(tT$Gene.title, "character")
-            expect_type(tT$P.Value, "double")
-            expect_type(tT$logFC, "double")
-            expect_type(tT$Gene.ID, "character")
-
-            # Non-Interactive Histogram
-            fig <- nonInteractiveHistogramPlot(fit2, adjustment)
-            expect_type(fig, "list")
-            expect_type(fig$breaks, "double")
-            expect_type(fig$counts, "integer")
-            expect_type(fig$density, "double")
-            expect_type(fig$mids, "double")
-            expect_type(fig$xname, "character")
-            expect_type(fig$equidist, "logical")
-
-            # Interactive Histogram
-            fig <- interactiveHistogramPlot(fit2, adjustment)
-            fig
-            expect_type(fig, 'list')
-            expect_type(fig$elementId, 'NULL')
-            expect_type(fig$height, 'NULL')
-            expect_type(fig$width, 'NULL')
-            expect_type(fig$x, 'list')
-            expect_type(fig$sizingPolicy, 'list')
-            expect_type(fig$dependencies, 'list')
-            expect_type(fig$preRenderHook, 'closure')
-            expect_type(fig$jsHooks, 'list')
-
-            # Summarize test results as "up", "down" or "not expressed"
-            dT <-
-              calculateDifferentialGeneExpressionSummary(
-                fit2,
-                adjustment,
-                significanceLevelCutOff)
-
-            expect_type(dT, 'double')
-            expect_equal(ncol(dT), 1)
-            expect_equal(nrow(dT), 897)
-
-            # Non-Interactive Venn diagram
-            fig <- nonInteractiveVennDiagramPlot(dT)
-
-            # Non-Interactive Q-Q plot
-            fig <- nonInteractiveQQPlot(fit2)
-            expect_type(fig, 'list')
-            expect_type(fig$y, "double")
-            expect_type(fig$x, "double")
-
-            # Interactive Q-Q plot
-            ct <- 1
-            fig <- interactiveQQPlot(fit2, dT, ct)
-            fig
-            expect_type(fig, 'list')
-            expect_type(fig$elementId, 'NULL')
-            expect_type(fig$height, 'NULL')
-            expect_type(fig$width, 'NULL')
-            expect_type(fig$x, 'list')
-            expect_type(fig$sizingPolicy, 'list')
-            expect_type(fig$dependencies, 'list')
-            expect_type(fig$preRenderHook, 'closure')
-            expect_type(fig$jsHooks, 'list')
-
-            # Non-Interactive volcano plot (log P-value vs log fold change)
-            fig <- nonInteractiveVolcanoPlot(fit2, dT, ct)
-
-            # Interactive volcano plot (log P-value vs log fold change)
-            fig <- interactiveVolcanoPlot(fit2, dT, ct)
-            fig
-            expect_type(fig, 'list')
-            expect_type(fig$elementId, 'NULL')
-            expect_type(fig$height, 'NULL')
-            expect_type(fig$width, 'NULL')
-            expect_type(fig$x, 'list')
-            expect_type(fig$sizingPolicy, 'list')
-            expect_type(fig$dependencies, 'list')
-            expect_type(fig$preRenderHook, 'closure')
-            expect_type(fig$jsHooks, 'list')
-
-            # MD plot (log fold change vs mean log expression)
-            fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
-
-            # Plot Interactive Mean Difference of fit 2 data
-            fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
-            fig
-            expect_type(fig, 'list')
-            expect_type(fig$elementId, 'NULL')
-            expect_type(fig$height, 'NULL')
-            expect_type(fig$width, 'NULL')
-            expect_type(fig$x, 'list')
-            expect_type(fig$sizingPolicy, 'list')
-            expect_type(fig$dependencies, 'list')
-            expect_type(fig$preRenderHook, 'closure')
-            expect_type(fig$jsHooks, 'list')
+            expect_error(
+              fit2 <-
+                calculateDifferentialGeneExpression(
+                  gsms,
+                  limmaPrecisionWeights,
+                  forceNormalization,
+                  gsetData,
+                  expressionData
+                )
+            )
           })

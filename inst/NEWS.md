@@ -30,3 +30,6 @@ Changes in version 0.99.9 (2021-07-30)
 
 Changes in version 0.99.10 (2021-07-30)
 + Unit testing update
+
+Changes in version 0.99.10 (2021-08-02)
++ Unit testing update
