@@ -492,7 +492,7 @@ noninteractiveMeanDifferencePlot <- function(fit2, dT, ct) {
 #' for differential gene expression object
 nonInteractiveHistogramPlot <- function(fit2, adjustment) {
   tT2 <- topTable(fit2,
-                  adjust = adjustment,
+                  adjust.method = adjustment,
                   sort.by = "B",
                   number = Inf)
   fig <-

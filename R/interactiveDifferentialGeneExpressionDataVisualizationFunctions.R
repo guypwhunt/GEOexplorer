@@ -85,7 +85,7 @@
 #' for differential gene expression object
 interactiveHistogramPlot <- function(fit2, adjustment) {
   tT2 <- topTable(fit2,
-                  adjust = adjustment,
+                  adjust.method = adjustment,
                   sort.by = "B",
                   number = Inf)
   fig <- plot_ly(x = tT2$adj.P.Val,

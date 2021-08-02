@@ -17,7 +17,7 @@
 #' @return Large Shiny App
 loadApp <- function() {
   ui <- fluidPage(
-    titlePanel("GEO Explorer"),
+    titlePanel("GEOexplorer"),
     helpText(
       "GEO2R is an interactive web tool that allows
     users to compare two or more groups of experimental

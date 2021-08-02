@@ -36,3 +36,6 @@ Changes in version 0.99.11 (2021-08-02)
 
 Changes in version 0.99.12 (2021-08-02)
 + Unit testing update
+
+Changes in version 0.99.13 (2021-08-02)
++ Bioconductor feedback

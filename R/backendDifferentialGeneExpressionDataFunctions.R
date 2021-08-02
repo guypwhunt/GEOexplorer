@@ -390,7 +390,7 @@ convertAdjustment <- function(adjustment) {
 calculateTopDifferentiallyExpressedGenes <-
   function(fit2, adjustment) {
     tT <- topTable(fit2,
-                   adjust = adjustment,
+                   adjust.method = adjustment,
                    sort.by = "B",
                    number = 250)
     columnNamesList <- c()
