@@ -175,26 +175,23 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           span("P.Value is the Raw P-value"),
           br(),
           span(
-            "t is the Moderated t-statistic (only available
-            when two groups of Samples are defined)"
+            "t is the Moderated t-statistic"
           ),
           br(),
           span(
             "B is the B-statistic or log-odds that the gene is
-            differentially expressed (only available when two groups of
-            Samples are defined)"
+            differentially expressed"
           ),
           br(),
           span(
             "logFC is the Log2-fold change between two experimental
-            conditions (only available when two groups of Samples are defined)"
+            conditions"
           ),
           br(),
           span(
             "F is the moderated F-statistic which combines
             the t-statistics for all the pair-wise comparisons into an
-            overall test of significance for that gene (only available
-            when more than two groups of Samples are defined)"
+            overall test of significance for that gene"
           ),
           br(),
           br(),
