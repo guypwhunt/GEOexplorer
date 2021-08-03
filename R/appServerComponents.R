@@ -4,11 +4,14 @@
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceServer()
 #' @importFrom DT renderDataTable JS
-#' @importFrom utils write.csv
+#' @importFrom utils write.csv globalVariables
 #' @author Guy Hunt
 #' @noRd
 sourceServer <- function(input, output, session) {
   datasetInformationServer <- ({
+    # Define Global Variables
+    globalVariables(c("dataInput", "expressionData", "gsetData", "knnDataInput"))
+
     # Data Extraction Functions
     # Get the GEO2R data for all platforms
     allGset <- reactive({
@@ -155,7 +158,8 @@ sourceServer <- function(input, output, session) {
           extractPlatformGset(allGset(), input$platform)
         }, error = function(err) {
           # Return null if there is a error in the getGeoObject function
-          return(NULL)})
+          return(NULL)
+        })
 
         # Error handling to prevent users
         # trying to run exploratory data analysis
@@ -306,7 +310,7 @@ sourceServer <- function(input, output, session) {
               knnColumnInfo <- extractSampleDetails(gsetData)
 
               # Could turn the below into a function
-              knnColumnInfo <- knnColumnInfo[knnColumns, ]
+              knnColumnInfo <- knnColumnInfo[knnColumns,]
 
               for (i in seq_len(nrow(knnColumnInfo))) {
                 knnColumnInfo$group[i] <- as.character(selectInput(
@@ -564,7 +568,7 @@ sourceServer <- function(input, output, session) {
               knnColumnInfo <- extractSampleDetails(gsetData)
 
               # Could turn the below into a function
-              knnColumnInfo <- knnColumnInfo[knnColumns,]
+              knnColumnInfo <- knnColumnInfo[knnColumns, ]
             }
 
           }
