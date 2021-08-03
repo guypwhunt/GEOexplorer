@@ -4,6 +4,7 @@
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceServer()
 #' @importFrom DT renderDataTable JS
+#' @importFrom utils write.csv
 #' @author Guy Hunt
 #' @noRd
 sourceServer <- function(input, output, session) {
@@ -150,11 +151,11 @@ sourceServer <- function(input, output, session) {
         )
       } else {
         # Extract the GEO2R data from the specified platform
-        gsetData <<- tryCatch({
+        gsetData <- tryCatch({
           extractPlatformGset(allGset(), input$platform)
-        }, error = function(err)
+        }, error = function(err) {
           # Return null if there is a error in the getGeoObject function
-          return(NULL))
+          return(NULL)})
 
         # Error handling to prevent users
         # trying to run exploratory data analysis
@@ -164,7 +165,7 @@ sourceServer <- function(input, output, session) {
                            type = "error")
         } else {
           # Extract expression data
-          expressionData <<- extractExpressionData(gsetData)
+          expressionData <- extractExpressionData(gsetData)
 
           # Error handling to prevent issues
           # due to expression data with no samples
@@ -223,7 +224,7 @@ sourceServer <- function(input, output, session) {
               # Data Transformation Functions
               # Apply log transformation to expression
               #data if necessary
-              dataInput <<- tryCatch({
+              dataInput <- tryCatch({
                 calculateLogTransformation(expressionData,
                                            input$logTransformation)
               }, error = function(cond) {
@@ -239,7 +240,7 @@ sourceServer <- function(input, output, session) {
                                Therefore, the original dataset will be used.",
                   type = "warning"
                 )
-                dataInput <<- expressionData
+                dataInput <- expressionData
               }
 
               # Is log transformation auto applied
@@ -254,7 +255,7 @@ sourceServer <- function(input, output, session) {
 
               # Perform KNN transformation on log
               # expression data if necessary
-              knnDataInput <<- tryCatch({
+              knnDataInput <- tryCatch({
                 calculateKnnImpute(dataInput,
                                    input$knnTransformation)
               }, error = function(cond) {
@@ -271,7 +272,7 @@ sourceServer <- function(input, output, session) {
                                will be used instead.",
                   type = "warning"
                 )
-                knnDataInput <<- dataInput
+                knnDataInput <- dataInput
               }
               # Remove all incomplete rows
               naOmitInput <- calculateNaOmit(knnDataInput)
@@ -305,7 +306,7 @@ sourceServer <- function(input, output, session) {
               knnColumnInfo <- extractSampleDetails(gsetData)
 
               # Could turn the below into a function
-              knnColumnInfo <<- knnColumnInfo[knnColumns, ]
+              knnColumnInfo <- knnColumnInfo[knnColumns, ]
 
               for (i in seq_len(nrow(knnColumnInfo))) {
                 knnColumnInfo$group[i] <- as.character(selectInput(
@@ -466,6 +467,109 @@ sourceServer <- function(input, output, session) {
       output$iDEMd <- renderPlotly({
 
       })
+
+      # Error handling to display a notification if an
+      # invalid GEO accession code is used.
+      if (errorCheck() == TRUE) {
+        showNotification(
+          paste0(
+            paste0("The GEO accession code ",
+                   input$geoAccessionCode),
+            " is not a valid microarray accession code.
+                                Please enter a valid microarray accession code"
+          ),
+          type = "error"
+        )
+      } else {
+        # Extract the GEO2R data from the specified platform
+        gsetData <- tryCatch({
+          extractPlatformGset(allGset(), input$platform)
+        }, error = function(err) {
+          # Return null if there is a error in the getGeoObject function
+          return(NULL)
+        })
+
+        # Error handling to prevent users
+        # trying to run exploratory data analysis
+        # without selecting a platform
+        if (is.null(gsetData) == TRUE) {
+          showNotification("Please select a platform.",
+                           type = "error")
+        } else {
+          # Extract expression data
+          expressionData <- extractExpressionData(gsetData)
+
+          # Error handling to prevent issues
+          # due to expression data with no samples
+          if (length(expressionData) == 0) {
+            showNotification(
+              "The expression data is empty
+            and therefore can not be analysed.
+            This may indicate the GEO accession
+            code relates to an RNA sequence experiment
+                             rather than a microarray experiment.",
+              type = "error"
+            )
+          } else {
+            # Error handling to prevent non-microarray GEO
+            # accession codes from being used
+            if (is.double(expressionData) == FALSE) {
+              showNotification(
+                paste0(
+                  paste0(
+                    "It appears that the GEO accession code ",
+                    input$geoAccessionCode
+                  ),
+                  " is not a valid microarray gene
+                                    expression GEO accession code.
+                                    Please enter a valid microarray gene
+                                    expression GEO accession code."
+                ),
+                type = "error"
+              )
+            } else {
+              # Data Transformation Functions
+              # Apply log transformation to expression
+              #data if necessary
+              dataInput <- tryCatch({
+                calculateLogTransformation(expressionData,
+                                           input$logTransformation)
+              }, error = function(cond) {
+                return(NULL)
+              })
+
+              # Error handling to display a notification if
+              # there was an error in log transformation
+              if (is.null(dataInput) == TRUE) {
+                dataInput <- expressionData
+              }
+
+              # Perform KNN transformation on log
+              # expression data if necessary
+              knnDataInput <- tryCatch({
+                calculateKnnImpute(dataInput,
+                                   input$knnTransformation)
+              }, error = function(cond) {
+                return(NULL)
+              })
+
+              # Error handling to display a notification if
+              # there was an error in KNN imputation
+              if (is.null(knnDataInput) == TRUE) {
+                knnDataInput <- dataInput
+              }
+
+              # KNN Column Set Plot
+              knnColumns <- extractSampleNames(knnDataInput)
+              knnColumnInfo <- extractSampleDetails(gsetData)
+
+              # Could turn the below into a function
+              knnColumnInfo <- knnColumnInfo[knnColumns,]
+            }
+
+          }
+        }
+      }
 
 
       # Error handling to prevent non-microarray

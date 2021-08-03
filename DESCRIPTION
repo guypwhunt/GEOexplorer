@@ -50,7 +50,6 @@ Imports:
   heatmaply,
   maptools,
   pheatmap,
-  plotly,
   scales,
   shinyBS,
   shinyHeatmaply,
@@ -61,7 +60,8 @@ Imports:
   impute,
   grDevices,
   stats,
-  graphics
+  graphics,
+  utils
 Suggests: 
     rmarkdown,
     knitr,
