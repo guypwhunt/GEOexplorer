@@ -4,14 +4,11 @@
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceServer()
 #' @importFrom DT renderDataTable JS
-#' @importFrom utils write.csv globalVariables
+#' @importFrom utils write.csv
 #' @author Guy Hunt
 #' @noRd
 sourceServer <- function(input, output, session) {
   datasetInformationServer <- ({
-    # Define Global Variables
-    globalVariables(c("dataInput", "expressionData", "gsetData", "knnDataInput"))
-
     # Data Extraction Functions
     # Get the GEO2R data for all platforms
     allGset <- reactive({
@@ -310,7 +307,7 @@ sourceServer <- function(input, output, session) {
               knnColumnInfo <- extractSampleDetails(gsetData)
 
               # Could turn the below into a function
-              knnColumnInfo <- knnColumnInfo[knnColumns,]
+              knnColumnInfo <- knnColumnInfo[knnColumns, ]
 
               for (i in seq_len(nrow(knnColumnInfo))) {
                 knnColumnInfo$group[i] <- as.character(selectInput(
@@ -413,9 +410,10 @@ sourceServer <- function(input, output, session) {
                   # Interactive PCA Individual Plot
                   output$interactivePcaIndividualsPlot <-
                     renderPlotly({
-                      interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
-                                                          input$geoAccessionCode,
-                                                          gsetData)
+                      interactivePrcompPcaIndividualsPlot(
+                        pcaPrcompDataInput,
+                        input$geoAccessionCode,
+                        gsetData)
                     })
 
                   # Interactive PCA Variables Plot
@@ -568,129 +566,138 @@ sourceServer <- function(input, output, session) {
               knnColumnInfo <- extractSampleDetails(gsetData)
 
               # Could turn the below into a function
-              knnColumnInfo <- knnColumnInfo[knnColumns, ]
-            }
+              knnColumnInfo <- knnColumnInfo[knnColumns,]
 
-          }
-        }
-      }
+              # Differential gene expression analysis
+              gsms <- tryCatch({
+                calculateEachGroupsSamplesFromDataFrame(
+                  as.data.frame(
+                    sapply(
+                      seq_len(
+                        nrow(knnColumnInfo)),
+                      function(a)
+                      input[[paste0("sel", a)]])))
+                }, error=function(cond) {
+                 return(NULL)
+                }
 
+                )
 
-      # Error handling to prevent non-microarray
-      # datasets being used
-      if (is.double(expressionData) == FALSE) {
-        showNotification(
-          paste0(
-            paste0(
-              "It appears that the GEO accession code ",
-              input$geoAccessionCode
-            ),
-            " is not a valid microarray gene expression GEO accession code.
-            Or the expression data is not in a numerical format."
-          ),
-          type = "error"
-        )
-      } else {
-        # Differential gene expression analysis
-        gsms <-
-          calculateEachGroupsSamplesFromDataFrame(as.data.frame(sapply(seq_len(
-            nrow(knnColumnInfo)
-          ),
-          function(a)
-            input[[paste0("sel", a)]])))
+              # Error handling to prevent differential gene expression
+              # analysis being performed before exploratory data analysis
+              if (is.null(gsms)) {
+                showNotification(
+                  "There was an error running differential gene expression
+                  analysis. Please ensure you have performed exploratory data
+                  analysis first.",
+                  type = "error"
+                )
+              } else {
+                # Error handling to ensure at least one
+                # group has two samples and the other group
+                # has at least one sample
+                if ((lengths(regmatches(
+                  gsms, gregexpr("0", gsms)
+                )) > 0 &
+                lengths(regmatches(
+                  gsms, gregexpr("1", gsms)
+                )) > 1) |
+                (lengths(regmatches(
+                  gsms, gregexpr("0", gsms)
+                )) > 1 &
+                lengths(regmatches(
+                  gsms, gregexpr("1", gsms)
+                )) > 0)) {
+                  fit2 <- tryCatch({
+                    calculateDifferentialGeneExpression(
+                      gsms,
+                      input$limmaPrecisionWeights,
+                      input$forceNormalization,
+                      gsetData,
+                      knnDataInput
+                    )
+                  }
+                  , error = function(cond) {
+                    return(NULL)
+                  })
 
-        # Error handling to ensure at least one
-        # group has two samples and the other group
-        # has at least one sample
-        if ((lengths(regmatches(gsms, gregexpr("0", gsms))) > 0 &
-             lengths(regmatches(gsms, gregexpr("1", gsms))) > 1) |
-            (lengths(regmatches(gsms, gregexpr("0", gsms))) > 1 &
-             lengths(regmatches(gsms, gregexpr("1", gsms))) > 0)) {
-          fit2 <- tryCatch({
-            calculateDifferentialGeneExpression(
-              gsms,
-              input$limmaPrecisionWeights,
-              input$forceNormalization,
-              gsetData,
-              knnDataInput
-            )
-          }
-          , error = function(cond) {
-            return(NULL)
-          })
-
-          # Error handling to ensure Differential Gene
-          # Expression Analysis worked
-          if (is.null(fit2)) {
-            showNotification(
-              "There was an error calculating the
+                  # Error handling to ensure Differential Gene
+                  # Expression Analysis worked
+                  if (is.null(fit2)) {
+                    showNotification(
+                      "There was an error calculating the
                              differential gene expression analysis!",
-              type = "error"
-            )
-          } else {
-            adjustment <- convertAdjustment(input$pValueAdjustment)
-            tT <- calculateTopDifferentiallyExpressedGenes(fit2,
-                                                           adjustment)
-            dT <- calculateDifferentialGeneExpressionSummary(fit2,
-                                                             adjustment,
-                                                             input$significanceLevelCutOff)
+                      type = "error"
+                    )
+                  } else {
+                    adjustment <- convertAdjustment(input$pValueAdjustment)
+                    tT <-
+                      calculateTopDifferentiallyExpressedGenes(fit2,
+                                                               adjustment)
+                    dT <- calculateDifferentialGeneExpressionSummary(
+                      fit2,
+                      adjustment,
+                      input$significanceLevelCutOff)
 
-            ct <- 1
+                    ct <- 1
 
-            # Differential gene expression table
-            output$dETable <- renderDataTable({
-              as.data.frame(tT)
-            })
+                    # Differential gene expression table
+                    output$dETable <- renderDataTable({
+                      as.data.frame(tT)
+                    })
 
-            # Interactive Histogram Plot
-            output$iDEHistogram <- renderPlotly({
-              interactiveHistogramPlot(fit2, adjustment)
-            })
+                    # Interactive Histogram Plot
+                    output$iDEHistogram <- renderPlotly({
+                      interactiveHistogramPlot(fit2, adjustment)
+                    })
 
-            # Venn Diagram Plot
-            output$dEVennDiagram <- renderPlot({
-              nonInteractiveVennDiagramPlot(dT)
-            })
+                    # Venn Diagram Plot
+                    output$dEVennDiagram <- renderPlot({
+                      nonInteractiveVennDiagramPlot(dT)
+                    })
 
-            # Interactive QQ Plot
-            output$iDEQQ <- renderPlotly({
-              interactiveQQPlot(fit2, dT, ct)
-            })
+                    # Interactive QQ Plot
+                    output$iDEQQ <- renderPlotly({
+                      interactiveQQPlot(fit2, dT, ct)
+                    })
 
-            # Interactive Volcano Plot
-            output$iDEVolcano <- renderPlotly({
-              interactiveVolcanoPlot(fit2, dT, ct)
-            })
+                    # Interactive Volcano Plot
+                    output$iDEVolcano <- renderPlotly({
+                      interactiveVolcanoPlot(fit2, dT, ct)
+                    })
 
-            # Interactive Mean Difference Plot
-            output$iDEMd <- renderPlotly({
-              interactiveMeanDifferencePlot(fit2, dT, ct)
-            })
+                    # Interactive Mean Difference Plot
+                    output$iDEMd <- renderPlotly({
+                      interactiveMeanDifferencePlot(fit2, dT, ct)
+                    })
 
-            # Download Top Differentially Expressed Genes Table
-            output$downloadData <- downloadHandler(
-              filename = function() {
-                "top_differentially_expressed_genes.csv"
-              },
-              content = function(file) {
-                write.csv(tT, file, row.names = FALSE)
-              }
-            )
-            showNotification("Differential gene
+                    # Download Top Differentially Expressed Genes Table
+                    output$downloadData <- downloadHandler(
+                      filename = function() {
+                        "top_differentially_expressed_genes.csv"
+                      },
+                      content = function(file) {
+                        write.csv(tT, file, row.names = FALSE)
+                      }
+                    )
+                    showNotification("Differential gene
                            expression analysis complete!",
-                             type = "message")
-          }
-        } else {
-          showNotification(
-            "One group needs at
+                                     type = "message")
+                  }
+                } else {
+                  showNotification(
+                    "One group needs at
           least 2 samples and the other
                            group needs at least 1 sample",
-            type = "error"
-          )
+                    type = "error"
+                  )
+                }
+              }
+            }
+          }
         }
       }
     })
-
   })
   return(datasetInformationServer)
 }
