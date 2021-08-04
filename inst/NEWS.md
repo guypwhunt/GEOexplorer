@@ -45,3 +45,9 @@ Changes in version 0.99.14 (2021-08-02)
 
 Changes in version 0.99.15 (2021-08-02)
 + Bioconductor feedback
+
+Changes in version 0.99.16 (2021-08-02)
+- Removed undefined and global variables 
+
+Changes in version 0.99.17 (2021-08-04)
++ Added additional error handling 

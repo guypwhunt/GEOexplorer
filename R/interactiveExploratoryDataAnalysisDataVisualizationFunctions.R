@@ -357,7 +357,7 @@ interactiveMeanVariancePlot <-
       combineData <- merge(exData, geneData, by = "ID")
       colnames(combineData) <-
         str_replace_all(colnames(combineData), " ", ".")
-      combineData %>% filter(ID %in% c(rownames(exData)))
+      combineData %>% filter("ID" %in% c(rownames(exData)))
     } else{
       combineData <- exData
     }
@@ -678,7 +678,7 @@ interactivePrincompPcaIndividualsPlot <-
     if (ncol(geneData) > 0) {
       geneData <- as.data.frame(geneData)
       combineData <- merge(pcaDf, geneData, by = "ID")
-      combineData %>% filter(ID %in% c(rownames(pcaDf)))
+      combineData %>% filter("ID" %in% c(rownames(pcaDf)))
       colnames(combineData) <-
         str_replace_all(colnames(combineData), " ", ".")
     } else {
@@ -999,7 +999,7 @@ interactivePrcompPcaIndividualsPlot <-
     if (ncol(geneData) > 0) {
       geneData <- as.data.frame(geneData)
       combineData <- merge(pcaDf, geneData, by = "ID")
-      combineData %>% filter(ID %in% c(rownames(pcaDf)))
+      combineData %>% filter("ID" %in% c(rownames(pcaDf)))
       colnames(combineData) <-
         str_replace_all(colnames(combineData), " ", ".")
     } else {
