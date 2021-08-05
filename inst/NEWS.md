@@ -51,3 +51,6 @@ Changes in version 0.99.16 (2021-08-02)
 
 Changes in version 0.99.17 (2021-08-04)
 + Added additional error handling 
+
+Changes in version 0.99.18 (2021-08-05)
++ Cosmetic updates
