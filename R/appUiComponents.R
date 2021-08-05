@@ -224,8 +224,8 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           br(),
           span(
             "Generated using limma (vennDiagram).
-             Use to explore the overlap in significant
-            genes between multiple contrasts."
+            Displays the number of differentially expressed genes versus the
+            number of non-differentially expressed genes."
           ),
           plotOutput('dEVennDiagram')
         ),
