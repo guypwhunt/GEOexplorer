@@ -30,9 +30,10 @@ sourceServer <- function(input, output, session) {
         ))
 
         getGeoObject(input$geoAccessionCode)
-      }, error = function(err)
+      }, error = function(err) {
         # Return null if there is a error in the getGeoObject function
-        return(NULL))
+        return(NULL)
+      })
     })
 
     # Error handling to prevent invalid GEO series accession codes being used
@@ -307,7 +308,7 @@ sourceServer <- function(input, output, session) {
               knnColumnInfo <- extractSampleDetails(gsetData)
 
               # Could turn the below into a function
-              knnColumnInfo <- knnColumnInfo[knnColumns, ]
+              knnColumnInfo <- knnColumnInfo[knnColumns,]
 
               for (i in seq_len(nrow(knnColumnInfo))) {
                 knnColumnInfo$group[i] <- as.character(selectInput(
@@ -419,8 +420,9 @@ sourceServer <- function(input, output, session) {
                   # Interactive PCA Variables Plot
                   output$interactivePcaVariablesPlot <-
                     renderPlotly({
-                      interactivePrcompPcaVariablesPlot(pcaPrcompDataInput,
-                                                        input$geoAccessionCode)
+                      interactivePrcompPcaVariablesPlot(
+                        pcaPrcompDataInput,
+                        input$geoAccessionCode)
                     })
                   showNotification("Exploratory data analysis complete!",
                                    type = "message")
@@ -566,7 +568,7 @@ sourceServer <- function(input, output, session) {
               knnColumnInfo <- extractSampleDetails(gsetData)
 
               # Could turn the below into a function
-              knnColumnInfo <- knnColumnInfo[knnColumns,]
+              knnColumnInfo <- knnColumnInfo[knnColumns, ]
 
               # Differential gene expression analysis
               gsms <- tryCatch({
@@ -576,12 +578,10 @@ sourceServer <- function(input, output, session) {
                       seq_len(
                         nrow(knnColumnInfo)),
                       function(a)
-                      input[[paste0("sel", a)]])))
-                }, error=function(cond) {
-                 return(NULL)
-                }
-
-                )
+                        input[[paste0("sel", a)]])))
+              }, error = function(cond) {
+                return(NULL)
+              })
 
               # Error handling to prevent differential gene expression
               # analysis being performed before exploratory data analysis
@@ -634,10 +634,11 @@ sourceServer <- function(input, output, session) {
                     tT <-
                       calculateTopDifferentiallyExpressedGenes(fit2,
                                                                adjustment)
-                    dT <- calculateDifferentialGeneExpressionSummary(
-                      fit2,
-                      adjustment,
-                      input$significanceLevelCutOff)
+                    dT <-
+                      calculateDifferentialGeneExpressionSummary(
+                        fit2,
+                        adjustment,
+                        input$significanceLevelCutOff)
 
                     ct <- 1
 

@@ -3,7 +3,7 @@ Title: An Interactive Shiny App for Exploratory Data Analysis
   and Differential Gene Expression of Microarray Gene 
   Expression Data Held in the GEO Database
 Date: 2021/08/04
-Version: 0.99.17
+Version: 0.99.18
 Authors@R: 
   c(person(given = "Guy",
            family = "Hunt",
@@ -53,6 +53,7 @@ Imports:
   scales,
   shinyBS,
   shinyHeatmaply,
+  shinybusy,
   ggplot2,
   stringr,
   umap,

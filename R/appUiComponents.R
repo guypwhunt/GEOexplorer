@@ -4,6 +4,7 @@
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceSideBarUi()
 #' @importFrom shinyBS bsTooltip
+#' @importFrom shinybusy add_busy_spinner
 #' @author Guy Hunt
 #' @noRd
 sourceSideBarUi <- function() {
@@ -12,6 +13,7 @@ sourceSideBarUi <- function() {
       "Input a GEO series accession code (GSEXXXX format)
              to examine the gene expression data."
     ),
+    add_busy_spinner(spin = "fading-circle"),
     textInput("geoAccessionCode", "GEO accession code", "GSE18388"),
     helpText("Select the platform of interest."),
     selectInput("platform", "Platform", c()),
