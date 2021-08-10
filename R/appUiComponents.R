@@ -45,7 +45,8 @@ sourceSideBarUi <- function() {
     br(),
     radioButtons(
       "knnTransformation",
-      label = "Apply k-nearest neighbors (KNN) algorithm to predict null data:",
+      label = "Apply k-nearest neighbors (KNN) algorithm to predict
+      null data:",
       choices = list("Yes", "No"),
       selected = "No"
     ),
@@ -139,84 +140,85 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
       "Differential Gene Expression Analysis",
       tabsetPanel(
         type = "tabs",
-        tabPanel("Set Parameters",
-                 br(),
-                 span(
-                     "A table containing information for each of the experimental
+        tabPanel(
+          "Set Parameters",
+          br(),
+          span(
+            "A table containing information for each of the experimental
               conditions used in the gene expression study is displayed below.
               In the group column, select the experimental conditions you want
               to include in group 1, group 2 or N/A if you want the
               experimental condition excluded from differential gene
               expression analysis. During differential gene expression
               analysis, group 1 is compared against group 2."
-                   ),
-                   br(),
-                   br(),
-                   dataTableOutput('knnColumnTable'),
-                 br(),
-                 br(),
-                 span(
-                   "The parameters for differential gene expression analysis are
+          ),
+          br(),
+          br(),
+          dataTableOutput('knnColumnTable'),
+          br(),
+          br(),
+          span(
+            "The parameters for differential gene expression analysis are
               displayed below. Please select the appropriate parameters and
               click analyse to perform differential gene expression analysis."
-                 ),
-                 br(),
-                 br(),
-                   fluidRow(
-                     column(
-                       6,
-                       br(),
-                       uiOutput("dyncolumns"),
-                       selectInput(
-                         "pValueAdjustment",
-                         "Apply adjustment to the P-values:",
-                         choices = c(
-                           "Benjamini & Hochberg (False discovery rate)",
-                           "Benjamini & Yekutieli",
-                           "Bonferroni",
-                           "Holm",
-                           "None"
-                         )
-                       ),
-                       # "Hochberg" and "Hommel" were removed
-                       radioButtons(
-                         "limmaPrecisionWeights",
-                         label =
-                           "Apply limma precision weights (vooma):",
-                         choices =
-                           list("Yes", "No"),
-                         selected =
-                           "No"
-                       )
-                     ),
-                     br(),
-                     column(
-                       6,
-                       radioButtons(
-                         "forceNormalization",
-                         label =
-                           "Force normalization:",
-                         choices =
-                           list("Yes", "No"),
-                         selected =
-                           "No"
-                       ),
-                       sliderInput(
-                         "significanceLevelCutOff",
-                         "Significance level cut-off:",
-                         min = 0,
-                         max = 1,
-                         value = 0.05
-                       ),
-                       uiOutput("differentialExpressionButton")
-                     )
-                   ),
-                 br(),
-                 br(),
-                 titlePanel("Notes"),
-                 br(),
-                 span(
-                   "P-value adjustments can be applied to reduce the likelihood of
+          ),
+          br(),
+          br(),
+          fluidRow(
+            column(
+              6,
+              br(),
+              uiOutput("dyncolumns"),
+              selectInput(
+                "pValueAdjustment",
+                "Apply adjustment to the P-values:",
+                choices = c(
+                  "Benjamini & Hochberg (False discovery rate)",
+                  "Benjamini & Yekutieli",
+                  "Bonferroni",
+                  "Holm",
+                  "None"
+                )
+              ),
+              # "Hochberg" and "Hommel" were removed
+              radioButtons(
+                "limmaPrecisionWeights",
+                label =
+                  "Apply limma precision weights (vooma):",
+                choices =
+                  list("Yes", "No"),
+                selected =
+                  "No"
+              )
+            ),
+            br(),
+            column(
+              6,
+              radioButtons(
+                "forceNormalization",
+                label =
+                  "Force normalization:",
+                choices =
+                  list("Yes", "No"),
+                selected =
+                  "No"
+              ),
+              sliderInput(
+                "significanceLevelCutOff",
+                "Significance level cut-off:",
+                min = 0,
+                max = 1,
+                value = 0.05
+              ),
+              uiOutput("differentialExpressionButton")
+            )
+          ),
+          br(),
+          br(),
+          titlePanel("Notes"),
+          br(),
+          span(
+            "P-value adjustments can be applied to reduce the likelihood of
             a false positive occurring. The P-value adjustment 'None' indicates
             no P-value adjustment will be applied and is the least conservative
             P-value adjustment. The Benjamini & Hochberg (False discovery rate)
@@ -225,37 +227,37 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
             and Holm
             methods are the most conservative as they aim to control the
             family-wise error rate."
-                 ),
-                 br(),
-                 br(),
-                 span(
-                   "Limma precision weights should be applied if there is a strong
+          ),
+          br(),
+          br(),
+          span(
+            "Limma precision weights should be applied if there is a strong
             mean-variance trend as can be identified from the
             'Mean-Variance Plot' tab. By applying limma precision weights the
             limma vooma function is used to estimate the mean-variance
             relationship and uses this to compute appropriate
             observational-level weights."
-                 ),
-                 br(),
-                 br(),
-                 span(
-                   "Force normalisation should be selected if the gene expression
+          ),
+          br(),
+          br(),
+          span(
+            "Force normalisation should be selected if the gene expression
             dataset is not normally distributed, as can be identified from the
             'Box-and-Whisper Plot', the 'Expression Density Plot' and the
             '3D Expression Density Plot'. By selecting force normalisation
             quantile normalisation  is applied to the expression dataset
             making all selected samples have identical value distributions."
-                 ),
-                 br(),
-                 br(),
-                 span(
-                   "The significance level cut-off is used to identify genes that
+          ),
+          br(),
+          br(),
+          span(
+            "The significance level cut-off is used to identify genes that
                 are
             differentially expressed between the two groups. Genes with
             adjusted P-values less than the significance level cut-off are
             determined to be differentially expressed."
-                 )
-                 ),
+          )
+        ),
         tabPanel(
           "Top Differentially Expressed Genes",
           br(),
@@ -272,19 +274,24 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
             Genes with the smallest P-values will be the most reliable."
           ),
           br(),
+          br(),
           span("P.Value is the Raw P-value"),
           br(),
+          br(),
           span("t is the Moderated t-statistic"),
+          br(),
           br(),
           span(
             "B is the B-statistic or log-odds that the gene is
             differentially expressed"
           ),
           br(),
+          br(),
           span(
             "logFC is the Log2-fold change between two experimental
             conditions"
           ),
+          br(),
           br(),
           span(
             "F is the moderated F-statistic which combines
@@ -361,7 +368,8 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           br(),
           span(
             "Generated using R plotly.
-            A mean difference (MD) plot displays log2 fold change versus average
+            A mean difference (MD) plot displays
+            log2 fold change versus average
             log2 expression values and is useful for visualizing differentially
             expressed genes. Highlighted genes are significantly differentially
             expressed at the selected adjusted p-value cutoff."
