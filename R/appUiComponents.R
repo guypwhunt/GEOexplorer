@@ -504,7 +504,7 @@ sourceExploratoryDataAnalysisUi <- function() {
         plotlyOutput('interactiveHeatMapPlot')
       ),
       tabPanel(
-        "PCA Analysis",
+        "PCA",
         tabsetPanel(
           type = "tabs",
           tabPanel(
