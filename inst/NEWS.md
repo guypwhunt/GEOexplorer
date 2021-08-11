@@ -54,3 +54,6 @@ Changes in version 0.99.17 (2021-08-04)
 
 Changes in version 0.99.18 (2021-08-05)
 + Cosmetic updates
+
+Changes in version 0.99.19 (2021-08-1)
++ Usability updates
