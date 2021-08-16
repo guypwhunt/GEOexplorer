@@ -1,6 +1,6 @@
 # GEOexplorer
 
-GEOexplorer enables exploratory data analysis and differential gene expression of gene expression analysis to be performed on data held in the GEO database. The outputs are interactive graphs. GEOexplorer also contains a shiny app that can be used to perform exploratory data analysis and differential gene expression of gene expression analysis.
+GEOexplorer contains a Shiny app that enables exploratory data analysis and differential gene expression of gene expression analysis to be performed on microarray data held in the GEO database. The results are displayed as interactive graphs.
 
 ## Acknowledgements
 
@@ -31,13 +31,13 @@ BiocManager::install("GEOexplorer")
 
 ```R
 library(GEOexplorer)
-GEOexplorer::loadApp()
+loadApp()
 ```
 
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Pull requests are welcome. 
 
-Please make sure to update tests as appropriate.
+For any changes or issues, please open an issue to discuss what you would like to change.
 
 ## License
 [GPL-3](https://choosealicense.com/licenses/gpl-3.0/)
