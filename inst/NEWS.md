@@ -58,5 +58,8 @@ Changes in version 0.99.18 (2021-08-05)
 Changes in version 0.99.19 (2021-08-11)
 + Usability updates
 
-Changes in version 0.99.19 (2021-08-16)
+Changes in version 0.99.20 (2021-08-16)
++ Vignettes updates
+
+Changes in version 0.99.21 (2021-08-27)
 + Vignettes updates
