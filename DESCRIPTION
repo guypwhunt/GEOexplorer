@@ -46,7 +46,7 @@ biocViews:
   DifferentialExpression,
   Microarray,
   MicroRNAArray
-Depends: shiny, limma, Biobase, plotly
+Depends: shiny, limma, Biobase, plotly, shinyBS
 Imports: 
   DT,
   htmltools,
@@ -55,7 +55,6 @@ Imports:
   maptools,
   pheatmap,
   scales,
-  shinyBS,
   shinyHeatmaply,
   shinybusy,
   ggplot2,
