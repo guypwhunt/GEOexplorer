@@ -4,11 +4,118 @@
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceServer()
 #' @importFrom DT renderDataTable JS
+#' @importFrom shinyBS addTooltip
 #' @importFrom utils write.csv
 #' @author Guy Hunt
 #' @noRd
 sourceServer <- function(input, output, session) {
   datasetInformationServer <- ({
+    # Add Log Tool Tips
+    addTooltip(
+      session,
+      id = "logTransformation",
+      title = "The GEO database accepts a variety of data value types,
+              including logged and unlogged data.
+              Limma expects data values to be in log space.
+              To address this, an auto-detect feature that checks
+              the values of selected samples
+              and automatically performs a log2 transformation on
+              values determined not to be in log space.
+              Alternatively, the user can select Yes
+              to force log2 transformation,
+              or No to override the auto-detect feature.
+              The auto-detect feature only considers Sample values that
+              have been assigned to a group, and applies the transformation in
+              an all-or-none fashion",
+      placement = "top",
+      trigger = "hover"
+    )
+
+    # Add KNN Tool Tips
+    addTooltip(
+      session,
+      id = "knnTransformation",
+      title = "Rows with over 50% missing values are imputed using the overall
+              mean per sample. Columns with over
+              80% will cause an error in the KNN
+              computation.",
+      placement = "top",
+      trigger = "hover"
+    )
+
+    # Add P-value adjustment Tool Tips
+    addTooltip(
+      session,
+      id = "pValueAdjustment",
+      title =
+        "P-value adjustments can be applied to reduce the likelihood of
+        a false positive occurring. The P-value adjustment 'None'
+        indicates
+        no P-value adjustment will be applied and is the least
+        conservative
+        P-value adjustment. The Benjamini & Hochberg
+        (False discovery rate)
+        and Benjamini & Yekutieli methods are slightly more
+        conservative and aim to control the false discovery rate.
+        The Bonferroni
+        and Holm methods are the most conservative as they aim to
+        control the family-wise error rate.",
+      placement = "top",
+      trigger = "hover"
+    )
+
+    # Add Limma Precision Weights adjustment Tool Tips
+    addTooltip(
+      session,
+      id = "limmaPrecisionWeights",
+      title =
+        "Limma precision weights should be applied if there is
+                  a strong
+                  mean-variance trend as can be identified from the
+                  'Mean-Variance Plot' tab. By applying limma precision
+                  weights the
+                  limma vooma function is used to estimate the mean-variance
+                  relationship and uses this to compute appropriate
+                  observational-level weights.",
+      placement = "top",
+      trigger = "hover"
+    )
+
+    # Add Limma Precision Weights adjustment Tool Tips
+    addTooltip(
+      session,
+      id = "forceNormalization",
+      title =
+        "Force normalisation should be selected if the gene
+                  expression
+                  dataset is not normally distributed, as can be identified
+                  from the
+                  'Box-and-Whisper Plot', the 'Expression Density Plot'
+                  and the
+                  '3D Expression Density Plot'. By selecting force
+                  normalisation
+                  quantile normalisation  is applied to the expression dataset
+                  making all selected samples have identical value
+                distributions.",
+      placement = "top",
+      trigger = "hover"
+    )
+
+    #Add Significance Level Cutoff Tool Tips
+    addTooltip(
+      session,
+      id = "significanceLevelCutOff",
+      title =
+        "The significance level cut-off is used to identify genes
+                  that are
+            differentially expressed between the two groups. Genes with
+            adjusted P-values less than the significance level cut-off are
+            determined to be differentially expressed.",
+      placement = "top",
+      trigger = "hover"
+    )
+
+
     # Data Extraction Functions
     # Get the GEO2R data for all platforms
     allGset <- reactive({
@@ -308,7 +415,7 @@ sourceServer <- function(input, output, session) {
               knnColumnInfo <- extractSampleDetails(gsetData)
 
               # Could turn the below into a function
-              knnColumnInfo <- knnColumnInfo[knnColumns,]
+              knnColumnInfo <- knnColumnInfo[knnColumns, ]
 
               for (i in seq_len(nrow(knnColumnInfo))) {
                 knnColumnInfo$group[i] <- as.character(selectInput(
@@ -372,6 +479,10 @@ sourceServer <- function(input, output, session) {
               # Error handling to prevent errors caused by
               # expression datasets with only one column
               if (ncol(expressionData) > 1) {
+                # Update UMAP KNN max
+                updateNumericInput(session, inputId = "knn",
+                                   value =2, max = ncol(expressionData))
+
                 # Interactive UMAP Plot
                 output$interactiveUmapPlot <- renderPlotly({
                   interactiveUmapPlot(naOmitInput,
@@ -420,9 +531,8 @@ sourceServer <- function(input, output, session) {
                   # Interactive PCA Variables Plot
                   output$interactivePcaVariablesPlot <-
                     renderPlotly({
-                      interactivePrcompPcaVariablesPlot(
-                        pcaPrcompDataInput,
-                        input$geoAccessionCode)
+                      interactivePrcompPcaVariablesPlot(pcaPrcompDataInput,
+                                                        input$geoAccessionCode)
                     })
                   showNotification("Exploratory data analysis complete!",
                                    type = "message")
@@ -568,7 +678,7 @@ sourceServer <- function(input, output, session) {
               knnColumnInfo <- extractSampleDetails(gsetData)
 
               # Could turn the below into a function
-              knnColumnInfo <- knnColumnInfo[knnColumns, ]
+              knnColumnInfo <- knnColumnInfo[knnColumns,]
 
               # Differential gene expression analysis
               gsms <- tryCatch({
@@ -576,9 +686,11 @@ sourceServer <- function(input, output, session) {
                   as.data.frame(
                     sapply(
                       seq_len(
-                        nrow(knnColumnInfo)),
+                        nrow(knnColumnInfo)
+                        ),
                       function(a)
                         input[[paste0("sel", a)]])))
+
               }, error = function(cond) {
                 return(NULL)
               })

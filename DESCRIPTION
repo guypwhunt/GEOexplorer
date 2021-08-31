@@ -2,8 +2,8 @@ Package: GEOexplorer
 Title: An Interactive Shiny App for Exploratory Data Analysis 
   and Differential Gene Expression of Microarray Gene 
   Expression Data Held in the GEO Database
-Date: 2021/08/27
-Version: 0.99.21
+Date: 2021/08/31
+Version: 0.99.22
 Authors@R: 
   c(person(given = "Guy",
            family = "Hunt",
@@ -12,14 +12,18 @@ Authors@R:
            comment = c(ORCID = "0000-0002-5217-2678")),
     person(given = "Fabrizio",
            family = "Smeraldi",
-           role = c("ctb", "ths")),
+           role = c("ctb", "ths"),
+           email = "f.smeraldi@qmul.ac.uk"),
     person(given = "Michael",
            family = "Barnes",
-           role = c("ctb", "ths")),
+           role = c("ctb", "ths"),
+           email = "m.r.barnes@qmul.ac.uk",
+           comment = c(ORCID = "0000-0001-9097-7381")),
     person(given = "Rafael",
            family = "Henkin",
-           role = c("ctb", "ths"))
-           )
+           role = c("ctb", "ths"),
+           email = "r.henkin@qmul.ac.uk",
+           comment = c(ORCID = "0000-0002-5511-5230")))
 Description: GEOexplorer is a Shiny app that enables 
   exploratory data analysis and differential gene expression 
   of gene expression analysis on microarray gene expression 
@@ -42,7 +46,7 @@ biocViews:
   DifferentialExpression,
   Microarray,
   MicroRNAArray
-Depends: shiny, limma, Biobase, plotly
+Depends: shiny, limma, Biobase, plotly, shinyBS
 Imports: 
   DT,
   htmltools,
@@ -51,7 +55,6 @@ Imports:
   maptools,
   pheatmap,
   scales,
-  shinyBS,
   shinyHeatmaply,
   shinybusy,
   ggplot2,

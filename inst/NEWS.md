@@ -63,3 +63,7 @@ Changes in version 0.99.20 (2021-08-16)
 
 Changes in version 0.99.21 (2021-08-27)
 + Vignettes updates
+
+Changes in version 0.99.22 (2021-08-31)
++ Author contact details updated 
++ Popup updates
