@@ -14,7 +14,7 @@ sourceSideBarUi <- function() {
              to examine the gene expression data."
     ),
     add_busy_spinner(spin = "fading-circle"),
-    textInput("geoAccessionCode", "GEO accession code", "GSE18388"),
+    textInput("geoAccessionCode", "GEO accession code", ""),
     helpText("Select the platform of interest."),
     selectInput("platform", "Platform", c()),
     radioButtons(
