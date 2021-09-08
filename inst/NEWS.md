@@ -67,3 +67,6 @@ Changes in version 0.99.21 (2021-08-27)
 Changes in version 0.99.22 (2021-08-31)
 + Author contact details updated 
 + Popup updates
+
+Changes in version 0.99.23 (2021-09-08)
++ Minor UI Updates
