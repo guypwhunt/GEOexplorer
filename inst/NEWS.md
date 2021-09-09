@@ -73,3 +73,6 @@ Changes in version 0.99.23 (2021-09-08)
 
 Changes in version 0.99.24 (2021-09-08)
 + Description update
+
+Changes in version 0.99.25 (2021-09-09)
++ Minor bug fix
