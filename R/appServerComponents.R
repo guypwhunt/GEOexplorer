@@ -10,6 +10,16 @@
 #' @noRd
 sourceServer <- function(input, output, session) {
   datasetInformationServer <- ({
+    # Add platform tool tip
+    addTooltip(
+      session,
+      id = "platform",
+      title = "Each platform relates to a different microarray experiment
+      performed in the study.",
+      placement = "top",
+      trigger = "hover"
+    )
+
     # Add Log Tool Tips
     addTooltip(
       session,
@@ -126,7 +136,7 @@ sourceServer <- function(input, output, session) {
         {
           showNotification("Please input a GEO series
                            accession code with the format GSEXXX",
-                           type = "error")
+                           type = "warning")
         }
 
         # Error handling preventing errors

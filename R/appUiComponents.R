@@ -11,12 +11,20 @@ sourceSideBarUi <- function() {
   sideBarUi <- sidebarPanel(
     helpText(
       "Input a GEO series accession code (GSEXXXX format)
-             to examine the gene expression data."
+      to examine the gene expression data.
+      This can be obtained from https://www.ncbi.nlm.nih.gov/gds."
     ),
     add_busy_spinner(spin = "fading-circle"),
     textInput("geoAccessionCode", "GEO accession code", ""),
     helpText("Select the platform of interest."),
     selectInput("platform", "Platform", c()),
+    bsTooltip(
+      id = "platform",
+      title = "Each platform relates to a different microarray experiment
+      performed in the study.",
+      placement = "top",
+      trigger = "hover"
+    ),
     radioButtons(
       "logTransformation",
       label = "Apply log transformation to the data:",
