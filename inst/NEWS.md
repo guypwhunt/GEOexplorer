@@ -82,3 +82,6 @@ Changes in version 0.99.26 (2021-09-10)
 
 Changes in version 0.99.27 (2021-09-14)
 + Vignettes updates
+
+Changes in version 0.99.28 (2021-09-14)
++ Author updates
