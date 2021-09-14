@@ -15,7 +15,7 @@
 #' @importFrom graphics abline boxplot hist par text
 #' @importFrom stats complete.cases cor model.matrix
 #' na.omit prcomp princomp quantile
-#' @importFrom vembedr embed_url
+#' @importFrom shinyBS bsTooltip addTooltip
 #' @author Guy Hunt
 #' @return Large Shiny App
 loadApp <- function() {
