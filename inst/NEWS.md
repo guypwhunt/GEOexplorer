@@ -79,3 +79,6 @@ Changes in version 0.99.25 (2021-09-09)
 
 Changes in version 0.99.26 (2021-09-10)
 + Minor UI update
+
+Changes in version 0.99.27 (2021-09-14)
++ Vignettes updates
