@@ -85,3 +85,6 @@ Changes in version 0.99.27 (2021-09-14)
 
 Changes in version 0.99.28 (2021-09-14)
 + Author updates
+
+Changes in version 0.99.29 (2021-10-12)
++ Test updates
