@@ -9,6 +9,11 @@ Authors@R:
            role = c("aut", "cre"),
            email = "guypwhunt1992@gmail.com",
            comment = c(ORCID = "0000-0002-5217-2678")),
+    person(given = "Rafael",
+           family = "Henkin",
+           role = c("ctb", "ths"),
+           email = "r.henkin@qmul.ac.uk",
+           comment = c(ORCID = "0000-0002-5511-5230")),
     person(given = "Fabrizio",
            family = "Smeraldi",
            role = c("ctb", "ths"),
@@ -18,12 +23,7 @@ Authors@R:
            family = "Barnes",
            role = c("ctb", "ths"),
            email = "m.r.barnes@qmul.ac.uk",
-           comment = c(ORCID = "0000-0001-9097-7381")),
-    person(given = "Rafael",
-           family = "Henkin",
-           role = c("ctb", "ths"),
-           email = "r.henkin@qmul.ac.uk",
-           comment = c(ORCID = "0000-0002-5511-5230")))
+           comment = c(ORCID = "0000-0001-9097-7381")))
 Description: GEOexplorer is a Shiny app that enables 
   exploratory data analysis and differential gene expression 
   of gene expression analysis on microarray gene expression 
