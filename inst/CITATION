@@ -1,0 +1,25 @@
+citHeader("Please cite the following if utilizing the GEOquery software: ")
+
+citEntry(entry="article",
+  author = c(person(c("Guy","P"),"Hunt"),
+  person("Rafael","Henkin"),
+  person("Fabrizio","Smeraldi"),
+  person(c("Michael","R"),"Barnes")),
+  title = "GEOexplorer: an R/Bioconductor package for gene
+          expression analysis and visualisation",
+  journal = "bioRxiv",
+  year = 2021,
+  volume = "2021.10.06.459411",
+  doi = "10.1101/2021.10.06.459411",
+  textVersion =
+    paste("Hunt, G. P., Henkin, R., Smeraldi, F. and
+    Barnes, M. R.  (2021)",
+    "'GEOexplorer: an R/Bioconductor package for gene expression
+    analysis and visualisation'",
+    "bioRxiv, pp. 2021.10.06.459411.",sep="\n")
+)
+
+citFooter("This free open-source software implements academic
+research by the authors and co-workers. If you use it,
+please support the project by citing the appropriate
+journal articles.")
