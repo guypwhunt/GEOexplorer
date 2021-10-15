@@ -510,16 +510,11 @@ test_that("Microarray GSE with missing values is handled correctly by all
             tT <-
               calculateTopDifferentiallyExpressedGenes(fit2, adjustment)
             expect_type(tT, "list")
-            #expect_type(tT$ID, "character")
             expect_type(tT$t, "double")
-            #expect_type(tT$SPOT_ID, "character")
-            #expect_type(tT$GB_ACC, "character")
             expect_type(tT$adj.P.Val, "double")
             expect_type(tT$B, "double")
-            #expect_type(tT$RANGE_GB, "character")
             expect_type(tT$P.Value, "double")
             expect_type(tT$logFC, "double")
-            #expect_type(tT$RANGE_START, "double")
 
             # Non-Interactive Histogram
             fig <- nonInteractiveHistogramPlot(fit2, adjustment)
