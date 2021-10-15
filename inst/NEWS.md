@@ -92,3 +92,6 @@ Changes in version 0.99.29 (2021-10-12)
 
 Changes in version 0.99.30 (2021-10-13)
 + Citation updates
+
+Changes in version 0.99.31 (2021-10-15)
++ Test updates
