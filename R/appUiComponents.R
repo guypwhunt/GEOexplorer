@@ -15,9 +15,15 @@ sourceSideBarUi <- function() {
       This can be obtained from https://www.ncbi.nlm.nih.gov/gds."
     ),
     add_busy_spinner(spin = "fading-circle"),
-    textInput("geoAccessionCode", "GEO accession code", ""),
-    helpText("Select the platform of interest."),
-    selectInput("platform", "Platform", c()),
+    radioButtons(
+      "inputDataType",
+      label = "Do you want to upload a gene expression dataset or get one from
+      GEO?",
+      choices = list("GEO", "Upload"),
+      selected = "GEO"
+    ),
+    uiOutput("dataInput"),
+    uiOutput("dataInput2"),
     bsTooltip(
       id = "platform",
       title = "Each platform relates to a different microarray experiment

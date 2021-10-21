@@ -230,7 +230,7 @@ calculateDifferentialGeneExpression <-
     groups <- make.names(c("Group1", "Group2"))
     levels(gs) <- groups
     gset$group <- gs
-    design <- model.matrix(~ group + 0, gset)
+    design <- model.matrix(~group + 0, gset)
     colnames(design) <- levels(gs)
 
     if (limmaPrecisionWeights == "Yes") {
@@ -628,3 +628,42 @@ calculateEachGroupsSamplesFromDataFrame <-
 
     return(stringGroup)
   }
+
+#' A function to normalise RNA seq expressio  data
+#'
+#' This function allows you to normalise RNA seq expressio  data
+#' @param rnaExpressionData A object containing the RNA seq expression data
+#' @keywords rnaSeq
+#' @importFrom stringr str_locate
+#' @examples # Define Variables
+#' geoAccessionCode <- "GSE63310"
+#'
+#' # Update Sample Names
+#' rnaExpressionData <- calculateSampleNames(rnaExpressionData)
+#'
+#' # Update Sample Names
+#' rnaExpressionData <- calculateSampleNames(rnaExpressionData)
+#'
+#' # Raw counts are converted to counts-per-million (CPM)
+#' cpm <- cpm(rnaExpressionData)
+#'
+#' # Is log transformation auto applied
+#' autoLogInformation <-
+#' calculateAutoLogTransformApplication(cpm)
+#'
+#'
+#' # Apply log transformation to expression data if necessary
+#' dataInput <-
+#' calculateLogTransformation(cpm, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, knnTransformation)
+
+#' @author Guy Hunt
+#' @noRd
+calculateCountsPerMillion <- function(rnaExpressionData) {
+  # Raw counts are converted to counts-per-million (CPM)
+  cpm <- cpm(rnaExpressionData)
+
+  return(cpm)
+}

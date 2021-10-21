@@ -348,18 +348,22 @@ interactiveMeanVariancePlot <-
     exData <- as.data.frame(exData)
     exData["ID"] <- rownames(ex)
 
-    # Extract gene data
-    geneData <- gset@featureData@data
-
-    # Error handling to catch gset without featureData
-    if (ncol(geneData) > 0) {
-      geneData <- as.data.frame(geneData)
-      combineData <- merge(exData, geneData, by = "ID")
-      colnames(combineData) <-
-        str_replace_all(colnames(combineData), " ", ".")
-      combineData %>% filter("ID" %in% c(rownames(exData)))
-    } else{
+    if (is.null(gset)) {
       combineData <- exData
+    } else {
+      # Extract gene data
+      geneData <- gset@featureData@data
+
+      # Error handling to catch gset without featureData
+      if (ncol(geneData) > 0) {
+        geneData <- as.data.frame(geneData)
+        combineData <- merge(exData, geneData, by = "ID")
+        colnames(combineData) <-
+          str_replace_all(colnames(combineData), " ", ".")
+        combineData %>% filter("ID" %in% c(rownames(exData)))
+      } else{
+        combineData <- exData
+      }
     }
     # Plot mean variance
     fig <-
@@ -528,7 +532,7 @@ interactivePrcompPcaScreePlot <-
           categoryarray = ~ columnNames
         ),
         yaxis = list(title = "Percentage of Explained Variances",
-                     tickformat = "%")
+                     tickformat = ".0%")
       )
 
     fig
@@ -605,7 +609,7 @@ interactivePrincompPcaScreePlot <-
           categoryarray = ~ columnNames
         ),
         yaxis = list(title = "Percentage of Explained Variances",
-                     tickformat = "%")
+                     tickformat = ".0%")
       )
 
     fig
@@ -673,16 +677,20 @@ interactivePrincompPcaIndividualsPlot <-
     pcaDf <- data.frame(pcaData$scores)
     pcaDf <- transform(pcaDf)
     pcaDf["ID"] <- rownames(pcaDf)
-    geneData <- gset@featureData@data
-    # Error handling for gset without featureData@data
-    if (ncol(geneData) > 0) {
-      geneData <- as.data.frame(geneData)
-      combineData <- merge(pcaDf, geneData, by = "ID")
-      combineData %>% filter("ID" %in% c(rownames(pcaDf)))
-      colnames(combineData) <-
-        str_replace_all(colnames(combineData), " ", ".")
-    } else {
+    if (is.null(gset)) {
       combineData <- pcaDf
+    } else {
+      geneData <- gset@featureData@data
+      # Error handling for gset without featureData@data
+      if (ncol(geneData) > 0) {
+        geneData <- as.data.frame(geneData)
+        combineData <- merge(pcaDf, geneData, by = "ID")
+        combineData %>% filter("ID" %in% c(rownames(pcaDf)))
+        colnames(combineData) <-
+          str_replace_all(colnames(combineData), " ", ".")
+      } else {
+        combineData <- pcaDf
+      }
     }
 
 
@@ -994,16 +1002,20 @@ interactivePrcompPcaIndividualsPlot <-
     pcaDf <- data.frame(pcaData$x)
     pcaDf <- transform(pcaDf)
     pcaDf["ID"] <- rownames(pcaDf)
-    geneData <- gset@featureData@data
-    # Error handling for gset without featureData@data
-    if (ncol(geneData) > 0) {
-      geneData <- as.data.frame(geneData)
-      combineData <- merge(pcaDf, geneData, by = "ID")
-      combineData %>% filter("ID" %in% c(rownames(pcaDf)))
-      colnames(combineData) <-
-        str_replace_all(colnames(combineData), " ", ".")
-    } else {
+    if (is.null(gset)) {
       combineData <- pcaDf
+    } else {
+      geneData <- gset@featureData@data
+      # Error handling for gset without featureData@data
+      if (ncol(geneData) > 0) {
+        geneData <- as.data.frame(geneData)
+        combineData <- merge(pcaDf, geneData, by = "ID")
+        combineData %>% filter("ID" %in% c(rownames(pcaDf)))
+        colnames(combineData) <-
+          str_replace_all(colnames(combineData), " ", ".")
+      } else {
+        combineData <- pcaDf
+      }
     }
 
 
