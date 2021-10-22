@@ -692,116 +692,76 @@ calculateNaOmit <- function(ex) {
   return(ex)
 }
 
-#' A function to obtain the supplementary files and extract the expression data
+#' A function to read the input CSVs
 #'
-#' This function allows you to source a the GEO supplementary files
-#' and extract the expression data from the files
-#' @param geoAccessionCode A character string representing
-#' a GEO object for download and parsing
-#' @keywords GEO rnaSeq
-#' @importFrom GEOquery getGEOSuppFiles
-#' @importFrom utils untar
-#' @importFrom R.utils gunzip
+#' This function allows you to read the input CSVs
+#' @param file A object CSV object
+#' @keywords csv
+#' @importFrom utils read.csv
+#' @examples # Extract CSV
+#' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
+#' @author Guy Hunt
+#' @noRd
+readCsvFile <- function(file) {
+  # read the file
+  dF <- read.csv(file = file)
+
+  return(dF)
+}
+
+#' A function to preprocess user uploaded gene expression data
+#'
+#' This function allows you to preprocess user uploaded gene expression data
+#' @param file A object CSV object
+#' @keywords csv
+#' @importFrom Biobase ExpressionSet
+#' @examples # Extract CSV
+#' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
+#'
+#' # Get a list of all the columns
+#' columns <- extractSampleNames(rnaExpressionData)
+#' @author Guy Hunt
+#' @noRd
+preProcessGeneExpressionData <- function(expressionData) {
+  # Replace row names with gene names
+  row.names(expressionData) <- expressionData$Genes
+
+  # Delete gene column
+  expressionData <- subset(expressionData, select = -Genes)
+
+  # Convert to matrix
+  expressionData <- data.matrix(expressionData)
+
+  # Convert to expression set
+  expressionData <- ExpressionSet(expressionData)
+
+  return(expressionData)
+}
+
+#' A function to preprocess user uploaded gene expression data
+#'
+#' This function allows you to convert expression data to counts per million
+#' @param expressionData A object containing the gene expression data
+#' @keywords rnaSeq
+#' @importFrom edgeR cpm
 #' @examples # Define Variables
 #' geoAccessionCode <- "GSE63310"
 #'
 #' # Source and extract expression data
 #' rnaExpressionData <- extractGeoSupFiles(geoAccessionCode)
-#' @author Guy Hunt
-#' @noRd
-extractGeoSupFiles <- function(geoAccessionCode, geneNamesCol, countsCol) {
-  # Define Variables
-  path <- paste0(".\\", geoAccessionCode)
-  tarFileName <- paste0(geoAccessionCode, "_RAW.tar")
-
-  # DOWNLOAD TAR FILE
-  geoTarFile <- getGEOSuppFiles(geoAccessionCode)
-
-  # Set working directory
-  setwd(path)
-
-  # Untar the file (THIS IS ERORRING) (CONTINUE HERE)
-  untar(tarFileName, exdir = ".")
-
-  # Obtain list of file names in the directory
-  listOfFileInDir <- list.files(path = path)
-
-  # Remove tar file name from list
-  listOfFileInDir <- listOfFileInDir[listOfFileInDir != tarFileName]
-
-  # For each file save as a gz file
-  for(i in listOfFileInDir)
-    gunzip(i, overwrite=TRUE)
-
-  # Define file names
-  files <- list.files(".")
-  files <- files[files != tarFileName]
-
-  # Combine the text files into a matrix of counts using edgeR
-  expressionData <- readDGE(files, columns=c(geneNamesCol,countsCol))
-
-  # Delete files in directory
-  for (fileName in list.files(".")){
-    file.remove(fileName)
-  }
-
-  # Set Working directory
-  setwd("..")
-
-  return(expressionData)
-}
-
-#' A function to update the expression data sample names
-#'
-#' This function allows you to update the expression data sample names
-#' @param rnaExpressionData A object containing the RNA seq expression data
-#' @keywords rnaSeq
-#' @importFrom stringr str_locate
-#' @examples # Define Variables
-#' geoAccessionCode <- "GSE63310"
 #'
 #' # Update Sample Names
-#' rnaExpressionData <- calculateSampleNames(rnaExpressionData)
-#'
-#' # Update Sample Names
-#' rnaExpressionData <- calculateSampleNames(rnaExpressionData)
-#' @author Guy Hunt
-#' @noRd
-calculateSampleNames <- function(rnaExpressionData) {
-  # Extract the sample information
-  samplenames <- substring(colnames(rnaExpressionData), 0,
-                           (str_locate(colnames(
-                             rnaExpressionData), "_")-1)[,1])
-  samplenames
-
-  # Update the colnames with the sample names
-  colnames(rnaExpressionData) <- samplenames
-
-  return(rnaExpressionData)
-}
-
-#' A function to convert expression data to counts per million
-#'
-#' This function allows you to convert expression data to counts per million
-#' @param rnaExpressionData A object containing the RNA seq expression data
-#' @keywords rnaSeq
-#' @importFrom stringr str_locate
-#' @examples # Define Variables
-#' geoAccessionCode <- "GSE63310"
-#'
-#' # Update Sample Names
-#' rnaExpressionData <- calculateSampleNames(rnaExpressionData)
-#'
-#' # Update Sample Names
-#' rnaExpressionData <- calculateSampleNames(rnaExpressionData)
+#' columns <- calculateSampleNames(rnaExpressionData)
 #'
 #' # Raw counts are converted to counts-per-million (CPM)
-#' cpm <- cpm(rnaExpressionData)
+#' cpm <- cpm(rnaExpressionData, "Yes")
 #' @author Guy Hunt
 #' @noRd
-calculateCountsPerMillion <- function(rnaExpressionData) {
+calculateCountsPerMillion <- function(rnaExpressionData, applyCpm) {
+  if (applyCpm == "Yes"){
   # Raw counts are converted to counts-per-million (CPM)
-  cpm <- cpm(rnaExpressionData)
-
+  cpm <- cpm(rnaExpressionData)} else {
+    cpm <- rnaExpressionData
+  }
   return(cpm)
 }

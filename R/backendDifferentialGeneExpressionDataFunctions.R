@@ -629,41 +629,109 @@ calculateEachGroupsSamplesFromDataFrame <-
     return(stringGroup)
   }
 
-#' A function to normalise RNA seq expressio  data
+#' A function to calculate differential gene expression for RNA seq
 #'
-#' This function allows you to normalise RNA seq expressio  data
-#' @param rnaExpressionData A object containing the RNA seq expression data
+#' This function allows you to calculate differential gene expression
+#' for RNA seq
+#' @param expressionData A object containing the gene expression data
 #' @keywords rnaSeq
-#' @importFrom stringr str_locate
+#' @importFrom edgeR DGEList calcNormFactors as.matrix.DGEList
+#' @importFrom stats model.matrix
+#' @import limma
 #' @examples # Define Variables
 #' geoAccessionCode <- "GSE63310"
 #'
-#' # Update Sample Names
-#' rnaExpressionData <- calculateSampleNames(rnaExpressionData)
+#' # Source and extract expression data
+#' rnaExpressionData <- extractGeoSupFiles(geoAccessionCode)
 #'
 #' # Update Sample Names
-#' rnaExpressionData <- calculateSampleNames(rnaExpressionData)
+#' columns <- calculateSampleNames(rnaExpressionData)
 #'
 #' # Raw counts are converted to counts-per-million (CPM)
-#' cpm <- cpm(rnaExpressionData)
+#' cpm <- cpm(rnaExpressionData, "Yes")
 #'
-#' # Is log transformation auto applied
-#' autoLogInformation <-
-#' calculateAutoLogTransformApplication(cpm)
+#' # Get column names
+#' columnNames <- extractSampleNames(rnaExpressionData)
 #'
+#' # Define Groups
+#' numberOfColumns <- length(columnNames)
+#' numberOfColumns <- numberOfColumns + 1
+#' halfNumberOfColumns <- ceiling(numberOfColumns / 2)
+#' i <- 0
 #'
-#' # Apply log transformation to expression data if necessary
-#' dataInput <-
-#' calculateLogTransformation(cpm, logTransformation)
+#' group1 <- c()
+#' group2 <- c()
 #'
-#' # Perform KNN transformation on log expression data if necessary
-#' knnDataInput <- calculateKnnImpute(dataInput, knnTransformation)
-
+#' for (name in columnNames) {
+#'   if (i < halfNumberOfColumns) {
+#'     group1 <- c(group1, name)
+#'     i <- i + 1
+#'   } else {
+#'     group2 <- c(group2, name)
+#'     i <- i + 1
+#'   }
+#' }
+#'
+#' # Select columns in group2
+#' column2 <- calculateExclusiveColumns(columnNames, group1)
+#'
+#' # Calculate gsms
+#' gsms <- calculateEachGroupsSamples(columnNames, group1, group2)
+#'
+#' # Convert P value adjustment
+#' adjustment <- convertAdjustment(pValueAdjustment)
+#'
+#' fit2 <- calculateDifferentialGeneExpressionRnaSeq(rnaExpressionData, gsms,
+#'                                                   limmaPrecisionWeights,
+#'                                                   forceNormalization)
+#'
 #' @author Guy Hunt
 #' @noRd
-calculateCountsPerMillion <- function(rnaExpressionData) {
-  # Raw counts are converted to counts-per-million (CPM)
-  cpm <- cpm(rnaExpressionData)
+calculateDifferentialGeneExpressionRnaSeq <- function(
+  rnaExpressionData, gsms, limmaPrecisionWeights, forceNormalization) {
+  sml <- strsplit(gsms, split = "")[[1]]
+  sel <- which(sml != "X")
+  sml <- sml[sel]
+  rnaExpressionData <- rnaExpressionData[, sel]
 
-  return(cpm)
+  # Convert into a DGE List
+  rnaExpressionData = DGEList(rnaExpressionData, group = sml)
+
+  # Normalisation
+  if (forceNormalization == "Yes") {
+    # normalize data
+    rnaExpressionData <- calcNormFactors(rnaExpressionData, method = "TMM")
+  }
+
+  # assign samples to groups and set up design matrix
+  gs <- factor(sml)
+  groups <- make.names(c("Group1", "Group2"))
+  levels(gs) <- groups
+  rnaExpressionData$samples$group <- gs
+
+  design <- model.matrix(~group + 0, rnaExpressionData$samples)
+  colnames(design) <- levels(gs)
+
+  # Construct contrast matrix
+  cts <- paste(groups[1], groups[2], sep = "-")
+  cont.matrix <- makeContrasts(contrasts = cts,
+                               levels = design)
+
+  if (limmaPrecisionWeights == "Yes") {
+    # calculate precision weights and show plot of
+    # mean-variance trend
+    v <- voom(rnaExpressionData, design, plot = FALSE)
+
+    # fit linear model
+    fit  <- lmFit(v)
+  } else {
+    # fit linear model
+    fit <- lmFit(as.matrix.DGEList(rnaExpressionData), design)
+  }
+
+  fit2 <- contrasts.fit(fit, cont.matrix)
+
+  fit2 <- eBayes(fit2, 0.01)
+
+  return(fit2)
 }

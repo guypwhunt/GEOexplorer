@@ -38,7 +38,7 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/guypwhunt/GEOexplorer/
 BugReports: https://github.com/guypwhunt/GEOexplorer/issues
-RoxygenNote: 7.1.1.9001
+RoxygenNote: 7.1.2
 biocViews: 
   Software,
   GeneExpression,
@@ -49,6 +49,7 @@ biocViews:
 Depends: shiny, limma, Biobase, plotly, shinyBS
 Imports: 
   DT,
+  edgeR,
   htmltools,
   factoextra,
   heatmaply,
