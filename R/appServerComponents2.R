@@ -128,6 +128,7 @@ sourceServer2 <- function(input, output, session) {
     # Define Variables
     gsetData <- NULL
     geoAccessionCode <- ""
+    all <- reactiveValues()
 
     # Extract Expression Data
     expressionData <- reactive({
@@ -254,34 +255,34 @@ sourceServer2 <- function(input, output, session) {
       if (input$typeOfData == "RNA Sequencing")
       {
         # Raw counts are converted to counts-per-million (CPM)
-        cpm <-
+        all$cpm <-
           calculateCountsPerMillion(expressionData(), input$cpmTransformation)
       } else if (input$typeOfData == "Microarray")
       {
-        cpm < -expressionData()
+        all$cpm < -expressionData()
       }
 
       autoLogInformation <-
-        calculateAutoLogTransformApplication(cpm)
+        calculateAutoLogTransformApplication(all$cpm)
 
       # Apply log transformation to expression data if necessary
-      dataInput <-
-        calculateLogTransformation(cpm, input$logTransformation)
+      all$dataInput <-
+        calculateLogTransformation(all$cpm, input$logTransformation)
 
       # Perform KNN transformation on log expression data if necessary
-      knnDataInput <-
-        calculateKnnImpute(dataInput, input$knnTransformation)
+      all$knnDataInput <-
+        calculateKnnImpute(all$dataInput, input$knnTransformation)
 
       # Get a list of all the columns in the KNN output
-      knnColumns <- extractSampleNames(knnDataInput)
+      knnColumns <- extractSampleNames(all$knnDataInput)
 
       # Get knn output column Details
-      knnColumnInfo <- columnInfo()
-      row.names(knnColumnInfo) <- knnColumnInfo$column
-      knnColumnInfo <- knnColumnInfo[knnColumns,]
+      all$knnColumnInfo <- columnInfo()
+      row.names(all$knnColumnInfo) <- all$knnColumnInfo$column
+      all$knnColumnInfo <- all$knnColumnInfo[knnColumns,]
 
       # Remove all incomplete rows
-      naOmitInput <- calculateNaOmit(knnDataInput)
+      naOmitInput <- calculateNaOmit(all$knnDataInput)
 
       # Perform Prcomp PCA analysis on KNN transformation expression data
       pcaPrcompDataInput <- calculatePrcompPca(naOmitInput)
@@ -293,8 +294,8 @@ sourceServer2 <- function(input, output, session) {
       })
 
       # Generate Differential Gene Expression Table
-      for (i in seq_len(nrow(knnColumnInfo))) {
-        knnColumnInfo$group[i] <- as.character(selectInput(
+      for (i in seq_len(nrow(all$knnColumnInfo))) {
+        all$knnColumnInfo$group[i] <- as.character(selectInput(
           paste0("sel", i),
           "",
           choices = unique(c("N/A", "Group 1", "Group 2")),
@@ -303,7 +304,7 @@ sourceServer2 <- function(input, output, session) {
       }
 
       output$knnColumnTable <- renderDataTable(
-        knnColumnInfo,
+        all$knnColumnInfo,
         escape = FALSE,
         selection = 'none',
         server = FALSE,
@@ -326,12 +327,12 @@ sourceServer2 <- function(input, output, session) {
 
       # Expression dataset table
       output$table <- renderDataTable({
-        knnDataInput
+        all$knnDataInput
       })
 
       # Interactive Box-and-Whisker Plot
       output$interactiveBoxAndWhiskerPlot <- renderPlotly({
-        interactiveBoxAndWhiskerPlot(knnDataInput,
+        interactiveBoxAndWhiskerPlot(all$knnDataInput,
                                      geoAccessionCode,
                                      input$platform)
       })
@@ -425,6 +426,34 @@ sourceServer2 <- function(input, output, session) {
           type = "warning"
         )
       }
+    })
+
+    observeEvent(input$differentialExpressionButton, {
+      # Clear unused memory
+      gc()
+
+      # Set all differential gene expression
+      # analysis outputs to blank, this resets
+      # all the visualizations to blank after
+      # clicking analyse
+      output$dETable <- renderDataTable({
+
+      })
+      output$iDEHistogram <- renderPlotly({
+
+      })
+      output$dEVennDiagram <- renderPlot({
+
+      })
+      output$iDEQQ <- renderPlotly({
+
+      })
+      output$iDEVolcano <- renderPlotly({
+
+      })
+      output$iDEMd <- renderPlotly({
+
+      })
     })
   })
 return(datasetInformationServer)
