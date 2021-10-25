@@ -10,12 +10,12 @@
 sourceSideBarUi2 <- function() {
   sideBarUi <- sidebarPanel(
     add_busy_spinner(spin = "fading-circle"),
-    fileInput("file1", "Upload CSV Gene Expression Count File",
+    fileInput("file2", "Upload CSV Experimental Conditions File",
               multiple = TRUE,
               accept = c("text/csv",
                          "text/comma-separated-values,text/plain",
                          ".csv")),
-    fileInput("file2", "Upload CSV Experimental Conditions File",
+    fileInput("file1", "Upload CSV Gene Expression Count File",
               multiple = TRUE,
               accept = c("text/csv",
                          "text/comma-separated-values,text/plain",
@@ -130,7 +130,7 @@ sourceDatasetInformationUi2 <- function() {
                                        ),
                                        br(),
                                        br(),
-                                       tableOutput('table')
+                                       dataTableOutput('table')
                                      )
                                    ))
   return(datasetInformationUi)

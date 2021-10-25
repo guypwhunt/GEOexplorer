@@ -704,7 +704,7 @@ calculateNaOmit <- function(ex) {
 #' @noRd
 readCsvFile <- function(file) {
   # read the file
-  dF <- read.csv(file = file)
+  dF <- read.csv(file = file, check.names = FALSE)
 
   return(dF)
 }
@@ -733,7 +733,7 @@ preProcessGeneExpressionData <- function(expressionData) {
   expressionData <- data.matrix(expressionData)
 
   # Convert to expression set
-  expressionData <- ExpressionSet(expressionData)
+  #expressionData <- ExpressionSet(expressionData)
 
   return(expressionData)
 }
