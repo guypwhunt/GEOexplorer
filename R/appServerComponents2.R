@@ -454,7 +454,135 @@ sourceServer2 <- function(input, output, session) {
       output$iDEMd <- renderPlotly({
 
       })
+
+      # Differential gene expression analysis
+      gsms <- tryCatch({
+        calculateEachGroupsSamplesFromDataFrame(
+          as.data.frame(
+            sapply(
+              seq_len(
+                nrow(all$knnColumnInfo)
+              ),
+              function(a)
+                input[[paste0("sel", a)]])))
+
+      }, error = function(cond) {
+        return(NULL)
+      })
+
+      # Error handling to prevent differential gene expression
+      # analysis being performed before exploratory data analysis
+      if (is.null(gsms)) {
+        showNotification(
+          "There was an error running differential gene expression
+                  analysis. Please ensure you have performed exploratory data
+                  analysis first.",
+          type = "error"
+        )
+      } else {
+        # Error handling to ensure at least one
+        # group has two samples and the other group
+        # has at least one sample
+        if ((lengths(regmatches(
+          gsms, gregexpr("0", gsms)
+        )) > 0 &
+        lengths(regmatches(
+          gsms, gregexpr("1", gsms)
+        )) > 1) |
+        (lengths(regmatches(
+          gsms, gregexpr("0", gsms)
+        )) > 1 &
+        lengths(regmatches(
+          gsms, gregexpr("1", gsms)
+        )) > 0)) {
+
+          fit2 <-
+            #tryCatch({
+            calculateDifferentialGeneExpressionRnaSeq(
+              all$knnDataInput, gsms,
+              input$limmaPrecisionWeights,
+              input$forceNormalization)
+          #}
+          #, error = function(cond) {
+          #  return(NULL)
+          #})
+          if (is.null(fit2)) {
+            showNotification(
+              "There was an error calculating the
+                             differential gene expression analysis!",
+              type = "error"
+            )
+          } else {
+            adjustment <- convertAdjustment(input$pValueAdjustment)
+
+            tT <-
+              calculateTopDifferentiallyExpressedGenes(fit2,
+                                                       adjustment)
+            dT <-
+              calculateDifferentialGeneExpressionSummary(
+                fit2,
+                adjustment,
+                input$significanceLevelCutOff)
+
+            ct <- 1
+
+            # Differential gene expression table
+            output$dETable <- renderDataTable({
+              as.data.frame(tT)
+            })
+
+            # Interactive Histogram Plot
+            output$iDEHistogram <- renderPlotly({
+              interactiveHistogramPlot(fit2, adjustment)
+            })
+
+            # Venn Diagram Plot
+            output$dEVennDiagram <- renderPlot({
+              nonInteractiveVennDiagramPlot(dT)
+            })
+
+            # Interactive QQ Plot
+            output$iDEQQ <- renderPlotly({
+              interactiveQQPlot(fit2, dT, ct)
+            })
+
+            # Interactive Volcano Plot
+            output$iDEVolcano <- renderPlotly({
+              interactiveVolcanoPlot(fit2, dT, ct)
+            })
+
+            # Interactive Mean Difference Plot
+            output$iDEMd <- renderPlotly({
+              interactiveMeanDifferencePlot(fit2, dT, ct)
+            })
+
+            # Download Top Differentially Expressed Genes Table
+            output$downloadData <- downloadHandler(
+              filename = function() {
+                "top_differentially_expressed_genes.csv"
+              },
+              content = function(file) {
+                write.csv(tT, file, row.names = FALSE)
+              }
+            )
+            showNotification("Differential gene
+                           expression analysis complete!",
+                             type = "message")
+          }
+        } else {
+          showNotification(
+            "One group needs at
+          least 2 samples and the other
+                           group needs at least 1 sample",
+            type = "error"
+          )
+        }
+          }
+
+
+
     })
-  })
+
+    })
 return(datasetInformationServer)
 }
