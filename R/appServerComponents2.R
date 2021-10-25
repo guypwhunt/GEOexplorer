@@ -111,7 +111,7 @@ sourceServer2 <- function(input, output, session) {
       trigger = "hover"
     )
 
-    #Add Significance Level Cutoff Tool Tips
+    # Add Significance Level Cutoff Tool Tips
     addTooltip(
       session,
       id = "significanceLevelCutOff",
@@ -188,57 +188,57 @@ sourceServer2 <- function(input, output, session) {
 
       # Set all outputs to blank, this resets
       # all the visualizations to blank after clicking analyse
-      #output$logTransformationText <- renderUI({
+      output$logTransformationText <- renderUI({
 
-      #})
-      #output$knnColumnTable <- renderDataTable({
+      })
+      output$knnColumnTable <- renderDataTable({
 
-      #})
-      #output$interactiveBoxAndWhiskerPlot <- renderPlotly({
+      })
+      output$interactiveBoxAndWhiskerPlot <- renderPlotly({
 
-      #})
-      #output$interactiveDensityPlot <- renderPlotly({
+      })
+      output$interactiveDensityPlot <- renderPlotly({
 
-      #})
-      #output$interactiveThreeDDensityPlot <- renderPlotly({
+      })
+      output$interactiveThreeDDensityPlot <- renderPlotly({
 
-      #})
-      #output$interactiveUmapPlot <- renderPlotly({
+      })
+      output$interactiveUmapPlot <- renderPlotly({
 
-      #})
-      #output$interactiveHeatMapPlot <- renderPlotly({
+      })
+      output$interactiveHeatMapPlot <- renderPlotly({
 
-      #})
-      #output$interactiveMeanVariancePlot <- renderPlotly({
+      })
+      output$interactiveMeanVariancePlot <- renderPlotly({
 
-      #})
-      #output$interactivePcaScreePlot <- renderPlotly({
+      })
+      output$interactivePcaScreePlot <- renderPlotly({
 
-      #})
-      #output$interactivePcaIndividualsPlot <- renderPlotly({
+      })
+      output$interactivePcaIndividualsPlot <- renderPlotly({
 
-      #})
-      #output$interactivePcaVariablesPlot <- renderPlotly({
+      })
+      output$interactivePcaVariablesPlot <- renderPlotly({
 
-      #})
-      #output$dETable <- renderDataTable({
+      })
+      output$dETable <- renderDataTable({
 
-      #})
-      #output$iDEHistogram <- renderPlotly({
+      })
+      output$iDEHistogram <- renderPlotly({
 
-      #})
-      #output$dEVennDiagram <- renderPlot({
+      })
+      output$dEVennDiagram <- renderPlot({
 
-      #})
-      #output$iDEQQ <- renderPlotly({
+      })
+      output$iDEQQ <- renderPlotly({
 
-      #})
-      #output$iDEVolcano <- renderPlotly({
+      })
+      output$iDEVolcano <- renderPlotly({
 
-      #})
-      #output$iDEMd <- renderPlotly({
+      })
+      output$iDEMd <- renderPlotly({
 
-      #})
+      })
 
       # Make Differential Gene Expression Action
       # Button Appear, this prevents users
@@ -302,27 +302,27 @@ sourceServer2 <- function(input, output, session) {
         ))
       }
 
-      #output$knnColumnTable <- renderDataTable(
-      #  knnDataInput,
-      #  escape = FALSE,
-      #  selection = 'none',
-      #  server = FALSE,
-      #  options = list(
-      #    dom = 't',
-      #    paging = FALSE,
-      #    ordering = FALSE
-      #  ),
-      #  callback =
-      #    JS(
-      #      "table.rows().every(function(i, tab, row) {
-      #  var $this = $(this.node());
-      #  $this.attr('id', this.data()[0]);
-      #  $this.addClass('shiny-input-container');
-      #});
-      #Shiny.unbindAll(table.table().node());
-      #Shiny.bindAll(table.table().node());"
-      #    )
-      #)
+      output$knnColumnTable <- renderDataTable(
+        knnColumnInfo,
+        escape = FALSE,
+        selection = 'none',
+        server = FALSE,
+        options = list(
+          dom = 't',
+          paging = FALSE,
+          ordering = FALSE
+        ),
+        callback =
+          JS(
+            "table.rows().every(function(i, tab, row) {
+        var $this = $(this.node());
+        $this.attr('id', this.data()[0]);
+        $this.addClass('shiny-input-container');
+      });
+      Shiny.unbindAll(table.table().node());
+      Shiny.bindAll(table.table().node());"
+          )
+      )
 
       # Expression dataset table
       output$table <- renderDataTable({
@@ -330,101 +330,101 @@ sourceServer2 <- function(input, output, session) {
       })
 
       # Interactive Box-and-Whisker Plot
-      #output$interactiveBoxAndWhiskerPlot <- renderPlotly({
-      #  interactiveBoxAndWhiskerPlot(knnDataInput,
-      #                               geoAccessionCode,
-      #                               input$platform)
-      #})
+      output$interactiveBoxAndWhiskerPlot <- renderPlotly({
+        interactiveBoxAndWhiskerPlot(knnDataInput,
+                                     geoAccessionCode,
+                                     input$platform)
+      })
 
       # Interactive Density Plot
-      #output$interactiveDensityPlot <- renderPlotly({
-      #  interactiveDensityPlot(naOmitInput,
-      #                         geoAccessionCode,
-      #                         input$platform)
-      #})
+      output$interactiveDensityPlot <- renderPlotly({
+        interactiveDensityPlot(naOmitInput,
+                               geoAccessionCode,
+                               input$platform)
+      })
 
       # 3D Interactive Density Plot
-      #output$interactiveThreeDDensityPlot <- renderPlotly({
-      #  interactiveThreeDDensityPlot(naOmitInput,
-      #                               geoAccessionCode,
-      #                               input$platform)
-      #})
+      output$interactiveThreeDDensityPlot <- renderPlotly({
+        interactiveThreeDDensityPlot(naOmitInput,
+                                     geoAccessionCode,
+                                     input$platform)
+      })
 
       # Error handling to prevent errors caused by
       # expression datasets with only one column
-      #if (ncol(naOmitInput) > 1) {
+      if (ncol(naOmitInput) > 1) {
         # Update UMAP KNN max
-      #  updateNumericInput(
-      #    session,
-      #    inputId = "knn",
-      #    value = 2,
-      #    max = ncol(naOmitInput)
-      #  )
+        updateNumericInput(
+          session,
+          inputId = "knn",
+          value = 2,
+          max = ncol(naOmitInput)
+        )
 
-      #  # Interactive UMAP Plot
-      #  output$interactiveUmapPlot <- renderPlotly({
-      #    interactiveUmapPlot(naOmitInput,
-      #                        input$knn,
-      #                        geoAccessionCode)
-      #  })
+        # Interactive UMAP Plot
+        output$interactiveUmapPlot <- renderPlotly({
+          interactiveUmapPlot(naOmitInput,
+                              input$knn,
+                              geoAccessionCode)
+        })
 
         # Heatmap Plot
-      #  output$interactiveHeatMapPlot <- renderPlotly({
-      #    interactiveHeatMapPlot(naOmitInput)
-      #  })
+        output$interactiveHeatMapPlot <- renderPlotly({
+          interactiveHeatMapPlot(naOmitInput)
+        })
 
         # Interactive Mean Variance Plot
-      #  output$interactiveMeanVariancePlot <- renderPlotly({
-      #    interactiveMeanVariancePlot(naOmitInput,
-      #                                geoAccessionCode,
-      #                                gsetData)
-      #  })
+        output$interactiveMeanVariancePlot <- renderPlotly({
+          interactiveMeanVariancePlot(naOmitInput,
+                                      geoAccessionCode,
+                                      gsetData)
+        })
 
         # Error handling to display a notification
         # if there was an error in PCA
-      # if (is.null(pcaPrcompDataInput) == TRUE) {
-      #    showNotification(
-      #      "There was an error performing principal component
-      #                           analysis on the expression data.
-      #                           Therefore the PCA visualisations
-      #                           will not be displayed.",
-      #      type = "warning"
-      #    )
-      #  } else {
-      #    # Interactive PCA Scree Plot
-      #    output$interactivePcaScreePlot <- renderPlotly({
-      #      interactivePrcompPcaScreePlot(pcaPrcompDataInput,
-      #                                    geoAccessionCode)
-      #    })
+       if (is.null(pcaPrcompDataInput) == TRUE) {
+          showNotification(
+            "There was an error performing principal component
+                                 analysis on the expression data.
+                                 Therefore the PCA visualisations
+                                 will not be displayed.",
+            type = "warning"
+          )
+        } else {
+          # Interactive PCA Scree Plot
+          output$interactivePcaScreePlot <- renderPlotly({
+            interactivePrcompPcaScreePlot(pcaPrcompDataInput,
+                                          geoAccessionCode)
+          })
 
-      #    # Interactive PCA Individual Plot
-      #    output$interactivePcaIndividualsPlot <-
-      #      renderPlotly({
-      #        interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
-      #                                            geoAccessionCode,
-      #                                            gsetData)
-      #      })
+          # Interactive PCA Individual Plot
+          output$interactivePcaIndividualsPlot <-
+            renderPlotly({
+              interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
+                                                  geoAccessionCode,
+                                                  gsetData)
+            })
 
-      #    # Interactive PCA Variables Plot
-      #    output$interactivePcaVariablesPlot <-
-      #      renderPlotly({
-      #        interactivePrcompPcaVariablesPlot(pcaPrcompDataInput,
-      #                                          geoAccessionCode)
-      #      })
-      #    showNotification("Exploratory data analysis complete!",
-      #                     type = "message")
-      #  }
-      #} else{
-      #  # A notification to the user that only
-      #  # certain data visulisations will be created
-      #  showNotification(
-      #    "As the expression dataset had only one
-      #                         column only the Box-and-Whisper Plot
-      #                         and Expression Density
-      #                         Plots will be produced.",
-      #    type = "warning"
-      #  )
-      #}
+          # Interactive PCA Variables Plot
+          output$interactivePcaVariablesPlot <-
+            renderPlotly({
+              interactivePrcompPcaVariablesPlot(pcaPrcompDataInput,
+                                                geoAccessionCode)
+            })
+          showNotification("Exploratory data analysis complete!",
+                           type = "message")
+        }
+      } else{
+        # A notification to the user that only
+        # certain data visulisations will be created
+        showNotification(
+          "As the expression dataset had only one
+                               column only the Box-and-Whisper Plot
+                               and Expression Density
+                               Plots will be produced.",
+          type = "warning"
+        )
+      }
     })
   })
 return(datasetInformationServer)
