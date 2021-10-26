@@ -212,9 +212,6 @@ sourceServer3 <- function(input, output, session) {
           output$experimentInfo <- renderUI({
 
           })
-          output$columnTable <- renderDataTable({
-
-          })
           output$table <- renderDataTable({
 
           })
@@ -245,9 +242,7 @@ sourceServer3 <- function(input, output, session) {
           output$interactiveMeanVariancePlot <- renderPlotly({
 
           })
-          output$interactivePcaScreePlot <- renderPlotly({
 
-          })
           output$interactivePcaIndividualsPlot <- renderPlotly({
 
           })
@@ -280,6 +275,10 @@ sourceServer3 <- function(input, output, session) {
           output$differentialExpressionButton <- renderUI({
             actionButton("differentialExpressionButton", "Analyse")
           })
+
+          # Update Experimental informatin
+          output$experimentInfo <-  renderUI({"Experimental Information is
+          not available when processing user-uploaded files!"})
 
           # Error handling to display a notification if an
           # invalid GEO accession code is used.
@@ -660,19 +659,6 @@ sourceServer3 <- function(input, output, session) {
                         type = "warning"
                       )
                     } else {
-                      # Interactive PCA Scree Plot
-                      output$interactivePcaScreePlot <-
-                        tryCatch({
-                          renderPlotly({
-                            interactivePrcompPcaScreePlot(pcaPrcompDataInput,
-                                                          input$geoAccessionCode)
-                          })
-                        },
-                        error = function(e) {
-                          # return a safeError if a parsing error occurs
-                          stop(safeError(e))
-                        })
-
                       # Interactive PCA Individual Plot
                       output$interactivePcaIndividualsPlot <-
                         tryCatch({
@@ -1118,9 +1104,6 @@ sourceServer3 <- function(input, output, session) {
           output$interactiveMeanVariancePlot <- renderPlotly({
 
           })
-          output$interactivePcaScreePlot <- renderPlotly({
-
-          })
           output$interactivePcaIndividualsPlot <- renderPlotly({
 
           })
@@ -1374,21 +1357,6 @@ sourceServer3 <- function(input, output, session) {
                 type = "warning"
               )
             } else {
-              # Interactive PCA Scree Plot
-              output$interactivePcaScreePlot <-
-                tryCatch({
-                  renderPlotly({
-                    interactivePrcompPcaScreePlot(pcaPrcompDataInput,
-                                                  geoAccessionCode)
-                  })
-                },
-                error = function(e) {
-                  # return a safeError if a parsing error occurs
-                  stop(safeError(e))
-                })
-
-
-
               # Interactive PCA Individual Plot
               output$interactivePcaIndividualsPlot <-
                 tryCatch({
