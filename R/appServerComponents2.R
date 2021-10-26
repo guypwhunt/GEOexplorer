@@ -157,7 +157,13 @@ sourceServer2 <- function(input, output, session) {
 
 
     # Expression dataset table
-    output$table <- renderDataTable(expressionData())
+    output$table <- tryCatch({
+      renderDataTable(expressionData())
+    },
+    error = function(e) {
+      # return a safeError if a parsing error occurs
+      stop(safeError(e))
+    })
 
 
     # Extract Column Information
@@ -179,9 +185,16 @@ sourceServer2 <- function(input, output, session) {
 
 
     # Experimental conditions table
-    output$columnTable <- renderDataTable({
-      columnInfo()
+    output$columnTable <- tryCatch({
+      renderDataTable({
+        columnInfo()
+      })
+    },
+    error = function(e) {
+      # return a safeError if a parsing error occurs
+      stop(safeError(e))
     })
+
 
     # Exploratory Data Analysis steps
     observeEvent(input$exploratoryDataAnalysisButton, {
@@ -290,9 +303,16 @@ sourceServer2 <- function(input, output, session) {
 
       # Data Visualisation Functions
       # Update if log transformation took place
-      output$logTransformationText <- renderUI({
-        helpText(autoLogInformation)
+      output$logTransformationText <- tryCatch({
+        renderUI({
+          helpText(autoLogInformation)
+        })
+      },
+      error = function(e) {
+        # return a safeError if a parsing error occurs
+        stop(safeError(e))
       })
+
 
       # Generate Differential Gene Expression Table
       for (i in seq_len(nrow(all$knnColumnInfo))) {
@@ -304,53 +324,94 @@ sourceServer2 <- function(input, output, session) {
         ))
       }
 
-      output$knnColumnTable <- renderDataTable(
-        all$knnColumnInfo,
-        escape = FALSE,
-        selection = 'none',
-        server = FALSE,
-        options = list(
-          dom = 't',
-          paging = FALSE,
-          ordering = FALSE
-        ),
-        callback =
-          JS(
-            "table.rows().every(function(i, tab, row) {
+      output$knnColumnTable <-
+        output$logTransformationText <- tryCatch({
+          renderDataTable(
+            all$knnColumnInfo,
+            escape = FALSE,
+            selection = 'none',
+            server = FALSE,
+            options = list(
+              dom = 't',
+              paging = FALSE,
+              ordering = FALSE
+            ),
+            callback =
+              JS(
+                "table.rows().every(function(i, tab, row) {
         var $this = $(this.node());
         $this.attr('id', this.data()[0]);
         $this.addClass('shiny-input-container');
       });
       Shiny.unbindAll(table.table().node());
       Shiny.bindAll(table.table().node());"
+              )
           )
-      )
+        },
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          stop(safeError(e))
+        })
+
+
 
       # Expression dataset table
-      output$table <- renderDataTable({
-        all$knnDataInput
+      output$table <- tryCatch({
+        renderDataTable({
+          all$knnDataInput
+        })
+      },
+      error = function(e) {
+        # return a safeError if a parsing error occurs
+        stop(safeError(e))
       })
 
       # Interactive Box-and-Whisker Plot
-      output$interactiveBoxAndWhiskerPlot <- renderPlotly({
-        interactiveBoxAndWhiskerPlot(all$knnDataInput,
-                                     geoAccessionCode,
-                                     input$platform)
-      })
+      output$interactiveBoxAndWhiskerPlot <-
+        tryCatch({
+          renderPlotly({
+            interactiveBoxAndWhiskerPlot(all$knnDataInput,
+                                         geoAccessionCode,
+                                         input$platform)
+          })
+        },
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          stop(safeError(e))
+        })
+
+
 
       # Interactive Density Plot
-      output$interactiveDensityPlot <- renderPlotly({
-        interactiveDensityPlot(naOmitInput,
-                               geoAccessionCode,
-                               input$platform)
-      })
+      output$interactiveDensityPlot <-
+        tryCatch({
+          renderPlotly({
+            interactiveDensityPlot(naOmitInput,
+                                   geoAccessionCode,
+                                   input$platform)
+          })
+        },
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          stop(safeError(e))
+        })
+
 
       # 3D Interactive Density Plot
-      output$interactiveThreeDDensityPlot <- renderPlotly({
-        interactiveThreeDDensityPlot(naOmitInput,
-                                     geoAccessionCode,
-                                     input$platform)
-      })
+      output$interactiveThreeDDensityPlot <-
+        tryCatch({
+          renderPlotly({
+            interactiveThreeDDensityPlot(naOmitInput,
+                                         geoAccessionCode,
+                                         input$platform)
+          })
+        },
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          stop(safeError(e))
+        })
+
+
 
       # Error handling to prevent errors caused by
       # expression datasets with only one column
@@ -364,27 +425,52 @@ sourceServer2 <- function(input, output, session) {
         )
 
         # Interactive UMAP Plot
-        output$interactiveUmapPlot <- renderPlotly({
-          interactiveUmapPlot(naOmitInput,
-                              input$knn,
-                              geoAccessionCode)
+        output$interactiveUmapPlot <- tryCatch({
+          renderPlotly({
+            interactiveUmapPlot(naOmitInput,
+                                input$knn,
+                                geoAccessionCode)
+          })
+        },
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          stop(safeError(e))
         })
+
+
+
 
         # Heatmap Plot
-        output$interactiveHeatMapPlot <- renderPlotly({
-          interactiveHeatMapPlot(naOmitInput)
+        output$interactiveHeatMapPlot <- tryCatch({
+          renderPlotly({
+            interactiveHeatMapPlot(naOmitInput)
+          })
+        },
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          stop(safeError(e))
         })
 
+
         # Interactive Mean Variance Plot
-        output$interactiveMeanVariancePlot <- renderPlotly({
-          interactiveMeanVariancePlot(naOmitInput,
-                                      geoAccessionCode,
-                                      gsetData)
+        output$interactiveMeanVariancePlot <- tryCatch({
+          renderPlotly({
+            interactiveMeanVariancePlot(naOmitInput,
+                                        geoAccessionCode,
+                                        gsetData)
+          })
+        },
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          stop(safeError(e))
         })
+
+
+
 
         # Error handling to display a notification
         # if there was an error in PCA
-       if (is.null(pcaPrcompDataInput) == TRUE) {
+        if (is.null(pcaPrcompDataInput) == TRUE) {
           showNotification(
             "There was an error performing principal component
                                  analysis on the expression data.
@@ -394,25 +480,46 @@ sourceServer2 <- function(input, output, session) {
           )
         } else {
           # Interactive PCA Scree Plot
-          output$interactivePcaScreePlot <- renderPlotly({
-            interactivePrcompPcaScreePlot(pcaPrcompDataInput,
-                                          geoAccessionCode)
+          output$interactivePcaScreePlot <- tryCatch({
+            renderPlotly({
+              interactivePrcompPcaScreePlot(pcaPrcompDataInput,
+                                            geoAccessionCode)
+            })
+          },
+          error = function(e) {
+            # return a safeError if a parsing error occurs
+            stop(safeError(e))
           })
+
+
 
           # Interactive PCA Individual Plot
           output$interactivePcaIndividualsPlot <-
-            renderPlotly({
-              interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
-                                                  geoAccessionCode,
-                                                  gsetData)
+            tryCatch({
+              renderPlotly({
+                interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
+                                                    geoAccessionCode,
+                                                    gsetData)
+              })
+            },
+            error = function(e) {
+              # return a safeError if a parsing error occurs
+              stop(safeError(e))
             })
 
           # Interactive PCA Variables Plot
-          output$interactivePcaVariablesPlot <-
+          output$interactivePcaVariablesPlot <- tryCatch({
             renderPlotly({
               interactivePrcompPcaVariablesPlot(pcaPrcompDataInput,
                                                 geoAccessionCode)
             })
+          },
+          error = function(e) {
+            # return a safeError if a parsing error occurs
+            stop(safeError(e))
+          })
+
+          # Show notification that Exploratory data analysis finished
           showNotification("Exploratory data analysis complete!",
                            type = "message")
         }
@@ -458,14 +565,11 @@ sourceServer2 <- function(input, output, session) {
 
       # Differential gene expression analysis
       gsms <- tryCatch({
-        calculateEachGroupsSamplesFromDataFrame(
-          as.data.frame(
-            sapply(
-              seq_len(
-                nrow(all$knnColumnInfo)
-              ),
-              function(a)
-                input[[paste0("sel", a)]])))
+        calculateEachGroupsSamplesFromDataFrame(as.data.frame(sapply(seq_len(
+          nrow(all$knnColumnInfo)
+        ),
+        function(a)
+          input[[paste0("sel", a)]])))
 
       }, error = function(cond) {
         return(NULL)
@@ -484,62 +588,58 @@ sourceServer2 <- function(input, output, session) {
         # Error handling to ensure at least one
         # group has two samples and the other group
         # has at least one sample
-        if ((lengths(regmatches(
-          gsms, gregexpr("0", gsms)
-        )) > 0 &
-        lengths(regmatches(
-          gsms, gregexpr("1", gsms)
-        )) > 1) |
-        (lengths(regmatches(
-          gsms, gregexpr("0", gsms)
-        )) > 1 &
-        lengths(regmatches(
-          gsms, gregexpr("1", gsms)
-        )) > 0)) {
-
+        if ((lengths(regmatches(gsms, gregexpr("0", gsms))) > 0 &
+             lengths(regmatches(gsms, gregexpr("1", gsms))) > 1) |
+            (lengths(regmatches(gsms, gregexpr("0", gsms))) > 1 &
+             lengths(regmatches(gsms, gregexpr("1", gsms))) > 0)) {
           fit2 <-
             tryCatch({
-            calculateDifferentialGeneExpressionRnaSeq(
-              all$knnDataInput, gsms,
-              input$limmaPrecisionWeights,
-              input$forceNormalization)
-          }
-          , error = function(cond) {
-            return(NULL)
-          })
+              calculateDifferentialGeneExpressionRnaSeq(
+                all$knnDataInput,
+                gsms,
+                input$limmaPrecisionWeights,
+                input$forceNormalization
+              )
+            }
+            , error = function(cond) {
+              return(NULL)
+            })
           if (is.null(fit2)) {
             # Try again with non-log data
-            knnDataInput <- calculateKnnImpute(all$cpm, input$knnTransformation)
+            knnDataInput <-
+              calculateKnnImpute(all$cpm, input$knnTransformation)
             fit22 <- tryCatch({
               calculateDifferentialGeneExpressionRnaSeq(
-                knnDataInput, gsms,
+                knnDataInput,
+                gsms,
                 input$limmaPrecisionWeights,
-                input$forceNormalization)
+                input$forceNormalization
+              )
             }
             , error = function(cond) {
               return(NULL)
             })
 
             if (is.null(fit22)) {
-            showNotification(
-              "There was an error calculating the
+              showNotification(
+                "There was an error calculating the
                              differential gene expression analysis!",
-              type = "error"
-            )
-          } else
+                type = "error"
+              )
+            } else
             {
-            # Update fit2
-            fit2 <- fit22
+              # Update fit2
+              fit2 <- fit22
 
-            # Show warning that non-log data was used
-            showNotification(
-              "There was an error calculating the
+              # Show warning that non-log data was used
+              showNotification(
+                "There was an error calculating the
                              differential gene expression analysis
               using the log data. So the non-log data was used instead!",
-              type = "warning"
-            )
+                type = "warning"
+              )
             }
-            }
+          }
           if (is.null(fit2) == FALSE) {
             # Convert the UI adjustment into the value needed for the backend
             adjustment <- convertAdjustment(input$pValueAdjustment)
@@ -551,40 +651,85 @@ sourceServer2 <- function(input, output, session) {
 
             # Calculate genes that are upregulated and downregulated
             dT <-
-              calculateDifferentialGeneExpressionSummary(
-                fit2,
-                adjustment,
-                input$significanceLevelCutOff)
+              calculateDifferentialGeneExpressionSummary(fit2,
+                                                         adjustment,
+                                                         input$significanceLevelCutOff)
 
             # Differential gene expression table
-            output$dETable <- renderDataTable({
-              as.data.frame(tT)
-            })
+            output$dETable <- tryCatch({
+                renderDataTable({
+                  as.data.frame(tT)
+                })
+              },
+              error = function(e) {
+                # return a safeError if a parsing error occurs
+                stop(safeError(e))
+              })
 
             # Interactive Histogram Plot
-            output$iDEHistogram <- renderPlotly({
-              interactiveHistogramPlot(fit2, adjustment)
-            })
+            output$iDEHistogram <-
+              tryCatch({
+                renderPlotly({
+                  interactiveHistogramPlot(fit2, adjustment)
+                })
+              },
+              error = function(e) {
+                # return a safeError if a parsing error occurs
+                stop(safeError(e))
+              })
+
 
             # Venn Diagram Plot
-            output$dEVennDiagram <- renderPlot({
-              nonInteractiveVennDiagramPlot(dT)
-            })
+            output$dEVennDiagram <-
+              tryCatch({
+                renderPlot({
+                  nonInteractiveVennDiagramPlot(dT)
+                })
+              },
+              error = function(e) {
+                # return a safeError if a parsing error occurs
+                stop(safeError(e))
+              })
+
+
 
             # Interactive QQ Plot
-            output$iDEQQ <- renderPlotly({
-              interactiveQQPlot(fit2, dT, ct)
-            })
+            output$iDEQQ <-
+              tryCatch({
+                renderPlotly({
+                  interactiveQQPlot(fit2, dT, ct)
+                })
+              },
+              error = function(e) {
+                # return a safeError if a parsing error occurs
+                stop(safeError(e))
+              })
+
+
 
             # Interactive Volcano Plot
-            output$iDEVolcano <- renderPlotly({
-              interactiveVolcanoPlot(fit2, dT, ct)
-            })
+            output$iDEVolcano <-
+              tryCatch({
+                renderPlotly({
+                  interactiveVolcanoPlot(fit2, dT, ct)
+                })
+              },
+              error = function(e) {
+                # return a safeError if a parsing error occurs
+                stop(safeError(e))
+              })
 
             # Interactive Mean Difference Plot
-            output$iDEMd <- renderPlotly({
-              interactiveMeanDifferencePlot(fit2, dT, ct)
+            output$iDEMd <- tryCatch({
+              renderPlotly({
+                interactiveMeanDifferencePlot(fit2, dT, ct)
+              })
+            },
+            error = function(e) {
+              # return a safeError if a parsing error occurs
+              stop(safeError(e))
             })
+
 
             # Download Top Differentially Expressed Genes Table
             output$downloadData <- downloadHandler(
@@ -607,12 +752,12 @@ sourceServer2 <- function(input, output, session) {
             type = "error"
           )
         }
-          }
+      }
 
 
 
     })
 
-    })
-return(datasetInformationServer)
+  })
+  return(datasetInformationServer)
 }
