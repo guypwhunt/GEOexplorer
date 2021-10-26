@@ -546,6 +546,29 @@ sourceExploratoryDataAnalysisUi <- function() {
         plotlyOutput('interactivePcaVariablesPlot')
       ),
       tabPanel(
+        "PCA 3D Variables Plot",
+        br(),
+        span(
+          "Generated using R prcomp and R plotly. Principal component
+              analysis
+              (PCA) reduces the dimensionality of multivariate data to two
+              dimensions that can be visualized graphically with minimal loss
+              of information."
+        ),
+        br(),
+        span(
+          "Eigenvalues correspond to the amount of the variation explained
+              by each principal component (PC). The plot displays the
+              eigenvalues for each variable (column) in the gene expression
+              dataset for the top three principal components (PC1, PC2 and PC3).
+              The plot shows data after log and KNN transformation if they were
+              performed."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactive3DPcaVariablesPlot')
+      ),
+      tabPanel(
         "UMAP Plot",
         br(),
         span(

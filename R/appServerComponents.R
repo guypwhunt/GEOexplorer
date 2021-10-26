@@ -249,6 +249,9 @@ sourceServer <- function(input, output, session) {
           output$interactivePcaVariablesPlot <- renderPlotly({
 
           })
+          output$interactive3DPcaVariablesPlot <- renderPlotly({
+
+          })
           output$dETable <- renderDataTable({
 
           })
@@ -687,6 +690,19 @@ sourceServer <- function(input, output, session) {
                           stop(safeError(e))
                         })
 
+                      # Interactive 3D PCA Variables Plot
+                      output$interactive3DPcaVariablesPlot <-
+                        tryCatch({
+                          renderPlotly({
+                            interactive3DPrcompPcaVariablesPlot(pcaPrcompDataInput,
+                                                              input$geoAccessionCode)
+                          })
+                        },
+                        error = function(e) {
+                          # return a safeError if a parsing error occurs
+                          stop(safeError(e))
+                        })
+
                       showNotification("Exploratory data analysis complete!",
                                        type = "message")
                     }
@@ -1110,6 +1126,9 @@ sourceServer <- function(input, output, session) {
           output$interactivePcaVariablesPlot <- renderPlotly({
 
           })
+          output$interactive3DPcaVariablesPlot <- renderPlotly({
+
+          })
           output$dETable <- renderDataTable({
 
           })
@@ -1376,6 +1395,19 @@ sourceServer <- function(input, output, session) {
                 tryCatch({
                   renderPlotly({
                     interactivePrcompPcaVariablesPlot(pcaPrcompDataInput,
+                                                      geoAccessionCode)
+                  })
+                },
+                error = function(e) {
+                  # return a safeError if a parsing error occurs
+                  stop(safeError(e))
+                })
+
+              # Interactive 3D PCA Variables Plot
+              output$interactive3DPcaVariablesPlot <-
+                tryCatch({
+                  renderPlotly({
+                    interactive3DPrcompPcaVariablesPlot(pcaPrcompDataInput,
                                                       geoAccessionCode)
                   })
                 },
