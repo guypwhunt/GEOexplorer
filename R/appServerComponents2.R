@@ -273,7 +273,7 @@ sourceServer2 <- function(input, output, session) {
           calculateCountsPerMillion(expressionData(), input$cpmTransformation)
       } else if (input$typeOfData == "Microarray")
       {
-        all$cpm < -expressionData()
+        all$cpm <- expressionData()
       }
 
       autoLogInformation <-
@@ -293,7 +293,7 @@ sourceServer2 <- function(input, output, session) {
       # Get knn output column Details
       all$knnColumnInfo <- columnInfo()
       row.names(all$knnColumnInfo) <- all$knnColumnInfo$column
-      all$knnColumnInfo <- all$knnColumnInfo[knnColumns,]
+      all$knnColumnInfo <- all$knnColumnInfo[knnColumns, ]
 
       # Remove all incomplete rows
       naOmitInput <- calculateNaOmit(all$knnDataInput)
@@ -592,54 +592,68 @@ sourceServer2 <- function(input, output, session) {
              lengths(regmatches(gsms, gregexpr("1", gsms))) > 1) |
             (lengths(regmatches(gsms, gregexpr("0", gsms))) > 1 &
              lengths(regmatches(gsms, gregexpr("1", gsms))) > 0)) {
-          fit2 <-
-            tryCatch({
-              calculateDifferentialGeneExpressionRnaSeq(
+          if (input$typeOfData == "RNA Sequencing")
+          {
+            fit2 <-
+              tryCatch({
+                calculateDifferentialGeneExpressionRnaSeq(
+                  all$knnDataInput,
+                  gsms,
+                  input$limmaPrecisionWeights,
+                  input$forceNormalization
+                )
+              }
+              , error = function(cond) {
+                return(NULL)
+              })
+            if (is.null(fit2)) {
+              # Try again with non-log data
+              knnDataInput <-
+                calculateKnnImpute(all$cpm, input$knnTransformation)
+              fit22 <- tryCatch({
+                calculateDifferentialGeneExpressionRnaSeq(
+                  knnDataInput,
+                  gsms,
+                  input$limmaPrecisionWeights,
+                  input$forceNormalization
+                )
+              }
+              , error = function(cond) {
+                return(NULL)
+              })
+
+              if (is.null(fit22)) {
+                showNotification(
+                  "There was an error calculating the
+                             differential gene expression analysis!",
+                  type = "error"
+                )
+              } else
+              {
+                # Update fit2
+                fit2 <- fit22
+
+                # Show warning that non-log data was used
+                showNotification(
+                  "There was an error calculating the
+                             differential gene expression analysis
+              using the log data. So the non-log data was used instead!",
+                  type = "warning"
+                )
+              }
+            }
+          } else if (input$typeOfData == "Microarray") {
+            fit2 <- tryCatch({
+              calculateDifferentialGeneExpressionMicroarray(
                 all$knnDataInput,
                 gsms,
                 input$limmaPrecisionWeights,
-                input$forceNormalization
-              )
+                input$forceNormalization)
             }
             , error = function(cond) {
               return(NULL)
             })
-          if (is.null(fit2)) {
-            # Try again with non-log data
-            knnDataInput <-
-              calculateKnnImpute(all$cpm, input$knnTransformation)
-            fit22 <- tryCatch({
-              calculateDifferentialGeneExpressionRnaSeq(
-                knnDataInput,
-                gsms,
-                input$limmaPrecisionWeights,
-                input$forceNormalization
-              )
             }
-            , error = function(cond) {
-              return(NULL)
-            })
-
-            if (is.null(fit22)) {
-              showNotification(
-                "There was an error calculating the
-                             differential gene expression analysis!",
-                type = "error"
-              )
-            } else
-            {
-              # Update fit2
-              fit2 <- fit22
-
-              # Show warning that non-log data was used
-              showNotification(
-                "There was an error calculating the
-                             differential gene expression analysis
-              using the log data. So the non-log data was used instead!",
-                type = "warning"
-              )
-            }
-          }
           if (is.null(fit2) == FALSE) {
             # Convert the UI adjustment into the value needed for the backend
             adjustment <- convertAdjustment(input$pValueAdjustment)
@@ -657,14 +671,14 @@ sourceServer2 <- function(input, output, session) {
 
             # Differential gene expression table
             output$dETable <- tryCatch({
-                renderDataTable({
-                  as.data.frame(tT)
-                })
-              },
-              error = function(e) {
-                # return a safeError if a parsing error occurs
-                stop(safeError(e))
+              renderDataTable({
+                as.data.frame(tT)
               })
+            },
+            error = function(e) {
+              # return a safeError if a parsing error occurs
+              stop(safeError(e))
+            })
 
             # Interactive Histogram Plot
             output$iDEHistogram <-
@@ -743,6 +757,12 @@ sourceServer2 <- function(input, output, session) {
             showNotification("Differential gene
                            expression analysis complete!",
                              type = "message")
+          } else {
+            showNotification(
+              "There was an error in differential gene expression
+              analysis.",
+              type = "error"
+            )
           }
         } else {
           showNotification(

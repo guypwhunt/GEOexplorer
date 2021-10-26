@@ -211,7 +211,7 @@ calculateDifferentialGeneExpression <-
     sml <- strsplit(gsms, split = "")[[1]]
 
     # Reduce the dimensionality of gset to that of ex
-    gset <- gset[row.names(gset) %in% row.names(ex), ]
+    gset <- gset[row.names(gset) %in% row.names(ex),]
     gset <- gset[, colnames(gset) %in% colnames(ex)]
 
     sel <- which(sml != "X")
@@ -230,12 +230,12 @@ calculateDifferentialGeneExpression <-
     groups <- make.names(c("Group1", "Group2"))
     levels(gs) <- groups
     gset$group <- gs
-    design <- model.matrix(~group + 0, gset)
+    design <- model.matrix( ~ group + 0, gset)
     colnames(design) <- levels(gs)
 
     if (limmaPrecisionWeights == "Yes") {
       nall <- nrow(gset)
-      gset <- gset[complete.cases(exprs(gset)), ]
+      gset <- gset[complete.cases(exprs(gset)),]
 
       # calculate precision weights and show plot of
       # mean-variance trend
@@ -687,8 +687,10 @@ calculateEachGroupsSamplesFromDataFrame <-
 #'
 #' @author Guy Hunt
 #' @noRd
-calculateDifferentialGeneExpressionRnaSeq <- function(
-  rnaExpressionData, gsms, limmaPrecisionWeights, forceNormalization) {
+calculateDifferentialGeneExpressionRnaSeq <- function(rnaExpressionData,
+                                                      gsms,
+                                                      limmaPrecisionWeights,
+                                                      forceNormalization) {
   sml <- strsplit(gsms, split = "")[[1]]
   sel <- which(sml != "X")
   sml <- sml[sel]
@@ -700,7 +702,8 @@ calculateDifferentialGeneExpressionRnaSeq <- function(
   # Normalisation
   if (forceNormalization == "Yes") {
     # normalize data
-    rnaExpressionData <- calcNormFactors(rnaExpressionData, method = "TMM")
+    rnaExpressionData <-
+      calcNormFactors(rnaExpressionData, method = "TMM")
   }
 
   # assign samples to groups and set up design matrix
@@ -709,7 +712,7 @@ calculateDifferentialGeneExpressionRnaSeq <- function(
   levels(gs) <- groups
   rnaExpressionData$samples$group <- gs
 
-  design <- model.matrix(~group + 0, rnaExpressionData$samples)
+  design <- model.matrix( ~ group + 0, rnaExpressionData$samples)
   colnames(design) <- levels(gs)
 
   # Construct contrast matrix
@@ -731,6 +734,246 @@ calculateDifferentialGeneExpressionRnaSeq <- function(
 
   fit2 <- contrasts.fit(fit, cont.matrix)
 
+  fit2 <- eBayes(fit2, 0.01)
+
+  return(fit2)
+}
+
+
+#' A function to calculate differential gene expression for user uploaded
+#' microarray data
+#'
+#' This function allows you to calculate differential gene expression
+#' for RNA seq
+#' @param ex A object containing the gene expression data
+#' @param gsms A string of integers indicating
+#' which group a sample belongs to, which can be calculated form the
+#' calculateEachGroupsSamples() function
+#' @param limmaPrecisionWeights Whether to apply
+#' limma precision weights (vooma)
+#' @param forceNormalization Whether to force normalization
+#'#' @keywords rnaSeq
+#' @importFrom edgeR DGEList calcNormFactors as.matrix.DGEList
+#' @importFrom stats model.matrix
+#' @import limma
+#' @examples
+#' # Define Variables
+#' geoAccessionCode <- ""
+#' platform <- ""
+#' gsetData <- NULL
+#' path <- paste0(".\\", geoAccessionCode)
+#' tarFileName <- paste0(geoAccessionCode, "_RAW.tar")
+#' logTransformation <- "Auto-Detect"
+#' knnTransformation <- "Yes"
+#' cpmTransformation <- "No"
+#' knn <- 2
+#' pValueAdjustment <- "Benjamini & Yekutieli"
+#' limmaPrecisionWeights <- "Yes"
+#' forceNormalization <- "Yes"
+#' platformAnnotation <- "NCBI generated"
+#' significanceLevelCutOff <- 0.5
+#'
+#' # Extract CSVs
+#' expressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer/R/testScripts/microarrayExampleGeneExpressionCsv.csv")
+#' # Get a list of all the columns
+#' columns <- extractSampleNames(expressionData)
+#'
+#'
+#' # NEW CODE
+#' # Preprocess Gene Expression Data
+#' expressionData <- preProcessGeneExpressionData(expressionData)
+#'
+#' ## Data pre-processing
+#' # Raw counts are converted to counts-per-million (CPM)
+#' cpm <- calculateCountsPerMillion(expressionData, cpmTransformation)
+#'
+#' # OLD CODE
+#' # Is log transformation auto applied
+#' autoLogInformation <-
+#'   calculateAutoLogTransformApplication(cpm)
+#'
+#' # Apply log transformation to expression data if necessary
+#' dataInput <-
+#'   calculateLogTransformation(cpm, logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, knnTransformation)
+#'
+#' # Get a list of all the columns in the KNN output
+#' knnColumns <- extractSampleNames(knnDataInput)
+#'
+#' # Get knn output column Details
+#' knnColumnInfo <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer/R/testScripts/microarrayExampleExperimentalConditionsCsv.csv")
+#' row.names(knnColumnInfo) <- knnColumnInfo$column
+#' knnColumnInfo <- knnColumnInfo[knnColumns, ]
+#'
+#' # Remove all incomplete rows
+#' naOmitInput <- calculateNaOmit(knnDataInput)
+#'
+#' # Perform Princomp PCA analysis on KNN transformation
+#' # expression data
+#' pcaPrincompDataInput <- calculatePrincompPca(naOmitInput)
+#'
+#' # Perform Prcomp PCA analysis on KNN transformation expression data
+#' pcaPrcompDataInput <- calculatePrcompPca(naOmitInput)
+#'
+#' # Interactive Box and Whispher Plot
+#' fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform)
+#' fig
+#'
+#' # Interactive Density Plot
+#' fig <- interactiveDensityPlot(naOmitInput, geoAccessionCode, platform)
+#' fig
+#'
+#' # Interactive 3D Density Plot
+#' fig <- interactiveThreeDDensityPlot(naOmitInput,geoAccessionCode, platform)
+#' fig
+#'
+#' # Interactive Mean Variance Plot (ERROR NEEDS gsetData)
+#' fig <- interactiveMeanVariancePlot(naOmitInput, geoAccessionCode, gsetData)
+#' fig
+#'
+#' # Interactive UMAP
+#' fig <- interactiveUmapPlot(naOmitInput, knn, geoAccessionCode)
+#' fig
+#'
+#' # Interactive Princomp PCA Scree Plot
+#' fig <- interactivePrincompPcaScreePlot(pcaPrincompDataInput,
+#'                                        geoAccessionCode)
+#' fig
+#'
+#' # Interactive Princomp PCA Individual Plot
+#' fig <- interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput,
+#'                                              geoAccessionCode,
+#'                                              gsetData)
+#' fig
+#'
+#' # Interactive Princomp PCA Variables Plot
+#' fig <- interactivePrincompPcaVariablesPlot(pcaPrincompDataInput,
+#'                                            geoAccessionCode)
+#' fig
+#'
+#' # Interactive Prcomp PCA Scree Plot
+#' fig <-
+#'   interactivePrcompPcaScreePlot(pcaPrcompDataInput,
+#'                                 geoAccessionCode)
+#' fig
+#'
+#' # Interactive Prcomp PCA Individual Plot
+#' fig <- interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
+#'                                            geoAccessionCode,
+#'                                            gsetData)
+#' fig
+#'
+#' # Interactive Prcomp PCA Variables Plot
+#' fig <- interactivePrcompPcaVariablesPlot(pcaPrcompDataInput,
+#'                                          geoAccessionCode)
+#' fig
+#'
+#' # Correlation Matrix of samples
+#' fig <- interactiveHeatMapPlot(naOmitInput)
+#' fig
+#' ## Differential expression analysis
+#' # Get column names
+#' columnNames <- extractSampleNames(expressionData)
+#'
+#' # Define Groups
+#' numberOfColumns <- length(columnNames)
+#' numberOfColumns <- numberOfColumns + 1
+#' halfNumberOfColumns <- ceiling(numberOfColumns / 2)
+#' i <- 0
+#'
+#' group1 <- c()
+#' group2 <- c()
+#'
+#' for (name in columnNames) {
+#'   if (i < halfNumberOfColumns) {
+#'     group1 <- c(group1, name)
+#'     i <- i + 1
+#'   } else {
+#'     group2 <- c(group2, name)
+#'     i <- i + 1
+#'   }
+#' }
+#'
+#' # Select columns in group2
+#' column2 <- calculateExclusiveColumns(columnNames, group1)
+#'
+#' # Calculate gsms
+#' gsms <- calculateEachGroupsSamples(columnNames, group1, group2)
+#'
+#' # Convert P value adjustment
+#' adjustment <- convertAdjustment(pValueAdjustment)
+#'
+#' # Calculate Differential Gene Expression
+#' fit2 <- calculateDifferentialGeneExpressionMicroarray(knnDataInput,
+#' gsms,
+#' limmaPrecisionWeights,
+#' forceNormalization)
+#' @author Guy Hunt
+#' @noRd
+calculateDifferentialGeneExpressionMicroarray <- function(ex,
+                                                      gsms,
+                                                      limmaPrecisionWeights,
+                                                      forceNormalization) {
+  # group membership for all samples
+  sml <- strsplit(gsms, split = "")[[1]]
+
+  # Reduce the dimensionality of ex to the samples selected
+  sel <- which(sml != "X")
+  sml <- sml[sel]
+  ex <- ex[, sel]
+
+  if (forceNormalization == "Yes") {
+    # normalize data
+    ex <- normalizeBetweenArrays(ex)
+  }
+
+  # assign samples to groups and set up design matrix
+  gs <- factor(sml)
+  groups <- make.names(c("Group1", "Group2"))
+  levels(gs) <- groups
+
+  # Convert ex to expression dataset
+  ex <- ExpressionSet(ex)
+  ex$group <- gs
+  design <- model.matrix( ~ group + 0, ex)
+  colnames(design) <- levels(gs)
+
+  if (limmaPrecisionWeights == "Yes") {
+    nall <- nrow(ex)
+    # Convert ex to matrix
+    ex <- as.matrix(ex)
+    ex <- ex[complete.cases(ex),]
+
+    # calculate precision weights and show plot of
+    # mean-variance trend
+    v <- vooma(ex, design, plot = FALSE)
+    # attach gene annotations
+    v$genes <- as.data.frame(row.names(ex))
+    # Update column name
+    colnames(v$genes) <- list("ID")
+    # fit linear model
+    fit  <- lmFit(v)
+  } else if (limmaPrecisionWeights == "No") {
+    # fit linear model
+    fit <- lmFit(ex, design)
+
+    # attach gene annotations
+    fit$genes <- as.data.frame(row.names(ex))
+
+    # Update column name
+    colnames(fit$genes) <- list("ID")
+  }
+
+  # set up contrasts of interest and recalculate
+  # model coefficients
+  cts <- paste(groups[1], groups[2], sep = "-")
+  cont.matrix <- makeContrasts(contrasts = cts,
+                               levels = design)
+  fit2 <- contrasts.fit(fit, cont.matrix)
+
+  # compute statistics and table of top significant genes
   fit2 <- eBayes(fit2, 0.01)
 
   return(fit2)
