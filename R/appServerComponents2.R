@@ -129,6 +129,7 @@ sourceServer2 <- function(input, output, session) {
     gsetData <- NULL
     geoAccessionCode <- ""
     all <- reactiveValues()
+    ct <- 1
 
     # Extract Expression Data
     expressionData <- reactive({
@@ -497,34 +498,63 @@ sourceServer2 <- function(input, output, session) {
         )) > 0)) {
 
           fit2 <-
-            #tryCatch({
+            tryCatch({
             calculateDifferentialGeneExpressionRnaSeq(
               all$knnDataInput, gsms,
               input$limmaPrecisionWeights,
               input$forceNormalization)
-          #}
-          #, error = function(cond) {
-          #  return(NULL)
-          #})
+          }
+          , error = function(cond) {
+            return(NULL)
+          })
           if (is.null(fit2)) {
+            # Try again with non-log data
+            knnDataInput <- calculateKnnImpute(all$cpm, input$knnTransformation)
+            fit22 <- tryCatch({
+              calculateDifferentialGeneExpressionRnaSeq(
+                knnDataInput, gsms,
+                input$limmaPrecisionWeights,
+                input$forceNormalization)
+            }
+            , error = function(cond) {
+              return(NULL)
+            })
+
+            if (is.null(fit22)) {
             showNotification(
               "There was an error calculating the
                              differential gene expression analysis!",
               type = "error"
             )
-          } else {
+          } else
+            {
+            # Update fit2
+            fit2 <- fit22
+
+            # Show warning that non-log data was used
+            showNotification(
+              "There was an error calculating the
+                             differential gene expression analysis
+              using the log data. So the non-log data was used instead!",
+              type = "warning"
+            )
+            }
+            }
+          if (is.null(fit2) == FALSE) {
+            # Convert the UI adjustment into the value needed for the backend
             adjustment <- convertAdjustment(input$pValueAdjustment)
 
+            # Calculate the top differentially expressed genes
             tT <-
               calculateTopDifferentiallyExpressedGenes(fit2,
                                                        adjustment)
+
+            # Calculate genes that are upregulated and downregulated
             dT <-
               calculateDifferentialGeneExpressionSummary(
                 fit2,
                 adjustment,
                 input$significanceLevelCutOff)
-
-            ct <- 1
 
             # Differential gene expression table
             output$dETable <- renderDataTable({
