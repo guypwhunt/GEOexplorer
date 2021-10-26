@@ -10,6 +10,9 @@
 #' @noRd
 sourceServer <- function(input, output, session) {
   datasetInformationServer <- ({
+    # Define variables
+    all <- reactiveValues()
+
     # Add platform tool tip
     addTooltip(
       session,
@@ -125,7 +128,6 @@ sourceServer <- function(input, output, session) {
       trigger = "hover"
     )
 
-
     # Data Extraction Functions
     # Get the GEO2R data for all platforms
     allGset <- reactive({
@@ -157,23 +159,26 @@ sourceServer <- function(input, output, session) {
     errorCheck <- reactive({
       is.null(allGset())
     })
+    observeEvent(errorCheck(), {
+      if (errorCheck() == FALSE){
+        # Get a list of all the platforms
+        platforms <- reactive({
+          extractPlatforms(allGset())
+        })
 
-    # Get a list of all the platforms
-    platforms <- reactive({
-      extractPlatforms(allGset())
-    })
+        # Select the top platform
+        platform <- reactive({
+          platforms()[1]
+        })
 
-    # Select the top platform
-    platform <- reactive({
-      platforms()[1]
-    })
-
-    # Update Platform Options
-    platformObserve <- observe({
-      updateSelectInput(session,
-                        "platform",
-                        choices = platforms(),
-                        selected = platform())
+        # Update Platform Options
+        platformObserve <- observe({
+          updateSelectInput(session,
+                            "platform",
+                            choices = platforms(),
+                            selected = platform())
+        })
+      }
     })
 
     # Exploratory data analysis visualisation
@@ -269,7 +274,7 @@ sourceServer <- function(input, output, session) {
         )
       } else {
         # Extract the GEO2R data from the specified platform
-        gsetData <- tryCatch({
+        all$gsetData <- tryCatch({
           extractPlatformGset(allGset(), input$platform)
         }, error = function(err) {
           # Return null if there is a error in the getGeoObject function
@@ -279,16 +284,16 @@ sourceServer <- function(input, output, session) {
         # Error handling to prevent users
         # trying to run exploratory data analysis
         # without selecting a platform
-        if (is.null(gsetData) == TRUE) {
+        if (is.null(all$gsetData) == TRUE) {
           showNotification("Please select a platform.",
                            type = "error")
         } else {
           # Extract expression data
-          expressionData <- extractExpressionData(gsetData)
+          all$expressionData <- extractExpressionData(all$gsetData)
 
           # Error handling to prevent issues
           # due to expression data with no samples
-          if (length(expressionData) == 0) {
+          if (length(all$expressionData) == 0) {
             showNotification(
               "The expression data is empty
             and therefore can not be analysed.
@@ -300,17 +305,17 @@ sourceServer <- function(input, output, session) {
           } else {
             # Extract the experiment information
             experimentInformation <-
-              extractExperimentInformation(gsetData)
+              extractExperimentInformation(all$gsetData)
 
             # Extract Column Information
-            columnInfo <- extractSampleDetails(gsetData)
+            columnInfo <- extractSampleDetails(all$gsetData)
 
             # Get a list of all the columns
-            columns <- extractSampleNames(expressionData)
+            columns <- extractSampleNames(all$expressionData)
 
             # Error handling to prevent non-microarray GEO
             # accession codes from being used
-            if (is.double(expressionData) == FALSE) {
+            if (is.double(all$expressionData) == FALSE) {
               showNotification(
                 paste0(
                   paste0(
@@ -336,15 +341,15 @@ sourceServer <- function(input, output, session) {
 
               # Expression dataset table
               output$table <- renderDataTable({
-                expressionData
+                all$expressionData
               })
 
             } else {
               # Data Transformation Functions
               # Apply log transformation to expression
               #data if necessary
-              dataInput <- tryCatch({
-                calculateLogTransformation(expressionData,
+              all$dataInput <- tryCatch({
+                calculateLogTransformation(all$expressionData,
                                            input$logTransformation)
               }, error = function(cond) {
                 return(NULL)
@@ -352,19 +357,19 @@ sourceServer <- function(input, output, session) {
 
               # Error handling to display a notification if
               # there was an error in log transformation
-              if (is.null(dataInput) == TRUE) {
+              if (is.null(all$dataInput) == TRUE) {
                 showNotification(
                   "There was an error applying log
               transformation to the expression data.
                                Therefore, the original dataset will be used.",
                   type = "warning"
                 )
-                dataInput <- expressionData
+                all$dataInput <- all$expressionData
               }
 
               # Is log transformation auto applied
               autoLogInformation <- tryCatch({
-                calculateAutoLogTransformApplication(expressionData)
+                calculateAutoLogTransformApplication(all$expressionData)
               }, error = function(cond) {
                 return(
                   "There was an error calculating if log transformation
@@ -374,8 +379,8 @@ sourceServer <- function(input, output, session) {
 
               # Perform KNN transformation on log
               # expression data if necessary
-              knnDataInput <- tryCatch({
-                calculateKnnImpute(dataInput,
+              all$knnDataInput <- tryCatch({
+                calculateKnnImpute(all$dataInput,
                                    input$knnTransformation)
               }, error = function(cond) {
                 return(NULL)
@@ -383,7 +388,7 @@ sourceServer <- function(input, output, session) {
 
               # Error handling to display a notification if
               # there was an error in KNN imputation
-              if (is.null(knnDataInput) == TRUE) {
+              if (is.null(all$knnDataInput) == TRUE) {
                 showNotification(
                   "There was an error applying KNN imputation to the
                                expression data. Therefore, the log-transformed/
@@ -391,10 +396,10 @@ sourceServer <- function(input, output, session) {
                                will be used instead.",
                   type = "warning"
                 )
-                knnDataInput <- dataInput
+                all$knnDataInput <- all$dataInput
               }
               # Remove all incomplete rows
-              naOmitInput <- calculateNaOmit(knnDataInput)
+              naOmitInput <- calculateNaOmit(all$knnDataInput)
 
               # Perform PCA analysis on KNN transformation
               # expression data using princomp
@@ -421,14 +426,14 @@ sourceServer <- function(input, output, session) {
               })
 
               # KNN Column Set Plot
-              knnColumns <- extractSampleNames(knnDataInput)
-              knnColumnInfo <- extractSampleDetails(gsetData)
+              all$knnColumns <- extractSampleNames(all$knnDataInput)
+              all$knnColumnInfo <- extractSampleDetails(all$gsetData)
 
               # Could turn the below into a function
-              knnColumnInfo <- knnColumnInfo[knnColumns, ]
+              all$knnColumnInfo <- all$knnColumnInfo[all$knnColumns, ]
 
-              for (i in seq_len(nrow(knnColumnInfo))) {
-                knnColumnInfo$group[i] <- as.character(selectInput(
+              for (i in seq_len(nrow(all$knnColumnInfo))) {
+                all$knnColumnInfo$group[i] <- as.character(selectInput(
                   paste0("sel", i),
                   "",
                   choices = unique(c(
@@ -439,7 +444,7 @@ sourceServer <- function(input, output, session) {
               }
 
               output$knnColumnTable <- renderDataTable(
-                knnColumnInfo,
+                all$knnColumnInfo,
                 escape = FALSE,
                 selection = 'none',
                 server = FALSE,
@@ -462,12 +467,12 @@ sourceServer <- function(input, output, session) {
 
               # Expression dataset table
               output$table <- renderDataTable({
-                knnDataInput
+                all$knnDataInput
               })
 
               # Interactive Box-and-Whisker Plot
               output$interactiveBoxAndWhiskerPlot <- renderPlotly({
-                interactiveBoxAndWhiskerPlot(knnDataInput,
+                interactiveBoxAndWhiskerPlot(all$knnDataInput,
                                              input$geoAccessionCode,
                                              input$platform)
               })
@@ -488,10 +493,10 @@ sourceServer <- function(input, output, session) {
 
               # Error handling to prevent errors caused by
               # expression datasets with only one column
-              if (ncol(expressionData) > 1) {
+              if (ncol(all$expressionData) > 1) {
                 # Update UMAP KNN max
                 updateNumericInput(session, inputId = "knn",
-                                   value =2, max = ncol(expressionData))
+                                   value =2, max = ncol(all$expressionData))
 
                 # Interactive UMAP Plot
                 output$interactiveUmapPlot <- renderPlotly({
@@ -509,7 +514,7 @@ sourceServer <- function(input, output, session) {
                 output$interactiveMeanVariancePlot <- renderPlotly({
                   interactiveMeanVariancePlot(naOmitInput,
                                               input$geoAccessionCode,
-                                              gsetData)
+                                              all$gsetData)
                 })
 
                 # Error handling to display a notification
@@ -535,7 +540,7 @@ sourceServer <- function(input, output, session) {
                       interactivePrcompPcaIndividualsPlot(
                         pcaPrcompDataInput,
                         input$geoAccessionCode,
-                        gsetData)
+                        all$gsetData)
                     })
 
                   # Interactive PCA Variables Plot
@@ -605,27 +610,16 @@ sourceServer <- function(input, output, session) {
           type = "error"
         )
       } else {
-        # Extract the GEO2R data from the specified platform
-        gsetData <- tryCatch({
-          extractPlatformGset(allGset(), input$platform)
-        }, error = function(err) {
-          # Return null if there is a error in the getGeoObject function
-          return(NULL)
-        })
-
-        # Error handling to prevent users
+                # Error handling to prevent users
         # trying to run exploratory data analysis
         # without selecting a platform
-        if (is.null(gsetData) == TRUE) {
+        if (is.null(all$gsetData) == TRUE) {
           showNotification("Please select a platform.",
                            type = "error")
         } else {
-          # Extract expression data
-          expressionData <- extractExpressionData(gsetData)
-
           # Error handling to prevent issues
           # due to expression data with no samples
-          if (length(expressionData) == 0) {
+          if (length(all$expressionData) == 0) {
             showNotification(
               "The expression data is empty
             and therefore can not be analysed.
@@ -637,7 +631,7 @@ sourceServer <- function(input, output, session) {
           } else {
             # Error handling to prevent non-microarray GEO
             # accession codes from being used
-            if (is.double(expressionData) == FALSE) {
+            if (is.double(all$expressionData) == FALSE) {
               showNotification(
                 paste0(
                   paste0(
@@ -652,43 +646,17 @@ sourceServer <- function(input, output, session) {
                 type = "error"
               )
             } else {
-              # Data Transformation Functions
-              # Apply log transformation to expression
-              #data if necessary
-              dataInput <- tryCatch({
-                calculateLogTransformation(expressionData,
-                                           input$logTransformation)
-              }, error = function(cond) {
-                return(NULL)
-              })
-
-              # Error handling to display a notification if
+             # Error handling to display a notification if
               # there was an error in log transformation
-              if (is.null(dataInput) == TRUE) {
-                dataInput <- expressionData
+              if (is.null(all$dataInput) == TRUE) {
+                all$dataInput <- all$expressionData
               }
-
-              # Perform KNN transformation on log
-              # expression data if necessary
-              knnDataInput <- tryCatch({
-                calculateKnnImpute(dataInput,
-                                   input$knnTransformation)
-              }, error = function(cond) {
-                return(NULL)
-              })
 
               # Error handling to display a notification if
               # there was an error in KNN imputation
-              if (is.null(knnDataInput) == TRUE) {
-                knnDataInput <- dataInput
+              if (is.null(all$knnDataInput) == TRUE) {
+                all$knnDataInput <- all$dataInput
               }
-
-              # KNN Column Set Plot
-              knnColumns <- extractSampleNames(knnDataInput)
-              knnColumnInfo <- extractSampleDetails(gsetData)
-
-              # Could turn the below into a function
-              knnColumnInfo <- knnColumnInfo[knnColumns,]
 
               # Differential gene expression analysis
               gsms <- tryCatch({
@@ -696,7 +664,7 @@ sourceServer <- function(input, output, session) {
                   as.data.frame(
                     sapply(
                       seq_len(
-                        nrow(knnColumnInfo)
+                        nrow(all$knnColumnInfo)
                       ),
                       function(a)
                         input[[paste0("sel", a)]])))
@@ -735,8 +703,8 @@ sourceServer <- function(input, output, session) {
                       gsms,
                       input$limmaPrecisionWeights,
                       input$forceNormalization,
-                      gsetData,
-                      knnDataInput
+                      all$gsetData,
+                      all$knnDataInput
                     )
                   }
                   , error = function(cond) {
