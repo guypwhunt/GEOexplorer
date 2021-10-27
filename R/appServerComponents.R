@@ -215,9 +215,6 @@ sourceServer <- function(input, output, session) {
 
           # Set all outputs to blank, this resets
           # all the visualizations to blank after clicking analyse
-          output$experimentInfo <- renderUI({
-
-          })
           output$table <- renderDataTable({
 
           })
@@ -284,11 +281,6 @@ sourceServer <- function(input, output, session) {
           output$output6 <- renderUI({
             actionButton("differentialExpressionButtonGeo", "Analyse")
           })
-
-          # Update Experimental information
-          output$experimentInfo <-  renderUI({HTML("<p>Experimental
-          Information is not available when processing
-                                                   user-uploaded files!</p>")})
 
           # Error handling to display a notification if an
           # invalid GEO accession code is used.
@@ -1005,6 +997,10 @@ sourceServer <- function(input, output, session) {
 
       } else if
       (input$dataSource == "Upload") {
+        # Update Experimental information
+        output$experimentInfo <-  renderUI({HTML("<p>Experimental
+          Information is not available when processing
+          user-uploaded files!</p>")})
         # Update UI Side Bar with EDA button
         output$output5 <- renderUI({
           actionButton("exploratoryDataAnalysisButtonUpload", "Analyse")
@@ -1051,6 +1047,7 @@ sourceServer <- function(input, output, session) {
         # Define Variables
         gsetData <- NULL
         geoAccessionCode <- ""
+        platform <- ""
 
         # Extract Expression Data
         expressionData <- reactive({
@@ -1297,7 +1294,7 @@ sourceServer <- function(input, output, session) {
               renderPlotly({
                 interactiveBoxAndWhiskerPlot(all$knnDataInput,
                                              geoAccessionCode,
-                                             input$platform)
+                                             platform)
               })
             },
             error = function(e) {
@@ -1313,7 +1310,7 @@ sourceServer <- function(input, output, session) {
               renderPlotly({
                 interactiveDensityPlot(naOmitInput,
                                        geoAccessionCode,
-                                       input$platform)
+                                       platform)
               })
             },
             error = function(e) {
@@ -1328,7 +1325,7 @@ sourceServer <- function(input, output, session) {
               renderPlotly({
                 interactiveThreeDDensityPlot(naOmitInput,
                                              geoAccessionCode,
-                                             input$platform)
+                                             platform)
               })
             },
             error = function(e) {
