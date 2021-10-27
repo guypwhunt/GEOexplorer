@@ -547,7 +547,7 @@ sourceExploratoryDataAnalysisUi <- function() {
         plotlyOutput('interactivePcaVariablesPlot')
       ),
       tabPanel(
-        "PCA 3D Variables Plot",
+        "3D PCA Variables Plot",
         br(),
         span(
           "Generated using R prcomp and R plotly. Principal component

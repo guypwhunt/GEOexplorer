@@ -181,7 +181,8 @@ sourceServer <- function(input, output, session) {
           })
         })
 
-        # Error handling to prevent invalid GEO series accession codes being used
+        # Error handling to prevent invalid GEO series accession
+        # codes being used
         errorCheck <- reactive({
           is.null(allGset())
         })
@@ -285,8 +286,9 @@ sourceServer <- function(input, output, session) {
           })
 
           # Update Experimental information
-          output$experimentInfo <-  renderUI({HTML("<p>Experimental Information is
-          not available when processing user-uploaded files!</p>")})
+          output$experimentInfo <-  renderUI({HTML("<p>Experimental
+          Information is not available when processing
+                                                   user-uploaded files!</p>")})
 
           # Error handling to display a notification if an
           # invalid GEO accession code is used.
@@ -671,9 +673,10 @@ sourceServer <- function(input, output, session) {
                       output$interactivePcaIndividualsPlot <-
                         tryCatch({
                           renderPlotly({
-                            interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
-                                                                input$geoAccessionCode,
-                                                                all$gsetData)
+                            interactivePrcompPcaIndividualsPlot(
+                              pcaPrcompDataInput,
+                              input$geoAccessionCode,
+                              all$gsetData)
                           })
                         },
                         error = function(e) {
@@ -686,8 +689,9 @@ sourceServer <- function(input, output, session) {
                       output$interactivePcaVariablesPlot <-
                         tryCatch({
                           renderPlotly({
-                            interactivePrcompPcaVariablesPlot(pcaPrcompDataInput,
-                                                              input$geoAccessionCode)
+                            interactivePrcompPcaVariablesPlot(
+                              pcaPrcompDataInput,
+                              input$geoAccessionCode)
                           })
                         },
                         error = function(e) {
@@ -695,18 +699,28 @@ sourceServer <- function(input, output, session) {
                           stop(safeError(e))
                         })
 
-                      # Interactive 3D PCA Variables Plot
-                      output$interactive3DPcaVariablesPlot <-
-                        tryCatch({
-                          renderPlotly({
-                            interactive3DPrcompPcaVariablesPlot(pcaPrcompDataInput,
-                                                              input$geoAccessionCode)
+                      # Only Display 3D PCA Variables Plot if there are more
+                      # than two experimental samples
+                      if (ncol(all$knnDataInput) > 2) {
+                        # Interactive 3D PCA Variables Plot
+                        output$interactive3DPcaVariablesPlot <-
+                          tryCatch({
+                            renderPlotly({
+                              interactive3DPrcompPcaVariablesPlot(
+                                pcaPrcompDataInput,
+                                input$geoAccessionCode)
+                            })
+                          },
+                          error = function(e) {
+                            # return a safeError if a parsing error occurs
+                            stop(safeError(e))
                           })
-                        },
-                        error = function(e) {
-                          # return a safeError if a parsing error occurs
-                          stop(safeError(e))
-                        })
+                      } else {
+                        showNotification("As the gene expression data has less
+                                         than 3 columns, the 3D PCA Variables
+                                         Plot will not be produced.",
+                                         type = "warning")
+                      }
 
                       showNotification("Exploratory data analysis complete!",
                                        type = "message")
@@ -819,9 +833,14 @@ sourceServer <- function(input, output, session) {
 
                   # Differential gene expression analysis
                   gsms <- tryCatch({
-                    calculateEachGroupsSamplesFromDataFrame(as.data.frame(sapply(seq_len(nrow(all$knnColumnInfo)),
-                                                                                 function(a)
-                                                                                   input[[paste0("sel", a)]])))
+                    calculateEachGroupsSamplesFromDataFrame(
+                      as.data.frame(
+                        sapply(
+                          seq_len(
+                            nrow(
+                              all$knnColumnInfo)),
+                          function(a)
+                            input[[paste0("sel", a)]])))
 
                   }, error = function(cond) {
                     return(NULL)
@@ -878,10 +897,12 @@ sourceServer <- function(input, output, session) {
                         tT <-
                           calculateTopDifferentiallyExpressedGenes(fit2,
                                                                    adjustment)
+
                         dT <-
-                          calculateDifferentialGeneExpressionSummary(fit2,
-                                                                     adjustment,
-                                                                     input$significanceLevelCutOff)
+                          calculateDifferentialGeneExpressionSummary(
+                            fit2,
+                            adjustment,
+                            input$significanceLevelCutOff)
                         # Differential gene expression table
                         output$dETable <- tryCatch({
                           renderDataTable({
@@ -1172,7 +1193,8 @@ sourceServer <- function(input, output, session) {
           {
             # Raw counts are converted to counts-per-million (CPM)
             all$cpm <-
-              calculateCountsPerMillion(expressionData(), input$cpmTransformation)
+              calculateCountsPerMillion(expressionData(),
+                                        input$cpmTransformation)
           } else if (input$typeOfData == "Microarray")
           {
             all$cpm <- expressionData()
@@ -1471,7 +1493,8 @@ sourceServer <- function(input, output, session) {
 
           # Differential gene expression analysis
           gsms <- tryCatch({
-            calculateEachGroupsSamplesFromDataFrame(as.data.frame(sapply(seq_len(
+            calculateEachGroupsSamplesFromDataFrame(as.data.frame(
+              sapply(seq_len(
               nrow(all$knnColumnInfo)
             ),
             function(a)
@@ -1562,7 +1585,8 @@ sourceServer <- function(input, output, session) {
                 })
               }
               if (is.null(fit2) == FALSE) {
-                # Convert the UI adjustment into the value needed for the backend
+                # Convert the UI adjustment into the value
+                # needed for the backend
                 adjustment <- convertAdjustment(input$pValueAdjustment)
 
                 # Calculate the top differentially expressed genes
@@ -1572,9 +1596,10 @@ sourceServer <- function(input, output, session) {
 
                 # Calculate genes that are upregulated and downregulated
                 dT <-
-                  calculateDifferentialGeneExpressionSummary(fit2,
-                                                             adjustment,
-                                                             input$significanceLevelCutOff)
+                  calculateDifferentialGeneExpressionSummary(
+                    fit2,
+                    adjustment,
+                    input$significanceLevelCutOff)
 
                 # Differential gene expression table
                 output$dETable <-
@@ -1667,8 +1692,8 @@ sourceServer <- function(input, output, session) {
                            expression analysis complete!",
                                  type = "message")
               } else {
-                showNotification("There was an error in differential gene expression
-              analysis.",
+                showNotification("There was an error in
+                differential gene expression analysis.",
                                  type = "error")
               }
             } else {

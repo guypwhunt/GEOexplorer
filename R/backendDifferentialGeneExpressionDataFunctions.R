@@ -259,6 +259,7 @@ calculateDifferentialGeneExpression <-
 
     # compute statistics and table of top significant genes
     fit2 <- eBayes(fit2, 0.01)
+
     return(fit2)
   }
 
@@ -736,6 +737,9 @@ calculateDifferentialGeneExpressionRnaSeq <- function(rnaExpressionData,
 
   fit2 <- eBayes(fit2, 0.01)
 
+  # Add ID column if it does not exist
+  fit2$ID <- row.names(fit2)
+
   return(fit2)
 }
 
@@ -975,6 +979,9 @@ calculateDifferentialGeneExpressionMicroarray <- function(ex,
 
   # compute statistics and table of top significant genes
   fit2 <- eBayes(fit2, 0.01)
+
+  # Add ID column if it does not exist
+  fit2$ID <- row.names(fit2)
 
   return(fit2)
 }

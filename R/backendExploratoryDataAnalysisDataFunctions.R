@@ -714,7 +714,7 @@ readCsvFile <- function(file) {
 #' This function allows you to preprocess user uploaded gene expression data
 #' @param file A object CSV object
 #' @keywords csv
-#' @importFrom Biobase ExpressionSet
+#' @import Biobase
 #' @examples # Extract CSV
 #' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
 #'
@@ -727,7 +727,7 @@ preProcessGeneExpressionData <- function(expressionData) {
   row.names(expressionData) <- expressionData$Genes
 
   # Delete gene column
-  expressionData <- subset(expressionData, select = -Genes)
+  expressionData <- expressionData[ , !(colnames(expressionData) == "Genes")]
 
   # Convert to matrix
   expressionData <- data.matrix(expressionData)

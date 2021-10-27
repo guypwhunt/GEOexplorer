@@ -95,3 +95,8 @@ Changes in version 0.99.30 (2021-10-13)
 
 Changes in version 0.99.31 (2021-10-15)
 + Test updates
+
+Changes in version 0.99.32 (2021-10-27)
++ User Upload functionality added
++ 3D PCA Variables Plot
+- PCA Scree Plot
