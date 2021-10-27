@@ -691,3 +691,77 @@ calculateNaOmit <- function(ex) {
   ex <- na.omit(ex)
   return(ex)
 }
+
+#' A function to read the input CSVs
+#'
+#' This function allows you to read the input CSVs
+#' @param file A object CSV object
+#' @keywords csv
+#' @importFrom utils read.csv
+#' @examples # Extract CSV
+#' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
+#' @author Guy Hunt
+#' @noRd
+readCsvFile <- function(file) {
+  # read the file
+  dF <- read.csv(file = file, check.names = FALSE)
+
+  return(dF)
+}
+
+#' A function to preprocess user uploaded gene expression data
+#'
+#' This function allows you to preprocess user uploaded gene expression data
+#' @param file A object CSV object
+#' @keywords csv
+#' @import Biobase
+#' @examples # Extract CSV
+#' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
+#'
+#' # Get a list of all the columns
+#' columns <- extractSampleNames(rnaExpressionData)
+#' @author Guy Hunt
+#' @noRd
+preProcessGeneExpressionData <- function(expressionData) {
+  # Replace row names with gene names
+  row.names(expressionData) <- expressionData$Genes
+
+  # Delete gene column
+  expressionData <- expressionData[ , !(colnames(expressionData) == "Genes")]
+
+  # Convert to matrix
+  expressionData <- data.matrix(expressionData)
+
+  # Convert to expression set
+  #expressionData <- ExpressionSet(expressionData)
+
+  return(expressionData)
+}
+
+#' A function to preprocess user uploaded gene expression data
+#'
+#' This function allows you to convert expression data to counts per million
+#' @param expressionData A object containing the gene expression data
+#' @keywords rnaSeq
+#' @importFrom edgeR cpm
+#' @examples # Define Variables
+#' geoAccessionCode <- "GSE63310"
+#'
+#' # Source and extract expression data
+#' rnaExpressionData <- extractGeoSupFiles(geoAccessionCode)
+#'
+#' # Update Sample Names
+#' columns <- calculateSampleNames(rnaExpressionData)
+#'
+#' # Raw counts are converted to counts-per-million (CPM)
+#' cpm <- cpm(rnaExpressionData, "Yes")
+#' @author Guy Hunt
+#' @noRd
+calculateCountsPerMillion <- function(rnaExpressionData, applyCpm) {
+  if (applyCpm == "Yes"){
+  # Raw counts are converted to counts-per-million (CPM)
+  cpm <- cpm(rnaExpressionData)} else {
+    cpm <- rnaExpressionData
+  }
+  return(cpm)
+}

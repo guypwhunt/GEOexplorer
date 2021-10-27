@@ -348,18 +348,22 @@ interactiveMeanVariancePlot <-
     exData <- as.data.frame(exData)
     exData["ID"] <- rownames(ex)
 
-    # Extract gene data
-    geneData <- gset@featureData@data
-
-    # Error handling to catch gset without featureData
-    if (ncol(geneData) > 0) {
-      geneData <- as.data.frame(geneData)
-      combineData <- merge(exData, geneData, by = "ID")
-      colnames(combineData) <-
-        str_replace_all(colnames(combineData), " ", ".")
-      combineData %>% filter("ID" %in% c(rownames(exData)))
-    } else{
+    if (is.null(gset)) {
       combineData <- exData
+    } else {
+      # Extract gene data
+      geneData <- gset@featureData@data
+
+      # Error handling to catch gset without featureData
+      if (ncol(geneData) > 0) {
+        geneData <- as.data.frame(geneData)
+        combineData <- merge(exData, geneData, by = "ID")
+        colnames(combineData) <-
+          str_replace_all(colnames(combineData), " ", ".")
+        combineData %>% filter("ID" %in% c(rownames(exData)))
+      } else{
+        combineData <- exData
+      }
     }
     # Plot mean variance
     fig <-
@@ -528,7 +532,7 @@ interactivePrcompPcaScreePlot <-
           categoryarray = ~ columnNames
         ),
         yaxis = list(title = "Percentage of Explained Variances",
-                     tickformat = "%")
+                     tickformat = ".0%")
       )
 
     fig
@@ -605,7 +609,7 @@ interactivePrincompPcaScreePlot <-
           categoryarray = ~ columnNames
         ),
         yaxis = list(title = "Percentage of Explained Variances",
-                     tickformat = "%")
+                     tickformat = ".0%")
       )
 
     fig
@@ -673,16 +677,20 @@ interactivePrincompPcaIndividualsPlot <-
     pcaDf <- data.frame(pcaData$scores)
     pcaDf <- transform(pcaDf)
     pcaDf["ID"] <- rownames(pcaDf)
-    geneData <- gset@featureData@data
-    # Error handling for gset without featureData@data
-    if (ncol(geneData) > 0) {
-      geneData <- as.data.frame(geneData)
-      combineData <- merge(pcaDf, geneData, by = "ID")
-      combineData %>% filter("ID" %in% c(rownames(pcaDf)))
-      colnames(combineData) <-
-        str_replace_all(colnames(combineData), " ", ".")
-    } else {
+    if (is.null(gset)) {
       combineData <- pcaDf
+    } else {
+      geneData <- gset@featureData@data
+      # Error handling for gset without featureData@data
+      if (ncol(geneData) > 0) {
+        geneData <- as.data.frame(geneData)
+        combineData <- merge(pcaDf, geneData, by = "ID")
+        combineData %>% filter("ID" %in% c(rownames(pcaDf)))
+        colnames(combineData) <-
+          str_replace_all(colnames(combineData), " ", ".")
+      } else {
+        combineData <- pcaDf
+      }
     }
 
 
@@ -994,16 +1002,20 @@ interactivePrcompPcaIndividualsPlot <-
     pcaDf <- data.frame(pcaData$x)
     pcaDf <- transform(pcaDf)
     pcaDf["ID"] <- rownames(pcaDf)
-    geneData <- gset@featureData@data
-    # Error handling for gset without featureData@data
-    if (ncol(geneData) > 0) {
-      geneData <- as.data.frame(geneData)
-      combineData <- merge(pcaDf, geneData, by = "ID")
-      combineData %>% filter("ID" %in% c(rownames(pcaDf)))
-      colnames(combineData) <-
-        str_replace_all(colnames(combineData), " ", ".")
-    } else {
+    if (is.null(gset)) {
       combineData <- pcaDf
+    } else {
+      geneData <- gset@featureData@data
+      # Error handling for gset without featureData@data
+      if (ncol(geneData) > 0) {
+        geneData <- as.data.frame(geneData)
+        combineData <- merge(pcaDf, geneData, by = "ID")
+        combineData %>% filter("ID" %in% c(rownames(pcaDf)))
+        colnames(combineData) <-
+          str_replace_all(colnames(combineData), " ", ".")
+      } else {
+        combineData <- pcaDf
+      }
     }
 
 
@@ -1109,6 +1121,192 @@ interactivePrcompPcaIndividualsPlot <-
     fig
   }
 
+#' A Function to Create an Interactive 3D Scatter Plot of the
+#' prcomp Principle Components Analysis of each of the Genes
+#' in an Expression Object
+#'
+#' This function allows you to plot prcomp PCA expression
+#' results into an interactive 3D Scatter Plot
+#' @param geoAccessionCode A character string representing
+#' a GEO object for download and parsing
+#' @param pcaData An object containing the results of PCA
+#' on a Geo Expression object which can be obtained from the
+#' calculatePrincompPca() function
+#' @param gset The GEO object which can be obtained from the
+#' extractPlatformGset() function
+#' @keywords GEO
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData,
+#' logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Remove all incomplete rows
+#' naOmitInput <- calculateNaOmit(knnDataInput)
+#'
+#' # Perform Prcomp PCA analysis on KNN transformation expression data
+#' pcaPrcompDataInput <- calculatePrcompPca(naOmitInput)
+#'
+#' # Interactive Prcomp PCA Individual Plot
+#' fig <- interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
+#' geoAccessionCode, gsetData)
+#' fig
+#'
+#' @import plotly
+#' @importFrom stringr str_replace_all
+#' @importFrom factoextra get_pca_ind get_eigenvalue
+#' @importFrom scales label_percent
+#' @author Guy Hunt
+#' @noRd
+#' @seealso [calculatePrcompPca()]
+#' for Princomp PCA expression object,
+#' [extractPlatformGset()] for GEO object
+interactive3DPrcompPcaIndividualsPlot <-
+  function(pcaData, geoAccessionCode, gset) {
+    pcaDf <- data.frame(pcaData$x)
+    pcaDf <- transform(pcaDf)
+    pcaDf["ID"] <- rownames(pcaDf)
+    gset <- NULL
+    if (is.null(gset)) {
+      combineData <- pcaDf
+    } else {
+      geneData <- gset@featureData@data
+      # Error handling for gset without featureData@data
+      if (ncol(geneData) > 0) {
+        geneData <- as.data.frame(geneData)
+        combineData <- merge(pcaDf, geneData, by = "ID")
+        combineData %>% filter("ID" %in% c(rownames(pcaDf)))
+        colnames(combineData) <-
+          str_replace_all(colnames(combineData), " ", ".")
+      } else {
+        combineData <- pcaDf
+      }
+    }
+
+    individualsStats <- get_pca_ind(pcaData)
+    eigenValue <- get_eigenvalue(pcaData)
+
+    fig <-
+      plot_ly(
+        combineData,
+        x =  ~ PC1,
+        y =  ~ PC2,
+        z =  ~ PC3,
+        mode = "markers",
+        type = 'scatter3d',
+        text =
+          if ('ID' %in% colnames(combineData)) {
+            if ('Gene.symbol' %in% colnames(combineData)) {
+              if ('Gene.title' %in% colnames(combineData)) {
+                if ('Gene.ID' %in% colnames(combineData)) {
+                  ~ paste(
+                    'ID: ',
+                    ID,
+                    '<br></br>',
+                    'Gene Symbol: ',
+                    Gene.symbol,
+                    '<br></br>',
+                    'Gene Title: ',
+                    Gene.title,
+                    '<br></br>',
+                    'Gene ID: ',
+                    Gene.ID,
+                    '<br></br>',
+                    'Dimension 1: ',
+                    PC1,
+                    '<br></br>',
+                    'Dimension 2: ',
+                    PC2
+                  )
+                } else {
+                  ~ paste(
+                    'ID: ',
+                    ID,
+                    '<br></br>',
+                    'Gene Symbol: ',
+                    Gene.symbol,
+                    '<br></br>',
+                    'Gene Title: ',
+                    Gene.title,
+                    '<br></br>',
+                    'Dimension 1: ',
+                    PC1,
+                    '<br></br>',
+                    'Dimension 2: ',
+                    PC2
+                  )
+                }
+              } else {
+                ~ paste(
+                  'ID: ',
+                  ID,
+                  '<br></br>',
+                  'Gene Symbol: ',
+                  Gene.symbol,
+                  '<br></br>',
+                  'Dimension 1: ',
+                  PC1,
+                  '<br></br>',
+                  'Dimension 2: ',
+                  PC2
+                )
+              }
+            } else {
+              ~ paste('ID: ',
+                      ID,
+                      '<br></br>',
+                      'Dimension 1: ',
+                      PC1,
+                      '<br></br>',
+                      'Dimension 2: ',
+                      PC2)
+            }
+          } else {
+            ~ paste('Dimension 1: ', PC1, '<br></br>',
+                    'Dimension 2: ', PC2)
+          }
+        ,
+        hoverinfo = text,
+        marker = list(color = ~ individualsStats$cos2[, 1],
+                      size = 3)
+      )
+
+    fig <-
+      layout(
+        fig,
+        title = paste(geoAccessionCode, "PCA Individuals Plot"),
+        scene = list(
+          xaxis = list(title = paste(
+            "PC1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
+          )),
+          yaxis = list(title = paste(
+            "PC2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
+          )),
+          zaxis = list(title = paste(
+            "PC3", label_percent(accuracy = 0.1)(eigenValue[3, 2] / 100)
+          ))
+        )
+      )
+    fig
+  }
+
 #' A Function to Create an Interactive Scatter Plot
 #' of the Principle Components Analysis of each of the
 #' Samples in an Expression Object
@@ -1191,6 +1389,98 @@ interactivePrcompPcaVariablesPlot <-
         yaxis = list(title = paste(
           "PC2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
         ))
+      )
+    fig
+  }
+
+#' A Function to Create an Interactive 3D Scatter Plot
+#' of the Principle Components Analysis of each of the
+#' Samples in an Expression Object
+#'
+#' This function allows you to plot PCA expression results
+#' into an interactive 3D Scatter Plot
+#' @param geoAccessionCode A character string representing a
+#' GEO object for download and parsing
+#' @param pcaData An object containing the results of PCA on
+#' a Geo Expression object which can be obtained from the
+#' calculatePrincompPca() function
+#' @keywords GEO
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData,
+#' logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Remove all incomplete rows
+#' naOmitInput <- calculateNaOmit(knnDataInput)
+#' # Perform Prcomp PCA analysis on KNN transformation expression data
+#' pcaPrcompDataInput <- calculatePrcompPca(naOmitInput)
+#'
+#' # Interactive Prcomp PCA Variables Plot
+#' fig <- interactivePrcompPcaVariablesPlot(pcaPrcompDataInput,
+#' geoAccessionCode)
+#' fig
+#'
+#' @import plotly
+#' @importFrom factoextra get_pca_var get_eigenvalue
+#' @importFrom scales label_percent
+#' @author Guy Hunt
+#' @noRd
+#' @seealso [calculatePrcompPca()]
+#' for Princomp PCA expression object,
+#' [extractPlatformGset()] for GEO object
+interactive3DPrcompPcaVariablesPlot <-
+  function(pcaData, geoAccessionCode) {
+    variableStats <- get_pca_var(pcaData)
+    eigenValue <- get_eigenvalue(pcaData)
+    pcaData <- as.data.frame(unclass(pcaData$rotation))
+
+    fig <-
+      plot_ly(
+        pcaData,
+        x =  ~ PC1,
+        y =  ~ PC2,
+        z =  ~ PC2,
+        text = rownames(pcaData),
+        mode = "markers",
+        type = 'scatter3d'
+        ,
+        marker = list(size = 10, color = ~ variableStats$contrib[, 1]),
+        name = rownames(pcaData)
+      )
+
+    fig <-
+      layout(
+        fig,
+        title = paste(geoAccessionCode, "PCA Variables Plot"),
+        scene = list(
+        xaxis = list(title = paste(
+          "PC1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
+        )),
+        yaxis = list(title = paste(
+          "PC2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
+        )),
+        zaxis = list(title = paste(
+          "PC3", label_percent(accuracy = 0.1)(eigenValue[3, 2] / 100)
+        ))
+      )
       )
     fig
   }

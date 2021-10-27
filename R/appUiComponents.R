@@ -9,22 +9,18 @@
 #' @noRd
 sourceSideBarUi <- function() {
   sideBarUi <- sidebarPanel(
-    helpText(
-      "Input a GEO series accession code (GSEXXXX format)
-      to examine the gene expression data.
-      This can be obtained from https://www.ncbi.nlm.nih.gov/gds."
-    ),
     add_busy_spinner(spin = "fading-circle"),
-    textInput("geoAccessionCode", "GEO accession code", ""),
-    helpText("Select the platform of interest."),
-    selectInput("platform", "Platform", c()),
-    bsTooltip(
-      id = "platform",
-      title = "Each platform relates to a different microarray experiment
-      performed in the study.",
-      placement = "top",
-      trigger = "hover"
+    radioButtons(
+      "dataSource",
+      label = "Would you like to upload the gene expression data
+      or source the data from GEO?",
+      choices = list("GEO", "Upload"),
+      selected = "GEO"
     ),
+    uiOutput("output1"),
+    uiOutput("output2"),
+    uiOutput("output3"),
+    uiOutput("output4"),
     radioButtons(
       "logTransformation",
       label = "Apply log transformation to the data:",
@@ -50,7 +46,6 @@ sourceSideBarUi <- function() {
       trigger = "hover"
     ),
     uiOutput("logTransformationText"),
-    br(),
     radioButtons(
       "knnTransformation",
       label = "Apply k-nearest neighbors (KNN) algorithm to predict
@@ -67,7 +62,8 @@ sourceSideBarUi <- function() {
       placement = "top",
       trigger = "hover"
     ),
-    actionButton("exploratoryDataAnalysisButton", "Analyse")
+    uiOutput("output5")
+    #actionButton("exploratoryDataAnalysisButton", "Analyse")
   )
   return(sideBarUi)
 }
@@ -279,7 +275,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
                 placement = "top",
                 trigger = "hover"
               ),
-              uiOutput("differentialExpressionButton")
+              uiOutput("output6")
             )
           )
         ),
@@ -422,25 +418,6 @@ sourceExploratoryDataAnalysisUi <- function() {
     tabsetPanel(
       type = "tabs",
       tabPanel(
-        "Box-and-Whisper Plot",
-        br(),
-        span(
-          "Generated using R plotly.
-          The plot below displays the distribution of the values
-          of the genes in the dataset.
-          The quartiles are calculated using the linear method.
-          Viewing the distribution can be useful for determining if the
-          data in the dataset is suitable for differential expression analysis.
-          Generally, median-centred values are indicative that the data is
-          normalized and cross-comparable.
-          The plot shows data after log and KNN transformation if they were
-          performed."
-        ),
-        br(),
-        br(),
-        plotlyOutput('interactiveBoxAndWhiskerPlot')
-      ),
-      tabPanel(
         "Expression Density Plot",
         br(),
         span(
@@ -477,6 +454,25 @@ sourceExploratoryDataAnalysisUi <- function() {
         plotlyOutput('interactiveThreeDDensityPlot')
       ),
       tabPanel(
+        "Box-and-Whisper Plot",
+        br(),
+        span(
+          "Generated using R plotly.
+          The plot below displays the distribution of the values
+          of the genes in the dataset.
+          The quartiles are calculated using the linear method.
+          Viewing the distribution can be useful for determining if the
+          data in the dataset is suitable for differential expression analysis.
+          Generally, median-centred values are indicative that the data is
+          normalized and cross-comparable.
+          The plot shows data after log and KNN transformation if they were
+          performed."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactiveBoxAndWhiskerPlot')
+      ),
+      tabPanel(
         "Mean-Variance Plot",
         br(),
         span(
@@ -491,6 +487,87 @@ sourceExploratoryDataAnalysisUi <- function() {
         br(),
         br(),
         plotlyOutput('interactiveMeanVariancePlot')
+      ),
+      tabPanel(
+        "PCA Individuals Plot",
+        br(),
+        span(
+          "Generated using R prcomp and R plotly.
+              Principal component analysis (PCA)
+              reduces the dimensionality of multivariate data to two dimensions
+              that
+              can be visualized graphically with minimal loss of information."
+        ),
+        br(),
+        span(
+          "Eigenvalues correspond to the amount of the variation explained
+              by each principal component (PC). The plot displays the
+              eigenvalues
+              for each individual (row) in the gene expression dataset for the
+              top two principal components (PC1 and PC2). The plot shows data
+              after log and KNN transformation if they were performed."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactivePcaIndividualsPlot')
+      ),
+      tabPanel(
+        "Heatmap Plot",
+        br(),
+        span(
+          "Generated using R cor and heatmaply.
+          The plot below compares the correlation values of the samples in a
+          heatmap."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactiveHeatMapPlot')
+      ),
+      tabPanel(
+        "PCA Variables Plot",
+        br(),
+        span(
+          "Generated using R prcomp and R plotly. Principal component
+              analysis
+              (PCA) reduces the dimensionality of multivariate data to two
+              dimensions that can be visualized graphically with minimal loss
+              of information."
+        ),
+        br(),
+        span(
+          "Eigenvalues correspond to the amount of the variation explained
+              by each principal component (PC). The plot displays the
+              eigenvalues for each variable (column) in the gene expression
+              dataset for the top two principal components (PC1 and PC2).
+              The plot shows data after log and KNN transformation if they were
+              performed."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactivePcaVariablesPlot')
+      ),
+      tabPanel(
+        "3D PCA Variables Plot",
+        br(),
+        span(
+          "Generated using R prcomp and R plotly. Principal component
+              analysis
+              (PCA) reduces the dimensionality of multivariate data to two
+              dimensions that can be visualized graphically with minimal loss
+              of information."
+        ),
+        br(),
+        span(
+          "Eigenvalues correspond to the amount of the variation explained
+              by each principal component (PC). The plot displays the
+              eigenvalues for each variable (column) in the gene expression
+              dataset for the top three principal components (PC1, PC2 and PC3).
+              The plot shows data after log and KNN transformation if they were
+              performed."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactive3DPcaVariablesPlot')
       ),
       tabPanel(
         "UMAP Plot",
@@ -515,92 +592,6 @@ sourceExploratoryDataAnalysisUi <- function() {
         ),
         br(),
         plotlyOutput('interactiveUmapPlot')
-      ),
-      tabPanel(
-        "Heatmap Plot",
-        br(),
-        span(
-          "Generated using R cor and heatmaply.
-          The plot below compares the correlation values of the samples in a
-          heatmap."
-        ),
-        br(),
-        br(),
-        plotlyOutput('interactiveHeatMapPlot')
-      ),
-      tabPanel(
-        "PCA",
-        tabsetPanel(
-          type = "tabs",
-          tabPanel(
-            "Scree Plot",
-            br(),
-            span(
-              "Generated using R prcomp and plotly.
-              Principal component analysis (PCA) reduces the
-              dimensionality of multivariate data to two dimensions
-              that can be visualized graphically with minimal loss
-              of information."
-            ),
-            br(),
-            span(
-              "Eigenvalues correspond to the amount of the variation
-              explained by each principal component (PC).
-              The plot displays the eigenvalues against the number of
-              dimensions. The plot shows data after log and
-              KNN transformation if they were performed."
-            ),
-            br(),
-            br(),
-            plotlyOutput('interactivePcaScreePlot')
-          ),
-          tabPanel(
-            "Individuals Plot",
-            br(),
-            span(
-              "Generated using R prcomp and R plotly.
-              Principal component analysis (PCA)
-              reduces the dimensionality of multivariate data to two dimensions
-              that
-              can be visualized graphically with minimal loss of information."
-            ),
-            br(),
-            span(
-              "Eigenvalues correspond to the amount of the variation explained
-              by each principal component (PC). The plot displays the
-              eigenvalues
-              for each individual (row) in the gene expression dataset for the
-              top two principal components (PC1 and PC2). The plot shows data
-              after log and KNN transformation if they were performed."
-            ),
-            br(),
-            br(),
-            plotlyOutput('interactivePcaIndividualsPlot')
-          ),
-          tabPanel(
-            "Variables Plot",
-            br(),
-            span(
-              "Generated using R prcomp and R plotly. Principal component
-              analysis
-              (PCA) reduces the dimensionality of multivariate data to two
-              dimensions that can be visualized graphically with minimal loss
-              of information."
-            ),
-            br(),
-            span(
-              "Eigenvalues correspond to the amount of the variation explained
-              by each principal component (PC). The plot displays the
-              eigenvalues for each variable (column) in the gene expression
-              dataset for the top two principal components (PC1 and PC2).
-              The plot shows data after log and KNN transformation if they were
-              performed."
-            ),
-            br(),
-            br(),
-            plotlyOutput('interactivePcaVariablesPlot')
-          )
-        )
       )
     )
   )
