@@ -62,7 +62,8 @@ sourceSideBarUi <- function() {
       placement = "top",
       trigger = "hover"
     ),
-    actionButton("exploratoryDataAnalysisButton", "Analyse")
+    uiOutput("output5")
+    #actionButton("exploratoryDataAnalysisButton", "Analyse")
   )
   return(sideBarUi)
 }
@@ -274,7 +275,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
                 placement = "top",
                 trigger = "hover"
               ),
-              uiOutput("differentialExpressionButton")
+              uiOutput("output6")
             )
           )
         ),

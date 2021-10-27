@@ -6,6 +6,7 @@
 #' @importFrom DT renderDataTable JS
 #' @importFrom shinyBS addTooltip
 #' @importFrom utils write.csv
+#' @importFrom htmltools HTML
 #' @author Guy Hunt
 #' @noRd
 sourceServer <- function(input, output, session) {
@@ -122,6 +123,10 @@ sourceServer <- function(input, output, session) {
     observeEvent(input$dataSource, {
       # Update UI side bar with GEO widgets
       if (input$dataSource == "GEO") {
+        # Update UI Side Bar with EDA button
+        output$output5 <- renderUI({
+          actionButton("exploratoryDataAnalysisButtonGeo", "Analyse")
+        })
         output$output1 <- renderUI({
           helpText(
             "Input a GEO series accession code (GSEXXXX format)
@@ -203,7 +208,7 @@ sourceServer <- function(input, output, session) {
         })
 
         # Exploratory data analysis visualisation
-        observeEvent(input$exploratoryDataAnalysisButton, {
+        observeEvent(input$exploratoryDataAnalysisButtonGeo, {
           # Clear unused memory
           gc()
 
@@ -275,13 +280,13 @@ sourceServer <- function(input, output, session) {
           # Button Appear, this prevents users
           # trying to perform differential gene expression analysis
           # prior to exploratory data analysis
-          output$differentialExpressionButton <- renderUI({
-            actionButton("differentialExpressionButton", "Analyse")
+          output$output6 <- renderUI({
+            actionButton("differentialExpressionButtonGeo", "Analyse")
           })
 
-          # Update Experimental informatin
-          output$experimentInfo <-  renderUI({"Experimental Information is
-          not available when processing user-uploaded files!"})
+          # Update Experimental information
+          output$experimentInfo <-  renderUI({HTML("<p>Experimental Information is
+          not available when processing user-uploaded files!</p>")})
 
           # Error handling to display a notification if an
           # invalid GEO accession code is used.
@@ -724,7 +729,7 @@ sourceServer <- function(input, output, session) {
         })
 
         # Differential Gene Expression Functions
-        observeEvent(input$differentialExpressionButton, {
+        observeEvent(input$differentialExpressionButtonGeo, {
           # Clear unused memory
           gc()
 
@@ -979,6 +984,10 @@ sourceServer <- function(input, output, session) {
 
       } else if
       (input$dataSource == "Upload") {
+        # Update UI Side Bar with EDA button
+        output$output5 <- renderUI({
+          actionButton("exploratoryDataAnalysisButtonUpload", "Analyse")
+        })
         # Update UI side bar with User Upload widgets
         output$output1 <- renderUI({
           fileInput("file2", "Upload CSV Experimental Conditions File",
@@ -994,7 +1003,7 @@ sourceServer <- function(input, output, session) {
                                "text/comma-separated-values,text/plain",
                                ".csv"))
         })
-        output$output <- renderUI({
+        output$output3 <- renderUI({
           radioButtons(
             "typeOfData",
             label = "Microarray or RNA Sequencing Data?",
@@ -1090,7 +1099,7 @@ sourceServer <- function(input, output, session) {
 
 
         # Exploratory Data Analysis steps
-        observeEvent(input$exploratoryDataAnalysisButton, {
+        observeEvent(input$exploratoryDataAnalysisButtonUpload, {
           # Clear unused memory
           gc()
 
@@ -1152,8 +1161,8 @@ sourceServer <- function(input, output, session) {
           # Button Appear, this prevents users
           # trying to perform differential gene expression analysis
           # prior to exploratory data analysis
-          output$differentialExpressionButton <- renderUI({
-            actionButton("differentialExpressionButton", "Analyse")
+          output$output6 <- renderUI({
+            actionButton("differentialExpressionButtonUpload", "Analyse")
           })
 
           # Get a list of all the columns
@@ -1433,7 +1442,7 @@ sourceServer <- function(input, output, session) {
           }
         })
 
-        observeEvent(input$differentialExpressionButton, {
+        observeEvent(input$differentialExpressionButtonUpload, {
           # Clear unused memory
           gc()
 
