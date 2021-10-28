@@ -119,7 +119,10 @@ sourceDatasetInformationUi <- function() {
                                          each row relates to a gene, and each
                                          value relates to a gene expression
                                          value for that gene under that
-                                         experimental condition"
+                                         experimental condition. The values
+                                         are displayed post KNN imputation,
+                                         count per million transformation and
+                                         log transformation if selected."
                                        ),
                                        br(),
                                        br(),
@@ -378,7 +381,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
             (-log10 P value) versus magnitude of change (log2 fold change)
             and is useful for visualizing differentially expressed genes.
             Highlighted genes are significantly differentially expressed at
-            the selected adjusted p-value cutoff value"
+            the selected adjusted p-value cutoff value."
           ),
           br(),
           br(),
@@ -403,9 +406,12 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           "Heatmap Plot",
           br(),
           span(
-            "Generated using R heatmaply
+            "Generated using R heatmaply.
             A heatmap plot displaying the top differentially expressed genes
-            expression values for each experimental condition."
+            expression values for each experimental condition. The expression
+            values are displayed post KNN imputation, count per million
+            transformation, log transformation, normalisation and limma
+            precision weights if selected."
           ),
           br(),
           br(),
@@ -445,14 +451,13 @@ sourceExploratoryDataAnalysisUi <- function() {
           "Generated using R plotly.
           The plot below displays the distribution of the values
           of the genes in the dataset.
-          This plot complements the boxplot in
-          checking for data normalization before
-          differential expression analysis. If
+          This plot is useful for identifying if the data is normalised before
+          performing differential expression analysis. If
           density curves are similar from gene
           to gene, it is indicative that the data
           is normalized and cross-comparable.
-          The plot shows data after log and KNN
-          transformation if they were performed."
+          The values are displayed post KNN imputation, count per million
+          transformation and log transformation if selected."
         ),
         br(),
         br(),
@@ -464,11 +469,13 @@ sourceExploratoryDataAnalysisUi <- function() {
         span(
           "Generated using R plotly.
           The plot below displays the distribution of the values of the genes
-          in the dataset. This plot complements the boxplot in checking
-          for data normalization before differential expression analysis.
+          in the dataset. This plot is useful for identifying if the data is
+          normalised before
+          performing differential expression analysis.
           If density curves are similar from gene to gene, it is indicative
-          that the data is normalized and cross-comparable. The plot shows
-          data after log and KNN transformation if they were performed."
+          that the data is normalized and cross-comparable. The values are
+          displayed post KNN imputation, count per million
+          transformation and log transformation if selected."
         ),
         br(),
         br(),
@@ -486,8 +493,8 @@ sourceExploratoryDataAnalysisUi <- function() {
           data in the dataset is suitable for differential expression analysis.
           Generally, median-centred values are indicative that the data is
           normalized and cross-comparable.
-          The plot shows data after log and KNN transformation if they were
-          performed."
+          The values are displayed post KNN imputation, count per million
+          transformation and log transformation if selected."
         ),
         br(),
         br(),
@@ -502,8 +509,8 @@ sourceExploratoryDataAnalysisUi <- function() {
           of the expression data, after fitting a linear model.
           It can help show if there is a lot of variation in the data.
           Each point represents a gene.
-          The plot shows data after log and KNN transformation if they were
-          performed."
+          The values are displayed post KNN imputation, count per million
+          transformation and log transformation if selected."
         ),
         br(),
         br(),
@@ -525,8 +532,9 @@ sourceExploratoryDataAnalysisUi <- function() {
               by each principal component (PC). The plot displays the
               eigenvalues
               for each individual (row) in the gene expression dataset for the
-              top two principal components (PC1 and PC2). The plot shows data
-              after log and KNN transformation if they were performed."
+              top two principal components (PC1 and PC2). The values are
+              displayed post KNN imputation, count per million
+              transformation and log transformation if selected."
         ),
         br(),
         br(),
@@ -538,7 +546,8 @@ sourceExploratoryDataAnalysisUi <- function() {
         span(
           "Generated using R cor and heatmaply.
           The plot below compares the correlation values of the samples in a
-          heatmap."
+          heatmap. The values are displayed post KNN imputation, count per
+          million transformation and log transformation if selected."
         ),
         br(),
         br(),
@@ -549,10 +558,9 @@ sourceExploratoryDataAnalysisUi <- function() {
         br(),
         span(
           "Generated using R prcomp and R plotly. Principal component
-              analysis
-              (PCA) reduces the dimensionality of multivariate data to two
-              dimensions that can be visualized graphically with minimal loss
-              of information."
+          analysis (PCA) reduces the dimensionality of multivariate data to two
+          dimensions that can be visualized graphically with minimal loss
+          of information."
         ),
         br(),
         span(
@@ -560,8 +568,8 @@ sourceExploratoryDataAnalysisUi <- function() {
               by each principal component (PC). The plot displays the
               eigenvalues for each variable (column) in the gene expression
               dataset for the top two principal components (PC1 and PC2).
-              The plot shows data after log and KNN transformation if they were
-              performed."
+              The values are displayed post KNN imputation, count per million
+              transformation and log transformation if selected."
         ),
         br(),
         br(),
@@ -572,19 +580,20 @@ sourceExploratoryDataAnalysisUi <- function() {
         br(),
         span(
           "Generated using R prcomp and R plotly. Principal component
-              analysis
-              (PCA) reduces the dimensionality of multivariate data to two
-              dimensions that can be visualized graphically with minimal loss
-              of information."
+          analysis
+          (PCA) reduces the dimensionality of multivariate data to two
+          dimensions that can be visualized graphically with minimal loss
+          of information."
         ),
         br(),
         span(
           "Eigenvalues correspond to the amount of the variation explained
               by each principal component (PC). The plot displays the
               eigenvalues for each variable (column) in the gene expression
-              dataset for the top three principal components (PC1, PC2 and PC3).
-              The plot shows data after log and KNN transformation if they were
-              performed."
+              dataset for the top three principal components
+              (PC1, PC2 and PC3).
+              The values are displayed post KNN imputation, count per million
+              transformation and log transformation if selected."
         ),
         br(),
         br(),
@@ -599,8 +608,8 @@ sourceExploratoryDataAnalysisUi <- function() {
           is a dimension reduction technique useful for visualizing
           how genes are related to each other. The number of nearest
           neighbours used in the calculation is indicated in the graph.
-          The plot shows data after log and KNN transformation
-          if they were performed."
+          The values are displayed post KNN imputation, count per million
+          transformation and log transformation if selected."
         ),
         br(),
         br(),

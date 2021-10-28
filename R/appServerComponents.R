@@ -1017,9 +1017,9 @@ sourceServer <- function(input, output, session) {
       } else if
       (input$dataSource == "Upload") {
         # Update Experimental information
-        output$experimentInfo <-  renderUI({HTML("<p>Experimental
+        output$experimentInfo <-  renderUI({HTML("<b>Experimental
           Information is not available when processing
-          user-uploaded files!</p>")})
+          user-uploaded files!</b>")})
         # Update UI Side Bar with EDA button
         output$output5 <- renderUI({
           actionButton("exploratoryDataAnalysisButtonUpload", "Analyse")

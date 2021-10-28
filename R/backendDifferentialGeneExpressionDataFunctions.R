@@ -751,9 +751,8 @@ calculateDifferentialGeneExpressionRnaSeq <- function(rnaExpressionData,
   } else {
     # fit linear model
     fit <- lmFit(as.matrix.DGEList(rnaExpressionData), design)
-
     # Update results
-    results$ex <- rnaExpressionData
+    results$ex <- rnaExpressionData$counts
   }
 
   fit2 <- contrasts.fit(fit, cont.matrix)
@@ -804,7 +803,8 @@ calculateDifferentialGeneExpressionRnaSeq <- function(rnaExpressionData,
 #' significanceLevelCutOff <- 0.5
 #'
 #' # Extract CSVs
-#' expressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer/R/testScripts/microarrayExampleGeneExpressionCsv.csv")
+#' expressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer
+#' /R/testScripts/microarrayExampleGeneExpressionCsv.csv")
 #' # Get a list of all the columns
 #' columns <- extractSampleNames(expressionData)
 #'
@@ -833,7 +833,8 @@ calculateDifferentialGeneExpressionRnaSeq <- function(rnaExpressionData,
 #' knnColumns <- extractSampleNames(knnDataInput)
 #'
 #' # Get knn output column Details
-#' knnColumnInfo <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer/R/testScripts/microarrayExampleExperimentalConditionsCsv.csv")
+#' knnColumnInfo <- readCsvFile("C:/Users/guypw/OneDrive/Documents/
+#' GEOexplorer/R/testScripts/microarrayExampleExperimentalConditionsCsv.csv")
 #' row.names(knnColumnInfo) <- knnColumnInfo$column
 #' knnColumnInfo <- knnColumnInfo[knnColumns, ]
 #'
@@ -848,7 +849,8 @@ calculateDifferentialGeneExpressionRnaSeq <- function(rnaExpressionData,
 #' pcaPrcompDataInput <- calculatePrcompPca(naOmitInput)
 #'
 #' # Interactive Box and Whispher Plot
-#' fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode, platform)
+#' fig <- interactiveBoxAndWhiskerPlot(knnDataInput, geoAccessionCode,
+#' platform)
 #' fig
 #'
 #' # Interactive Density Plot
@@ -962,10 +964,14 @@ calculateDifferentialGeneExpressionMicroarray <- function(ex,
     ex <- normalizeBetweenArrays(ex)
   }
 
+  # Update results
+  results$ex <- ex
+
   # assign samples to groups and set up design matrix
   gs <- factor(sml)
   groups <- make.names(c("Group1", "Group2"))
   levels(gs) <- groups
+
 
   # Convert ex to expression dataset
   ex <- ExpressionSet(ex)
@@ -999,9 +1005,6 @@ calculateDifferentialGeneExpressionMicroarray <- function(ex,
 
     # Update column name
     colnames(fit$genes) <- list("ID")
-
-    # Update results
-    results$ex <- ex
   }
 
   # set up contrasts of interest and recalculate
