@@ -1007,11 +1007,11 @@ sourceServer <- function(input, output, session) {
         })
         # Update UI side bar with User Upload widgets
         output$output1 <- renderUI({
-          fileInput("file2", "Upload CSV Experimental Conditions File",
-                    multiple = TRUE,
-                    accept = c("text/csv",
-                               "text/comma-separated-values,text/plain",
-                               ".csv"))
+        #  fileInput("file2", "Upload CSV Experimental Conditions File",
+        #            multiple = TRUE,
+        #            accept = c("text/csv",
+        #                       "text/comma-separated-values,text/plain",
+        #                       ".csv"))
         })
         output$output2 <- renderUI({
           fileInput("file1", "Upload CSV Gene Expression Count File",
