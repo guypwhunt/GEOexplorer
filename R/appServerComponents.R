@@ -1028,21 +1028,29 @@ sourceServer <- function(input, output, session) {
             selected = "Microarray"
           )
         })
-        output$output4 <- renderUI({
-          radioButtons(
-            "cpmTransformation",
-            label = "Convert to count per million:",
-            choices = list("Yes", "No"),
-            selected = "No"
-          )
+
+        observeEvent(input$typeOfData, {
+          if (input$typeOfData == "RNA Sequencing") {
+            output$output4 <- renderUI({
+              radioButtons(
+                "cpmTransformation",
+                label = "Convert to count per million:",
+                choices = list("Yes", "No"),
+                selected = "No"
+              )
+            })
+            # Add CPM tool tip
+            bsTooltip(
+              id = "cpmTransformation",
+              title = "This is recommended for raw RNA sequence data.",
+              placement = "top",
+              trigger = "hover"
+            )
+          } else if
+          (input$typeOfData == "Microarray") {
+          output$output4 <- renderUI({})
+          }
         })
-        # Add CPM tool tip
-        bsTooltip(
-          id = "cpmTransformation",
-          title = "This is recommended for raw RNA sequence data.",
-          placement = "top",
-          trigger = "hover"
-        )
 
         # Define Variables
         gsetData <- NULL
@@ -1087,21 +1095,11 @@ sourceServer <- function(input, output, session) {
 
         # Extract Column Information
         columnInfo <- reactive({
-          # Ensure a file has been uploaded
-          req(input$file2)
-
-          # Try reading the CSV
-          tryCatch({
-            columnInfoDf <- readCsvFile(input$file2$datapath)
-          },
-          error = function(e) {
-            # return a safeError if a parsing error occurs
-            stop(safeError(e))
-          })
-
+          columnInfoDf <- as.data.frame(colnames(expressionData()))
+          try(colnames(columnInfoDf) <- list("column"))
+          try(rownames(columnInfoDf) <- columnInfoDf[,1])
           return(columnInfoDf)
         })
-
 
         # Experimental conditions table
         output$columnTable <-
@@ -1213,8 +1211,9 @@ sourceServer <- function(input, output, session) {
 
           # Get knn output column Details
           all$knnColumnInfo <- columnInfo()
+          all$knnColumnInfo <- as.data.frame(all$knnColumnInfo[knnColumns, ])
+          colnames(all$knnColumnInfo) <- list("column")
           row.names(all$knnColumnInfo) <- all$knnColumnInfo$column
-          all$knnColumnInfo <- all$knnColumnInfo[knnColumns,]
 
           # Remove all incomplete rows
           naOmitInput <- calculateNaOmit(all$knnDataInput)
