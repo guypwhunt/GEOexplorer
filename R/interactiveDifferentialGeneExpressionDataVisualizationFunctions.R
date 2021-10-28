@@ -783,3 +783,30 @@ interactiveQQPlot <- function(fit2, dT, ct) {
   )
   fig
 }
+
+
+#' A Function to Create an Heatmap Plot of the
+#' Top Differentially expressed genes for each experimental condition
+#'
+#' This function allows you to Create an Heatmap Plot of the
+#' Top Differentially expressed genes for each experimental condition
+#' @import heatmaply
+#' @author Guy Hunt
+#' @noRd
+#' @seealso [calculateDifferentialGeneExpression()]
+#' for differential gene expression object,
+#' [calculateDifferentialGeneExpressionSummary()]
+#' for summary differential gene expression object
+interactiveDGEHeatMapPlot <- function(ex, limmaPrecisionWeights, numberOfGenes, tT) {
+  # Select the genes of interest
+  i <- row.names(tT[1:numberOfGenes,])
+
+  # Create the heatmap
+  if (limmaPrecisionWeights == "Yes") {
+    fig <- heatmaply(ex$E[i, ])
+  } else if (limmaPrecisionWeights == "No") {
+    fig <- heatmaply(ex[i, ])
+  }
+  return(fig)
+
+}

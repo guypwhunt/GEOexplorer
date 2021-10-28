@@ -398,6 +398,27 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           br(),
           br(),
           plotlyOutput('iDEMd')
+        ),
+        tabPanel(
+          "Heatmap Plot",
+          br(),
+          span(
+            "Generated using R heatmaply
+            A heatmap plot displaying the top differentially expressed genes
+            expression values for each experimental condition."
+          ),
+          br(),
+          br(),
+          numericInput(
+            "numberOfGenes",
+            "Input the number of genes to display:",
+            2,
+            min = 2,
+            max = 250,
+            step = 1
+          ),
+          br(),
+          plotlyOutput('iHeatmap')
         )
       )
     )

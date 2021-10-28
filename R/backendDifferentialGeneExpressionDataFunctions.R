@@ -204,6 +204,9 @@ calculateDifferentialGeneExpression <-
            forceNormalization,
            gset,
            ex) {
+    # Define results variable
+    results <- NULL
+
     # make proper column names to match toptable
     fvarLabels(gset) <- make.names(fvarLabels(gset))
 
@@ -245,9 +248,16 @@ calculateDifferentialGeneExpression <-
 
       # fit linear model
       fit  <- lmFit(v)
+
+      # Update results
+      results$ex <- v
+
     } else if (limmaPrecisionWeights == "No") {
       # fit linear model
       fit <- lmFit(gset, design)
+
+      # Update results
+      results$ex <- exprs(gset)
     }
 
     # set up contrasts of interest and recalculate
@@ -260,7 +270,10 @@ calculateDifferentialGeneExpression <-
     # compute statistics and table of top significant genes
     fit2 <- eBayes(fit2, 0.01)
 
-    return(fit2)
+    # Update results
+    results$fit2 <- fit2
+
+    return(results)
   }
 
 #' A Function to Convert the UI P-Value Adjustment
@@ -692,6 +705,10 @@ calculateDifferentialGeneExpressionRnaSeq <- function(rnaExpressionData,
                                                       gsms,
                                                       limmaPrecisionWeights,
                                                       forceNormalization) {
+  # Create results variable
+  results <- NULL
+
+
   sml <- strsplit(gsms, split = "")[[1]]
   sel <- which(sml != "X")
   sml <- sml[sel]
@@ -728,9 +745,15 @@ calculateDifferentialGeneExpressionRnaSeq <- function(rnaExpressionData,
 
     # fit linear model
     fit  <- lmFit(v)
+
+    # Udate results
+    results$ex <- v
   } else {
     # fit linear model
     fit <- lmFit(as.matrix.DGEList(rnaExpressionData), design)
+
+    # Update results
+    results$ex <- rnaExpressionData
   }
 
   fit2 <- contrasts.fit(fit, cont.matrix)
@@ -740,7 +763,10 @@ calculateDifferentialGeneExpressionRnaSeq <- function(rnaExpressionData,
   # Add ID column if it does not exist
   fit2$ID <- row.names(fit2)
 
-  return(fit2)
+  # Update results
+  results$fit2 <- fit2
+
+  return(results)
 }
 
 
@@ -920,6 +946,9 @@ calculateDifferentialGeneExpressionMicroarray <- function(ex,
                                                       gsms,
                                                       limmaPrecisionWeights,
                                                       forceNormalization) {
+  # Create variable to store results
+  results <- NULL
+
   # group membership for all samples
   sml <- strsplit(gsms, split = "")[[1]]
 
@@ -959,6 +988,8 @@ calculateDifferentialGeneExpressionMicroarray <- function(ex,
     colnames(v$genes) <- list("ID")
     # fit linear model
     fit  <- lmFit(v)
+    # Update results
+    results$ex <- v
   } else if (limmaPrecisionWeights == "No") {
     # fit linear model
     fit <- lmFit(ex, design)
@@ -968,6 +999,9 @@ calculateDifferentialGeneExpressionMicroarray <- function(ex,
 
     # Update column name
     colnames(fit$genes) <- list("ID")
+
+    # Update results
+    results$ex <- ex
   }
 
   # set up contrasts of interest and recalculate
@@ -983,5 +1017,8 @@ calculateDifferentialGeneExpressionMicroarray <- function(ex,
   # Add ID column if it does not exist
   fit2$ID <- row.names(fit2)
 
-  return(fit2)
+  # Updated results
+  results$fit2 <- fit2
+
+  return(results)
 }

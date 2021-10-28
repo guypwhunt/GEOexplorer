@@ -273,6 +273,9 @@ sourceServer <- function(input, output, session) {
           output$iDEMd <- renderPlotly({
 
           })
+          output$iHeatmap <-renderPlotly({
+
+          })
 
           # Make Differential Gene Expression Action
           # Button Appear, this prevents users
@@ -761,6 +764,9 @@ sourceServer <- function(input, output, session) {
           output$iDEMd <- renderPlotly({
 
           })
+          output$iHeatmap <-renderPlotly({
+
+          })
 
           # Error handling to display a notification if an
           # invalid GEO accession code is used.
@@ -863,7 +869,7 @@ sourceServer <- function(input, output, session) {
                     lengths(regmatches(
                       gsms, gregexpr("1", gsms)
                     )) > 0)) {
-                      fit2 <- tryCatch({
+                      results <- tryCatch({
                         calculateDifferentialGeneExpression(
                           gsms,
                           input$limmaPrecisionWeights,
@@ -878,7 +884,7 @@ sourceServer <- function(input, output, session) {
 
                       # Error handling to ensure Differential Gene
                       # Expression Analysis worked
-                      if (is.null(fit2)) {
+                      if (is.null(results)) {
                         showNotification(
                           "There was an error calculating the
                              differential gene expression analysis!",
@@ -887,12 +893,12 @@ sourceServer <- function(input, output, session) {
                       } else {
                         adjustment <- convertAdjustment(input$pValueAdjustment)
                         tT <-
-                          calculateTopDifferentiallyExpressedGenes(fit2,
+                          calculateTopDifferentiallyExpressedGenes(results$fit2,
                                                                    adjustment)
 
                         dT <-
                           calculateDifferentialGeneExpressionSummary(
-                            fit2,
+                            results$fit2,
                             adjustment,
                             input$significanceLevelCutOff)
                         # Differential gene expression table
@@ -909,7 +915,7 @@ sourceServer <- function(input, output, session) {
                         # Interactive Histogram Plot
                         output$iDEHistogram <- tryCatch({
                           renderPlotly({
-                            interactiveHistogramPlot(fit2, adjustment)
+                            interactiveHistogramPlot(results$fit2, adjustment)
                           })
                         },
                         error = function(e) {
@@ -934,7 +940,7 @@ sourceServer <- function(input, output, session) {
                         output$iDEQQ <-
                           tryCatch({
                             renderPlotly({
-                              interactiveQQPlot(fit2, dT, ct)
+                              interactiveQQPlot(results$fit2, dT, ct)
                             })
                           },
                           error = function(e) {
@@ -946,7 +952,7 @@ sourceServer <- function(input, output, session) {
                         # Interactive Volcano Plot
                         output$iDEVolcano <- tryCatch({
                           renderPlotly({
-                            interactiveVolcanoPlot(fit2, dT, ct)
+                            interactiveVolcanoPlot(results$fit2, dT, ct)
                           })
                         },
                         error = function(e) {
@@ -958,7 +964,7 @@ sourceServer <- function(input, output, session) {
                         # Interactive Mean Difference Plot
                         output$iDEMd <- tryCatch({
                           renderPlotly({
-                            interactiveMeanDifferencePlot(fit2, dT, ct)
+                            interactiveMeanDifferencePlot(results$fit2, dT, ct)
                           })
                         },
                         error = function(e) {
@@ -966,6 +972,19 @@ sourceServer <- function(input, output, session) {
                           stop(safeError(e))
                         })
 
+                        # Interactive Heatmap Plot
+                        output$iHeatmap <-
+                          tryCatch({
+                            renderPlotly({
+                              interactiveDGEHeatMapPlot(results$ex,
+                                                        input$limmaPrecisionWeights,
+                                                        input$numberOfGenes, tT)
+                            })
+                          },
+                          error = function(e) {
+                            # return a safeError if a parsing error occurs
+                            stop(safeError(e))
+                          })
 
                         # Download Top Differentially Expressed Genes Table
                         output$downloadData <- downloadHandler(
@@ -1007,11 +1026,6 @@ sourceServer <- function(input, output, session) {
         })
         # Update UI side bar with User Upload widgets
         output$output1 <- renderUI({
-        #  fileInput("file2", "Upload CSV Experimental Conditions File",
-        #            multiple = TRUE,
-        #            accept = c("text/csv",
-        #                       "text/comma-separated-values,text/plain",
-        #                       ".csv"))
         })
         output$output2 <- renderUI({
           fileInput("file1", "Upload CSV Gene Expression Count File",
@@ -1170,6 +1184,9 @@ sourceServer <- function(input, output, session) {
 
           })
           output$iDEMd <- renderPlotly({
+
+          })
+          output$iHeatmap <-renderPlotly({
 
           })
 
@@ -1486,6 +1503,9 @@ sourceServer <- function(input, output, session) {
           output$iDEMd <- renderPlotly({
 
           })
+          output$iHeatmap <-renderPlotly({
+
+          })
 
           # Differential gene expression analysis
           gsms <- tryCatch({
@@ -1519,7 +1539,7 @@ sourceServer <- function(input, output, session) {
                  lengths(regmatches(gsms, gregexpr("1", gsms))) > 0)) {
               if (input$typeOfData == "RNA Sequencing")
               {
-                fit2 <-
+                results <-
                   tryCatch({
                     calculateDifferentialGeneExpressionRnaSeq(
                       all$knnDataInput,
@@ -1531,11 +1551,11 @@ sourceServer <- function(input, output, session) {
                   , error = function(cond) {
                     return(NULL)
                   })
-                if (is.null(fit2)) {
+                if (is.null(results)) {
                   # Try again with non-log data
                   knnDataInput <-
                     calculateKnnImpute(all$cpm, input$knnTransformation)
-                  fit22 <- tryCatch({
+                  results2 <- tryCatch({
                     calculateDifferentialGeneExpressionRnaSeq(
                       knnDataInput,
                       gsms,
@@ -1547,7 +1567,7 @@ sourceServer <- function(input, output, session) {
                     return(NULL)
                   })
 
-                  if (is.null(fit22)) {
+                  if (is.null(results2)) {
                     showNotification(
                       "There was an error calculating the
                              differential gene expression analysis!",
@@ -1555,8 +1575,8 @@ sourceServer <- function(input, output, session) {
                     )
                   } else
                   {
-                    # Update fit2
-                    fit2 <- fit22
+                    # Update results
+                    results <- results2
 
                     # Show warning that non-log data was used
                     showNotification(
@@ -1568,7 +1588,7 @@ sourceServer <- function(input, output, session) {
                   }
                 }
               } else if (input$typeOfData == "Microarray") {
-                fit2 <- tryCatch({
+                results <- tryCatch({
                   calculateDifferentialGeneExpressionMicroarray(
                     all$knnDataInput,
                     gsms,
@@ -1580,20 +1600,20 @@ sourceServer <- function(input, output, session) {
                   return(NULL)
                 })
               }
-              if (is.null(fit2) == FALSE) {
+              if (is.null(results) == FALSE) {
                 # Convert the UI adjustment into the value
                 # needed for the backend
                 adjustment <- convertAdjustment(input$pValueAdjustment)
 
                 # Calculate the top differentially expressed genes
                 tT <-
-                  calculateTopDifferentiallyExpressedGenes(fit2,
+                  calculateTopDifferentiallyExpressedGenes(results$fit2,
                                                            adjustment)
 
                 # Calculate genes that are upregulated and downregulated
                 dT <-
                   calculateDifferentialGeneExpressionSummary(
-                    fit2,
+                    results$fit2,
                     adjustment,
                     input$significanceLevelCutOff)
 
@@ -1613,7 +1633,7 @@ sourceServer <- function(input, output, session) {
                 output$iDEHistogram <-
                   tryCatch({
                     renderPlotly({
-                      interactiveHistogramPlot(fit2, adjustment)
+                      interactiveHistogramPlot(results$fit2, adjustment)
                     })
                   },
                   error = function(e) {
@@ -1640,7 +1660,7 @@ sourceServer <- function(input, output, session) {
                 output$iDEQQ <-
                   tryCatch({
                     renderPlotly({
-                      interactiveQQPlot(fit2, dT, ct)
+                      interactiveQQPlot(results$fit2, dT, ct)
                     })
                   },
                   error = function(e) {
@@ -1654,7 +1674,7 @@ sourceServer <- function(input, output, session) {
                 output$iDEVolcano <-
                   tryCatch({
                     renderPlotly({
-                      interactiveVolcanoPlot(fit2, dT, ct)
+                      interactiveVolcanoPlot(results$fit2, dT, ct)
                     })
                   },
                   error = function(e) {
@@ -1666,7 +1686,7 @@ sourceServer <- function(input, output, session) {
                 output$iDEMd <-
                   tryCatch({
                     renderPlotly({
-                      interactiveMeanDifferencePlot(fit2, dT, ct)
+                      interactiveMeanDifferencePlot(results$fit2, dT, ct)
                     })
                   },
                   error = function(e) {
@@ -1674,6 +1694,19 @@ sourceServer <- function(input, output, session) {
                     stop(safeError(e))
                   })
 
+                # Interactive Heatmap Plot
+                output$iHeatmap <-
+                  tryCatch({
+                    renderPlotly({
+                      interactiveDGEHeatMapPlot(results$ex,
+                                                input$limmaPrecisionWeights,
+                                                input$numberOfGenes, tT)
+                    })
+                  },
+                  error = function(e) {
+                    # return a safeError if a parsing error occurs
+                    stop(safeError(e))
+                  })
 
                 # Download Top Differentially Expressed Genes Table
                 output$downloadData <- downloadHandler(
