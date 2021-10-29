@@ -154,6 +154,12 @@ sourceServer <- function(input, output, session) {
           trigger = "hover"
         )
 
+        # Udate Search Results
+        observeEvent(input$searchGeoButton, {
+          output$searchInformation <- renderUI({searchGeo(input$searchTerm,
+                                                input$resultsLimit)})
+        })
+
         # Data Extraction Functions
         # Get the GEO2R data for all platforms
         allGset <- reactive({
