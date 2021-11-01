@@ -155,10 +155,10 @@ sourceServer <- function(input, output, session) {
         )
 
         # Udate Search Results
-        observeEvent(input$searchGeoButton, {
-          output$searchInformation <- renderUI({searchGeo(input$searchTerm,
-                                                input$resultsLimit)})
-        })
+        #observeEvent(input$searchGeoButton, {
+        #  output$searchInformation <- renderUI({searchGeo(input$searchTerm,
+        #                                        input$resultsLimit)})
+        #})
 
         # Data Extraction Functions
         # Get the GEO2R data for all platforms
@@ -565,9 +565,7 @@ sourceServer <- function(input, output, session) {
                   output$interactiveBoxAndWhiskerPlot <-
                     tryCatch({
                       renderPlotly({
-                        interactiveBoxAndWhiskerPlot(all$knnDataInput,
-                                                     input$geoAccessionCode,
-                                                     input$platform)
+                        interactiveBoxAndWhiskerPlot(all$knnDataInput)
                       })
                     },
                     error = function(e) {
@@ -580,9 +578,7 @@ sourceServer <- function(input, output, session) {
                   output$interactiveDensityPlot <-
                     tryCatch({
                       renderPlotly({
-                        interactiveDensityPlot(naOmitInput,
-                                               input$geoAccessionCode,
-                                               input$platform)
+                        interactiveDensityPlot(naOmitInput)
                       })
                     },
                     error = function(e) {
@@ -595,9 +591,7 @@ sourceServer <- function(input, output, session) {
                   output$interactiveThreeDDensityPlot <-
                     tryCatch({
                       renderPlotly({
-                        interactiveThreeDDensityPlot(naOmitInput,
-                                                     input$geoAccessionCode,
-                                                     input$platform)
+                        interactiveThreeDDensityPlot(naOmitInput)
                       })
                     },
                     error = function(e) {
@@ -622,8 +616,7 @@ sourceServer <- function(input, output, session) {
                       tryCatch({
                         renderPlotly({
                           interactiveUmapPlot(naOmitInput,
-                                              input$knn,
-                                              input$geoAccessionCode)
+                                              input$knn)
                         })
                       },
                       error = function(e) {
@@ -649,7 +642,6 @@ sourceServer <- function(input, output, session) {
                       tryCatch({
                         renderPlotly({
                           interactiveMeanVariancePlot(naOmitInput,
-                                                      input$geoAccessionCode,
                                                       all$gsetData)
                         })
                       },
@@ -676,7 +668,6 @@ sourceServer <- function(input, output, session) {
                           renderPlotly({
                             interactivePrcompPcaIndividualsPlot(
                               pcaPrcompDataInput,
-                              input$geoAccessionCode,
                               all$gsetData)
                           })
                         },
@@ -691,8 +682,7 @@ sourceServer <- function(input, output, session) {
                         tryCatch({
                           renderPlotly({
                             interactivePrcompPcaVariablesPlot(
-                              pcaPrcompDataInput,
-                              input$geoAccessionCode)
+                              pcaPrcompDataInput)
                           })
                         },
                         error = function(e) {
@@ -708,8 +698,7 @@ sourceServer <- function(input, output, session) {
                           tryCatch({
                             renderPlotly({
                               interactive3DPrcompPcaVariablesPlot(
-                                pcaPrcompDataInput,
-                                input$geoAccessionCode)
+                                pcaPrcompDataInput)
                             })
                           },
                           error = function(e) {
@@ -1074,8 +1063,6 @@ sourceServer <- function(input, output, session) {
 
         # Define Variables
         gsetData <- NULL
-        geoAccessionCode <- ""
-        platform <- ""
 
         # Extract Expression Data
         expressionData <- reactive({
@@ -1314,9 +1301,7 @@ sourceServer <- function(input, output, session) {
           output$interactiveBoxAndWhiskerPlot <-
             tryCatch({
               renderPlotly({
-                interactiveBoxAndWhiskerPlot(all$knnDataInput,
-                                             geoAccessionCode,
-                                             platform)
+                interactiveBoxAndWhiskerPlot(all$knnDataInput)
               })
             },
             error = function(e) {
@@ -1330,9 +1315,7 @@ sourceServer <- function(input, output, session) {
           output$interactiveDensityPlot <-
             tryCatch({
               renderPlotly({
-                interactiveDensityPlot(naOmitInput,
-                                       geoAccessionCode,
-                                       platform)
+                interactiveDensityPlot(naOmitInput)
               })
             },
             error = function(e) {
@@ -1345,9 +1328,7 @@ sourceServer <- function(input, output, session) {
           output$interactiveThreeDDensityPlot <-
             tryCatch({
               renderPlotly({
-                interactiveThreeDDensityPlot(naOmitInput,
-                                             geoAccessionCode,
-                                             platform)
+                interactiveThreeDDensityPlot(naOmitInput)
               })
             },
             error = function(e) {
@@ -1373,8 +1354,7 @@ sourceServer <- function(input, output, session) {
               tryCatch({
                 renderPlotly({
                   interactiveUmapPlot(naOmitInput,
-                                      input$knn,
-                                      geoAccessionCode)
+                                      input$knn)
                 })
               },
               error = function(e) {
@@ -1403,7 +1383,6 @@ sourceServer <- function(input, output, session) {
               tryCatch({
                 renderPlotly({
                   interactiveMeanVariancePlot(naOmitInput,
-                                              geoAccessionCode,
                                               gsetData)
                 })
               },
@@ -1431,7 +1410,6 @@ sourceServer <- function(input, output, session) {
                 tryCatch({
                   renderPlotly({
                     interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
-                                                        geoAccessionCode,
                                                         gsetData)
                   })
                 },
@@ -1444,8 +1422,7 @@ sourceServer <- function(input, output, session) {
               output$interactivePcaVariablesPlot <-
                 tryCatch({
                   renderPlotly({
-                    interactivePrcompPcaVariablesPlot(pcaPrcompDataInput,
-                                                      geoAccessionCode)
+                    interactivePrcompPcaVariablesPlot(pcaPrcompDataInput)
                   })
                 },
                 error = function(e) {
@@ -1457,8 +1434,7 @@ sourceServer <- function(input, output, session) {
               output$interactive3DPcaVariablesPlot <-
                 tryCatch({
                   renderPlotly({
-                    interactive3DPrcompPcaVariablesPlot(pcaPrcompDataInput,
-                                                      geoAccessionCode)
+                    interactive3DPrcompPcaVariablesPlot(pcaPrcompDataInput)
                   })
                 },
                 error = function(e) {

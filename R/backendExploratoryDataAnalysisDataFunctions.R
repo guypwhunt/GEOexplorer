@@ -783,35 +783,36 @@ searchGeo <- function(searchTerm, resultsLimit) {
   resultsLimit <- as.character(resultsLimit)
 
   # Define the two URLs
-  url <- 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term=searchTerm&retmax=resultsLimit&usehistory=y'
-  url2 <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&version=2.0&query_key=X&WebEnv=ENTER_WEBENV_PARAMETER_HERE"
+  firstURL <- 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term=searchTerm&retmax=resultsLimit&usehistory=y'
+  secondURL <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&version=2.0&query_key=X&WebEnv=ENTER_WEBENV_PARAMETER_HERE"
 
   # Update the first url with the search parameters
-  url <- str_replace(url, "searchTerm", searchTerm)
-  url <- str_replace(url, "resultsLimit", resultsLimit)
+  firstURL <- str_replace(firstURL, "searchTerm", searchTerm)
+  firstURL <- str_replace(firstURL, "resultsLimit", resultsLimit)
 
   # Perform the API call
-  res1 <- GET(url)
+  firstResults <- GET(firstURL)
 
   # Parse the response
-  res1Data <- xmlParse(res1)
-  res1Data <- xmlToList(res1Data)
+  firstResultsData <- xmlParse(firstResults)
+  firstResultsData <- xmlToList(firstResultsData)
 
   # Update the second url with the search parameters
-  url2 <- str_replace(url2, "X", res1Data$QueryKey)
-  url2 <- str_replace(url2, "ENTER_WEBENV_PARAMETER_HERE", res1Data$WebEnv)
+  secondURL <- str_replace(secondURL, "X", firstResultsData$QueryKey)
+  secondURL <- str_replace(secondURL, "ENTER_WEBENV_PARAMETER_HERE", firstResultsData$WebEnv)
 
   # Perform the API call
-  res2 <- GET(url2)
+  secondResults <- GET(secondURL)
 
   # Parse the response
-  res2Data <- xmlTreeParse(res2)
+  #secondResultsData <- xmlTreeParse(secondResults)
 
   # Convert from list to character
-  res2Data <- unlist(res2Data)
+  #secondResultsData <- unlist(secondResultsData)
 
   # Convert to HTML
-  res2Data <- HTML(res2Data)
+  #secondResultsData <- HTML(secondResultsData)
 
-  return(res2Data)
+  return(secondResults)
+  #return(secondResultsData$doc$children)
 }

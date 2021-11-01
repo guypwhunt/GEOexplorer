@@ -42,29 +42,29 @@ loadApp <- function() {
         type = "tabs",
         #####################
         # GEO search tab
-        tabPanel(
-          "GEO Search",
-          br(),
-          span(
-            "Summary information of the gene
-                                         expression study is displayed below."
-          ),
-          br(),
-          textInput("searchTerm", "Search term", "ALS"),
-          br(),
-          numericInput(
-            "resultsLimit",
-            "Input the number of results to display",
-            1,
-            min = 1,
-            max = 100,
-            step = 1
-          ),
-          br(),
-          actionButton("searchGeoButton", "Analyse"),
-          br(),
-          htmlOutput('searchInformation')
-        ),
+        #tabPanel(
+        #  "GEO Search",
+        #  br(),
+        #  span(
+        #    "Summary information of the gene
+        #                                 expression study is displayed below."
+        #  ),
+        #  br(),
+        #  textInput("searchTerm", "Search term", "ALS"),
+        #  br(),
+        #  numericInput(
+        #    "resultsLimit",
+        #    "Input the number of results to display",
+        #    1,
+        #    min = 1,
+        #    max = 100,
+        #    step = 1
+        #  ),
+        #  br(),
+        #  actionButton("searchGeoButton", "Analyse"),
+        #  br(),
+        #  htmlOutput('searchInformation')
+        #),
         #####################
         # Source the Dataset Information UI Components
         sourceDatasetInformationUi(),

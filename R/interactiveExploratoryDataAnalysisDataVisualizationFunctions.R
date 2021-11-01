@@ -43,7 +43,7 @@
 #' @noRd
 #' @seealso [extractExpressionData()] for expression object
 interactiveBoxAndWhiskerPlot <-
-  function(ex, geoAccessionCode, platform) {
+  function(ex) {
     ex <- as.data.frame(ex)
     fig <- plot_ly(type = "box", quartilemethod = "linear")
     i = 1
@@ -58,9 +58,7 @@ interactiveBoxAndWhiskerPlot <-
       i <- i + 1
     }
     fig <-
-      fig %>% layout(title = (paste(paste(
-        geoAccessionCode, "/"
-      ), platform)))
+      fig %>% layout(title = "Box And Whisker Plot")
     fig
   }
 
@@ -111,14 +109,11 @@ interactiveBoxAndWhiskerPlot <-
 #' @author Guy Hunt
 #' @noRd
 #' @seealso [extractExpressionData()] for expression object
-interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
+interactiveDensityPlot <- function(ex) {
   ex <- as.data.frame(ex)
   fig <-
     plot_ly(type = 'scatter',
-            mode = 'lines',
-            name = (paste(
-              paste(geoAccessionCode, platform), 'value distribution'
-            )))
+            mode = 'lines')
   i <- 1
   for (col in names(ex)) {
     density <- density(ex[, i])
@@ -131,9 +126,7 @@ interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
 
   fig <-
     fig %>% layout(
-      title = (paste(
-        paste(geoAccessionCode, platform), 'value distribution'
-      )),
+      title = "Density Plot",
       xaxis = list(title = 'Intensity'),
       yaxis = list(title = 'Density')
     )
@@ -188,14 +181,11 @@ interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
 #' @noRd
 #' @seealso [extractExpressionData()] for expression object
 interactiveThreeDDensityPlot <-
-  function(ex, geoAccessionCode, platform) {
+  function(ex) {
     ex <- as.data.frame(ex)
     fig <-
       plot_ly(type = 'scatter3d',
-              mode = 'lines',
-              name = (paste(
-                paste(geoAccessionCode, platform), 'value distribution'
-              )))
+              mode = 'lines')
     i <- 1
     for (col in names(ex)) {
       density <- density(ex[, i])
@@ -210,9 +200,7 @@ interactiveThreeDDensityPlot <-
     }
 
     fig <- fig %>% layout(
-      title = (paste(
-        paste(geoAccessionCode, platform), 'value distribution'
-      )),
+      title = "Density Plot",
       scene = list(
         xaxis = list(title = "Intensity"),
         yaxis = list(title = ""),
@@ -270,7 +258,7 @@ interactiveThreeDDensityPlot <-
 #' @author Guy Hunt
 #' @noRd
 #' @seealso [extractExpressionData()] for expression object
-interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
+interactiveUmapPlot <- function(ex, knn) {
   ex <- ex[!duplicated(ex),]  # remove duplicates
   ump <- umap(t(ex), n_neighbors = knn, random_state = 123)
   i <- 1
@@ -282,10 +270,9 @@ interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
                         name = row)
     i <- i + 1
   }
-  fig <- fig %>% layout(title = (paste(
-    geoAccessionCode,
+  fig <- fig %>% layout(title = (
     paste('UMAP plot, number of nearest neighbors used =', knn)
-  )))
+  ))
   fig
 }
 
@@ -340,7 +327,7 @@ interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
 #' for expression object, [extractPlatformGset()]
 #' for GEO object
 interactiveMeanVariancePlot <-
-  function(ex, geoAccessionCode, gset) {
+  function(ex, gset) {
     # Create linear model
     exData <- lmFit(ex)
 
@@ -453,9 +440,8 @@ interactiveMeanVariancePlot <-
                       width = 1)
         )
       )
-    fig <- fig %>% layout(title = (paste(
-      'Mean variance trend, ', geoAccessionCode
-    )))
+    fig <- fig %>% layout(title =
+      'Mean Variance Plot')
     fig
   }
 
@@ -512,7 +498,7 @@ interactiveMeanVariancePlot <-
 #' @noRd
 #' @seealso [calculatePrincompPca()] for PCA expression object
 interactivePrcompPcaScreePlot <-
-  function(pcaData, geoAccessionCode) {
+  function(pcaData) {
     columnNames <- colnames(pcaData$x)
     proportionOfVariance <- pcaData$sdev ^ 2 / sum(pcaData$sdev ^ 2)
     pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
@@ -525,7 +511,7 @@ interactivePrcompPcaScreePlot <-
         type = "bar"
       ) %>%
       layout(
-        title = paste(geoAccessionCode, "Scree Plot"),
+        title = "Scree Plot",
         xaxis = list(
           title = "Principal Components/Dimensions",
           categoryorder = "array",
@@ -590,7 +576,7 @@ interactivePrcompPcaScreePlot <-
 #' @noRd
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object
 interactivePrincompPcaScreePlot <-
-  function(pcaData, geoAccessionCode) {
+  function(pcaData) {
     columnNames <-   colnames(pcaData$loadings)
     proportionOfVariance <- pcaData$sdev ^ 2 / sum(pcaData$sdev ^ 2)
     pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
@@ -602,7 +588,7 @@ interactivePrincompPcaScreePlot <-
         type = "bar"
       ) %>%
       layout(
-        title = paste(geoAccessionCode, "Scree Plot"),
+        title = "Scree Plot",
         xaxis = list(
           title = "Principal Components/Dimensions",
           categoryorder = "array",
@@ -673,7 +659,7 @@ interactivePrincompPcaScreePlot <-
 #' for Princomp PCA expression object, [extractPlatformGset()]
 #' for GEO object
 interactivePrincompPcaIndividualsPlot <-
-  function(pcaData, geoAccessionCode, gset) {
+  function(pcaData, gset) {
     pcaDf <- data.frame(pcaData$scores)
     pcaDf <- transform(pcaDf)
     pcaDf["ID"] <- rownames(pcaDf)
@@ -786,7 +772,7 @@ interactivePrincompPcaIndividualsPlot <-
     fig <-
       layout(
         fig,
-        title = paste(geoAccessionCode, "PCA Individuals Plot"),
+        title = "PCA Individuals Plot",
         xaxis = list(title = paste(
           "Comp.1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
         )),
@@ -852,7 +838,7 @@ interactivePrincompPcaIndividualsPlot <-
 #' for Princomp PCA expression object,
 #' [extractPlatformGset()] for GEO object
 interactivePrincompPcaVariablesPlot <-
-  function(pcaData, geoAccessionCode) {
+  function(pcaData) {
     variableStats <- get_pca_var(pcaData)
     eigenValue <- get_eigenvalue(pcaData)
     pcaData <- as.data.frame(unclass(pcaData$loadings))
@@ -873,7 +859,7 @@ interactivePrincompPcaVariablesPlot <-
     fig <-
       layout(
         fig,
-        title = paste(geoAccessionCode, "PCA Variables Plot"),
+        title ="PCA Variables Plot",
         xaxis = list(title = paste(
           "Comp.1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
         )),
@@ -998,7 +984,7 @@ interactiveHeatMapPlot <- function(ex) {
 #' for Princomp PCA expression object,
 #' [extractPlatformGset()] for GEO object
 interactivePrcompPcaIndividualsPlot <-
-  function(pcaData, geoAccessionCode, gset) {
+  function(pcaData, gset) {
     pcaDf <- data.frame(pcaData$x)
     pcaDf <- transform(pcaDf)
     pcaDf["ID"] <- rownames(pcaDf)
@@ -1110,7 +1096,7 @@ interactivePrcompPcaIndividualsPlot <-
     fig <-
       layout(
         fig,
-        title = paste(geoAccessionCode, "PCA Individuals Plot"),
+        title = "PCA Individuals Plot",
         xaxis = list(title = paste(
           "PC1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
         )),
@@ -1179,7 +1165,7 @@ interactivePrcompPcaIndividualsPlot <-
 #' for Princomp PCA expression object,
 #' [extractPlatformGset()] for GEO object
 interactive3DPrcompPcaIndividualsPlot <-
-  function(pcaData, geoAccessionCode, gset) {
+  function(pcaData, gset) {
     pcaDf <- data.frame(pcaData$x)
     pcaDf <- transform(pcaDf)
     pcaDf["ID"] <- rownames(pcaDf)
@@ -1291,7 +1277,7 @@ interactive3DPrcompPcaIndividualsPlot <-
     fig <-
       layout(
         fig,
-        title = paste(geoAccessionCode, "PCA Individuals Plot"),
+        title = "PCA Individuals Plot",
         scene = list(
           xaxis = list(title = paste(
             "PC1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
@@ -1361,7 +1347,7 @@ interactive3DPrcompPcaIndividualsPlot <-
 #' for Princomp PCA expression object,
 #' [extractPlatformGset()] for GEO object
 interactivePrcompPcaVariablesPlot <-
-  function(pcaData, geoAccessionCode) {
+  function(pcaData) {
     variableStats <- get_pca_var(pcaData)
     eigenValue <- get_eigenvalue(pcaData)
     pcaData <- as.data.frame(unclass(pcaData$rotation))
@@ -1382,7 +1368,7 @@ interactivePrcompPcaVariablesPlot <-
     fig <-
       layout(
         fig,
-        title = paste(geoAccessionCode, "PCA Variables Plot"),
+        title = "PCA Variables Plot",
         xaxis = list(title = paste(
           "PC1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
         )),
@@ -1447,7 +1433,7 @@ interactivePrcompPcaVariablesPlot <-
 #' for Princomp PCA expression object,
 #' [extractPlatformGset()] for GEO object
 interactive3DPrcompPcaVariablesPlot <-
-  function(pcaData, geoAccessionCode) {
+  function(pcaData) {
     variableStats <- get_pca_var(pcaData)
     eigenValue <- get_eigenvalue(pcaData)
     pcaData <- as.data.frame(unclass(pcaData$rotation))
@@ -1469,7 +1455,7 @@ interactive3DPrcompPcaVariablesPlot <-
     fig <-
       layout(
         fig,
-        title = paste(geoAccessionCode, "PCA Variables Plot"),
+        title = "PCA Variables Plot",
         scene = list(
         xaxis = list(title = paste(
           "PC1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
