@@ -1236,20 +1236,39 @@ sourceServer <- function(input, output, session) {
           if (input$typeOfData == "RNA Sequencing")
           {
             # Raw counts are converted to counts-per-million (CPM)
-            all$cpm <-
+            all$cpm <- tryCatch({
               calculateCountsPerMillion(expressionData(),
                                         input$cpmTransformation)
+            },
+            error = function(e) {
+              # return null if there is an error
+              return(NULL)
+            })
           } else if (input$typeOfData == "Microarray")
           {
             all$cpm <- expressionData()
           }
 
+          # Apply log transformation to expression data if necessary
+          all$dataInput <- tryCatch({
+            calculateLogTransformation(all$cpm, input$logTransformation)
+          },
+          error = function(e) {
+            # return null if there is an error
+            return(NULL)
+          })
+
+          if (is.null(all$cpm) |  is.null(all$dataInput)) {
+            showNotification(
+              "There was an error analysing the gene expression data.
+              Please ensure you uploaded the file in the correct format.",
+              type = "error"
+            )
+          } else {
+
+          # Calculate if auto-log transformation is applied
           autoLogInformation <-
             calculateAutoLogTransformApplication(all$cpm)
-
-          # Apply log transformation to expression data if necessary
-          all$dataInput <-
-            calculateLogTransformation(all$cpm, input$logTransformation)
 
           # Perform KNN transformation on log expression data if necessary
           all$knnDataInput <-
@@ -1269,7 +1288,13 @@ sourceServer <- function(input, output, session) {
           naOmitInput <- calculateNaOmit(all$knnDataInput)
 
           # Perform Prcomp PCA analysis on KNN transformation expression data
-          pcaPrcompDataInput <- calculatePrcompPca(naOmitInput)
+          pcaPrcompDataInput <- tryCatch({
+            calculatePrcompPca(naOmitInput)
+          },
+          error = function(e) {
+            # return null if there is an error
+            return(NULL)
+          })
 
           # Data Visualisation Functions
           # Update if log transformation took place
@@ -1433,7 +1458,7 @@ sourceServer <- function(input, output, session) {
 
             # Error handling to display a notification
             # if there was an error in PCA
-            if (is.null(pcaPrcompDataInput) == TRUE) {
+            if (is.null(pcaPrcompDataInput)) {
               showNotification(
                 "There was an error performing principal component
                                  analysis on the expression data.
@@ -1494,7 +1519,7 @@ sourceServer <- function(input, output, session) {
               type = "warning"
             )
           }
-          } else
+          }} else
           {
             showNotification(
               "The gene expression file does not have the correct
