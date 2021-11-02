@@ -1018,7 +1018,8 @@ sourceServer <- function(input, output, session) {
           }
         })
 
-      } else if (input$dataSource == "Upload") {
+      } else if
+      (input$dataSource == "Upload") {
         # Update Experimental information
         output$experimentInfo <-  renderUI({
           HTML(
@@ -1088,25 +1089,37 @@ sourceServer <- function(input, output, session) {
           req(input$file1)
 
           # Extract CSV
-          tryCatch({
-            expressionDataDf <- readCsvFile(input$file1$datapath)
+          expressionDataDf <- tryCatch({
+            readCsvFile(input$file1$datapath)
           },
           error = function(e) {
-            # return a safeError if a parsing error occurs
-            stop(safeError(e))
+            # return null if there is an error
+            return(NULL)
           })
 
-          try({
-            # Preprocess the data
-            expressionDataDf <-
+          # Preprocess the data
+          expressionDataDf <-
+            tryCatch({
               preProcessGeneExpressionData(expressionDataDf)
-          })
-
+            },
+            error = function(e) {
+              # return null if there is an error
+              return(NULL)
+            })
           return(expressionDataDf)
-
         })
 
-
+        observeEvent(expressionData(),{
+          if (is.null(expressionData())) {
+            showNotification(
+              "There was an error processing the gene expression file.
+              Please make sure the file is a valid CSV and in the correct
+              format.",
+              type = "error"
+            )
+          }
+        else
+          {
         # Expression dataset table
         output$table <-
           tryCatch({
@@ -1380,9 +1393,6 @@ sourceServer <- function(input, output, session) {
                 # return a safeError if a parsing error occurs
                 stop(safeError(e))
               })
-
-
-
 
             # Heatmap Plot
             output$interactiveHeatMapPlot <-
@@ -1746,7 +1756,9 @@ sourceServer <- function(input, output, session) {
           }
         }
     })
-      }
+        }
+  })
+  }
     })
   })
   return(datasetInformationServer)
