@@ -974,6 +974,9 @@ sourceServer <- function(input, output, session) {
                           stop(safeError(e))
                         })
 
+                        # Update Interactive Heatmap Plot Gene number max
+                        updateNumericInput(session, "numberOfGenes", max = nrow(tT))
+
                         # Interactive Heatmap Plot
                         output$iHeatmap <-
                           tryCatch({
@@ -1752,6 +1755,9 @@ sourceServer <- function(input, output, session) {
                   # return a safeError if a parsing error occurs
                   stop(safeError(e))
                 })
+
+              # Update Interactive Heatmap Plot Gene number max
+              updateNumericInput(session, "numberOfGenes", max = nrow(tT))
 
               # Interactive Heatmap Plot
               output$iHeatmap <-
