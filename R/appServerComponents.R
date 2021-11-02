@@ -7,6 +7,7 @@
 #' @importFrom shinyBS addTooltip
 #' @importFrom utils write.csv
 #' @importFrom htmltools HTML
+#' @importFrom xfun file_ext
 #' @author Guy Hunt
 #' @noRd
 sourceServer <- function(input, output, session) {
@@ -1130,7 +1131,6 @@ sourceServer <- function(input, output, session) {
             stop(safeError(e))
           })
 
-
         # Extract Column Information
         columnInfo <- reactive({
           columnInfoDf <- as.data.frame(colnames(expressionData()))
@@ -1213,6 +1213,14 @@ sourceServer <- function(input, output, session) {
           output$iHeatmap <- renderPlotly({
 
           })
+
+          # Error handling to prevent non-csvs being uploaded
+          if (file_ext(input$file1$name) %in% c(
+            'text/csv',
+            'text/comma-separated-values',
+            'text/plain',
+            'csv'
+          )) {
 
           # Make Differential Gene Expression Action
           # Button Appear, this prevents users
@@ -1486,7 +1494,15 @@ sourceServer <- function(input, output, session) {
               type = "warning"
             )
           }
-        })
+          } else
+          {
+            showNotification(
+              "The gene expression file does not have the correct
+              file extension. Please upload a CSV.",
+              type = "error"
+            )
+          }
+          })
 
         observeEvent(input$differentialExpressionButtonUpload, {
           # Clear unused memory
