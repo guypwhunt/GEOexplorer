@@ -206,142 +206,279 @@ calculateDifferentialGeneExpression <-
            gset = NULL,
            ex,
            dataSource,
-           typeOfData = NULL) {
+           typeOfData = NULL,
+           dataSetType = "Single") {
     # Define results variable
     results <- NULL
 
-    if (dataSource == "GEO"){
-      # make proper column names to match toptable
-      fvarLabels(gset) <- make.names(fvarLabels(gset))
-
-      # Reduce the dimensionality of gset to that of ex
-      gset <- gset[row.names(gset) %in% row.names(ex),]
-      gset <- gset[, colnames(gset) %in% colnames(ex)]
-    }
-
-    # group membership for all samples
-    sml <- strsplit(gsms, split = "")[[1]]
-    sel <- which(sml != "X")
-    sml <- sml[sel]
-    ex <- ex[, sel]
-
-    if (dataSource == "GEO"){
-      # Update gset data
-      gset <- gset[, sel]
-      exprs(gset) <- ex
-    }
-    if (dataSource == "Upload") {
-      if (typeOfData == "RNA Sequencing") {
-        ex = DGEList(ex, group = sml)
-      }
-    }
-
-    if (forceNormalization == "Yes") {
+    if (dataSetType == "Single") {
       if (dataSource == "GEO") {
-        # normalize data
-        exprs(gset) <- normalizeBetweenArrays(ex)
+        # make proper column names to match toptable
+        fvarLabels(gset) <- make.names(fvarLabels(gset))
+
+        # Reduce the dimensionality of gset to that of ex
+        gset <- gset[row.names(gset) %in% row.names(ex),]
+        gset <- gset[, colnames(gset) %in% colnames(ex)]
+      }
+
+      # group membership for all samples
+      sml <- strsplit(gsms, split = "")[[1]]
+      sel <- which(sml != "X")
+      sml <- sml[sel]
+      ex <- ex[, sel]
+
+      if (dataSource == "GEO") {
+        # Update gset data
+        gset <- gset[, sel]
+        exprs(gset) <- ex
+      }
+      if (dataSource == "Upload") {
+        if (typeOfData == "RNA Sequencing") {
+          ex = DGEList(ex, group = sml)
+        }
+      }
+
+      if (forceNormalization == "Yes") {
+        if (dataSource == "GEO") {
+          # normalize data
+          exprs(gset) <- normalizeBetweenArrays(ex)
+        } else if (typeOfData == "RNA Sequencing") {
+          ex = calcNormFactors(ex, method = "TMM")
+        } else if (typeOfData == "Microarray") {
+          ex <- normalizeBetweenArrays(ex)
+        }
+      }
+
+      # assign samples to groups and set up design matrix
+      gs <- factor(sml)
+      groups <- make.names(c("Group1", "Group2"))
+      levels(gs) <- groups
+
+      if (dataSource == "GEO") {
+        # Update gset data
+        gset$group <- gs
+
+        # Create design
+        design <- model.matrix(~ group + 0, gset)
+      } else if (typeOfData == "Microarray") {
+        # Convert ex to expression dataset
+        ex <- ExpressionSet(ex)
+        ex$group <- gs
+        # Create design
+        design <- model.matrix(~ group + 0, ex)
       } else if (typeOfData == "RNA Sequencing") {
-        ex = calcNormFactors(ex, method = "TMM")
-      } else if (typeOfData == "Microarray") {
-        ex <- normalizeBetweenArrays(ex)
+        ex$samples$group <- gs
+        # Create design
+        design <- model.matrix(~ group + 0, ex$samples)
       }
-    }
 
-    # assign samples to groups and set up design matrix
-    gs <- factor(sml)
-    groups <- make.names(c("Group1", "Group2"))
-    levels(gs) <- groups
+      colnames(design) <- levels(gs)
 
-    if (dataSource == "GEO"){
-      # Update gset data
-      gset$group <- gs
+      if (limmaPrecisionWeights == "Yes") {
+        if (dataSource == "GEO") {
+          gset <- gset[complete.cases(exprs(gset)), ]
 
-      # Create design
-      design <- model.matrix( ~ group + 0, gset)
-    } else if (typeOfData == "Microarray") {
-      # Convert ex to expression dataset
-      ex <- ExpressionSet(ex)
-      ex$group <- gs
-      # Create design
-      design <- model.matrix( ~ group + 0, ex)
-    } else if (typeOfData == "RNA Sequencing") {
-      ex$samples$group <- gs
-      # Create design
-      design <- model.matrix( ~ group + 0, ex$samples)
-    }
+          # calculate precision weights and show plot of
+          # mean-variance trend
+          v <- vooma(gset, design, plot = FALSE)
+          # attach gene annotations
+          v$genes <- fData(gset)
+        } else if (typeOfData == "Microarray") {
+          # Convert ex to matrix
+          ex <- as.matrix(ex)
+          ex <- ex[complete.cases(ex), ]
+          # calculate precision weights
+          v <- vooma(ex, design, plot = FALSE)
+          # Add gene information
+          v$genes <- as.data.frame(row.names(ex))
+          colnames(v$genes) <- list("ID")
+        }
+        else if (typeOfData == "RNA Sequencing") {
+          # calculate precision weights
+          v <- voom(ex, design, plot = FALSE)
+          # fit linear model
+          fit  <- lmFit(v)
+          # Udate results
+          results$ex <- v
+        }
 
-    colnames(design) <- levels(gs)
-
-    if (limmaPrecisionWeights == "Yes") {
-      if (dataSource == "GEO"){
-        gset <- gset[complete.cases(exprs(gset)),]
-
-        # calculate precision weights and show plot of
-        # mean-variance trend
-        v <- vooma(gset, design, plot = FALSE)
-        # attach gene annotations
-        v$genes <- fData(gset)
-      } else if (typeOfData == "Microarray") {
-        # Convert ex to matrix
-        ex <- as.matrix(ex)
-        ex <- ex[complete.cases(ex),]
-        # calculate precision weights
-        v <- vooma(ex, design, plot = FALSE)
-        # Add gene information
-        v$genes <- as.data.frame(row.names(ex))
-        colnames(v$genes) <- list("ID")
-      }
-      else if (typeOfData == "RNA Sequencing") {
-        # calculate precision weights
-        v <- voom(ex, design, plot = FALSE)
         # fit linear model
         fit  <- lmFit(v)
-        # Udate results
+
+        # Update results
         results$ex <- v
+
+      } else if (limmaPrecisionWeights == "No") {
+        if (dataSource == "GEO") {
+          # fit linear model
+          fit <- lmFit(gset, design)
+          # Update results
+          results$ex <- exprs(gset)
+        } else if (typeOfData == "Microarray") {
+          # fit linear model
+          fit <- lmFit(ex, design)
+          # attach gene annotations
+          fit$genes <- as.data.frame(row.names(ex))
+          # Update column name
+          colnames(fit$genes) <- list("ID")
+
+          # Update results as a matrix
+          results$ex <- as.matrix(ex)
+        } else if (typeOfData == "RNA Sequencing") {
+          # fit linear model
+          fit <- lmFit(as.matrix.DGEList(ex), design)
+          # Update results
+          results$ex <- ex$counts
+        }
       }
 
-      # fit linear model
-      fit  <- lmFit(v)
+      # set up contrasts of interest and recalculate
+      # model coefficients
+      cts <- paste(groups[1], groups[2], sep = "-")
+      cont.matrix <- makeContrasts(contrasts = cts,
+                                   levels = design)
+      fit2 <- contrasts.fit(fit, cont.matrix)
+
+      # compute statistics and table of top significant genes
+      fit2 <- eBayes(fit2, 0.01)
 
       # Update results
-      results$ex <- v
+      results$fit2 <- fit2
 
-    } else if (limmaPrecisionWeights == "No") {
-      if (dataSource == "GEO"){
-        # fit linear model
-        fit <- lmFit(gset, design)
-        # Update results
-        results$ex <- exprs(gset)
-      } else if (typeOfData == "Microarray") {
-        # fit linear model
-        fit <- lmFit(ex, design)
-        # attach gene annotations
-        fit$genes <- as.data.frame(row.names(ex))
-        # Update column name
-        colnames(fit$genes) <- list("ID")
+    } else if (dataSetType == "Combine")
+    {
+      if (dataSource == "GEO") {
+        # make proper column names to match toptable
+        fvarLabels(gset) <- make.names(fvarLabels(gset))
 
-        # Update results as a matrix
-        results$ex <- as.matrix(ex)
-      } else if (typeOfData == "RNA Sequencing") {
-        # fit linear model
-        fit <- lmFit(as.matrix.DGEList(ex), design)
-        # Update results
-        results$ex <- ex$counts
+        # Reduce the dimensionality of gset to that of ex
+        gset <- gset[row.names(gset) %in% row.names(ex),]
+        gset <- gset[, colnames(gset) %in% colnames(ex)]
       }
+
+      # group membership for all samples
+      sml <- strsplit(gsms, split = "")[[1]]
+      sel <- which(sml != "X")
+      sml <- sml[sel]
+      ex <- ex[, sel]
+
+      if (dataSource == "Upload") {
+        if (typeOfData == "RNA Sequencing") {
+          ex = DGEList(ex, group = sml)
+        }
+      }
+
+      if (forceNormalization == "Yes") {
+        if (dataSource == "GEO") {
+          # normalize data
+          ex <- normalizeBetweenArrays(ex)
+        } else if (typeOfData == "RNA Sequencing") {
+          ex = calcNormFactors(ex, method = "TMM")
+        } else if (typeOfData == "Microarray") {
+          ex <- normalizeBetweenArrays(ex)
+        }
+      }
+
+      # assign samples to groups and set up design matrix
+      gs <- factor(sml)
+      groups <- make.names(c("Group1", "Group2"))
+      levels(gs) <- groups
+
+      if (dataSource == "GEO") {
+        # Update gset data
+        ex <- ExpressionSet(ex)
+        ex$group <- gs
+
+        # Create design
+        design <- model.matrix(~ group + 0, ex)
+      } else if (typeOfData == "Microarray" ) {
+        # Convert ex to expression dataset
+        ex <- ExpressionSet(ex)
+        ex$group <- gs
+        # Create design
+        design <- model.matrix(~ group + 0, ex)
+      } else if (typeOfData == "RNA Sequencing") {
+        ex$samples$group <- gs
+        # Create design
+        design <- model.matrix(~ group + 0, ex$samples)
+      }
+
+      colnames(design) <- levels(gs)
+
+      if (limmaPrecisionWeights == "Yes") {
+        if (dataSource == "GEO") {
+          # Convert to matrix
+          ex <- as.matrix(ex)
+          ex <- ex[complete.cases(ex), ]
+
+          # calculate precision weights and show plot of
+          # mean-variance trend
+          v <- vooma(ex, design, plot = FALSE)
+          # attach gene annotations
+          v$genes <- fData(gset)
+        } else if (typeOfData == "Microarray") {
+          # Convert ex to matrix
+          ex <- as.matrix(ex)
+          ex <- ex[complete.cases(ex), ]
+          # calculate precision weights
+          v <- vooma(ex, design, plot = FALSE)
+          # Add gene information
+          # v$genes <- gsetData@featureData@data
+          v$genes <- as.data.frame(row.names(ex))
+          colnames(v$genes) <- list("ID")
+        }
+        else if (typeOfData == "RNA Sequencing") {
+          # calculate precision weights
+          v <- voom(ex, design, plot = FALSE)
+          # fit linear model
+          fit  <- lmFit(v)
+          # Udate results
+          results$ex <- v
+        }
+
+        # fit linear model
+        fit  <- lmFit(v)
+
+        # Update results
+        results$ex <- v
+
+      } else if (limmaPrecisionWeights == "No") {
+        if (dataSource == "GEO") {
+          # fit linear model
+          fit <- lmFit(ex, design)
+          # Update results
+          results$ex <- ex
+        } else if (typeOfData == "Microarray") {
+          # fit linear model
+          fit <- lmFit(ex, design)
+          # attach gene annotations
+          fit$genes <- as.data.frame(row.names(ex))
+          # Update column name
+          colnames(fit$genes) <- list("ID")
+
+          # Update results as a matrix
+          results$ex <- as.matrix(ex)
+        } else if (typeOfData == "RNA Sequencing") {
+          # fit linear model
+          fit <- lmFit(as.matrix.DGEList(ex), design)
+          # Update results
+          results$ex <- ex$counts
+        }
+      }
+
+      # set up contrasts of interest and recalculate
+      # model coefficients
+      cts <- paste(groups[1], groups[2], sep = "-")
+      cont.matrix <- makeContrasts(contrasts = cts,
+                                   levels = design)
+      fit2 <- contrasts.fit(fit, cont.matrix)
+
+      # compute statistics and table of top significant genes
+      fit2 <- eBayes(fit2, 0.01)
+
+      # Update results
+      results$fit2 <- fit2
     }
-
-    # set up contrasts of interest and recalculate
-    # model coefficients
-    cts <- paste(groups[1], groups[2], sep = "-")
-    cont.matrix <- makeContrasts(contrasts = cts,
-                                 levels = design)
-    fit2 <- contrasts.fit(fit, cont.matrix)
-
-    # compute statistics and table of top significant genes
-    fit2 <- eBayes(fit2, 0.01)
-
-    # Update results
-    results$fit2 <- fit2
 
     return(results)
   }

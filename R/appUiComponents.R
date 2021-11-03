@@ -11,6 +11,13 @@ sourceSideBarUi <- function() {
   sideBarUi <- sidebarPanel(
     add_busy_spinner(spin = "fading-circle"),
     radioButtons(
+      "dataSetType",
+      label = "Would you like analyse a single gene exression dataset or
+      combine two gene exression datasets?",
+      choices = list("Single", "Combine"),
+      selected = "Single"
+    ),
+    radioButtons(
       "dataSource",
       label = "Would you like to upload the gene expression data
       or source the data from GEO?",
@@ -21,6 +28,10 @@ sourceSideBarUi <- function() {
     uiOutput("output2"),
     uiOutput("output3"),
     uiOutput("output4"),
+    uiOutput("output7"),
+    uiOutput("output8"),
+    uiOutput("output9"),
+    uiOutput("output10"),
     radioButtons(
       "logTransformation",
       label = "Apply log transformation to the data:",
