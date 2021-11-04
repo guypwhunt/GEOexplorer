@@ -129,6 +129,8 @@ sourceServer <- function(input, output, session) {
           if (input$dataSource == "GEO") {
             # Update UI Side Bar with EDA button
             output$output5 <- renderUI({
+            })
+            output$output5 <- renderUI({
               actionButton("exploratoryDataAnalysisButtonGeo", "Analyse")
             })
             output$output1 <- renderUI({
@@ -1036,6 +1038,8 @@ sourceServer <- function(input, output, session) {
               )
             })
             # Update UI Side Bar with EDA button
+            output$output5 <- renderUI({
+            })
             output$output5 <- renderUI({
               actionButton("exploratoryDataAnalysisButtonUpload", "Analyse")
             })
