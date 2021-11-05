@@ -162,6 +162,15 @@ sourceServer <- function(input, output, session) {
         output$output4 <- renderUI({
           selectInput("platform", "Platform", c())
         })
+        output$output5 <- renderUI({
+          radioButtons(
+            "knnTransformation",
+            label = "Apply k-nearest neighbors (KNN) algorithm to predict
+      null data:",
+            choices = list("Yes", "No"),
+            selected = "No"
+          )
+        })
 
         # Add platform tool tip
         addTooltip(
@@ -172,6 +181,20 @@ sourceServer <- function(input, output, session) {
           placement = "top",
           trigger = "hover"
         )
+
+        # Add knn tool tip
+        addTooltip(
+          session,
+          id = "knnTransformation",
+          title = "Rows with over 50% missing values are
+          imputed using the overall
+              mean per sample. Columns with over
+              80% will cause an error in the KNN
+              computation.",
+          placement = "top",
+          trigger = "hover"
+        )
+
 
         observeEvent(input$geoAccessionCode, {
           # Define error checks
@@ -232,7 +255,6 @@ sourceServer <- function(input, output, session) {
           }
 
           if (errorChecks$continueWorkflow == TRUE) {
-
             # Get a list of all the platforms
             platforms <- reactive({
               extractPlatforms(all$allGset())
@@ -280,48 +302,81 @@ sourceServer <- function(input, output, session) {
             selected = "Microarray"
           )
         })
-
-        # Add or remove CPM radio button
+        # Add KNN Imputation if the dataset is microarray
         observeEvent(input$typeOfData, {
-          # Define error checks
-          errorChecks$continueWorkflow <- TRUE
-          errorChecks$geoAccessionCode <- TRUE
-          errorChecks$geoMicroarrayAccessionCode <- TRUE
-          errorChecks$geoPlatform <- TRUE
-          errorChecks$expressionData <- TRUE
-          errorChecks$dataInput <- TRUE
-          errorChecks$knnDataInput <- TRUE
-          errorChecks$pcaPrcompDataInput <- TRUE
-          errorChecks$expressionDataOverTwoColumns <- TRUE
-          errorChecks$expressionDataOverOneColumns <- TRUE
-          errorChecks$differentialGeneExpression <- TRUE
-          errorChecks$differentialGeneExpressionGroup <- TRUE
-          errorChecks$uploadFile <- TRUE
-          errorChecks$uploadFileExtension <- TRUE
-          errorChecks$uploadLogData <- TRUE
-
-          if (input$typeOfData == "RNA Sequencing") {
-            output$output4 <- renderUI({
+          if (input$typeOfData == "Microarray") {
+            output$output5 <- renderUI({
               radioButtons(
-                "cpmTransformation",
-                label = "Convert to count per million:",
+                "knnTransformation",
+                label = "Apply k-nearest neighbors (KNN) algorithm to predict
+      null data:",
                 choices = list("Yes", "No"),
                 selected = "No"
               )
             })
-            # Add CPM tool tip
-            bsTooltip(
-              id = "cpmTransformation",
-              title = "This is recommended for raw RNA sequence data.",
+
+            # Add knn tool tip
+            addTooltip(
+              session,
+              id = "knnTransformation",
+              title = "Rows with over 50% missing values are imputed
+              using the overall
+              mean per sample. Columns with over
+              80% will cause an error in the KNN
+              computation.",
               placement = "top",
               trigger = "hover"
             )
-          } else if (input$typeOfData == "Microarray") {
-            output$output4 <- renderUI({
+          } else {
+            output$output5 <- renderUI({
+
             })
           }
         })
       }
+
+
+      # Add or remove CPM radio button
+      observeEvent(input$typeOfData, {
+        # Define error checks
+        errorChecks$continueWorkflow <- TRUE
+        errorChecks$geoAccessionCode <- TRUE
+        errorChecks$geoMicroarrayAccessionCode <- TRUE
+        errorChecks$geoPlatform <- TRUE
+        errorChecks$expressionData <- TRUE
+        errorChecks$dataInput <- TRUE
+        errorChecks$knnDataInput <- TRUE
+        errorChecks$pcaPrcompDataInput <- TRUE
+        errorChecks$expressionDataOverTwoColumns <- TRUE
+        errorChecks$expressionDataOverOneColumns <- TRUE
+        errorChecks$differentialGeneExpression <- TRUE
+        errorChecks$differentialGeneExpressionGroup <- TRUE
+        errorChecks$uploadFile <- TRUE
+        errorChecks$uploadFileExtension <- TRUE
+        errorChecks$uploadLogData <- TRUE
+
+        if (input$typeOfData == "RNA Sequencing") {
+          output$output4 <- renderUI({
+            radioButtons(
+              "cpmTransformation",
+              label = "Convert to count per million:",
+              choices = list("Yes", "No"),
+              selected = "No"
+            )
+          })
+          # Add CPM tool tip
+          bsTooltip(
+            id = "cpmTransformation",
+            title = "This is recommended for raw RNA sequence data.",
+            placement = "top",
+            trigger = "hover"
+          )
+        } else if (input$typeOfData == "Microarray") {
+          output$output4 <- renderUI({
+
+          })
+        }
+      })
     })
     # Exploratory data analysis visualisation
     observeEvent(input$exploratoryDataAnalysisButton, {
@@ -440,12 +495,10 @@ sourceServer <- function(input, output, session) {
 
         } else if (input$dataSource == "Upload") {
           # Error handling to prevent non-csvs being uploaded
-          if (file_ext(input$file1$name) %in% c(
-            'text/csv',
-            'text/comma-separated-values',
-            'text/plain',
-            'csv'
-          )) {
+          if (file_ext(input$file1$name) %in% c('text/csv',
+                                                'text/comma-separated-values',
+                                                'text/plain',
+                                                'csv')) {
             # Update error checks
             errorChecks$uploadFile <- TRUE
             errorChecks$continueWorkflow <- TRUE
@@ -481,7 +534,8 @@ sourceServer <- function(input, output, session) {
               errorChecks$expressionData <- TRUE
               errorChecks$continueWorkflow <- TRUE
               # Extract Column Information
-              all$columnInfo <- as.data.frame(colnames(all$expressionData))
+              all$columnInfo <-
+                as.data.frame(colnames(all$expressionData))
               try(colnames(all$columnInfo) <- list("column"))
               try(rownames(all$columnInfo) <- all$columnInfo[, 1])
             }
@@ -565,7 +619,7 @@ sourceServer <- function(input, output, session) {
                 return(NULL)
               })
 
-              if (is.null(all$cpm)== TRUE) {
+              if (is.null(all$cpm) == TRUE) {
                 # Update cpm
                 all$cpm <- all$expressionData
 
@@ -616,14 +670,42 @@ sourceServer <- function(input, output, session) {
             )
           })
 
-          # Perform KNN transformation on log
-          # expression data if necessary
-          all$knnDataInput <- tryCatch({
-            calculateKnnImpute(all$dataInput,
-                               input$knnTransformation)
-          }, error = function(cond) {
-            return(NULL)
-          })
+          if (input$dataSource == "Upload") {
+            if (input$typeOfData == "RNA Sequencing") {
+              # Perform KNN transformation on log
+              # expression data if necessary
+              all$knnDataInput <- tryCatch({
+                calculateKnnImpute(all$dataInput,
+                                   "No")
+              }, error = function(cond) {
+                return(NULL)
+              })
+            } else
+            {
+              # Perform KNN transformation on log
+              # expression data if necessary
+              all$knnDataInput <- tryCatch({
+                calculateKnnImpute(all$dataInput,
+                                   input$knnTransformation)
+              }, error = function(cond) {
+                return(NULL)
+              })
+              # Error handling to display a notification if
+              # there was an error in KNN imputation
+            }
+          } else {
+            # Perform KNN transformation on log
+            # expression data if necessary
+            all$knnDataInput <- tryCatch({
+              calculateKnnImpute(all$dataInput,
+                                 input$knnTransformation)
+            }, error = function(cond) {
+              return(NULL)
+            })
+            # Error handling to display a notification if
+            # there was an error in KNN imputation
+          }
+
           # Error handling to display a notification if
           # there was an error in KNN imputation
           if (is.null(all$knnDataInput) == TRUE) {
@@ -643,7 +725,7 @@ sourceServer <- function(input, output, session) {
           all$knnColumns <-
             extractSampleNames(all$knnDataInput)
 
-          if ((input$dataSource == "Upload")) {
+          if (input$dataSource == "Upload") {
             # Update col info
             all$columnInfo <-
               as.data.frame(all$columnInfo[all$knnColumns,])
@@ -698,8 +780,7 @@ sourceServer <- function(input, output, session) {
             # return a safeError if a parsing error occurs
             stop(safeError(e))
           })
-        } else if
-        (input$dataSource == "Upload") {
+        } else if (input$dataSource == "Upload") {
           # Update Experimental information
           output$experimentInfo <-  renderUI({
             HTML(
@@ -714,7 +795,7 @@ sourceServer <- function(input, output, session) {
         output$columnTable <-
           tryCatch({
             renderDataTable({
-              all$columnInfo[1:(length(all$columnInfo)-1)]
+              all$columnInfo[1:(length(all$columnInfo) - 1)]
             })
           },
           error = function(e) {
@@ -886,6 +967,16 @@ sourceServer <- function(input, output, session) {
         # Error handling to display a notification
         # if there was an error in PCA
         if (errorChecks$pcaPrcompDataInput  == TRUE) {
+          # Interactive PCA Scree Plot
+          output$interactivePcaScreePlot <- tryCatch({
+            renderPlotly({
+              interactivePrcompPcaScreePlot(pcaPrcompDataInput)
+            })
+          }, error = function(e) {
+            # return a safeError if a parsing error occurs
+            stop(safeError(e))
+          })
+
           # Interactive PCA Individual Plot
           output$interactivePcaIndividualsPlot <-
             tryCatch({
@@ -929,6 +1020,11 @@ sourceServer <- function(input, output, session) {
           }
         }
       }
+
+      if (errorChecks$continueWorkflow == TRUE) {
+        showNotification("Exploratory data analysis complete!",
+                         type = "message")
+      }
     })
     # Differential Gene Expression Functions
     observeEvent(input$differentialExpressionButton, {
@@ -969,10 +1065,8 @@ sourceServer <- function(input, output, session) {
             as.data.frame(
               sapply(
                 seq_len(
-                  nrow(
-                    all$columnInfo)),
-                function(a)
-                  input[[paste0("sel", a)]])))
+                  nrow(all$columnInfo)),function(a)
+                    input[[paste0("sel", a)]])))
 
         }, error = function(cond) {
           return(NULL)
@@ -998,19 +1092,10 @@ sourceServer <- function(input, output, session) {
           # Error handling to ensure at least one
           # group has two samples and the other group
           # has at least one sample
-          if ((lengths(regmatches(
-            gsms, gregexpr("0", gsms)
-          )) > 0 &
-          lengths(regmatches(
-            gsms, gregexpr("1", gsms)
-          )) > 1) |
-          (lengths(regmatches(
-            gsms, gregexpr("0", gsms)
-          )) > 1 &
-          lengths(regmatches(
-            gsms, gregexpr("1", gsms)
-          )) > 0)) {
-
+          if ((lengths(regmatches(gsms, gregexpr("0", gsms))) > 0 &
+               lengths(regmatches(gsms, gregexpr("1", gsms))) > 1) |
+              (lengths(regmatches(gsms, gregexpr("0", gsms))) > 1 &
+               lengths(regmatches(gsms, gregexpr("1", gsms))) > 0)) {
             if (input$dataSource == "GEO") {
               results <- tryCatch({
                 calculateDifferentialGeneExpression(
@@ -1054,12 +1139,14 @@ sourceServer <- function(input, output, session) {
                       knnDataInput,
                       input$dataSource,
                       input$typeOfData
-                    )}
-                    , error = function(cond) {
-                      return(NULL)
-                    })
+                    )
+                  }
+                  , error = function(cond) {
+                    return(NULL)
+                  })
                   # Show warning that non-log data was used
-                  showNotification("There was an error calculating the
+                  showNotification(
+                    "There was an error calculating the
                              differential gene expression analysis
               using the log data. So the non-log data was used instead!",
                     type = "warning"
@@ -1089,10 +1176,11 @@ sourceServer <- function(input, output, session) {
             # Update error check
             errorChecks$continueWorkflow <- FALSE
             # Display notification
-            showNotification( "One group needs at least 2 samples and the other
+            showNotification(
+              "One group needs at least 2 samples and the other
                               group needs at least 1 sample",
-            type = "error"
-    )
+              type = "error"
+            )
 
           }
 
@@ -1101,120 +1189,117 @@ sourceServer <- function(input, output, session) {
 
       if (errorChecks$continueWorkflow == TRUE) {
         adjustment <- convertAdjustment(input$pValueAdjustment)
-                    tT <-
-                      calculateTopDifferentiallyExpressedGenes(
-                        results$fit2,
-                        adjustment)
+        tT <-
+          calculateTopDifferentiallyExpressedGenes(results$fit2,
+                                                   adjustment)
 
-                    dT <-
-                      calculateDifferentialGeneExpressionSummary(
-                        results$fit2,
-                        adjustment,
-                        input$significanceLevelCutOff)
-                    # Differential gene expression table
-                    output$dETable <- tryCatch({
-                      renderDataTable({
-                        as.data.frame(tT)
-                      })
-                    },
-                    error = function(e) {
-                      # return a safeError if a parsing error occurs
-                      stop(safeError(e))
-                    })
+        dT <-
+          calculateDifferentialGeneExpressionSummary(
+            results$fit2,
+            adjustment,
+            input$significanceLevelCutOff)
+        # Differential gene expression table
+        output$dETable <- tryCatch({
+          renderDataTable({
+            as.data.frame(tT)
+          })
+        },
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          stop(safeError(e))
+        })
 
-                    # Interactive Histogram Plot
-                    output$iDEHistogram <- tryCatch({
-                      renderPlotly({
-                        interactiveHistogramPlot(results$fit2, adjustment)
-                      })
-                    },
-                    error = function(e) {
-                      # return a safeError if a parsing error occurs
-                      stop(safeError(e))
-                    })
-
-
-                    # Venn Diagram Plot
-                    output$dEVennDiagram <- tryCatch({
-                      renderPlot({
-                        nonInteractiveVennDiagramPlot(dT)
-                      })
-                    },
-                    error = function(e) {
-                      # return a safeError if a parsing error occurs
-                      stop(safeError(e))
-                    })
+        # Interactive Histogram Plot
+        output$iDEHistogram <- tryCatch({
+          renderPlotly({
+            interactiveHistogramPlot(results$fit2, adjustment)
+          })
+        },
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          stop(safeError(e))
+        })
 
 
-                    # Interactive QQ Plot
-                    output$iDEQQ <-
-                      tryCatch({
-                        renderPlotly({
-                          interactiveQQPlot(results$fit2, dT, ct)
-                        })
-                      },
-                      error = function(e) {
-                        # return a safeError if a parsing error occurs
-                        stop(safeError(e))
-                      })
+        # Venn Diagram Plot
+        output$dEVennDiagram <- tryCatch({
+          renderPlot({
+            nonInteractiveVennDiagramPlot(dT)
+          })
+        },
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          stop(safeError(e))
+        })
 
 
-                    # Interactive Volcano Plot
-                    output$iDEVolcano <- tryCatch({
-                      renderPlotly({
-                        interactiveVolcanoPlot(results$fit2, dT, ct)
-                      })
-                    },
-                    error = function(e) {
-                      # return a safeError if a parsing error occurs
-                      stop(safeError(e))
-                    })
+        # Interactive QQ Plot
+        output$iDEQQ <-
+          tryCatch({
+            renderPlotly({
+              interactiveQQPlot(results$fit2, dT, ct)
+            })
+          },
+          error = function(e) {
+            # return a safeError if a parsing error occurs
+            stop(safeError(e))
+          })
 
 
-                    # Interactive Mean Difference Plot
-                    output$iDEMd <- tryCatch({
-                      renderPlotly({
-                        interactiveMeanDifferencePlot(results$fit2, dT, ct)
-                      })
-                    },
-                    error = function(e) {
-                      # return a safeError if a parsing error occurs
-                      stop(safeError(e))
-                    })
+        # Interactive Volcano Plot
+        output$iDEVolcano <- tryCatch({
+          renderPlotly({
+            interactiveVolcanoPlot(results$fit2, dT, ct)
+          })
+        },
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          stop(safeError(e))
+        })
 
-                    # Update Interactive Heatmap Plot Gene number max
-                    updateNumericInput(session, "numberOfGenes", max = nrow(tT))
 
-                    # Interactive Heatmap Plot
-                    output$iHeatmap <-
-                      tryCatch({
-                        renderPlotly({
-                          interactiveDGEHeatMapPlot(
-                            results$ex,
-                            input$limmaPrecisionWeights,
-                            input$numberOfGenes,
-                            tT
-                          )
-                        })
-                      },
-                      error = function(e) {
-                        # return a safeError if a parsing error occurs
-                        stop(safeError(e))
-                      })
+        # Interactive Mean Difference Plot
+        output$iDEMd <- tryCatch({
+          renderPlotly({
+            interactiveMeanDifferencePlot(results$fit2, dT, ct)
+          })
+        },
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          stop(safeError(e))
+        })
 
-                    # Download Top Differentially Expressed Genes Table
-                    output$downloadData <- downloadHandler(
-                      filename = function() {
-                        "top_differentially_expressed_genes.csv"
-                      },
-                      content = function(file) {
-                        write.csv(tT, file, row.names = FALSE)
-                      }
-                    )
-                    showNotification("Differential gene
+        # Update Interactive Heatmap Plot Gene number max
+        updateNumericInput(session, "numberOfGenes", max = nrow(tT))
+
+        # Interactive Heatmap Plot
+        output$iHeatmap <-
+          tryCatch({
+            renderPlotly({
+              interactiveDGEHeatMapPlot(results$ex,
+                                        input$limmaPrecisionWeights,
+                                        input$numberOfGenes,
+                                        tT)
+            })
+          },
+          error = function(e) {
+            # return a safeError if a parsing error occurs
+            stop(safeError(e))
+          })
+
+        # Download Top Differentially Expressed Genes Table
+        output$downloadData <- downloadHandler(
+          filename = function() {
+            "top_differentially_expressed_genes.csv"
+          },
+          content = function(file) {
+            write.csv(tT, file, row.names = FALSE)
+          }
+        )
+        showNotification("Differential gene
                            expression analysis complete!",
-                                     type = "message")
-                  }
+                         type = "message")
+      }
 
     })
 

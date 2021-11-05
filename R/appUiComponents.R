@@ -57,13 +57,7 @@ sourceSideBarUi <- function() {
       trigger = "hover"
     ),
     uiOutput("logTransformationText"),
-    radioButtons(
-      "knnTransformation",
-      label = "Apply k-nearest neighbors (KNN) algorithm to predict
-      null data:",
-      choices = list("Yes", "No"),
-      selected = "No"
-    ),
+    uiOutput("output5"),
     bsTooltip(
       id = "knnTransformation",
       title = "Rows with over 50% missing values are imputed using the overall
@@ -73,7 +67,6 @@ sourceSideBarUi <- function() {
       placement = "top",
       trigger = "hover"
     ),
-    #uiOutput("output5")
     actionButton("exploratoryDataAnalysisButton", "Analyse")
   )
   return(sideBarUi)
@@ -289,7 +282,9 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
                 placement = "top",
                 trigger = "hover"
               ),
-              uiOutput("output6")
+              uiOutput("output6"),
+              br(),
+              br()
             )
           )
         ),
@@ -512,20 +507,26 @@ sourceExploratoryDataAnalysisUi <- function() {
         plotlyOutput('interactiveBoxAndWhiskerPlot')
       ),
       tabPanel(
-        "Mean-Variance Plot",
+        "PCA Scree Plot",
         br(),
         span(
-          "Generated using R limma and plotly.
-          The plot below is used to check the mean-variance relationship
-          of the expression data, after fitting a linear model.
-          It can help show if there is a lot of variation in the data.
-          Each point represents a gene.
-          The values are displayed post KNN imputation, count per million
-          transformation and log transformation if selected."
+          "Generated using R prcomp and plotly.
+              Principal component analysis (PCA) reduces the
+              dimensionality of multivariate data to two dimensions
+              that can be visualized graphically with minimal loss
+              of information."
+        ),
+        br(),
+        span(
+          "Eigenvalues correspond to the amount of the variation
+              explained by each principal component (PC).
+              The plot displays the eigenvalues against the number of
+              dimensions.  The values are displayed post KNN imputation,
+          count per million transformation and log transformation if selected."
         ),
         br(),
         br(),
-        plotlyOutput('interactiveMeanVariancePlot')
+        plotlyOutput('interactivePcaScreePlot')
       ),
       tabPanel(
         "PCA Individuals Plot",
@@ -550,6 +551,22 @@ sourceExploratoryDataAnalysisUi <- function() {
         br(),
         br(),
         plotlyOutput('interactivePcaIndividualsPlot')
+      ),
+      tabPanel(
+        "Mean-Variance Plot",
+        br(),
+        span(
+          "Generated using R limma and plotly.
+          The plot below is used to check the mean-variance relationship
+          of the expression data, after fitting a linear model.
+          It can help show if there is a lot of variation in the data.
+          Each point represents a gene.
+          The values are displayed post KNN imputation, count per million
+          transformation and log transformation if selected."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactiveMeanVariancePlot')
       ),
       tabPanel(
         "Heatmap Plot",
