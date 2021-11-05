@@ -17,6 +17,7 @@ sourceSideBarUi <- function() {
       choices = list("Single", "Combine"),
       selected = "Single"
     ),
+    uiOutput("output2"),
     radioButtons(
       "dataSource",
       label = "Would you like to upload the gene expression data
@@ -24,40 +25,22 @@ sourceSideBarUi <- function() {
       choices = list("GEO", "Upload"),
       selected = "GEO"
     ),
-    uiOutput("output1"),
-    uiOutput("output2"),
-    uiOutput("output3"),
     uiOutput("output4"),
+    uiOutput("output5"),
+    uiOutput("output6"),
     uiOutput("output7"),
     uiOutput("output8"),
     uiOutput("output9"),
     uiOutput("output10"),
+    uiOutput("output11"),
     radioButtons(
       "logTransformation",
       label = "Apply log transformation to the data:",
       choices = list("Auto-Detect", "Yes", "No"),
       selected = "Auto-Detect"
     ),
-    bsTooltip(
-      id = "logTransformation",
-      title = "The GEO database accepts a variety of data value types,
-              including logged and unlogged data.
-              Limma expects data values to be in log space.
-              To address this, an auto-detect feature that checks
-              the values of selected samples
-              and automatically performs a log2 transformation on
-              values determined not to be in log space.
-              Alternatively, the user can select Yes
-              to force log2 transformation,
-              or No to override the auto-detect feature.
-              The auto-detect feature only considers Sample values that
-              have been assigned to a group, and applies the transformation in
-              an all-or-none fashion",
-      placement = "top",
-      trigger = "hover"
-    ),
     uiOutput("logTransformationText"),
-    uiOutput("output5"),
+    uiOutput("output13"),
     bsTooltip(
       id = "knnTransformation",
       title = "Rows with over 50% missing values are imputed using the overall
@@ -282,7 +265,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
                 placement = "top",
                 trigger = "hover"
               ),
-              uiOutput("output6"),
+              uiOutput("output100"),
               br(),
               br()
             )

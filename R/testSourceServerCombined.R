@@ -146,23 +146,24 @@ sourceServer <- function(input, output, session) {
     observeEvent(input$dataSource, {
       # Update UI side bar with GEO widgets
       if (input$dataSource == "GEO") {
-        output$output1 <- renderUI({
+        # GEO help text
+        output$output4 <- renderUI({
           helpText(
             "Input a GEO series accession code (GSEXXXX format)
       to examine the gene expression data.
       This can be obtained from https://www.ncbi.nlm.nih.gov/gds."
           )
         })
-        output$output2 <- renderUI({
+        # GEO accession input
+        output$output5 <- renderUI({
           textInput("geoAccessionCode", "GEO accession code", "")
         })
-        output$output3 <- renderUI({
-          helpText("Select the platform of interest.")
-        })
-        output$output4 <- renderUI({
+        # Platform
+        output$output6 <- renderUI({
           selectInput("platform", "Platform", c())
         })
-        output$output5 <- renderUI({
+        # KNN Imputation Radio Button
+        output$output13 <- renderUI({
           radioButtons(
             "knnTransformation",
             label = "Apply k-nearest neighbors (KNN) algorithm to predict
@@ -241,13 +242,15 @@ sourceServer <- function(input, output, session) {
             # Update error check
             errorChecks$geoAccessionCode <- FALSE
             errorChecks$continueWorkflow <- FALSE
-            # Display notification
-            showNotification(
-              "There was an error obtaining the GEO dataset.
+            if (input$geoAccessionCode != "") {
+              # Display notification
+              showNotification(
+                "There was an error obtaining the GEO dataset.
                            Please ensure you entered the correct GEO Accession
                            Code.",
-              type = "warning"
-            )
+                type = "warning"
+              )
+            }
           } else {
             # Update error checks
             errorChecks$geoAccessionCode <- TRUE
@@ -279,10 +282,17 @@ sourceServer <- function(input, output, session) {
         all$gsetData <- NULL
 
         # Update UI side bar with User Upload widgets
-        output$output1 <- renderUI({
-
+        # Microarray vs RNA Seq Widget
+        output$output4 <- renderUI({
+          radioButtons(
+            "typeOfData",
+            label = "Microarray or RNA Sequencing Data?",
+            choices = list("Microarray", "RNA Sequencing"),
+            selected = "Microarray"
+          )
         })
-        output$output2 <- renderUI({
+        # File Upload Widget
+        output$output5 <- renderUI({
           fileInput(
             "file1",
             "Upload CSV Gene Expression Count File",
@@ -294,45 +304,8 @@ sourceServer <- function(input, output, session) {
             )
           )
         })
-        output$output3 <- renderUI({
-          radioButtons(
-            "typeOfData",
-            label = "Microarray or RNA Sequencing Data?",
-            choices = list("Microarray", "RNA Sequencing"),
-            selected = "Microarray"
-          )
-        })
-        # Add KNN Imputation if the dataset is microarray
-        observeEvent(input$typeOfData, {
-          if (input$typeOfData == "Microarray") {
-            output$output5 <- renderUI({
-              radioButtons(
-                "knnTransformation",
-                label = "Apply k-nearest neighbors (KNN) algorithm to predict
-      null data:",
-                choices = list("Yes", "No"),
-                selected = "No"
-              )
-            })
-
-            # Add knn tool tip
-            addTooltip(
-              session,
-              id = "knnTransformation",
-              title = "Rows with over 50% missing values are imputed
-              using the overall
-              mean per sample. Columns with over
-              80% will cause an error in the KNN
-              computation.",
-              placement = "top",
-              trigger = "hover"
-            )
-          } else {
-            output$output5 <- renderUI({
-
-            })
-          }
-        })
+        # Blank Widgets
+        output$output6 <- renderUI({})
       }
 
 
@@ -356,10 +329,11 @@ sourceServer <- function(input, output, session) {
         errorChecks$uploadLogData <- TRUE
 
         if (input$typeOfData == "RNA Sequencing") {
-          output$output4 <- renderUI({
+          # Add CPM widget if the dataset is microarray
+          output$output13 <- renderUI({
             radioButtons(
               "cpmTransformation",
-              label = "Convert to count per million:",
+              label = "Convert data to count per million:",
               choices = list("Yes", "No"),
               selected = "No"
             )
@@ -372,12 +346,103 @@ sourceServer <- function(input, output, session) {
             trigger = "hover"
           )
         } else if (input$typeOfData == "Microarray") {
-          output$output4 <- renderUI({
-
+          # Add KNN Imputation if the dataset is microarray
+          output$output13 <- renderUI({
+            radioButtons(
+              "knnTransformation",
+              label = "Apply k-nearest neighbors (KNN) algorithm to predict
+      null data:",
+              choices = list("Yes", "No"),
+              selected = "No"
+            )
           })
+
+          # Add knn tool tip
+          addTooltip(
+            session,
+            id = "knnTransformation",
+            title = "Rows with over 50% missing values are imputed
+              using the overall
+              mean per sample. Columns with over
+              80% will cause an error in the KNN
+              computation.",
+            placement = "top",
+            trigger = "hover"
+          )
         }
       })
     })
+
+
+    observeEvent(input$dataSetType,{
+      if (input$dataSetType == "Combine"){
+        # First Data Set Information Widget
+        output$output2 <- renderUI({
+          HTML(
+            "<b>First Gene Expression Dataset Information</b><br></br>"
+          )
+        })
+        output$output7 <- renderUI({
+          HTML(
+            "<b>Second Gene Expression Dataset Information</b><br></br>"
+          )
+        })
+        output$output8 <- renderUI({
+          radioButtons(
+            "dataSource2",
+            label = "Would you like to upload the gene expression data
+      or source the data from GEO?",
+            choices = list("GEO", "Upload"),
+            selected = "GEO"
+          )})
+        observeEvent(input$dataSource2,{
+          if (input$dataSource2 == "GEO") {
+            # GEO Help Text Widget
+            output$output9 <- renderUI({
+              helpText(
+                "Input a GEO series accession code (GSEXXXX format)
+      to examine the gene expression data.
+      This can be obtained from https://www.ncbi.nlm.nih.gov/gds."
+              )
+            })
+            # GEO Accession Code Input Widget
+            output$output10 <- renderUI({
+              textInput("geoAccessionCode2", "GEO accession code", "")
+            })
+            # Platform input text
+            output$output11 <- renderUI({
+              selectInput("platform2", "Platform", c())
+            })
+          } else if (input$dataSource2 == "Upload") {
+            # File upload widget
+            output$output9 <- renderUI({
+              fileInput(
+                "file2",
+                "Upload CSV Gene Expression Count File",
+                multiple = TRUE,
+                accept = c(
+                  "text/csv",
+                  "text/comma-separated-values,text/plain",
+                  ".csv"
+                )
+              )
+            })
+            # Blank widgets
+            output$output10 <- renderUI({})
+            output$output11 <- renderUI({})
+          }
+        })
+      } else if (input$dataSetType == "Single"){
+        # Set all UI widgets to blank
+        output$output2 <- renderUI({})
+        output$output7 <- renderUI({})
+        output$output8 <- renderUI({})
+        output$output9 <- renderUI({})
+        output$output10 <- renderUI({})
+        output$output11 <- renderUI({})
+      }
+    })
+
     # Exploratory data analysis visualisation
     observeEvent(input$exploratoryDataAnalysisButton, {
       # Clear unused memory
@@ -451,7 +516,7 @@ sourceServer <- function(input, output, session) {
       # Button Appear, this prevents users
       # trying to perform differential gene expression analysis
       # prior to exploratory data analysis
-      output$output6 <- renderUI({
+      output$output100 <- renderUI({
         actionButton("differentialExpressionButton", "Analyse")
       })
 
