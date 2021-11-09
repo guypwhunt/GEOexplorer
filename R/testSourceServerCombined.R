@@ -1368,19 +1368,37 @@ sourceServer <- function(input, output, session) {
               (lengths(regmatches(gsms, gregexpr("0", gsms))) > 1 &
                lengths(regmatches(gsms, gregexpr("1", gsms))) > 0)) {
             if (input$dataSource == "GEO") {
-              results <- tryCatch({
-                calculateDifferentialGeneExpression(
-                  gsms,
-                  input$limmaPrecisionWeights,
-                  input$forceNormalization,
-                  all$gsetData,
-                  all$knnDataInput,
-                  input$dataSource
-                )
+              if (input$dataSetType == "Single") {
+                results <- tryCatch({
+                  calculateDifferentialGeneExpression(
+                    gsms,
+                    input$limmaPrecisionWeights,
+                    input$forceNormalization,
+                    all$gsetData,
+                    all$knnDataInput,
+                    input$dataSource
+                  )
+                }
+                , error = function(cond) {
+                  return(NULL)
+                })
+              } else if (input$dataSetType == "Combine") {
+                results <- tryCatch({
+                  calculateDifferentialGeneExpression(
+                    gsms,
+                    input$limmaPrecisionWeights,
+                    input$forceNormalization,
+                    all$gsetData,
+                    all$knnDataInput,
+                    input$dataSource,
+                    NULL,
+                    input$dataSetType
+                  )
+                }
+                , error = function(cond) {
+                  return(NULL)
+                })
               }
-              , error = function(cond) {
-                return(NULL)
-              })
             } else if (input$dataSource == "Upload") {
               results <- tryCatch({
                 calculateDifferentialGeneExpression(

@@ -231,8 +231,7 @@ calculateDifferentialGeneExpression <-
         # Update gset data
         gset <- gset[, sel]
         exprs(gset) <- ex
-      }
-      if (dataSource == "Upload") {
+      } else if (dataSource == "Upload") {
         if (typeOfData == "RNA Sequencing") {
           ex = DGEList(ex, group = sml)
         }
@@ -298,8 +297,6 @@ calculateDifferentialGeneExpression <-
           v <- voom(ex, design, plot = FALSE)
           # fit linear model
           fit  <- lmFit(v)
-          # Udate results
-          results$ex <- v
         }
 
         # fit linear model
@@ -422,8 +419,6 @@ calculateDifferentialGeneExpression <-
           ex <- ex[complete.cases(ex), ]
           # calculate precision weights
           v <- vooma(ex, design, plot = FALSE)
-          # Add gene information
-          # v$genes <- gsetData@featureData@data
           v$genes <- as.data.frame(row.names(ex))
           colnames(v$genes) <- list("ID")
         }
@@ -446,8 +441,10 @@ calculateDifferentialGeneExpression <-
         if (dataSource == "GEO") {
           # fit linear model
           fit <- lmFit(ex, design)
+          # Update gene information
+          fit$genes <- fData(gset)
           # Update results
-          results$ex <- ex
+          results$ex <- as.matrix(ex)
         } else if (typeOfData == "Microarray") {
           # fit linear model
           fit <- lmFit(ex, design)
