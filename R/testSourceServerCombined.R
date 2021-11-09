@@ -286,7 +286,7 @@ sourceServer <- function(input, output, session) {
         output$output4 <- renderUI({
           radioButtons(
             "typeOfData",
-            label = "Microarray or RNA Sequencing Data?",
+            label = "Is the data from Microarray or RNA Sequencing?",
             choices = list("Microarray", "RNA Sequencing"),
             selected = "Microarray"
           )
@@ -382,11 +382,13 @@ sourceServer <- function(input, output, session) {
             "<b>First Gene Expression Dataset Information</b><br></br>"
           )
         })
+        # Second Data Set Information Widget
         output$output7 <- renderUI({
           HTML(
             "<b>Second Gene Expression Dataset Information</b><br></br>"
           )
         })
+        # Second Data Source Widget
         output$output8 <- renderUI({
           radioButtons(
             "dataSource2",
@@ -394,6 +396,14 @@ sourceServer <- function(input, output, session) {
       or source the data from GEO?",
             choices = list("GEO", "Upload"),
             selected = "GEO"
+          )})
+        # Second Data Source Widget
+        output$output14 <- renderUI({
+          radioButtons(
+            "batchCorrection",
+            label = "Batch correction method:",
+            choices = list("Empirical Bayes", "Linear Model", "None"),
+            selected = "None"
           )})
         observeEvent(input$dataSource2,{
           if (input$dataSource2 == "GEO") {
@@ -413,7 +423,89 @@ sourceServer <- function(input, output, session) {
             output$output11 <- renderUI({
               selectInput("platform2", "Platform", c())
             })
-          } else if (input$dataSource2 == "Upload") {
+            # Process second GEO accession code
+            observeEvent(input$geoAccessionCode2, {
+              # Define error checks
+              errorChecks$continueWorkflow2 <- TRUE
+              errorChecks$geoAccessionCode2 <- TRUE
+              errorChecks$geoMicroarrayAccessionCode2 <- TRUE
+              errorChecks$geoPlatform2 <- TRUE
+              errorChecks$expressionData2 <- TRUE
+              errorChecks$dataInput2 <- TRUE
+              errorChecks$knnDataInput2 <- TRUE
+              errorChecks$pcaPrcompDataInput2 <- TRUE
+              errorChecks$expressionDataOverTwoColumns2 <- TRUE
+              errorChecks$expressionDataOverOneColumns2 <- TRUE
+              errorChecks$differentialGeneExpression2 <- TRUE
+              errorChecks$differentialGeneExpressionGroup2 <- TRUE
+              errorChecks$uploadFile2 <- TRUE
+              errorChecks$uploadFileExtension2 <- TRUE
+              errorChecks$uploadLogData2 <- TRUE
+
+              # Get the GEO data for all platforms
+              all$allGset2 <- reactive({
+                tryCatch({
+                  # Error handling to ensure geoAccessionCode is populated
+                  req(input$geoAccessionCode2)
+                  # Notify the user the GEO accession code
+                  # is not a GEO series accession code
+                  if (substr(input$geoAccessionCode2, 1, 3) != "GSE")
+                  {
+                    showNotification("Please input a GEO series accession code
+                                 with the format GSEXXX",
+                                     type = "warning")
+                    return(NULL)
+                  } else {
+                    return(getGeoObject(input$geoAccessionCode2))
+                  }
+                }, error = function(err) {
+                  # Return null if there is a error in the getGeoObject function
+                  return(NULL)
+                })
+              })
+
+              # Update error check
+              if (is.null(all$allGset2())) {
+                # Update error check
+                errorChecks$geoAccessionCode2 <- FALSE
+                errorChecks$continueWorkflow2 <- FALSE
+                if (input$geoAccessionCode2 != "") {
+                  # Display notification
+                  showNotification(
+                    "There was an error obtaining the GEO dataset.
+                           Please ensure you entered the correct GEO Accession
+                           Code.",
+                    type = "warning"
+                  )
+                }
+              } else {
+                # Update error checks
+                errorChecks$geoAccessionCode2 <- TRUE
+                errorChecks$continueWorkflow2 <- TRUE
+              }
+
+              if (errorChecks$continueWorkflow2 == TRUE) {
+                # Get a list of all the platforms
+                platforms2 <- reactive({
+                  extractPlatforms(all$allGset2())
+                })
+
+                # Select the top platform
+                platform2 <- reactive({
+                  platforms2()[1]
+                })
+
+                # Update Platform Options
+                platformObserve2 <- observe({
+                  updateSelectInput(session,
+                                    "platform2",
+                                    choices = platforms2(),
+                                    selected = platform2())
+                })
+              }
+            })
+          } else if (input$dataSource2 == "Upload")
+            {
             # File upload widget
             output$output9 <- renderUI({
               fileInput(
@@ -440,6 +532,7 @@ sourceServer <- function(input, output, session) {
         output$output9 <- renderUI({})
         output$output10 <- renderUI({})
         output$output11 <- renderUI({})
+        output$output14 <- renderUI({})
       }
     })
 
@@ -512,14 +605,6 @@ sourceServer <- function(input, output, session) {
 
       })
 
-      # Make Differential Gene Expression Action
-      # Button Appear, this prevents users
-      # trying to perform differential gene expression analysis
-      # prior to exploratory data analysis
-      output$output100 <- renderUI({
-        actionButton("differentialExpressionButton", "Analyse")
-      })
-
       # Extract information from GSET including expression data
       if (errorChecks$continueWorkflow == TRUE) {
         if (input$dataSource == "GEO") {
@@ -551,14 +636,15 @@ sourceServer <- function(input, output, session) {
               extractExpressionData(all$gsetData)
 
             # Extract the experiment information
-            experimentInformation <-
+            all$experimentInformation <-
               extractExperimentInformation(all$gsetData)
 
             # Extract Column Information
             all$columnInfo <- extractSampleDetails(all$gsetData)
           }
 
-        } else if (input$dataSource == "Upload") {
+        } else if
+        (input$dataSource == "Upload") {
           # Error handling to prevent non-csvs being uploaded
           if (file_ext(input$file1$name) %in% c('text/csv',
                                                 'text/comma-separated-values',
@@ -617,6 +703,120 @@ sourceServer <- function(input, output, session) {
           }
         }
       }
+
+      # Combining datasets workflow
+        if (input$dataSetType == "Combine") {
+          if (errorChecks$continueWorkflow == TRUE &
+              errorChecks$continueWorkflow2 == TRUE) {
+
+            # Extract the GEO data from the specified platform
+            all$gsetData2 <- tryCatch({
+              extractPlatformGset(all$allGset2(), input$platform2)
+            }, error = function(err) {
+              # Return null if there is a error in the getGeoObject function
+              return(NULL)
+            })
+
+            # Error handling to prevent users
+            # trying to run exploratory data analysis
+            # without selecting a platform
+            if (is.null(all$gsetData2) == TRUE) {
+              # Update Error Checks
+              errorChecks$geoPlatform2 <- FALSE
+              errorChecks$continueWorkflow2 <- FALSE
+
+              # Show error
+              showNotification("Please select a platform.",
+                               type = "error")
+            } else if (is.null(all$gsetData2) == FALSE) {
+              errorChecks$geoPlatform2 <- TRUE
+              errorChecks$continueWorkflow2 <- TRUE
+
+              # Extract expression data
+              all$expressionData2 <-
+                extractExpressionData(all$gsetData2)
+
+              # Extract the experiment information
+              all$experimentInformation2 <-
+                extractExperimentInformation(all$gsetData2)
+
+              # Convert experiment information to HTML
+              all$convertedExperimentInformation <-
+                convertExperimentInformation(all$experimentInformation)
+
+
+              # Extract column information
+              all$columnInfo2 <- extractSampleDetails(all$gsetData2)
+
+              # Combine the expression datasets
+              combinedExpressionData <- tryCatch({
+                cbind(all$expressionData,
+                      all$expressionData2)
+              }, error = function(err) {
+                # Return null if there is a error in the getGeoObject function
+                return(NULL)
+              })
+
+              if (is.null(combinedExpressionData) == TRUE) {
+                # Show error
+                showNotification("The two gene expression datasets
+                                 could not be merged. Please make sure
+                                 they have the same platform.  Only the first
+                                 gene expression datasets was
+                                 processed as a result.",
+                                 type = "warning")
+              } else if (is.null(combinedExpressionData) == FALSE)
+              {
+                # Perform batch correction
+                combinedExpressionDataBatchRemoved <- tryCatch({
+                  calculateBatchCorrection(
+                    all$expressionData,
+                    all$expressionData2,
+                    combinedExpressionData,
+                    input$batchCorrection
+                  )}, error = function(err) {
+                    # Return null if there is a error in the getGeoObject function
+                    return(NULL)
+                  })
+
+                if (is.null(combinedExpressionDataBatchRemoved) == TRUE) {
+                  # Show error
+                  showNotification("There was an error performing batch
+                                   correction. Therefore the non-batch
+                                   corrected data was used.",
+                                   type = "warning")
+
+                  # Update expression data with non-batch corrected data
+                  all$expressionData <- combinedExpressionData
+
+                } else if (is.null(combinedExpressionDataBatchRemoved)
+                           == FALSE)
+                {
+                  # Update expression data
+                  all$expressionData <-
+                    combinedExpressionDataBatchRemoved
+                }
+                # Combine experimental conditions
+                all$columnInfo <-
+                  rbind(all$columnInfo , all$columnInfo2)
+
+                # Extract experiment information
+
+                all$convertedExperimentInformation2 <-
+                  convertExperimentInformation(all$experimentInformation)
+
+                # Combine experiment information
+                all$convertedExperimentInformation <- HTML(paste(
+                  "<b>First Experiment</b> <br>",
+                  all$convertedExperimentInformation,
+                  " <br><b>Second Experiment</b><br>",
+                  all$convertedExperimentInformation2))
+              }
+            }
+          }
+        }
+
+
 
 
       # Process Expression Data
@@ -838,8 +1038,7 @@ sourceServer <- function(input, output, session) {
           # Experimental Information Display
           output$experimentInfo <- tryCatch({
             renderUI({
-              convertExperimentInformation(experimentInformation)
-            })
+              all$convertedExperimentInformation            })
           },
           error = function(e) {
             # return a safeError if a parsing error occurs
@@ -1089,6 +1288,14 @@ sourceServer <- function(input, output, session) {
       if (errorChecks$continueWorkflow == TRUE) {
         showNotification("Exploratory data analysis complete!",
                          type = "message")
+
+        # Make Differential Gene Expression Action
+        # Button Appear, this prevents users
+        # trying to perform differential gene expression analysis
+        # prior to exploratory data analysis
+        output$output100 <- renderUI({
+          actionButton("differentialExpressionButton", "Analyse")
+        })
       }
     })
     # Differential Gene Expression Functions

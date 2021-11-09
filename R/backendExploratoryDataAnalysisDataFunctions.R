@@ -816,3 +816,153 @@ searchGeo <- function(searchTerm, resultsLimit) {
   return(secondResults)
   #return(secondResultsData$doc$children)
 }
+
+#' A function to apply batch correction
+#'
+#' This function allows you to apply batch correction
+#' @keywords geneExpression
+#' @import limma
+#' @importFrom sva ComBat
+#' @author Guy Hunt
+#' @noRd
+calculateBatchCorrection <- function(expressionData, expressionData2,
+                            combinedExpressionData, batchCorrection) {
+  if (batchCorrection != "None"){
+    # Define the batches
+    batchOne <- replicate(ncol(expressionData), "Batch1")
+    batchTwo <- replicate(ncol(expressionData2), "Batch2")
+    finalBatch <- c(batchOne, batchTwo)
+
+    if (batchCorrection == "Empirical Bayes") {
+      # Remove batch effect
+      combinedExpressionDataBatchRemoved <- ComBat(combinedExpressionData,
+                                                   batch = finalBatch)
+    } else if (batchCorrection == "Linear Model") {
+      # Remove batch effect using Limma
+      # (should not be done prior to fitting a linear mode)
+      combinedExpressionDataBatchRemoved <- removeBatchEffect(
+        combinedExpressionData,
+        batch = finalBatch)
+    }
+  } else {
+    combinedExpressionDataBatchRemoved <- combinedExpressionData
+  }
+  return(combinedExpressionDataBatchRemoved)
+}
+
+#' A GEO Function to Convert Two Experiment Information
+#' Object into HTML
+#'
+#' This function allows you to convert two experiment information
+#' into HTML
+#' @author Guy Hunt
+#' @noRd
+#' @seealso [extractExperimentInformation()] for GEO object
+convertTwoExperimentInformation <- function(experimentData, experimentData2) {
+  # First experiment info
+  experiment <- paste("<b>",
+                      "First Experiment",
+                      "</b>")
+  name <-
+    paste("<b>",
+          "Author's Name:",
+          "</b>",
+          "<p>",
+          experimentData@name,
+          "</p>")
+  lab <-
+    paste("<b>",
+          "Laboratory:",
+          "</b>",
+          "<p>",
+          experimentData@lab,
+          "</p>")
+  contact <-
+    paste("<b>",
+          "Contact Information:",
+          "</b>",
+          "<p>",
+          experimentData@contact,
+          "</p>")
+  title <-
+    paste("<b>",
+          "Paper Title:",
+          "</b>",
+          "<p>",
+          experimentData@title,
+          "</p>")
+  abstract <-
+    paste("<b>",
+          "Abstract:",
+          "</b>",
+          "<p>",
+          experimentData@abstract,
+          "</p>")
+  url <-
+    paste("<b>", "Paper URL:", "</b>", "<p>",
+          experimentData@url, "</p>")
+  pubMedIds <-
+    paste("<b>",
+          "PubMed ID:",
+          "</b>",
+          "<p>",
+          experimentData@pubMedIds,
+          "</p>")
+
+  # Second experiment info
+  experiment2 <- paste("<p></p><b>",
+                      "Second Experiment",
+                      "</b>")
+  name2 <-
+    paste("<b>",
+          "Author's Name:",
+          "</b>",
+          "<p>",
+          experimentData2@name,
+          "</p>")
+  lab2 <-
+    paste("<b>",
+          "Laboratory:",
+          "</b>",
+          "<p>",
+          experimentData2@lab,
+          "</p>")
+  contact2 <-
+    paste("<b>",
+          "Contact Information:",
+          "</b>",
+          "<p>",
+          experimentData2@contact,
+          "</p>")
+  title2 <-
+    paste("<b>",
+          "Paper Title:",
+          "</b>",
+          "<p>",
+          experimentData2@title,
+          "</p>")
+  abstract2 <-
+    paste("<b>",
+          "Abstract:",
+          "</b>",
+          "<p>",
+          experimentData2@abstract,
+          "</p>")
+  url2 <-
+    paste("<b>", "Paper URL:", "</b>", "<p>",
+          experimentData2@url, "</p>")
+  pubMedIds2 <-
+    paste("<b>",
+          "PubMed ID:",
+          "</b>",
+          "<p>",
+          experimentData2@pubMedIds,
+          "</p>")
+
+  # Merge experiment info
+  html <-
+    HTML(paste(experiment, title, name, lab, contact, url,
+               pubMedIds2, abstract2, experiment2, title2, name2, lab2,
+               contact2, url2,
+               pubMedIds2, abstract2, sep = ""))
+}

@@ -50,6 +50,7 @@ sourceSideBarUi <- function() {
       placement = "top",
       trigger = "hover"
     ),
+    uiOutput("output14"),
     actionButton("exploratoryDataAnalysisButton", "Analyse")
   )
   return(sideBarUi)
