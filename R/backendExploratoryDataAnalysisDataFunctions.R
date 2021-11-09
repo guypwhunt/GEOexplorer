@@ -855,114 +855,19 @@ calculateBatchCorrection <- function(expressionData, expressionData2,
 #'
 #' This function allows you to convert two experiment information
 #' into HTML
+#' @importFrom htmltools HTML
 #' @author Guy Hunt
 #' @noRd
 #' @seealso [extractExperimentInformation()] for GEO object
 convertTwoExperimentInformation <- function(experimentData, experimentData2) {
-  # First experiment info
-  experiment <- paste("<b>",
-                      "First Experiment",
-                      "</b>")
-  name <-
-    paste("<b>",
-          "Author's Name:",
-          "</b>",
-          "<p>",
-          experimentData@name,
-          "</p>")
-  lab <-
-    paste("<b>",
-          "Laboratory:",
-          "</b>",
-          "<p>",
-          experimentData@lab,
-          "</p>")
-  contact <-
-    paste("<b>",
-          "Contact Information:",
-          "</b>",
-          "<p>",
-          experimentData@contact,
-          "</p>")
-  title <-
-    paste("<b>",
-          "Paper Title:",
-          "</b>",
-          "<p>",
-          experimentData@title,
-          "</p>")
-  abstract <-
-    paste("<b>",
-          "Abstract:",
-          "</b>",
-          "<p>",
-          experimentData@abstract,
-          "</p>")
-  url <-
-    paste("<b>", "Paper URL:", "</b>", "<p>",
-          experimentData@url, "</p>")
-  pubMedIds <-
-    paste("<b>",
-          "PubMed ID:",
-          "</b>",
-          "<p>",
-          experimentData@pubMedIds,
-          "</p>")
+  experimentHtml <- HTML(
+    paste(
+      "<b>First Experiment</b> <br>",
+      experimentData,
+      " <br><b>Second Experiment</b><br>",
+      experimentData2
+    )
+  )
 
-  # Second experiment info
-  experiment2 <- paste("<p></p><b>",
-                      "Second Experiment",
-                      "</b>")
-  name2 <-
-    paste("<b>",
-          "Author's Name:",
-          "</b>",
-          "<p>",
-          experimentData2@name,
-          "</p>")
-  lab2 <-
-    paste("<b>",
-          "Laboratory:",
-          "</b>",
-          "<p>",
-          experimentData2@lab,
-          "</p>")
-  contact2 <-
-    paste("<b>",
-          "Contact Information:",
-          "</b>",
-          "<p>",
-          experimentData2@contact,
-          "</p>")
-  title2 <-
-    paste("<b>",
-          "Paper Title:",
-          "</b>",
-          "<p>",
-          experimentData2@title,
-          "</p>")
-  abstract2 <-
-    paste("<b>",
-          "Abstract:",
-          "</b>",
-          "<p>",
-          experimentData2@abstract,
-          "</p>")
-  url2 <-
-    paste("<b>", "Paper URL:", "</b>", "<p>",
-          experimentData2@url, "</p>")
-  pubMedIds2 <-
-    paste("<b>",
-          "PubMed ID:",
-          "</b>",
-          "<p>",
-          experimentData2@pubMedIds,
-          "</p>")
-
-  # Merge experiment info
-  html <-
-    HTML(paste(experiment, title, name, lab, contact, url,
-               pubMedIds2, abstract2, experiment2, title2, name2, lab2,
-               contact2, url2,
-               pubMedIds2, abstract2, sep = ""))
+  return(experimentHtml)
 }

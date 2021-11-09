@@ -806,11 +806,10 @@ sourceServer <- function(input, output, session) {
                   convertExperimentInformation(all$experimentInformation)
 
                 # Combine experiment information
-                all$convertedExperimentInformation <- HTML(paste(
-                  "<b>First Experiment</b> <br>",
-                  all$convertedExperimentInformation,
-                  " <br><b>Second Experiment</b><br>",
-                  all$convertedExperimentInformation2))
+                all$convertedExperimentInformation <-
+                  convertTwoExperimentInformation(
+                    all$convertedExperimentInformation,
+                    all$convertedExperimentInformation2)
               }
             }
           }
