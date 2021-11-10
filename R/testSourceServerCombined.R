@@ -277,7 +277,8 @@ sourceServer <- function(input, output, session) {
             })
           }
         })
-      } else if (input$dataSource == "Upload") {
+      } else if
+      (input$dataSource == "Upload") {
         # Define variables
         all$gsetData <- NULL
 
@@ -505,7 +506,7 @@ sourceServer <- function(input, output, session) {
               }
             })
           } else if (input$dataSource2 == "Upload")
-            {
+          {
             # File upload widget
             output$output9 <- renderUI({
               fileInput(
@@ -687,7 +688,11 @@ sourceServer <- function(input, output, session) {
               # Extract Column Information
               all$columnInfo <-
                 as.data.frame(colnames(all$expressionData))
-              try(colnames(all$columnInfo) <- list("column"))
+              all$columnInfo[,2:5] <- NA
+              try(colnames(all$columnInfo) <- list("column", "title",
+                                                   "source_name_ch1",
+                                                   "characteristics_ch1",
+                                                   "characteristics_ch1.1"))
               try(rownames(all$columnInfo) <- all$columnInfo[, 1])
             }
           } else {
@@ -705,174 +710,178 @@ sourceServer <- function(input, output, session) {
       }
 
       # Combining datasets workflow
-        if (input$dataSetType == "Combine") {
-          if (input$dataSource2 == "GEO"){
-            if (errorChecks$continueWorkflow == TRUE &
-                errorChecks$continueWorkflow2 == TRUE) {
+      if (input$dataSetType == "Combine") {
+        if (input$dataSource2 == "GEO"){
+          if (errorChecks$continueWorkflow == TRUE &
+              errorChecks$continueWorkflow2 == TRUE) {
 
-              # Extract the GEO data from the specified platform
-              all$gsetData2 <- tryCatch({
-                extractPlatformGset(all$allGset2(), input$platform2)
-              }, error = function(err) {
-                # Return null if there is a error in the getGeoObject function
-                return(NULL)
-              })
+            # Extract the GEO data from the specified platform
+            all$gsetData2 <- tryCatch({
+              extractPlatformGset(all$allGset2(), input$platform2)
+            }, error = function(err) {
+              # Return null if there is a error in the getGeoObject function
+              return(NULL)
+            })
 
-              # Error handling to prevent users
-              # trying to run exploratory data analysis
-              # without selecting a platform
-              if (is.null(all$gsetData2) == TRUE) {
-                # Update Error Checks
-                errorChecks$geoPlatform2 <- FALSE
-                errorChecks$continueWorkflow2 <- FALSE
+            # Error handling to prevent users
+            # trying to run exploratory data analysis
+            # without selecting a platform
+            if (is.null(all$gsetData2) == TRUE) {
+              # Update Error Checks
+              errorChecks$geoPlatform2 <- FALSE
+              errorChecks$continueWorkflow2 <- FALSE
 
-                # Show error
-                showNotification("Please select a platform.",
-                                 type = "error")
-              } else if (is.null(all$gsetData2) == FALSE) {
-                errorChecks$geoPlatform2 <- TRUE
-                errorChecks$continueWorkflow2 <- TRUE
-
-                # Extract expression data
-                all$expressionData2 <-
-                  extractExpressionData(all$gsetData2)
-
-                # Extract the experiment information
-                all$experimentInformation2 <-
-                  extractExperimentInformation(all$gsetData2)
-
-                # Convert experiment information to HTML
-                all$convertedExperimentInformation <-
-                  convertExperimentInformation(all$experimentInformation)
-
-
-                # Extract column information
-                all$columnInfo2 <- extractSampleDetails(all$gsetData2)
-
-                # Extract experiment information
-                  all$convertedExperimentInformation2 <-
-                    convertExperimentInformation(all$experimentInformation)
-
-                  # Combine experiment information
-                  all$convertedExperimentInformation <-
-                    convertTwoExperimentInformation(
-                      all$convertedExperimentInformation,
-                      all$convertedExperimentInformation2)
-                }
-              }
-          } else if
-          (input$dataSource2 == "Upload") {
-            # Error handling to prevent non-csvs being uploaded
-            if (file_ext(input$file2$name) %in% c('text/csv',
-                                                  'text/comma-separated-values',
-                                                  'text/plain',
-                                                  'csv')) {
-              # Update error checks
-              errorChecks$uploadFile2 <- TRUE
+              # Show error
+              showNotification("Please select a platform.",
+                               type = "error")
+            } else if (is.null(all$gsetData2) == FALSE) {
+              errorChecks$geoPlatform2 <- TRUE
               errorChecks$continueWorkflow2 <- TRUE
-              # Ensure a file has been uploaded
-              req(input$file2)
-              # Extract Expression Data from CSV
-              all$expressionData2 <- tryCatch({
-                readCsvFile(input$file2$datapath)
+
+              # Extract expression data
+              all$expressionData2 <-
+                extractExpressionData(all$gsetData2)
+
+              # Extract the experiment information
+              all$experimentInformation2 <-
+                extractExperimentInformation(all$gsetData2)
+
+              # Convert experiment information to HTML
+              all$convertedExperimentInformation <-
+                convertExperimentInformation(all$experimentInformation)
+
+
+              # Extract column information
+              all$columnInfo2 <- extractSampleDetails(all$gsetData2)
+
+              # Extract experiment information
+              all$convertedExperimentInformation2 <-
+                convertExperimentInformation(all$experimentInformation)
+
+              # Combine experiment information
+              all$convertedExperimentInformation <-
+                convertTwoExperimentInformation(
+                  all$convertedExperimentInformation,
+                  all$convertedExperimentInformation2)
+            }
+          }
+        } else if
+        (input$dataSource2 == "Upload") {
+          # Error handling to prevent non-csvs being uploaded
+          if (file_ext(input$file2$name) %in% c('text/csv',
+                                                'text/comma-separated-values',
+                                                'text/plain',
+                                                'csv')) {
+            # Update error checks
+            errorChecks$uploadFile2 <- TRUE
+            errorChecks$continueWorkflow2 <- TRUE
+            # Ensure a file has been uploaded
+            req(input$file2)
+            # Extract Expression Data from CSV
+            all$expressionData2 <- tryCatch({
+              readCsvFile(input$file2$datapath)
+            },
+            error = function(e) {
+              # return null if there is an error
+              return(NULL)
+            })
+
+
+            # Preprocess the data
+            all$expressionData2 <-
+              tryCatch({
+                preProcessGeneExpressionData(all$expressionData2)
               },
               error = function(e) {
                 # return null if there is an error
                 return(NULL)
               })
 
-
-              # Preprocess the data
-              all$expressionData2 <-
-                tryCatch({
-                  preProcessGeneExpressionData(all$expressionData2)
-                },
-                error = function(e) {
-                  # return null if there is an error
-                  return(NULL)
-                })
-
-              # Expression Error Check
-              if (is.null(all$expressionData2) == TRUE) {
-                # Update error checks
-                errorChecks$expressionData2 <- FALSE
-                errorChecks$continueWorkflow2 <- FALSE
-              } else if (is.null(all$expressionData2) == FALSE) {
-                # Update error checks
-                errorChecks$expressionData2 <- TRUE
-                errorChecks$continueWorkflow2 <- TRUE
-                # Extract Column Information
-                all$columnInfo2 <-
-                  as.data.frame(colnames(all$expressionData2))
-                try(colnames(all$columnInfo2) <- list("column"))
-                try(rownames(all$columnInfo2) <- all$columnInfo2[, 1])
-              }
-            } else {
+            # Expression Error Check
+            if (is.null(all$expressionData2) == TRUE) {
               # Update error checks
-              errorChecks$uploadFile2 <- FALSE
+              errorChecks$expressionData2 <- FALSE
               errorChecks$continueWorkflow2 <- FALSE
-              # Show notification
-              showNotification(
-                "The gene expression file does not have the correct
-              file extension. Please upload a CSV.",
-                type = "error"
-              )
+            } else if (is.null(all$expressionData2) == FALSE) {
+              # Update error checks
+              errorChecks$expressionData2 <- TRUE
+              errorChecks$continueWorkflow2 <- TRUE
+              # Extract Column Information
+              all$columnInfo2 <-
+                as.data.frame(colnames(all$expressionData2))
+              all$columnInfo2[,2:5] <- NA
+              try(colnames(all$columnInfo2) <- list("column", "title",
+                                                   "source_name_ch1",
+                                                   "characteristics_ch1",
+                                                   "characteristics_ch1.1"))
+              try(rownames(all$columnInfo2) <- all$columnInfo2[, 1])
             }
+          } else {
+            # Update error checks
+            errorChecks$uploadFile2 <- FALSE
+            errorChecks$continueWorkflow2 <- FALSE
+            # Show notification
+            showNotification(
+              "The gene expression file does not have the correct
+              file extension. Please upload a CSV.",
+              type = "error"
+            )
           }
+        }
 
-          # Combine the expression datasets
-          combinedExpressionData <- tryCatch({
-            cbind(all$expressionData,
-                  all$expressionData2)
-          }, error = function(err) {
-            # Return null if there is a error in the getGeoObject function
-            return(NULL)
-          })
+        # Combine the expression datasets
+        combinedExpressionData <- tryCatch({
+          cbind(all$expressionData,
+                all$expressionData2)
+        }, error = function(err) {
+          # Return null if there is a error in the getGeoObject function
+          return(NULL)
+        })
 
-          if (is.null(combinedExpressionData) == TRUE) {
-            # Show error
-            showNotification("The two gene expression datasets
+        if (is.null(combinedExpressionData) == TRUE) {
+          # Show error
+          showNotification("The two gene expression datasets
                                  could not be merged. Please make sure
                                  they have the same platform.  Only the first
                                  gene expression datasets was
                                  processed as a result.",
-                             type = "warning")
-          } else if (is.null(combinedExpressionData) == FALSE)
-          {
-            # Perform batch correction
-            combinedExpressionDataBatchRemoved <- tryCatch({
-              calculateBatchCorrection(
-                all$expressionData,
-                all$expressionData2,
-                combinedExpressionData,
-                input$batchCorrection
-              )}, error = function(err) {
-                # Return null if there is a error in the getGeoObject function
-                return(NULL)
-              })
+                           type = "warning")
+        } else if (is.null(combinedExpressionData) == FALSE)
+        {
+          # Perform batch correction
+          combinedExpressionDataBatchRemoved <- tryCatch({
+            calculateBatchCorrection(
+              all$expressionData,
+              all$expressionData2,
+              combinedExpressionData,
+              input$batchCorrection
+            )}, error = function(err) {
+              # Return null if there is a error in the getGeoObject function
+              return(NULL)
+            })
 
-            if (is.null(combinedExpressionDataBatchRemoved) == TRUE) {
-              # Show error
-              showNotification("There was an error performing batch
+          if (is.null(combinedExpressionDataBatchRemoved) == TRUE) {
+            # Show error
+            showNotification("There was an error performing batch
                                    correction. Therefore the non-batch
                                    corrected data was used.",
-                               type = "warning")
+                             type = "warning")
 
-              # Update expression data with non-batch corrected data
-              all$expressionData <- combinedExpressionData
+            # Update expression data with non-batch corrected data
+            all$expressionData <- combinedExpressionData
 
-            } else if (is.null(combinedExpressionDataBatchRemoved)
-                       == FALSE)
-            {
-              # Update expression data
-              all$expressionData <-
-                combinedExpressionDataBatchRemoved
-            }
-            # Combine experimental conditions
-            all$columnInfo <-
-              rbind(all$columnInfo , all$columnInfo2)
+          } else if (is.null(combinedExpressionDataBatchRemoved)
+                     == FALSE)
+          {
+            # Update expression data
+            all$expressionData <-
+              combinedExpressionDataBatchRemoved
           }
+          # Combine experimental conditions
+          all$columnInfo <-
+            rbind(all$columnInfo , all$columnInfo2)
         }
+      }
 
 
 
