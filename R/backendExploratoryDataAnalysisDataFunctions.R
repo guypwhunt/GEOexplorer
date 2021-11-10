@@ -871,3 +871,31 @@ convertTwoExperimentInformation <- function(experimentData, experimentData2) {
 
   return(experimentHtml)
 }
+
+#' A Function to Convert the Column Names to Experimental Information Table
+#'
+#' This function allows you to Columns to an Experimental Information Table
+#' @author Guy Hunt
+#' @noRd
+convertExpressionDataToExperimentInformation <- function(expressionData) {
+  # Convert expression data columns to data frame
+  columnInfo <-
+    as.data.frame(colnames(expressionData))
+  # Update column names
+  colnames(columnInfo) <- c("column")
+  # Update rownames
+  rownames(columnInfo) <- columnInfo[, 1]
+
+  # Define colnames
+  names <- c("title",
+             "source_name_ch1",
+             "characteristics_ch1",
+             "characteristics_ch1.1")
+
+  # Add blank columns
+  columnInfo[,names] <- "NA"
+  # Update rownames
+  try(colnames(columnInfo[,2:5]) <- names)
+
+  return(columnInfo)
+}
