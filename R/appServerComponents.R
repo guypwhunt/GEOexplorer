@@ -1045,19 +1045,10 @@ sourceServer <- function(input, output, session) {
           all$knnColumns <-
             extractSampleNames(all$knnDataInput)
 
-          if (input$dataSource == "Upload") {
-            # Update col info
-            all$columnInfo <-
-              as.data.frame(all$columnInfo[all$knnColumns,])
-            colnames(all$columnInfo) <- list("column")
-            row.names(all$columnInfo) <- all$columnInfo$column
+          # Update col info
+          all$columnInfo <-
+            all$columnInfo[all$knnColumns, ]
 
-          } else if ((input$dataSource == "GEO")) {
-            # Update col info
-            all$columnInfo <-
-              all$columnInfo[all$knnColumns, ]
-
-          }
           # Remove all incomplete rows
           naOmitInput <- calculateNaOmit(all$knnDataInput)
 

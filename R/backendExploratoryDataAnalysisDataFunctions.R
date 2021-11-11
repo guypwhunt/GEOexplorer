@@ -879,23 +879,23 @@ convertTwoExperimentInformation <- function(experimentData, experimentData2) {
 #' @noRd
 convertExpressionDataToExperimentInformation <- function(expressionData) {
   # Convert expression data columns to data frame
+  column <- colnames(expressionData)
+  # Define other columns
+  title <-
+    source_name_ch1 <-
+    characteristics_ch1 <-
+    characteristics_ch1.1 <- NA
+  # Create dataframe
   columnInfo <-
-    as.data.frame(colnames(expressionData))
-  # Update column names
-  colnames(columnInfo) <- c("column")
+    data.frame(column, title, source_name_ch1, characteristics_ch1,
+               characteristics_ch1.1)
   # Update rownames
   rownames(columnInfo) <- columnInfo[, 1]
-
-  # Define colnames
-  names <- c("title",
-             "source_name_ch1",
-             "characteristics_ch1",
-             "characteristics_ch1.1")
-
-  # Add blank columns
-  columnInfo[,names] <- "NA"
-  # Update rownames
-  try(colnames(columnInfo[,2:5]) <- names)
+  # Update colnames
+  colnames(columnInfo, do.NULL = FALSE)
+  colnames(columnInfo) <- c("column", "title", "source_name_ch1",
+                            "characteristics_ch1",
+                            "characteristics_ch1.1")
 
   return(columnInfo)
 }
