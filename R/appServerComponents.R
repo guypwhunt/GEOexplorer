@@ -640,6 +640,10 @@ sourceServer <- function(input, output, session) {
             all$experimentInformation <-
               extractExperimentInformation(all$gsetData)
 
+            # Convert experiment information to HTML
+            all$convertedExperimentInformation <-
+              convertExperimentInformation(all$experimentInformation)
+
             # Extract Column Information
             all$columnInfo <- extractSampleDetails(all$gsetData)
           }
@@ -739,11 +743,6 @@ sourceServer <- function(input, output, session) {
               # Extract the experiment information
               all$experimentInformation2 <-
                 extractExperimentInformation(all$gsetData2)
-
-              # Convert experiment information to HTML
-              all$convertedExperimentInformation <-
-                convertExperimentInformation(all$experimentInformation)
-
 
               # Extract column information
               all$columnInfo2 <- extractSampleDetails(all$gsetData2)
@@ -1142,6 +1141,7 @@ sourceServer <- function(input, output, session) {
             paste0("sel", i),
             "",
             choices = unique(c("N/A", "Group 1", "Group 2")),
+            selected = "N/A",
             width = "100px"
           ))
         }
@@ -1378,7 +1378,7 @@ sourceServer <- function(input, output, session) {
       if (errorChecks$continueWorkflow == TRUE)
       {
         # Differential gene expression analysis
-        gsms <- reactive(tryCatch({
+        gsms <- tryCatch({
           calculateEachGroupsSamplesFromDataFrame(as.data.frame(sapply(seq_len(
             nrow(all$columnInfo)
           ), function(a)
@@ -1386,11 +1386,12 @@ sourceServer <- function(input, output, session) {
 
         }, error = function(cond) {
           return(NULL)
-        }))
+        })
 
+        showNotification(gsms)
         # Error handling to prevent differential gene expression
         # analysis being performed before exploratory data analysis
-        if (is.null(gsms()) == TRUE) {
+        if (is.null(gsms) == TRUE) {
           # Update error check
           errorChecks$continueWorkflow <- FALSE
           showNotification(
@@ -1399,7 +1400,7 @@ sourceServer <- function(input, output, session) {
                   analysis first.",
             type = "error"
           )
-        } else if (is.null(gsms()) == FALSE) {
+        } else if (is.null(gsms) == FALSE) {
           # Update error check
           errorChecks$continueWorkflow <- TRUE
         }
@@ -1408,15 +1409,15 @@ sourceServer <- function(input, output, session) {
           # Error handling to ensure at least one
           # group has two samples and the other group
           # has at least one sample
-          if ((lengths(regmatches(gsms(), gregexpr("0", gsms()))) > 0 &
-               lengths(regmatches(gsms(), gregexpr("1", gsms()))) > 1) |
-              (lengths(regmatches(gsms(), gregexpr("0", gsms()))) > 1 &
-               lengths(regmatches(gsms(), gregexpr("1", gsms()))) > 0)) {
+          if ((lengths(regmatches(gsms, gregexpr("0", gsms))) > 0 &
+               lengths(regmatches(gsms, gregexpr("1", gsms))) > 1) |
+              (lengths(regmatches(gsms, gregexpr("0", gsms))) > 1 &
+               lengths(regmatches(gsms, gregexpr("1", gsms))) > 0)) {
             if (input$dataSource == "GEO") {
               if (input$dataSetType == "Single") {
                 results <- tryCatch({
                   calculateDifferentialGeneExpression(
-                    gsms(),
+                    gsms,
                     input$limmaPrecisionWeights,
                     input$forceNormalization,
                     all$gsetData,
@@ -1430,7 +1431,7 @@ sourceServer <- function(input, output, session) {
               } else if (input$dataSetType == "Combine") {
                 results <- tryCatch({
                   calculateDifferentialGeneExpression(
-                    gsms(),
+                    gsms,
                     input$limmaPrecisionWeights,
                     input$forceNormalization,
                     all$gsetData,
@@ -1447,7 +1448,7 @@ sourceServer <- function(input, output, session) {
             } else if (input$dataSource == "Upload") {
               results <- tryCatch({
                 calculateDifferentialGeneExpression(
-                  gsms(),
+                  gsms,
                   input$limmaPrecisionWeights,
                   input$forceNormalization,
                   all$gsetData,
@@ -1466,7 +1467,7 @@ sourceServer <- function(input, output, session) {
                     calculateKnnImpute(all$cpm, input$knnTransformation)
                   results <- tryCatch({
                     calculateDifferentialGeneExpression(
-                      gsms(),
+                      gsms,
                       input$limmaPrecisionWeights,
                       input$forceNormalization,
                       all$gsetData,
