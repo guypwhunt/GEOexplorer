@@ -283,15 +283,29 @@ sourceServer <- function(input, output, session) {
         all$gsetData <- NULL
 
         # Update UI side bar with User Upload widgets
-        # Microarray vs RNA Seq Widget
-        output$output4 <- renderUI({
-          radioButtons(
-            "typeOfData",
-            label = "Is the data from Microarray or RNA Sequencing?",
-            choices = list("Microarray", "RNA Sequencing"),
-            selected = "Microarray"
-          )
+        observeEvent(input$dataSetType, {
+          # Microarray vs RNA Seq Widget
+          if (input$dataSetType == "Combine") {
+            output$output4 <- renderUI({
+              radioButtons(
+                "typeOfData",
+                label = "Is the data from Microarray or RNA Sequencing?",
+                choices = list("Microarray"),
+                selected = "Microarray"
+              )
+            })
+          } else if (input$dataSetType == "Single") {
+            output$output4 <- renderUI({
+              radioButtons(
+                "typeOfData",
+                label = "Is the data from Microarray or RNA Sequencing?",
+                choices = list("Microarray", "RNA Sequencing"),
+                selected = "Microarray"
+              )
+            })
+          }
         })
+
         # File Upload Widget
         output$output5 <- renderUI({
           fileInput(
@@ -398,6 +412,7 @@ sourceServer <- function(input, output, session) {
             choices = list("GEO", "Upload"),
             selected = "GEO"
           )})
+
         # Second Data Source Widget
         output$output14 <- renderUI({
           radioButtons(
@@ -423,6 +438,16 @@ sourceServer <- function(input, output, session) {
             # Platform input text
             output$output11 <- renderUI({
               selectInput("platform2", "Platform", c())
+            })
+            # KNN Input
+            output$output13 <- renderUI({
+              radioButtons(
+                "knnTransformation",
+                label = "Apply k-nearest neighbors (KNN) algorithm to predict
+      null data:",
+                choices = list("Yes", "No"),
+                selected = "No"
+              )
             })
             # Process second GEO accession code
             observeEvent(input$geoAccessionCode2, {
