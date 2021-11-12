@@ -846,3 +846,25 @@ calculateEachGroupsSamplesFromDataFrame <-
 
     return(stringGroup)
   }
+
+#' A Function to Calculate the Samples Selected in Each Group
+#'
+#' This function calculates the GSMS object
+#' @author Guy Hunt
+#' @noRd
+calculateEachGroupsSamplesGsms <-
+  function(columnInfo, groupOne, groupTwo) {
+    # Update all rows to X
+    columnInfo$group <- "X"
+
+    # Add group 1 columns
+    columnInfo[groupOne,]$group <- "0"
+
+    # Add group 2 columns
+    columnInfo[groupTwo,]$group <- "1"
+
+    # colapse columns to character
+    gsms <- paste(columnInfo$group, collapse = '')
+
+    return(gsms)
+  }
