@@ -775,7 +775,7 @@ sourceServer <- function(input, output, session) {
 
               # Extract experiment information
               all$convertedExperimentInformation2 <-
-                convertExperimentInformation(all$experimentInformation)
+                convertExperimentInformation(all$experimentInformation2)
 
               # Combine experiment information
               all$convertedExperimentInformation <-

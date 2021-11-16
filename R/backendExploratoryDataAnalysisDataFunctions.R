@@ -913,59 +913,63 @@ convertExpressionDataToExperimentInformation <- function(expressionData) {
 #' @author Guy Hunt
 #' @noRd
 combineExpressionData <- function(expressionData1, expressionData2) {
+  expressionData1 <- expressionData
   # Identify the rows in expressionData1 that are not in expressionData2
   expressionData2RowNamesToAdd <- expressionData1[
     !(rownames(expressionData1) %in% rownames(expressionData2)),]
 
-  # Extract the rownames
-  expressionData2RowNamesToAdd <- rownames(expressionData2RowNamesToAdd)
+  if (length(expressionData2RowNamesToAdd) > 0) {
+    # Extract the rownames
+    expressionData2RowNamesToAdd <- rownames(expressionData2RowNamesToAdd)
 
-  # Convert to a dataframe
-  expressionData2RowNamesToAdd <- as.data.frame(expressionData2RowNamesToAdd)
+    # Convert to a dataframe
+    expressionData2RowNamesToAdd <- as.data.frame(expressionData2RowNamesToAdd)
 
-  # Update the rownames
-  rownames(expressionData2RowNamesToAdd) <- expressionData2RowNamesToAdd[,1]
+    # Update the rownames
+    rownames(expressionData2RowNamesToAdd) <- expressionData2RowNamesToAdd[,1]
 
-  # Update the colnames
-  colnames(expressionData2RowNamesToAdd) <- c("rowname")
+    # Update the colnames
+    colnames(expressionData2RowNamesToAdd) <- c("rowname")
 
-  # Add the new columns with NA data
-  expressionData2RowNamesToAdd[colnames(expressionData2)] <- NA
+    # Add the new columns with NA data
+    expressionData2RowNamesToAdd[colnames(expressionData2)] <- NA
 
-  # Remove the rownames column
-  expressionData2RowNamesToAdd <- subset(expressionData2RowNamesToAdd,
-                                         select = -c("rowname"))
+    # Remove the rownames column
+    expressionData2RowNamesToAdd <- subset(expressionData2RowNamesToAdd,
+                                           select = -rowname)
 
-  # Add the new rows to expressionData2
-  expressionData2 <- rbind(expressionData2, expressionData2RowNamesToAdd)
-
+    # Add the new rows to expressionData2
+    expressionData2 <- rbind(expressionData2, expressionData2RowNamesToAdd)
+  }
 
   # Identify the rows in expressionData1 that are not in expressionData2
   expressionDataRowNamesToAdd <-
     expressionData2[
       !(rownames(expressionData2) %in% rownames(expressionData1)),]
 
-  # Extract the rownames
-  expressionDataRowNamesToAdd <- rownames(expressionDataRowNamesToAdd)
+  if (length(expressionDataRowNamesToAdd) > 0) {
+    # Extract the rownames
+    expressionDataRowNamesToAdd <- rownames(expressionDataRowNamesToAdd)
 
-  # Convert to a dataframe
-  expressionDataRowNamesToAdd <- as.data.frame(expressionDataRowNamesToAdd)
+    # Convert to a dataframe
+    expressionDataRowNamesToAdd <- as.data.frame(expressionDataRowNamesToAdd)
 
-  # Update the rownames
-  rownames(expressionDataRowNamesToAdd) <- expressionDataRowNamesToAdd[,1]
+    # Update the rownames
+    rownames(expressionDataRowNamesToAdd) <- expressionDataRowNamesToAdd[,1]
 
-  # Update the colnames
-  colnames(expressionDataRowNamesToAdd) <- c("rowname")
+    # Update the colnames
+    colnames(expressionDataRowNamesToAdd) <- c("rowname")
 
-  # Add the new columns with NA data
-  expressionDataRowNamesToAdd[,colnames(expressionData1)] <- NA
+    # Add the new columns with NA data
+    expressionDataRowNamesToAdd[,colnames(expressionData1)] <- NA
 
-  # Remove the rownames column
-  expressionDataRowNamesToAdd <- subset(expressionDataRowNamesToAdd,
-                                        select = -c("rowname"))
+    # Remove the rownames column
+    expressionDataRowNamesToAdd <- subset(expressionDataRowNamesToAdd,
+                                          select = -rowname)
 
-  # Add the new rows to expressionData1
-  expressionData1 <- rbind(expressionData1, expressionDataRowNamesToAdd)
+    # Add the new rows to expressionData1
+    expressionData1 <- rbind(expressionData1, expressionDataRowNamesToAdd)
+  }
 
   mergedExpressionData <- cbind(expressionData1, expressionData2)
 
