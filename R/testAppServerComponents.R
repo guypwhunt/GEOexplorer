@@ -843,8 +843,8 @@ sourceServer <- function(input, output, session) {
 
         # Combine the expression datasets
         combinedExpressionData <- tryCatch({
-          cbind(all$expressionData,
-                all$expressionData2)
+          # Combine the two dataframes
+          combineExpressionData(all$expressionData, all$expressionData2)
         }, error = function(err) {
           # Return null if there is a error in the getGeoObject function
           return(NULL)
@@ -901,7 +901,7 @@ sourceServer <- function(input, output, session) {
       # Process Expression Data
       if (errorChecks$continueWorkflow == TRUE) {
         # Error handling to detect wrong format expression data
-        if (is.double(all$expressionData) == FALSE) {
+        if (isNumeric(all$expressionData) == FALSE) {
           errorChecks$expressionData <- FALSE
           errorChecks$continueWorkflow <- FALSE
           # Display error message
@@ -925,7 +925,7 @@ sourceServer <- function(input, output, session) {
             type = "error"
           )
         }
-        else if ((is.double(all$expressionData)) &
+        else if ((isNumeric(all$expressionData)) &
                  ((length(all$expressionData) == 0) == FALSE) == TRUE) {
           # Error handling to prevent errors caused by
           # expression datasets with only one column
@@ -1410,8 +1410,6 @@ sourceServer <- function(input, output, session) {
         }, error = function(cond) {
           return(NULL)
         })
-
-        showNotification(gsms)
         # Error handling to prevent differential gene expression
         # analysis being performed before exploratory data analysis
         if (is.null(gsms) == TRUE) {
