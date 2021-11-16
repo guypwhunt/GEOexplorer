@@ -485,7 +485,8 @@ sourceServer <- function(input, output, session) {
                     return(getGeoObject(input$geoAccessionCode2))
                   }
                 }, error = function(err) {
-                  # Return null if there is a error in the getGeoObject function
+                  # Return null if there is a error in the
+                  # getGeoObject function
                   return(NULL)
                 })
               })
@@ -843,8 +844,8 @@ sourceServer <- function(input, output, session) {
 
         # Combine the expression datasets
         combinedExpressionData <- tryCatch({
-          cbind(all$expressionData,
-                all$expressionData2)
+          # Combine the two dataframes
+          combineExpressionData(all$expressionData, all$expressionData2)
         }, error = function(err) {
           # Return null if there is a error in the getGeoObject function
           return(NULL)
@@ -901,7 +902,7 @@ sourceServer <- function(input, output, session) {
       # Process Expression Data
       if (errorChecks$continueWorkflow == TRUE) {
         # Error handling to detect wrong format expression data
-        if (is.double(all$expressionData) == FALSE) {
+        if (isNumeric(all$expressionData) == FALSE) {
           errorChecks$expressionData <- FALSE
           errorChecks$continueWorkflow <- FALSE
           # Display error message
@@ -925,7 +926,7 @@ sourceServer <- function(input, output, session) {
             type = "error"
           )
         }
-        else if ((is.double(all$expressionData)) &
+        else if ((isNumeric(all$expressionData)) &
                  ((length(all$expressionData) == 0) == FALSE) == TRUE) {
           # Error handling to prevent errors caused by
           # expression datasets with only one column
@@ -1129,7 +1130,7 @@ sourceServer <- function(input, output, session) {
         output$columnTable <-
           tryCatch({
             renderDataTable({
-              all$columnInfo[1:(length(all$columnInfo) - 1)]
+              all$columnInfo
             })
           },
           error = function(e) {
@@ -1159,45 +1160,36 @@ sourceServer <- function(input, output, session) {
             stop(safeError(e))
           })
 
-
-        # KNN Column Set Plot
-        for (i in seq_len(nrow(all$columnInfo))) {
-          all$columnInfo$group[i] <- as.character(selectInput(
-            paste0("sel", i),
-            "",
-            choices = unique(c("N/A", "Group 1", "Group 2")),
-            selected = "N/A",
-            width = "100px"
-          ))
-        }
-
-        output$knnColumnTable <- tryCatch({
+        output$knnColumnTableOne <- tryCatch({
           renderDataTable(
             all$columnInfo,
-            escape = FALSE,
-            selection = 'none',
-            server = FALSE,
-            options = list(
-              dom = 't',
-              paging = FALSE,
-              ordering = FALSE
-            ),
-            callback =
-              JS(
-                "table.rows().every(function(i, tab, row) {
-        var $this = $(this.node());
-        $this.attr('id', this.data()[0]);
-        $this.addClass('shiny-input-container');
-      });
-      Shiny.unbindAll(table.table().node());
-      Shiny.bindAll(table.table().node());"
-              )
+            selection = 'multiple',
+            server = FALSE
           )
         },
         error = function(e) {
           # return a safeError if a parsing error occurs
           stop(safeError(e))
         })
+
+        observeEvent(input$knnColumnTableOne_rows_selected, {
+          all$knnColumnTableTwo <- all$columnInfo[
+            -input$knnColumnTableOne_rows_selected, ]
+
+          output$knnColumnTableTwo <- tryCatch({
+            renderDataTable(
+              all$knnColumnTableTwo,
+              selection = 'multiple',
+              server = FALSE
+            )
+          },
+          error = function(e) {
+            # return a safeError if a parsing error occurs
+            stop(safeError(e))
+          })
+        })
+
+
 
         # Expression dataset table
         output$table <-
@@ -1404,16 +1396,21 @@ sourceServer <- function(input, output, session) {
       {
         # Differential gene expression analysis
         gsms <- tryCatch({
-          calculateEachGroupsSamplesFromDataFrame(as.data.frame(sapply(seq_len(
-            nrow(all$columnInfo)
-          ), function(a)
-            input[[paste0("sel", a)]])))
+          calculateEachGroupsSamplesGsms(
+            all$columnInfo,
+            row.names(
+              all$columnInfo[
+                input$knnColumnTableOne_rows_selected,
+              ]),
+            row.names(
+              all$knnColumnTableTwo[
+                input$knnColumnTableTwo_rows_selected,
+              ])
+          )
 
         }, error = function(cond) {
           return(NULL)
         })
-
-        showNotification(gsms)
         # Error handling to prevent differential gene expression
         # analysis being performed before exploratory data analysis
         if (is.null(gsms) == TRUE) {

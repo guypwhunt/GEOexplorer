@@ -129,7 +129,7 @@ calculateEachGroupsSamples <-
 #' can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @import limma
-#' @importFrom edgeR DGEList as.matrix.DGEList
+#' @importFrom edgeR DGEList as.matrix.DGEList calcNormFactors
 #' @examples
 #' # Get the GEO data for all platforms
 #' geoAccessionCode <- "GSE18388"

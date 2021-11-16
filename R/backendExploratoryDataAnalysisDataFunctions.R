@@ -699,7 +699,8 @@ calculateNaOmit <- function(ex) {
 #' @keywords csv
 #' @importFrom utils read.csv
 #' @examples # Extract CSV
-#' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
+#' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/
+#' GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
 #' @author Guy Hunt
 #' @noRd
 readCsvFile <- function(file) {
@@ -716,7 +717,8 @@ readCsvFile <- function(file) {
 #' @keywords csv
 #' @import Biobase
 #' @examples # Extract CSV
-#' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
+#' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/
+#' GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
 #'
 #' # Get a list of all the columns
 #' columns <- extractSampleNames(rnaExpressionData)
@@ -783,8 +785,10 @@ searchGeo <- function(searchTerm, resultsLimit) {
   resultsLimit <- as.character(resultsLimit)
 
   # Define the two URLs
-  firstURL <- 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term=searchTerm&retmax=resultsLimit&usehistory=y'
-  secondURL <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&version=2.0&query_key=X&WebEnv=ENTER_WEBENV_PARAMETER_HERE"
+  firstURL <- 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?
+  db=gds&term=searchTerm&retmax=resultsLimit&usehistory=y'
+  secondURL <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?
+  db=gds&version=2.0&query_key=X&WebEnv=ENTER_WEBENV_PARAMETER_HERE"
 
   # Update the first url with the search parameters
   firstURL <- str_replace(firstURL, "searchTerm", searchTerm)
@@ -799,7 +803,8 @@ searchGeo <- function(searchTerm, resultsLimit) {
 
   # Update the second url with the search parameters
   secondURL <- str_replace(secondURL, "X", firstResultsData$QueryKey)
-  secondURL <- str_replace(secondURL, "ENTER_WEBENV_PARAMETER_HERE", firstResultsData$WebEnv)
+  secondURL <- str_replace(secondURL, "ENTER_WEBENV_PARAMETER_HERE",
+                           firstResultsData$WebEnv)
 
   # Perform the API call
   secondResults <- GET(secondURL)
@@ -928,7 +933,8 @@ combineExpressionData <- function(expressionData1, expressionData2) {
   expressionData2RowNamesToAdd[colnames(expressionData2)] <- NA
 
   # Remove the rownames column
-  expressionData2RowNamesToAdd <- subset(expressionData2RowNamesToAdd, select = -c(rowname))
+  expressionData2RowNamesToAdd <- subset(expressionData2RowNamesToAdd,
+                                         select = -c("rowname"))
 
   # Add the new rows to expressionData2
   expressionData2 <- rbind(expressionData2, expressionData2RowNamesToAdd)
@@ -955,7 +961,8 @@ combineExpressionData <- function(expressionData1, expressionData2) {
   expressionDataRowNamesToAdd[,colnames(expressionData1)] <- NA
 
   # Remove the rownames column
-  expressionDataRowNamesToAdd <- subset(expressionDataRowNamesToAdd, select = -c(rowname))
+  expressionDataRowNamesToAdd <- subset(expressionDataRowNamesToAdd,
+                                        select = -c("rowname"))
 
   # Add the new rows to expressionData1
   expressionData1 <- rbind(expressionData1, expressionDataRowNamesToAdd)

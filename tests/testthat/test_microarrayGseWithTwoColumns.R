@@ -144,10 +144,7 @@ test_that("Microarray GSE with two columns is handled correctly by
 
             # Non-Interactive Box-and-Whisker Plot
             fig <-
-              nonInteractiveBoxAndWhiskerPlot(ex = knnDataInput,
-                                              geoAccessionCode =
-                                                geoAccessionCode,
-                                              platform = platform)
+              nonInteractiveBoxAndWhiskerPlot(ex = knnDataInput)
             expect_type(fig, 'list')
             expect_type(fig$stats, 'double')
             expect_type(fig$n, 'double')
@@ -158,8 +155,7 @@ test_that("Microarray GSE with two columns is handled correctly by
 
             # Interactive Box-and-Whisker Plot
             fig <-
-              interactiveBoxAndWhiskerPlot(knnDataInput,
-                                           geoAccessionCode, platform)
+              interactiveBoxAndWhiskerPlot(knnDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -173,16 +169,14 @@ test_that("Microarray GSE with two columns is handled correctly by
 
             # Non-Interactive Density Plot
             fig <-
-              nonInteractiveDensityPlot(ex = naOmitInput,
-                                        geoAccessionCode = geoAccessionCode,
-                                        platform = platform)
+              nonInteractiveDensityPlot(ex = naOmitInput)
             expect_type(fig, 'list')
             expect_type(fig$X, 'double')
             expect_type(fig$Y, 'double')
 
             # Interactive Density Plot
             fig <-
-              interactiveDensityPlot(naOmitInput, geoAccessionCode, platform)
+              interactiveDensityPlot(naOmitInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -196,8 +190,7 @@ test_that("Microarray GSE with two columns is handled correctly by
 
             # 3D Interactive Density Plot
             fig <-
-              interactiveThreeDDensityPlot(naOmitInput,
-                                           geoAccessionCode, platform)
+              interactiveThreeDDensityPlot(naOmitInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -211,7 +204,7 @@ test_that("Microarray GSE with two columns is handled correctly by
 
             # Interactive UMAP
             fig <-
-              interactiveUmapPlot(naOmitInput, knn, geoAccessionCode)
+              interactiveUmapPlot(naOmitInput, knn)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -225,8 +218,7 @@ test_that("Microarray GSE with two columns is handled correctly by
 
             # Interactive Mean Variance Plot
             fig <-
-              interactiveMeanVariancePlot(naOmitInput,
-                                          geoAccessionCode, gsetData)
+              interactiveMeanVariancePlot(naOmitInput, gsetData)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -240,8 +232,7 @@ test_that("Microarray GSE with two columns is handled correctly by
 
             # Interactive Princomp PCA Scree Plot
             fig <-
-              interactivePrincompPcaScreePlot(pcaPrincompDataInput,
-                                              geoAccessionCode)
+              interactivePrincompPcaScreePlot(pcaPrincompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -256,7 +247,7 @@ test_that("Microarray GSE with two columns is handled correctly by
             # Interactive Princomp PCA Individual Plot
             fig <-
               interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput,
-                                                    geoAccessionCode, gsetData)
+                                                    gsetData)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -270,8 +261,7 @@ test_that("Microarray GSE with two columns is handled correctly by
 
             # Interactive Princomp PCA Variables Plot
             fig <-
-              interactivePrincompPcaVariablesPlot(pcaPrincompDataInput,
-                                                  geoAccessionCode)
+              interactivePrincompPcaVariablesPlot(pcaPrincompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -285,8 +275,7 @@ test_that("Microarray GSE with two columns is handled correctly by
 
             # Interactive Prcomp PCA Scree Plot
             fig <-
-              interactivePrcompPcaScreePlot(pcaPrcompDataInput,
-                                            geoAccessionCode)
+              interactivePrcompPcaScreePlot(pcaPrcompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -300,8 +289,7 @@ test_that("Microarray GSE with two columns is handled correctly by
 
             # Interactive Prcomp PCA Individual Plot
             fig <-
-              interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
-                                                  geoAccessionCode, gsetData)
+              interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput, gsetData)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -315,8 +303,7 @@ test_that("Microarray GSE with two columns is handled correctly by
 
             # Interactive Prcomp PCA Variables Plot
             fig <-
-              interactivePrcompPcaVariablesPlot(pcaPrcompDataInput,
-                                                geoAccessionCode)
+              interactivePrcompPcaVariablesPlot(pcaPrcompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -343,14 +330,14 @@ test_that("Microarray GSE with two columns is handled correctly by
 
             # Non-Interactive UMAP
             fig <-
-              nonInteractiveUmapPlot(naOmitInput, knn, geoAccessionCode)
+              nonInteractiveUmapPlot(naOmitInput, knn)
             expect_type(fig, 'list')
             expect_type(fig$x, 'double')
             expect_type(fig$y, 'double')
 
             # Non-Interactive Mean Variance Plot
             fig <-
-              nonInteractiveMeanVariancePlot(naOmitInput, geoAccessionCode)
+              nonInteractiveMeanVariancePlot(naOmitInput)
 
             # Non-Interactive Princomp PCA Scree Plot
             fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)

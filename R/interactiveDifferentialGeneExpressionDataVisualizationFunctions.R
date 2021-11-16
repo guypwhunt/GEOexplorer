@@ -797,9 +797,10 @@ interactiveQQPlot <- function(fit2, dT, ct) {
 #' for differential gene expression object,
 #' [calculateDifferentialGeneExpressionSummary()]
 #' for summary differential gene expression object
-interactiveDGEHeatMapPlot <- function(ex, limmaPrecisionWeights, numberOfGenes, tT) {
+interactiveDGEHeatMapPlot <- function(ex, limmaPrecisionWeights,
+                                      numberOfGenes, tT) {
   # Select the genes of interest
-  i <- row.names(tT[1:numberOfGenes,])
+  i <- row.names(tT[seq_len(numberOfGenes),])
 
   # Create the heatmap
   if (limmaPrecisionWeights == "Yes") {

@@ -8,12 +8,14 @@ test_that("Microarray GSE with non-log values is handled correctly
             logTransformation <- "Auto-Detect"
             knnTransformation <- "Yes"
             knn <- 2
-            pValueAdjustment <-
-              "Benjamini & Hochberg (False discovery rate)"
+            pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
             limmaPrecisionWeights <- "Yes"
             forceNormalization <- "Yes"
             platformAnnotation <- "NCBI generated"
             significanceLevelCutOff <- 0.05
+            dataSource <- "GEO"
+            typeOfData <- "Microarray"
+            dataSetType <- "Single"
 
             # Get the GEO data for all platforms
             geoAccessionCode <- "GSE2"
@@ -141,10 +143,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Non-Interactive Box-and-Whisker Plot
             fig <-
-              nonInteractiveBoxAndWhiskerPlot(ex = knnDataInput,
-                                              geoAccessionCode =
-                                                geoAccessionCode,
-                                              platform = platform)
+              nonInteractiveBoxAndWhiskerPlot(ex = knnDataInput)
             expect_type(fig, 'list')
             expect_type(fig$stats, 'double')
             expect_type(fig$n, 'double')
@@ -155,8 +154,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Box-and-Whisker Plot
             fig <-
-              interactiveBoxAndWhiskerPlot(knnDataInput,
-                                           geoAccessionCode, platform)
+              interactiveBoxAndWhiskerPlot(knnDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -170,16 +168,14 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Non-Interactive Density Plot
             fig <-
-              nonInteractiveDensityPlot(ex = naOmitInput,
-                                        geoAccessionCode = geoAccessionCode,
-                                        platform = platform)
+              nonInteractiveDensityPlot(ex = naOmitInput)
             expect_type(fig, 'list')
             expect_type(fig$X, 'double')
             expect_type(fig$Y, 'double')
 
             # Interactive Density Plot
             fig <-
-              interactiveDensityPlot(naOmitInput, geoAccessionCode, platform)
+              interactiveDensityPlot(naOmitInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -193,8 +189,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # 3D Interactive Density Plot
             fig <-
-              interactiveThreeDDensityPlot(naOmitInput,
-                                           geoAccessionCode, platform)
+              interactiveThreeDDensityPlot(naOmitInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -208,7 +203,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive UMAP
             fig <-
-              interactiveUmapPlot(naOmitInput, knn, geoAccessionCode)
+              interactiveUmapPlot(naOmitInput, knn)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -222,8 +217,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Mean Variance Plot
             fig <-
-              interactiveMeanVariancePlot(naOmitInput,
-                                          geoAccessionCode, gsetData)
+              interactiveMeanVariancePlot(naOmitInput, gsetData)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -237,8 +231,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Princomp PCA Scree Plot
             fig <-
-              interactivePrincompPcaScreePlot(pcaPrincompDataInput,
-                                              geoAccessionCode)
+              interactivePrincompPcaScreePlot(pcaPrincompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -253,7 +246,7 @@ test_that("Microarray GSE with non-log values is handled correctly
             # Interactive Princomp PCA Individual Plot
             fig <-
               interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput,
-                                                    geoAccessionCode, gsetData)
+                                                    gsetData)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -267,8 +260,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Princomp PCA Variables Plot
             fig <-
-              interactivePrincompPcaVariablesPlot(pcaPrincompDataInput,
-                                                  geoAccessionCode)
+              interactivePrincompPcaVariablesPlot(pcaPrincompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -282,8 +274,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Prcomp PCA Scree Plot
             fig <-
-              interactivePrcompPcaScreePlot(pcaPrcompDataInput,
-                                            geoAccessionCode)
+              interactivePrcompPcaScreePlot(pcaPrcompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -297,8 +288,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Prcomp PCA Individual Plot
             fig <-
-              interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
-                                                  geoAccessionCode, gsetData)
+              interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput, gsetData)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -312,8 +302,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Prcomp PCA Variables Plot
             fig <-
-              interactivePrcompPcaVariablesPlot(pcaPrcompDataInput,
-                                                geoAccessionCode)
+              interactivePrcompPcaVariablesPlot(pcaPrcompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -340,14 +329,14 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Non-Interactive UMAP
             fig <-
-              nonInteractiveUmapPlot(naOmitInput, knn, geoAccessionCode)
+              nonInteractiveUmapPlot(naOmitInput, knn)
             expect_type(fig, 'list')
             expect_type(fig$x, 'double')
             expect_type(fig$y, 'double')
 
             # Non-Interactive Mean Variance Plot
             fig <-
-              nonInteractiveMeanVariancePlot(naOmitInput, geoAccessionCode)
+              nonInteractiveMeanVariancePlot(naOmitInput)
 
             # Non-Interactive Princomp PCA Scree Plot
             fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)
@@ -463,40 +452,43 @@ test_that("Microarray GSE with non-log values is handled correctly
             adjustment <- convertAdjustment(pValueAdjustment)
 
             # Get fit 2
-            fit2 <-
+            results <-
               calculateDifferentialGeneExpression(gsms,
                                                   limmaPrecisionWeights,
                                                   forceNormalization,
                                                   gsetData,
-                                                  expressionData)
-            expect_type(fit2, "list")
-            expect_type(fit2$coefficients, "double")
-            expect_type(fit2$sigma, "double")
-            expect_type(fit2$cov.coefficients, "double")
-            expect_type(fit2$rank, "integer")
-            expect_type(fit2$Amean, "double")
-            expect_type(fit2$design, "double")
-            expect_type(fit2$df.prior, "double")
-            expect_type(fit2$var.prior, "double")
-            expect_type(fit2$s2.post, "double")
-            expect_type(fit2$df.total, "double")
-            expect_type(fit2$lods, "double")
-            expect_type(fit2$F.p.value, "double")
-            expect_type(fit2$stdev.unscaled, "double")
-            expect_type(fit2$df.residual, "double")
-            expect_type(fit2$pivot, "integer")
-            expect_type(fit2$genes, "list")
-            expect_type(fit2$method, "character")
-            expect_type(fit2$contrasts, "double")
-            expect_type(fit2$s2.prior, "double")
-            expect_type(fit2$proportion, "double")
-            expect_type(fit2$t, "double")
-            expect_type(fit2$p.value, "double")
-            expect_type(fit2$F, "double")
+                                                  expressionData,
+                                                  dataSource,
+                                                  typeOfData,
+                                                  dataSetType)
+            expect_type(results$fit2, "list")
+            expect_type(results$fit2$coefficients, "double")
+            expect_type(results$fit2$sigma, "double")
+            expect_type(results$fit2$cov.coefficients, "double")
+            expect_type(results$fit2$rank, "integer")
+            expect_type(results$fit2$Amean, "double")
+            expect_type(results$fit2$design, "double")
+            expect_type(results$fit2$df.prior, "double")
+            expect_type(results$fit2$var.prior, "double")
+            expect_type(results$fit2$s2.post, "double")
+            expect_type(results$fit2$df.total, "double")
+            expect_type(results$fit2$lods, "double")
+            expect_type(results$fit2$F.p.value, "double")
+            expect_type(results$fit2$stdev.unscaled, "double")
+            expect_type(results$fit2$df.residual, "double")
+            expect_type(results$fit2$pivot, "integer")
+            expect_type(results$fit2$genes, "list")
+            expect_type(results$fit2$method, "character")
+            expect_type(results$fit2$contrasts, "double")
+            expect_type(results$fit2$s2.prior, "double")
+            expect_type(results$fit2$proportion, "double")
+            expect_type(results$fit2$t, "double")
+            expect_type(results$fit2$p.value, "double")
+            expect_type(results$fit2$F, "double")
 
             # Print Top deferentially expressed genes
-            tT <-
-              calculateTopDifferentiallyExpressedGenes(fit2, adjustment)
+            tT <- calculateTopDifferentiallyExpressedGenes(results$fit2,
+                                                           adjustment)
             expect_type(tT, "list")
             expect_type(tT$ID, "character")
             expect_type(tT$t, "double")
@@ -509,7 +501,7 @@ test_that("Microarray GSE with non-log values is handled correctly
             expect_type(tT$Gene.ID, "character")
 
             # Non-Interactive Histogram
-            fig <- nonInteractiveHistogramPlot(fit2, adjustment)
+            fig <- nonInteractiveHistogramPlot(results$fit2, adjustment)
             expect_type(fig, "list")
             expect_type(fig$breaks, "double")
             expect_type(fig$counts, "integer")
@@ -519,8 +511,7 @@ test_that("Microarray GSE with non-log values is handled correctly
             expect_type(fig$equidist, "logical")
 
             # Interactive Histogram
-            fig <- interactiveHistogramPlot(fit2, adjustment)
-            fig
+            fig <- interactiveHistogramPlot(results$fit2, adjustment)
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
             expect_type(fig$height, 'NULL')
@@ -532,12 +523,8 @@ test_that("Microarray GSE with non-log values is handled correctly
             expect_type(fig$jsHooks, 'list')
 
             # Summarize test results as "up", "down" or "not expressed"
-            dT <-
-              calculateDifferentialGeneExpressionSummary(
-                fit2,
-                adjustment,
-                significanceLevelCutOff)
-
+            dT <- calculateDifferentialGeneExpressionSummary(
+              results$fit2, adjustment, significanceLevelCutOff)
             expect_type(dT, 'double')
             expect_equal(ncol(dT), 1)
             expect_equal(nrow(dT), 897)
@@ -546,15 +533,14 @@ test_that("Microarray GSE with non-log values is handled correctly
             fig <- nonInteractiveVennDiagramPlot(dT)
 
             # Non-Interactive Q-Q plot
-            fig <- nonInteractiveQQPlot(fit2)
+            fig <- nonInteractiveQQPlot(results$fit2)
             expect_type(fig, 'list')
             expect_type(fig$y, "double")
             expect_type(fig$x, "double")
 
             # Interactive Q-Q plot
             ct <- 1
-            fig <- interactiveQQPlot(fit2, dT, ct)
-            fig
+            fig <- interactiveQQPlot(results$fit2, dT, ct)
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
             expect_type(fig$height, 'NULL')
@@ -566,11 +552,10 @@ test_that("Microarray GSE with non-log values is handled correctly
             expect_type(fig$jsHooks, 'list')
 
             # Non-Interactive volcano plot (log P-value vs log fold change)
-            fig <- nonInteractiveVolcanoPlot(fit2, dT, ct)
+            fig <- nonInteractiveVolcanoPlot(results$fit2, dT, ct)
 
             # Interactive volcano plot (log P-value vs log fold change)
-            fig <- interactiveVolcanoPlot(fit2, dT, ct)
-            fig
+            fig <- interactiveVolcanoPlot(results$fit2, dT, ct)
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
             expect_type(fig$height, 'NULL')
@@ -582,11 +567,25 @@ test_that("Microarray GSE with non-log values is handled correctly
             expect_type(fig$jsHooks, 'list')
 
             # MD plot (log fold change vs mean log expression)
-            fig <- noninteractiveMeanDifferencePlot(fit2, dT, ct)
+            fig <- noninteractiveMeanDifferencePlot(results$fit2, dT, ct)
 
             # Plot Interactive Mean Difference of fit 2 data
-            fig <- interactiveMeanDifferencePlot(fit2, dT, ct)
-            fig
+            fig <- interactiveMeanDifferencePlot(results$fit2, dT, ct)
+            expect_type(fig, 'list')
+            expect_type(fig$elementId, 'NULL')
+            expect_type(fig$height, 'NULL')
+            expect_type(fig$width, 'NULL')
+            expect_type(fig$x, 'list')
+            expect_type(fig$sizingPolicy, 'list')
+            expect_type(fig$dependencies, 'list')
+            expect_type(fig$preRenderHook, 'closure')
+            expect_type(fig$jsHooks, 'list')
+
+            # Plot Interactive Heatmap Plot
+            numberOfGenes <- 20
+            fig <- interactiveDGEHeatMapPlot(results$ex,
+                                             limmaPrecisionWeights,
+                                             numberOfGenes, tT)
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
             expect_type(fig$height, 'NULL')
