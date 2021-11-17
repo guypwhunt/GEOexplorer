@@ -723,10 +723,20 @@ readCsvFile <- function(file) {
 #' # Get a list of all the columns
 #' columns <- extractSampleNames(rnaExpressionData)
 #' @author Guy Hunt
+#' @importFrom stringr str_remove_all
 #' @noRd
 preProcessGeneExpressionData <- function(expressionData) {
+  # Remove quote marks from column names
+  colnames(expressionData) <- str_remove_all(colnames(expressionData), "'")
+  colnames(expressionData) <- str_remove_all(colnames(expressionData), '"')
+
   # Replace row names with gene names
   row.names(expressionData) <- expressionData$Genes
+
+  # Remove quote marks from row names
+  row.names(expressionData) <- str_remove_all(row.names(expressionData), "'")
+  row.names(expressionData) <- str_remove_all(row.names(expressionData), '"')
+
 
   # Delete gene column
   expressionData <- expressionData[ , !(colnames(expressionData) == "Genes")]
@@ -734,8 +744,8 @@ preProcessGeneExpressionData <- function(expressionData) {
   # Convert to matrix
   expressionData <- data.matrix(expressionData)
 
-  # Convert to expression set
-  #expressionData <- ExpressionSet(expressionData)
+  # Replace NULL values with NA
+  expressionData[expressionData == "NULL"] <- NA
 
   return(expressionData)
 }

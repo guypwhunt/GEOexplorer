@@ -12,7 +12,9 @@
 #' @noRd
 sourceServer <- function(input, output, session) {
   datasetInformationServer <- ({
-    ###############
+    # Update default max file upload
+    options(shiny.maxRequestSize = 15*1024^2)
+
     # Common steps
     # Define variables
     all <- reactiveValues()
@@ -144,6 +146,22 @@ sourceServer <- function(input, output, session) {
     ###############
 
     observeEvent(input$dataSource, {
+      # Refresh error checks
+      errorChecks$continueWorkflow <- TRUE
+      errorChecks$geoAccessionCode <- TRUE
+      errorChecks$geoMicroarrayAccessionCode <- TRUE
+      errorChecks$geoPlatform <- TRUE
+      errorChecks$expressionData <- TRUE
+      errorChecks$dataInput <- TRUE
+      errorChecks$knnDataInput <- TRUE
+      errorChecks$pcaPrcompDataInput <- TRUE
+      errorChecks$expressionDataOverTwoColumns <- TRUE
+      errorChecks$expressionDataOverOneColumns <- TRUE
+      errorChecks$differentialGeneExpression <- TRUE
+      errorChecks$differentialGeneExpressionGroup <- TRUE
+      errorChecks$uploadFile <- TRUE
+      errorChecks$uploadFileExtension <- TRUE
+      errorChecks$uploadLogData <- TRUE
       # Update UI side bar with GEO widgets
       if (input$dataSource == "GEO") {
         # GEO help text
@@ -390,7 +408,41 @@ sourceServer <- function(input, output, session) {
 
 
     observeEvent(input$dataSetType,{
+      # Refresh error checks
+      errorChecks$continueWorkflow <- TRUE
+      errorChecks$geoAccessionCode <- TRUE
+      errorChecks$geoMicroarrayAccessionCode <- TRUE
+      errorChecks$geoPlatform <- TRUE
+      errorChecks$expressionData <- TRUE
+      errorChecks$dataInput <- TRUE
+      errorChecks$knnDataInput <- TRUE
+      errorChecks$pcaPrcompDataInput <- TRUE
+      errorChecks$expressionDataOverTwoColumns <- TRUE
+      errorChecks$expressionDataOverOneColumns <- TRUE
+      errorChecks$differentialGeneExpression <- TRUE
+      errorChecks$differentialGeneExpressionGroup <- TRUE
+      errorChecks$uploadFile <- TRUE
+      errorChecks$uploadFileExtension <- TRUE
+      errorChecks$uploadLogData <- TRUE
+
       if (input$dataSetType == "Combine"){
+        # Define error checks
+        errorChecks$continueWorkflow2 <- TRUE
+        errorChecks$geoAccessionCode2 <- TRUE
+        errorChecks$geoMicroarrayAccessionCode2 <- TRUE
+        errorChecks$geoPlatform2 <- TRUE
+        errorChecks$expressionData2 <- TRUE
+        errorChecks$dataInput2 <- TRUE
+        errorChecks$knnDataInput2 <- TRUE
+        errorChecks$pcaPrcompDataInput2 <- TRUE
+        errorChecks$expressionDataOverTwoColumns2 <- TRUE
+        errorChecks$expressionDataOverOneColumns2 <- TRUE
+        errorChecks$differentialGeneExpression2 <- TRUE
+        errorChecks$differentialGeneExpressionGroup2 <- TRUE
+        errorChecks$uploadFile2 <- TRUE
+        errorChecks$uploadFileExtension2 <- TRUE
+        errorChecks$uploadLogData2 <- TRUE
+
         # First Data Set Information Widget
         output$output2 <- renderUI({
           HTML(
@@ -451,23 +503,6 @@ sourceServer <- function(input, output, session) {
             })
             # Process second GEO accession code
             observeEvent(input$geoAccessionCode2, {
-              # Define error checks
-              errorChecks$continueWorkflow2 <- TRUE
-              errorChecks$geoAccessionCode2 <- TRUE
-              errorChecks$geoMicroarrayAccessionCode2 <- TRUE
-              errorChecks$geoPlatform2 <- TRUE
-              errorChecks$expressionData2 <- TRUE
-              errorChecks$dataInput2 <- TRUE
-              errorChecks$knnDataInput2 <- TRUE
-              errorChecks$pcaPrcompDataInput2 <- TRUE
-              errorChecks$expressionDataOverTwoColumns2 <- TRUE
-              errorChecks$expressionDataOverOneColumns2 <- TRUE
-              errorChecks$differentialGeneExpression2 <- TRUE
-              errorChecks$differentialGeneExpressionGroup2 <- TRUE
-              errorChecks$uploadFile2 <- TRUE
-              errorChecks$uploadFileExtension2 <- TRUE
-              errorChecks$uploadLogData2 <- TRUE
-
               # Get the GEO data for all platforms
               all$allGset2 <- reactive({
                 tryCatch({
@@ -600,7 +635,9 @@ sourceServer <- function(input, output, session) {
       output$interactiveMeanVariancePlot <- renderPlotly({
 
       })
+      output$interactivePcaScreePlot <- renderPlotly({
 
+        })
       output$interactivePcaIndividualsPlot <- renderPlotly({
 
       })
@@ -674,8 +711,7 @@ sourceServer <- function(input, output, session) {
             all$columnInfo <- extractSampleDetails(all$gsetData)
           }
 
-        } else if
-        (input$dataSource == "Upload") {
+        } else if (input$dataSource == "Upload") {
           # Error handling to prevent non-csvs being uploaded
           if (file_ext(input$file1$name) %in% c('text/csv',
                                                 'text/comma-separated-values',
@@ -685,7 +721,7 @@ sourceServer <- function(input, output, session) {
             errorChecks$uploadFile <- TRUE
             errorChecks$continueWorkflow <- TRUE
             # Ensure a file has been uploaded
-            req(input$file1)
+            req(input$file1$datapath)
             # Extract Expression Data from CSV
             all$expressionData <- tryCatch({
               readCsvFile(input$file1$datapath)
@@ -716,10 +752,11 @@ sourceServer <- function(input, output, session) {
               errorChecks$expressionData <- TRUE
               errorChecks$continueWorkflow <- TRUE
               # Extract Column Information
-              all$columnInfo <- convertExpressionDataToExperimentInformation(
-                all$expressionData)
+              all$columnInfo <-
+                convertExpressionDataToExperimentInformation(all$expressionData)
             }
-          } else {
+          } else
+          {
             # Update error checks
             errorChecks$uploadFile <- FALSE
             errorChecks$continueWorkflow <- FALSE
@@ -730,6 +767,7 @@ sourceServer <- function(input, output, session) {
               type = "error"
             )
           }
+
         }
       }
 
@@ -895,9 +933,6 @@ sourceServer <- function(input, output, session) {
             rbind(all$columnInfo , all$columnInfo2)
         }
       }
-
-
-
 
       # Process Expression Data
       if (errorChecks$continueWorkflow == TRUE) {
@@ -1129,9 +1164,9 @@ sourceServer <- function(input, output, session) {
         # Column Set Plot
         output$columnTable <-
           tryCatch({
-            renderDataTable({
-              all$columnInfo
-            })
+            renderDataTable(
+              all$columnInfo, selection = 'none'
+            )
           },
           error = function(e) {
             # return a safeError if a parsing error occurs
@@ -1140,9 +1175,9 @@ sourceServer <- function(input, output, session) {
         # Expression dataset table
         output$table <-
           tryCatch({
-            renderDataTable({
-              all$knnDataInput
-            })
+            renderDataTable(
+              all$knnDataInput, selection = 'none'
+            )
           },
           error = function(e) {
             # return a safeError if a parsing error occurs
@@ -1162,9 +1197,9 @@ sourceServer <- function(input, output, session) {
 
         output$knnColumnTableOne <- tryCatch({
           renderDataTable(
-            all$columnInfo,
-            selection = 'multiple',
-            server = FALSE
+            all$columnInfo
+            ,selection = 'multiple'
+            ,server = FALSE
           )
         },
         error = function(e) {
@@ -1178,9 +1213,9 @@ sourceServer <- function(input, output, session) {
 
           output$knnColumnTableTwo <- tryCatch({
             renderDataTable(
-              all$knnColumnTableTwo,
-              selection = 'multiple',
-              server = FALSE
+              all$knnColumnTableTwo
+              ,selection = 'multiple'
+              ,server = FALSE
             )
           },
           error = function(e) {
@@ -1194,9 +1229,9 @@ sourceServer <- function(input, output, session) {
         # Expression dataset table
         output$table <-
           tryCatch({
-            renderDataTable({
-              all$knnDataInput
-            })
+            renderDataTable(
+              all$knnDataInput, selection = 'none'
+            )
           },
           error = function(e) {
             # return a safeError if a parsing error occurs
@@ -1241,6 +1276,19 @@ sourceServer <- function(input, output, session) {
             # return a safeError if a parsing error occurs
             stop(safeError(e))
           })
+        # Error handling to display a notification
+        # if there was an error in PCA
+        if (errorChecks$pcaPrcompDataInput  == TRUE) {
+          # Interactive PCA Scree Plot
+          output$interactivePcaScreePlot <- tryCatch({
+            renderPlotly({
+              interactivePrcompPcaScreePlot(pcaPrcompDataInput)
+            })
+          }, error = function(e) {
+            # return a safeError if a parsing error occurs
+            stop(safeError(e))
+          })
+        }
         # Error handling to prevent errors caused by
         # expression datasets with only one column
         if (errorChecks$expressionDataOverOneColumns == TRUE) {
@@ -1290,60 +1338,48 @@ sourceServer <- function(input, output, session) {
               # return a safeError if a parsing error occurs
               stop(safeError(e))
             })
-        }
-        # Error handling to display a notification
-        # if there was an error in PCA
-        if (errorChecks$pcaPrcompDataInput  == TRUE) {
-          # Interactive PCA Scree Plot
-          output$interactivePcaScreePlot <- tryCatch({
-            renderPlotly({
-              interactivePrcompPcaScreePlot(pcaPrcompDataInput)
-            })
-          }, error = function(e) {
-            # return a safeError if a parsing error occurs
-            stop(safeError(e))
-          })
-
-          # Interactive PCA Individual Plot
-          output$interactivePcaIndividualsPlot <-
-            tryCatch({
-              renderPlotly({
-                interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
-                                                    all$gsetData)
-              })
-            },
-            error = function(e) {
-              # return a safeError if a parsing error occurs
-              stop(safeError(e))
-            })
-
-
-          # Interactive PCA Variables Plot
-          output$interactivePcaVariablesPlot <-
-            tryCatch({
-              renderPlotly({
-                interactivePrcompPcaVariablesPlot(pcaPrcompDataInput)
-              })
-            },
-            error = function(e) {
-              # return a safeError if a parsing error occurs
-              stop(safeError(e))
-            })
-
-          # Only Display 3D PCA Variables Plot if there are more
-          # than two experimental samples
-          if (errorChecks$expressionDataOverTwoColumns == TRUE) {
-            # Interactive 3D PCA Variables Plot
-            output$interactive3DPcaVariablesPlot <-
+          if (errorChecks$pcaPrcompDataInput == TRUE){
+            # Interactive PCA Individual Plot
+            output$interactivePcaIndividualsPlot <-
               tryCatch({
                 renderPlotly({
-                  interactive3DPrcompPcaVariablesPlot(pcaPrcompDataInput)
+                  interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
+                                                      all$gsetData)
                 })
               },
               error = function(e) {
                 # return a safeError if a parsing error occurs
                 stop(safeError(e))
               })
+
+
+            # Interactive PCA Variables Plot
+            output$interactivePcaVariablesPlot <-
+              tryCatch({
+                renderPlotly({
+                  interactivePrcompPcaVariablesPlot(pcaPrcompDataInput)
+                })
+              },
+              error = function(e) {
+                # return a safeError if a parsing error occurs
+                stop(safeError(e))
+              })
+
+            # Only Display 3D PCA Variables Plot if there are more
+            # than two experimental samples
+            if (errorChecks$expressionDataOverTwoColumns == TRUE) {
+              # Interactive 3D PCA Variables Plot
+              output$interactive3DPcaVariablesPlot <-
+                tryCatch({
+                  renderPlotly({
+                    interactive3DPrcompPcaVariablesPlot(pcaPrcompDataInput)
+                  })
+                },
+                error = function(e) {
+                  # return a safeError if a parsing error occurs
+                  stop(safeError(e))
+                })
+            }
           }
         }
       }
@@ -1557,9 +1593,9 @@ sourceServer <- function(input, output, session) {
             input$significanceLevelCutOff)
         # Differential gene expression table
         output$dETable <- tryCatch({
-          renderDataTable({
-            as.data.frame(tT)
-          })
+          renderDataTable(
+            as.data.frame(tT), selection = 'none'
+          )
         },
         error = function(e) {
           # return a safeError if a parsing error occurs
@@ -1657,8 +1693,9 @@ sourceServer <- function(input, output, session) {
                            expression analysis complete!",
                          type = "message")
       }
-
-    })
+      # Reset error check
+      errorChecks$continueWorkflow <- TRUE
+      })
 
   })
   return(datasetInformationServer)
