@@ -712,62 +712,70 @@ sourceServer <- function(input, output, session) {
           }
 
         } else if (input$dataSource == "Upload") {
-          # Error handling to prevent non-csvs being uploaded
-          if (file_ext(input$file1$name) %in% c('text/csv',
-                                                'text/comma-separated-values',
-                                                'text/plain',
-                                                'csv')) {
-            # Update error checks
-            errorChecks$uploadFile <- TRUE
-            errorChecks$continueWorkflow <- TRUE
-            # Ensure a file has been uploaded
-            req(input$file1$datapath)
-            # Extract Expression Data from CSV
-            all$expressionData <- tryCatch({
-              readCsvFile(input$file1$datapath)
-            },
-            error = function(e) {
-              # return null if there is an error
-              return(NULL)
-            })
-
-
-            # Preprocess the data
-            all$expressionData <-
-              tryCatch({
-                preProcessGeneExpressionData(all$expressionData)
+          # Error handling to prevent no file being uploaded
+          if (is.null(input$file1) == TRUE) {
+            showNotification("Please ensure you have uploaded a file before
+                             clicking analyse.",
+                             type = "error")
+          } else if (is.null(input$file1) == FALSE) {
+            # Error handling to prevent non-csvs being uploaded
+            if (file_ext(input$file1$name) %in% c(
+              'text/csv',
+              'text/comma-separated-values',
+              'text/plain',
+              'csv')) {
+              # Update error checks
+              errorChecks$uploadFile <- TRUE
+              errorChecks$continueWorkflow <- TRUE
+              # Ensure a file has been uploaded
+              req(input$file1$datapath)
+              # Extract Expression Data from CSV
+              all$expressionData <- tryCatch({
+                readCsvFile(input$file1$datapath)
               },
               error = function(e) {
                 # return null if there is an error
                 return(NULL)
               })
 
-            # Expression Error Check
-            if (is.null(all$expressionData) == TRUE) {
-              # Update error checks
-              errorChecks$expressionData <- FALSE
-              errorChecks$continueWorkflow <- FALSE
-            } else if (is.null(all$expressionData) == FALSE) {
-              # Update error checks
-              errorChecks$expressionData <- TRUE
-              errorChecks$continueWorkflow <- TRUE
-              # Extract Column Information
-              all$columnInfo <-
-                convertExpressionDataToExperimentInformation(all$expressionData)
-            }
-          } else
-          {
-            # Update error checks
-            errorChecks$uploadFile <- FALSE
-            errorChecks$continueWorkflow <- FALSE
-            # Show notification
-            showNotification(
-              "The gene expression file does not have the correct
-              file extension. Please upload a CSV.",
-              type = "error"
-            )
-          }
 
+              # Preprocess the data
+              all$expressionData <-
+                tryCatch({
+                  preProcessGeneExpressionData(all$expressionData)
+                },
+                error = function(e) {
+                  # return null if there is an error
+                  return(NULL)
+                })
+
+              # Expression Error Check
+              if (is.null(all$expressionData) == TRUE) {
+                # Update error checks
+                errorChecks$expressionData <- FALSE
+                errorChecks$continueWorkflow <- FALSE
+              } else if (is.null(all$expressionData) == FALSE) {
+                # Update error checks
+                errorChecks$expressionData <- TRUE
+                errorChecks$continueWorkflow <- TRUE
+                # Extract Column Information
+                all$columnInfo <-
+                  convertExpressionDataToExperimentInformation(
+                    all$expressionData)
+              }
+            } else
+            {
+              # Update error checks
+              errorChecks$uploadFile <- FALSE
+              errorChecks$continueWorkflow <- FALSE
+              # Show notification
+              showNotification(
+                "The gene expression file does not have the correct
+              file extension. Please upload a CSV.",
+                type = "error"
+              )
+            }
+          }
         }
       }
 

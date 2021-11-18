@@ -288,26 +288,54 @@ convertExperimentInformation <- function(experimentData) {
 #' @noRd
 #' @seealso [extractPlatformGset()] for GEO object
 extractSampleDetails <- function(gset) {
+  # Extract the experimental conditions
   phenoDataset <- phenoData(gset)
   phenoData <- phenoDataset@data
+
+  # Define the desired column names and variable
   columnNames <-
     c("title",
       "source_name_ch1",
       "characteristics_ch1",
       "characteristics_ch1.1")
   finalColumnNames <- c()
+  rejectedColumnNames <- c()
   i <- 1
 
+  # Identify the columns that are available and not available
   for (name in columnNames) {
     if (name %in% colnames(phenoData)) {
       finalColumnNames <- c(finalColumnNames, name)
+    } else {
+      rejectedColumnNames <- c(rejectedColumnNames, name)
     }
   }
 
+  # Create the dataframe with the available columns
   df <- data.frame(column = row.names(phenoData))
 
   for (name in finalColumnNames) {
     df <- data.frame(df, phenoData[name])
+  }
+
+  # Create the dataframe with the non-available columns
+  if (!is.null(rejectedColumnNames)) {
+    rejectedDf <- data.frame(column = row.names(phenoData))
+    row.names(rejectedDf) <- row.names(phenoData)
+    x <- 2
+    for (name in rejectedColumnNames) {
+      rejectedDf[x] <- NA
+      x <- x +1
+    }
+
+    # Remove the column column
+    rejectedDf <- subset(rejectedDf, select = -column)
+
+    # Update the column names
+    colnames(rejectedDf) <- rejectedColumnNames
+
+    # Bind the two dataframes
+    df <- cbind(df, rejectedDf)
   }
   return(df)
 }
@@ -923,17 +951,25 @@ convertExpressionDataToExperimentInformation <- function(expressionData) {
 #' @author Guy Hunt
 #' @noRd
 combineExpressionData <- function(expressionData1, expressionData2) {
-  expressionData1 <- expressionData
+  # Convert everything to a dataframe
+  expressionData1 <- as.matrix(expressionData1)
+  expressionData2 <- as.matrix(expressionData2)
+
   # Identify the rows in expressionData1 that are not in expressionData2
   expressionData2RowNamesToAdd <- expressionData1[
     !(rownames(expressionData1) %in% rownames(expressionData2)),]
+
+  # Identify the rows in expressionData1 that are not in expressionData2
+  expressionDataRowNamesToAdd <-
+    expressionData2[
+      !(rownames(expressionData2) %in% rownames(expressionData1)),]
 
   if (length(expressionData2RowNamesToAdd) > 0) {
     # Extract the rownames
     expressionData2RowNamesToAdd <- rownames(expressionData2RowNamesToAdd)
 
     # Convert to a dataframe
-    expressionData2RowNamesToAdd <- as.data.frame(expressionData2RowNamesToAdd)
+    expressionData2RowNamesToAdd <- as.matrix(expressionData2RowNamesToAdd)
 
     # Update the rownames
     rownames(expressionData2RowNamesToAdd) <- expressionData2RowNamesToAdd[,1]
@@ -942,7 +978,9 @@ combineExpressionData <- function(expressionData1, expressionData2) {
     colnames(expressionData2RowNamesToAdd) <- c("rowname")
 
     # Add the new columns with NA data
-    expressionData2RowNamesToAdd[colnames(expressionData2)] <- NA
+    #expressionData2RowNamesToAdd[colnames(expressionData2)] <- NA
+
+    x <- data.frame(NA, row.names = row.names(expressionData2RowNamesToAdd))
 
     # Remove the rownames column
     expressionData2RowNamesToAdd <- subset(expressionData2RowNamesToAdd,
@@ -952,17 +990,12 @@ combineExpressionData <- function(expressionData1, expressionData2) {
     expressionData2 <- rbind(expressionData2, expressionData2RowNamesToAdd)
   }
 
-  # Identify the rows in expressionData1 that are not in expressionData2
-  expressionDataRowNamesToAdd <-
-    expressionData2[
-      !(rownames(expressionData2) %in% rownames(expressionData1)),]
-
   if (length(expressionDataRowNamesToAdd) > 0) {
     # Extract the rownames
     expressionDataRowNamesToAdd <- rownames(expressionDataRowNamesToAdd)
 
     # Convert to a dataframe
-    expressionDataRowNamesToAdd <- as.data.frame(expressionDataRowNamesToAdd)
+    expressionDataRowNamesToAdd <- as.matrix(expressionDataRowNamesToAdd)
 
     # Update the rownames
     rownames(expressionDataRowNamesToAdd) <- expressionDataRowNamesToAdd[,1]
