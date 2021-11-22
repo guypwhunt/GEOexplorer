@@ -1018,3 +1018,44 @@ combineExpressionData <- function(expressionData1, expressionData2) {
 
   return(mergedExpressionData)
 }
+
+#' A Function to reset all errorChecks
+#'
+#' This function allows you to reset all errorChecks
+#' @author Guy Hunt
+#' @noRd
+resetErrorChecks <- function(errorChecks) {
+  errorChecks$continueWorkflow <- TRUE
+  errorChecks$geoAccessionCode <- TRUE
+  errorChecks$geoMicroarrayAccessionCode <- TRUE
+  errorChecks$geoPlatform <- TRUE
+  errorChecks$expressionData <- TRUE
+  errorChecks$dataInput <- TRUE
+  errorChecks$knnDataInput <- TRUE
+  errorChecks$pcaPrcompDataInput <- TRUE
+  errorChecks$expressionDataOverTwoColumns <- TRUE
+  errorChecks$expressionDataOverOneColumns <- TRUE
+  errorChecks$differentialGeneExpression <- TRUE
+  errorChecks$differentialGeneExpressionGroup <- TRUE
+  errorChecks$uploadFile <- TRUE
+  errorChecks$uploadFileExtension <- TRUE
+  errorChecks$uploadLogData <- TRUE
+  errorChecks$continueWorkflow2 <- TRUE
+  errorChecks$geoAccessionCode2 <- TRUE
+  errorChecks$geoMicroarrayAccessionCode2 <- TRUE
+  errorChecks$geoPlatform2 <- TRUE
+  errorChecks$expressionData2 <- TRUE
+  errorChecks$dataInput2 <- TRUE
+  errorChecks$knnDataInput2 <- TRUE
+  errorChecks$pcaPrcompDataInput2 <- TRUE
+  errorChecks$expressionDataOverTwoColumns2 <- TRUE
+  errorChecks$expressionDataOverOneColumns2 <- TRUE
+  errorChecks$differentialGeneExpression2 <- TRUE
+  errorChecks$differentialGeneExpressionGroup2 <- TRUE
+  errorChecks$uploadFile2 <- TRUE
+  errorChecks$uploadFileExtension2 <- TRUE
+  errorChecks$uploadLogData2 <- TRUE
+
+  return(errorChecks)
+
+}

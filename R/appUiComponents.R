@@ -10,6 +10,9 @@
 sourceSideBarUi <- function() {
   sideBarUi <- sidebarPanel(
     add_busy_spinner(spin = "fading-circle"),
+    actionButton("loadExampleData", "Load an Example Dataset"),
+    br(),
+    br(),
     radioButtons(
       "dataSetType",
       label = "Would you like analyse a single gene exression dataset or

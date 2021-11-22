@@ -127,41 +127,18 @@ sourceServer <- function(input, output, session) {
     )
 
     # Define error checks
-    errorChecks$continueWorkflow <- TRUE
-    errorChecks$geoAccessionCode <- TRUE
-    errorChecks$geoMicroarrayAccessionCode <- TRUE
-    errorChecks$geoPlatform <- TRUE
-    errorChecks$expressionData <- TRUE
-    errorChecks$dataInput <- TRUE
-    errorChecks$knnDataInput <- TRUE
-    errorChecks$pcaPrcompDataInput <- TRUE
-    errorChecks$expressionDataOverTwoColumns <- TRUE
-    errorChecks$expressionDataOverOneColumns <- TRUE
-    errorChecks$differentialGeneExpression <- TRUE
-    errorChecks$differentialGeneExpressionGroup <- TRUE
-    errorChecks$uploadFile <- TRUE
-    errorChecks$uploadFileExtension <- TRUE
-    errorChecks$uploadLogData <- TRUE
+    errorChecks <- resetErrorChecks(errorChecks)
 
-    ###############
+    # Load the example dataset and configurations
+    observeEvent(input$loadExampleData, {
+      updateRadioButtons(session, inputId = "dataSetType", selected = "Single")
+      updateRadioButtons(session, inputId = "dataSource", selected = "GEO")
+      updateTextInput(session, inputId = "geoAccessionCode", value = "GSE18388")
+    })
 
     observeEvent(input$dataSource, {
       # Refresh error checks
-      errorChecks$continueWorkflow <- TRUE
-      errorChecks$geoAccessionCode <- TRUE
-      errorChecks$geoMicroarrayAccessionCode <- TRUE
-      errorChecks$geoPlatform <- TRUE
-      errorChecks$expressionData <- TRUE
-      errorChecks$dataInput <- TRUE
-      errorChecks$knnDataInput <- TRUE
-      errorChecks$pcaPrcompDataInput <- TRUE
-      errorChecks$expressionDataOverTwoColumns <- TRUE
-      errorChecks$expressionDataOverOneColumns <- TRUE
-      errorChecks$differentialGeneExpression <- TRUE
-      errorChecks$differentialGeneExpressionGroup <- TRUE
-      errorChecks$uploadFile <- TRUE
-      errorChecks$uploadFileExtension <- TRUE
-      errorChecks$uploadLogData <- TRUE
+      errorChecks <- resetErrorChecks(errorChecks)
       # Update UI side bar with GEO widgets
       if (input$dataSource == "GEO") {
         # GEO help text
@@ -214,25 +191,18 @@ sourceServer <- function(input, output, session) {
           trigger = "hover"
         )
 
+        resetErrorChecksVariables <- reactive(c(input$logTransformation,
+                                                input$platform,
+                                                input$knnTransformation,
+                                                input$geoAccessionCode))
+
+        # Reset error checks when input variables are updated
+        observeEvent(resetErrorChecksVariables(), {
+          # Reset error checks
+          errorChecks <- resetErrorChecks(errorChecks)
+        })
 
         observeEvent(input$geoAccessionCode, {
-          # Define error checks
-          errorChecks$continueWorkflow <- TRUE
-          errorChecks$geoAccessionCode <- TRUE
-          errorChecks$geoMicroarrayAccessionCode <- TRUE
-          errorChecks$geoPlatform <- TRUE
-          errorChecks$expressionData <- TRUE
-          errorChecks$dataInput <- TRUE
-          errorChecks$knnDataInput <- TRUE
-          errorChecks$pcaPrcompDataInput <- TRUE
-          errorChecks$expressionDataOverTwoColumns <- TRUE
-          errorChecks$expressionDataOverOneColumns <- TRUE
-          errorChecks$differentialGeneExpression <- TRUE
-          errorChecks$differentialGeneExpressionGroup <- TRUE
-          errorChecks$uploadFile <- TRUE
-          errorChecks$uploadFileExtension <- TRUE
-          errorChecks$uploadLogData <- TRUE
-
           # Get the GEO data for all platforms
           all$allGset <- reactive({
             tryCatch({
@@ -302,15 +272,31 @@ sourceServer <- function(input, output, session) {
 
         # Update UI side bar with User Upload widgets
         observeEvent(input$dataSetType, {
+          # Reset error checks when data set type is changed
+          errorChecks <- resetErrorChecks(errorChecks)
+
           # Microarray vs RNA Seq Widget
           if (input$dataSetType == "Combine") {
-            output$output4 <- renderUI({
-              radioButtons(
-                "typeOfData",
-                label = "Is the data from Microarray or RNA Sequencing?",
-                choices = list("Microarray"),
-                selected = "Microarray"
-              )
+            observeEvent(input$dataSource2, {
+              if (input$dataSource2 == "GEO") {
+                output$output4 <- renderUI({
+                  radioButtons(
+                    "typeOfData",
+                    label = "Is the data from Microarray or RNA Sequencing?",
+                    choices = list("Microarray"),
+                    selected = "Microarray"
+                  )
+                })
+              } else {
+                output$output4 <- renderUI({
+                  radioButtons(
+                    "typeOfData",
+                    label = "Is the data from Microarray or RNA Sequencing?",
+                    choices = list("Microarray", "RNA Sequencing"),
+                    selected = "Microarray"
+                  )
+                })
+              }
             })
           } else if (input$dataSetType == "Single") {
             output$output4 <- renderUI({
@@ -337,6 +323,13 @@ sourceServer <- function(input, output, session) {
             )
           )
         })
+
+        # Reset error checks when a new file is uploaded
+        observeEvent(input$file1, {
+          # Reset error checks
+          errorChecks <- resetErrorChecks(errorChecks)
+        })
+
         # Blank Widgets
         output$output6 <- renderUI({})
       }
@@ -345,21 +338,7 @@ sourceServer <- function(input, output, session) {
       # Add or remove CPM radio button
       observeEvent(input$typeOfData, {
         # Define error checks
-        errorChecks$continueWorkflow <- TRUE
-        errorChecks$geoAccessionCode <- TRUE
-        errorChecks$geoMicroarrayAccessionCode <- TRUE
-        errorChecks$geoPlatform <- TRUE
-        errorChecks$expressionData <- TRUE
-        errorChecks$dataInput <- TRUE
-        errorChecks$knnDataInput <- TRUE
-        errorChecks$pcaPrcompDataInput <- TRUE
-        errorChecks$expressionDataOverTwoColumns <- TRUE
-        errorChecks$expressionDataOverOneColumns <- TRUE
-        errorChecks$differentialGeneExpression <- TRUE
-        errorChecks$differentialGeneExpressionGroup <- TRUE
-        errorChecks$uploadFile <- TRUE
-        errorChecks$uploadFileExtension <- TRUE
-        errorChecks$uploadLogData <- TRUE
+        errorChecks <- resetErrorChecks(errorChecks)
 
         if (input$typeOfData == "RNA Sequencing") {
           # Add CPM widget if the dataset is microarray
@@ -378,6 +357,12 @@ sourceServer <- function(input, output, session) {
             placement = "top",
             trigger = "hover"
           )
+          # Reset error checks when CPM transformation is updated
+          observeEvent(input$cpmTransformation, {
+            # Reset error checks
+            errorChecks <- resetErrorChecks(errorChecks)
+          })
+
         } else if (input$typeOfData == "Microarray") {
           # Add KNN Imputation if the dataset is microarray
           output$output13 <- renderUI({
@@ -402,28 +387,19 @@ sourceServer <- function(input, output, session) {
             placement = "top",
             trigger = "hover"
           )
+
+          # Reset error checks when KNN transformation is updated
+          observeEvent(input$knnTransformation, {
+            # Reset error checks
+            errorChecks <- resetErrorChecks(errorChecks)
+          })
         }
       })
     })
 
-
     observeEvent(input$dataSetType,{
       # Refresh error checks
-      errorChecks$continueWorkflow <- TRUE
-      errorChecks$geoAccessionCode <- TRUE
-      errorChecks$geoMicroarrayAccessionCode <- TRUE
-      errorChecks$geoPlatform <- TRUE
-      errorChecks$expressionData <- TRUE
-      errorChecks$dataInput <- TRUE
-      errorChecks$knnDataInput <- TRUE
-      errorChecks$pcaPrcompDataInput <- TRUE
-      errorChecks$expressionDataOverTwoColumns <- TRUE
-      errorChecks$expressionDataOverOneColumns <- TRUE
-      errorChecks$differentialGeneExpression <- TRUE
-      errorChecks$differentialGeneExpressionGroup <- TRUE
-      errorChecks$uploadFile <- TRUE
-      errorChecks$uploadFileExtension <- TRUE
-      errorChecks$uploadLogData <- TRUE
+      errorChecks <- resetErrorChecks(errorChecks)
 
       if (input$dataSetType == "Combine"){
         # Define error checks
@@ -473,6 +449,16 @@ sourceServer <- function(input, output, session) {
             choices = list("Empirical Bayes", "Linear Model", "None"),
             selected = "None"
           )})
+
+        inputErrorCheckVariables <- reactive(c(input$batchCorrection,
+                                               input$dataSource2))
+
+        # Reset error checks when input variables are updated
+        observeEvent(inputErrorCheckVariables(), {
+          # Reset error checks
+          errorChecks <- resetErrorChecks(errorChecks)
+        })
+
         observeEvent(input$dataSource2,{
           if (input$dataSource2 == "GEO") {
             # GEO Help Text Widget
@@ -501,6 +487,18 @@ sourceServer <- function(input, output, session) {
                 selected = "No"
               )
             })
+
+            resetErrorChecksVariables2 <- reactive(c(input$logTransformation,
+                                                    input$platform2,
+                                                    input$knnTransformation,
+                                                    input$geoAccessionCode2))
+
+            # Reset error checks when Platform is updated
+            observeEvent(resetErrorChecksVariables2(), {
+              # Reset error checks
+              errorChecks <- resetErrorChecks(errorChecks)
+            })
+
             # Process second GEO accession code
             observeEvent(input$geoAccessionCode2, {
               # Get the GEO data for all platforms
@@ -581,6 +579,13 @@ sourceServer <- function(input, output, session) {
                 )
               )
             })
+
+            # Reset error checks when a file is uploaded
+            observeEvent(input$file2, {
+              # Reset error checks
+              errorChecks <- resetErrorChecks(errorChecks)
+            })
+
             # Blank widgets
             output$output10 <- renderUI({})
             output$output11 <- renderUI({})
