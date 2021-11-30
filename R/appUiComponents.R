@@ -10,9 +10,6 @@
 sourceSideBarUi <- function() {
   sideBarUi <- sidebarPanel(
     add_busy_spinner(spin = "fading-circle"),
-    actionButton("loadExampleData", "Load an Example Dataset"),
-    br(),
-    br(),
     radioButtons(
       "dataSetType",
       label = "Would you like analyse a single gene exression dataset or
@@ -650,4 +647,51 @@ sourceExploratoryDataAnalysisUi <- function() {
     )
   )
   return(exploratoryDataAnalysisUi)
+}
+
+#' A Function to Return the Side Bar Ui Component
+#'
+#' A Function to Return the Side Bar Ui Component
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @examples sourceSideBarUi()
+#' @importFrom shinyBS bsTooltip
+#' @importFrom shinybusy add_busy_spinner
+#' @importFrom htmltools HTML
+#' @author Guy Hunt
+#' @noRd
+sourceExampleUI <- function() {
+  exampleUIComponents <- tabPanel(
+    "Example Datasets and Templates",
+    br(),
+    br(),
+    strong("This tab contains:"),
+    helpText("1. An example GEO accession code that can be
+             loaded into GEOexplorer."),
+    helpText("2. The required format of gene
+             expression files to be processed by GEOexplorer."),
+    helpText("2. An example of a microarray and an RNA seq gene expression
+             file that can be processed by GEOexplorer."),
+    br(),
+    br(),
+    strong("Load an example GEO Accession Code"),
+    br(),
+    actionButton("loadExampleData", "Load"),
+    br(),
+    br(),
+    strong("Download Gene Expression File Template"),
+    br(),
+    dataTableOutput('example'),
+    downloadButton("downloadGeneExpressionFileTemplate", "Download"),
+    br(),
+    br(),
+    strong("Download Example Microarray File"),
+    br(),
+    downloadButton("downloadMicroarrayExample", "Download"),
+    br(),
+    br(),
+    strong("Download Example RNASeq File"),
+    br(),
+    downloadButton("downloadRnaSeqExample", "Download")
+  )
+  return(exampleUIComponents)
 }

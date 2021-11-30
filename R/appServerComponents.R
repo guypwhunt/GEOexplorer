@@ -131,10 +131,33 @@ sourceServer <- function(input, output, session) {
 
     # Load the example dataset and configurations
     observeEvent(input$loadExampleData, {
+      # Update the two Radio buttons to enable the dataset to be processed
       updateRadioButtons(session, inputId = "dataSetType", selected = "Single")
       updateRadioButtons(session, inputId = "dataSource", selected = "GEO")
-      updateTextInput(session, inputId = "geoAccessionCode", value = "GSE18388")
+
+      # Add GEO accession input
+      output$output5 <- renderUI({
+        textInput("geoAccessionCode", "GEO accession code", "GSE18388")
+      })
     })
+
+    # Download gene expression template
+    geneExpressionTemplate <- as.data.frame(readCsvFile(
+      paste0(getwd(), "/inst/extdata/geneExpressionTemplate.csv")))
+    output$downloadGeneExpressionFileTemplate <- dowloadFile(
+      "gene_expression_template.csv", geneExpressionTemplate)
+
+    # Download microarray example dataset
+    microarrayExampleDataset <- as.data.frame(readCsvFile(
+      paste0(getwd(), "/inst/extdata/microarrayExampleGeneExpressionCsv.csv")))
+    output$downloadMicroarrayExample <- dowloadFile(
+      "microarray_example_dataset.csv", microarrayExampleDataset)
+
+    # Download microarray example dataset
+    rnaSeqExampleDataset <- as.data.frame(readCsvFile(
+      paste0(getwd(), "/inst/extdata/microarrayExampleGeneExpressionCsv.csv")))
+    output$downloadRnaSeqExample <- dowloadFile(
+      "rna_seq_example_dataset.csv", rnaSeqExampleDataset)
 
     observeEvent(input$dataSource, {
       # Refresh error checks
@@ -787,6 +810,14 @@ sourceServer <- function(input, output, session) {
       # Combining datasets workflow
       if (input$dataSetType == "Combine") {
         if (input$dataSource2 == "GEO"){
+          if (input$dataSource == "GEO"){
+            if (input$platform != input$platform){
+              showNotification("The two GEO series platforms are not the same.
+                               This might cause an error if the datasets do not
+                               have the same row names."
+                               , type = "warning")
+            }
+          }
           if (errorChecks$continueWorkflow == TRUE &
               errorChecks$continueWorkflow2 == TRUE) {
 
@@ -1694,14 +1725,10 @@ sourceServer <- function(input, output, session) {
           })
 
         # Download Top Differentially Expressed Genes Table
-        output$downloadData <- downloadHandler(
-          filename = function() {
-            "top_differentially_expressed_genes.csv"
-          },
-          content = function(file) {
-            write.csv(tT, file, row.names = FALSE)
-          }
-        )
+        output$downloadData <-
+          output$downloadGeneExpressionFileTemplate <- dowloadFile(
+            "top_differentially_expressed_genes.csv", tT)
+
         showNotification("Differential gene
                            expression analysis complete!",
                          type = "message")

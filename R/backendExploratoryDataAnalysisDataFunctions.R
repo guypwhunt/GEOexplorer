@@ -1059,3 +1059,20 @@ resetErrorChecks <- function(errorChecks) {
   return(errorChecks)
 
 }
+
+#' A Function to Enable users to download dataframes as CSVs
+#' @importFrom utils write.csv
+#' @import shiny
+#' @author Guy Hunt
+#' @noRd
+dowloadFile <- function(fileName, dataFrame) {
+  downloadHandler(
+    filename = function() {
+      fileName
+    },
+    content = function(file) {
+      write.csv(dataFrame, file,
+                row.names = FALSE)
+    }
+  )
+}
