@@ -142,22 +142,22 @@ sourceServer <- function(input, output, session) {
     })
 
     # Download gene expression template
-    geneExpressionTemplate <- as.data.frame(readCsvFile(
-      paste0(getwd(), "/inst/extdata/geneExpressionTemplate.csv")))
-    output$downloadGeneExpressionFileTemplate <- dowloadFile(
-      "gene_expression_template.csv", geneExpressionTemplate)
+    #geneExpressionTemplate <- as.data.frame(readCsvFile(
+    #  paste0(getwd(), "/inst/extdata/geneExpressionTemplate.csv")))
+    #output$downloadGeneExpressionFileTemplate <- dowloadFile(
+    #  "gene_expression_template.csv", geneExpressionTemplate)
 
     # Download microarray example dataset
-    microarrayExampleDataset <- as.data.frame(readCsvFile(
-      paste0(getwd(), "/inst/extdata/microarrayExampleGeneExpressionCsv.csv")))
-    output$downloadMicroarrayExample <- dowloadFile(
-      "microarray_example_dataset.csv", microarrayExampleDataset)
+    #microarrayExampleDataset <- as.data.frame(readCsvFile(
+    #  paste0(getwd(), "/inst/extdata/microarrayExampleGeneExpressionCsv.csv")))
+    #output$downloadMicroarrayExample <- dowloadFile(
+    #  "microarray_example_dataset.csv", microarrayExampleDataset)
 
     # Download microarray example dataset
-    rnaSeqExampleDataset <- as.data.frame(readCsvFile(
-      paste0(getwd(), "/inst/extdata/microarrayExampleGeneExpressionCsv.csv")))
-    output$downloadRnaSeqExample <- dowloadFile(
-      "rna_seq_example_dataset.csv", rnaSeqExampleDataset)
+    #rnaSeqExampleDataset <- as.data.frame(readCsvFile(
+    #  paste0(getwd(), "/inst/extdata/microarrayExampleGeneExpressionCsv.csv")))
+    #output$downloadRnaSeqExample <- dowloadFile(
+    #  "rna_seq_example_dataset.csv", rnaSeqExampleDataset)
 
     observeEvent(input$dataSource, {
       # Refresh error checks
