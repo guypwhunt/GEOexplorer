@@ -12,6 +12,9 @@
 #' @noRd
 sourceServer <- function(input, output, session) {
   datasetInformationServer <- ({
+    # Allow user reconnections
+    session$allowReconnect(TRUE)
+
     # Update default max file upload
     options(shiny.maxRequestSize = 15*1024^2)
 
