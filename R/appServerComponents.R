@@ -12,8 +12,11 @@
 #' @noRd
 sourceServer <- function(input, output, session) {
   datasetInformationServer <- ({
-    # Allow user reconnections
-    session$allowReconnect(TRUE)
+    # Update the max number of expressions
+    options(expressions = 500000)
+
+    # Update the timeout
+    options(timeout = 300)
 
     # Update default max file upload
     options(shiny.maxRequestSize = 15*1024^2)
@@ -140,7 +143,7 @@ sourceServer <- function(input, output, session) {
 
       # Add GEO accession input
       output$output5 <- renderUI({
-        textInput("geoAccessionCode", "GEO accession code", "GSE18388")
+        textInput("geoAccessionCode", "GEO accession code", "GSE18380")
       })
     })
 
