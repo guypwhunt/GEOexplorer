@@ -497,7 +497,8 @@ sourceExploratoryDataAnalysisUi <- function() {
         ),
         br(),
         br(),
-        plotlyOutput('interactiveBoxAndWhiskerPlot')
+        plotlyOutput('interactiveBoxAndWhiskerPlot'),
+        plotOutput('nonInteractiveBoxAndWhiskerPlot')
       ),
       tabPanel(
         "PCA Scree Plot",

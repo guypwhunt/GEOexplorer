@@ -5,7 +5,7 @@
 #' @examples sourceServer()
 #' @importFrom DT renderDataTable JS
 #' @importFrom shinyBS addTooltip
-#' @importFrom utils write.csv
+#' @importFrom utils write.csv object.size
 #' @importFrom htmltools HTML
 #' @importFrom xfun file_ext
 #' @author Guy Hunt
@@ -665,6 +665,10 @@ sourceServer <- function(input, output, session) {
       output$interactiveBoxAndWhiskerPlot <- renderPlotly({
 
       })
+
+      output$nonInteractiveBoxAndWhiskerPlot <- renderPlot({
+
+      })
       output$interactiveDensityPlot <- renderPlotly({
 
       })
@@ -1308,18 +1312,51 @@ sourceServer <- function(input, output, session) {
             stop(safeError(e))
           })
 
-
-        # Interactive Box-and-Whisker Plot
-        output$interactiveBoxAndWhiskerPlot <-
-          tryCatch({
-            renderPlotly({
-              interactiveBoxAndWhiskerPlot(all$knnDataInput)
+        if (object.size(all$knnDataInput) < 10000000){
+          # Interactive Box-and-Whisker Plot
+          output$interactiveBoxAndWhiskerPlot <-
+            tryCatch({
+              renderPlotly({
+                interactiveBoxAndWhiskerPlot(all$knnDataInput)
+              })
+            },
+            error = function(e) {
+              # return a safeError if a parsing error occurs
+              stop(safeError(e))
             })
-          },
-          error = function(e) {
-            # return a safeError if a parsing error occurs
-            stop(safeError(e))
-          })
+        } else if (object.size(naOmitInput) < 10000000){
+                    showNotification("Due to the size of the dataset, the
+                                     Box-and-Whisker plot was created after
+                                     rows containing missing values were
+                                     removed.",
+                           type = "warning")
+          # Interactive Box-and-Whisker Plot
+          output$interactiveBoxAndWhiskerPlot <-
+            tryCatch({
+              renderPlotly({
+                interactiveBoxAndWhiskerPlot(naOmitInput)
+              })
+            },
+            error = function(e) {
+              # return a safeError if a parsing error occurs
+              stop(safeError(e))
+            })
+        } else {
+          showNotification("Due to the size of the dataset, a static
+                           Box-and-Whisker plot was created instead
+                           of an interactive one.",
+                           type = "warning")
+
+          output$nonInteractiveBoxAndWhiskerPlot <- tryCatch({
+            renderPlot({
+              nonInteractiveBoxAndWhiskerPlot(all$knnDataInput)
+            })},
+            error = function(e) {
+              # return a safeError if a parsing error occurs
+              stop(safeError(e))
+            })
+        }
+
 
 
         # Interactive Density Plot
