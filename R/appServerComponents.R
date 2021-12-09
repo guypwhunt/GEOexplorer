@@ -148,22 +148,31 @@ sourceServer <- function(input, output, session) {
     })
 
     # Download gene expression template
-    #geneExpressionTemplate <- as.data.frame(readCsvFile(
-    #  paste0(getwd(), "/inst/extdata/geneExpressionTemplate.csv")))
-    #output$downloadGeneExpressionFileTemplate <- dowloadFile(
-    #  "gene_expression_template.csv", geneExpressionTemplate)
+    geneExpressionTemplate <- tryCatch({as.matrix(readCsvFileFromGoogleDocs(
+      "1-Iqp050vYGwVQ4Aioi3jdoVbtONTPAs0"))
+      },error = function(e) {
+        return(NULL)
+      })
+    output$downloadGeneExpressionFileTemplate <- dowloadFile(
+      "gene_expression_template.csv", geneExpressionTemplate)
 
     # Download microarray example dataset
-    #microarrayExampleDataset <- as.data.frame(readCsvFile(
-    #  paste0(getwd(), "/inst/extdata/microarrayExampleGeneExpressionCsv.csv")))
-    #output$downloadMicroarrayExample <- dowloadFile(
-    #  "microarray_example_dataset.csv", microarrayExampleDataset)
+    microarrayExampleDataset <- tryCatch({as.matrix(readCsvFileFromGoogleDocs(
+      "17cbedyM0aXEJD47wKoL6HhMhsg0w2Vop"))
+      },error = function(e) {
+        return(NULL)
+      })
+    output$downloadMicroarrayExample <- dowloadFile(
+      "microarray_example_dataset.csv", microarrayExampleDataset)
 
-    # Download microarray example dataset
-    #rnaSeqExampleDataset <- as.data.frame(readCsvFile(
-    #  paste0(getwd(), "/inst/extdata/microarrayExampleGeneExpressionCsv.csv")))
-    #output$downloadRnaSeqExample <- dowloadFile(
-    #  "rna_seq_example_dataset.csv", rnaSeqExampleDataset)
+    # Download RNAseq example dataset
+    rnaSeqExampleDataset <- tryCatch({as.matrix(readCsvFileFromGoogleDocs(
+      "1ym4Yd12zaRIie8zBN-ZwUw5wWX9owkJm"))
+      },error = function(e) {
+        return(NULL)
+      })
+    output$downloadRnaSeqExample <- dowloadFile(
+      "rna_seq_example_dataset.csv", rnaSeqExampleDataset)
 
     observeEvent(input$dataSource, {
       # Refresh error checks
@@ -274,7 +283,7 @@ sourceServer <- function(input, output, session) {
             errorChecks$continueWorkflow <- TRUE
           }
 
-          if (errorChecks$continueWorkflow == TRUE) {
+          if (errorChecks$continueWorkflow) {
             # Get a list of all the platforms
             platforms <- reactive({
               extractPlatforms(all$allGset())
@@ -294,8 +303,7 @@ sourceServer <- function(input, output, session) {
             })
           }
         })
-      } else if
-      (input$dataSource == "Upload") {
+      } else {
         # Define variables
         all$gsetData <- NULL
 
@@ -327,7 +335,8 @@ sourceServer <- function(input, output, session) {
                 })
               }
             })
-          } else if (input$dataSetType == "Single") {
+          } else
+            {
             output$output4 <- renderUI({
               radioButtons(
                 "typeOfData",
@@ -392,7 +401,8 @@ sourceServer <- function(input, output, session) {
             errorChecks <- resetErrorChecks(errorChecks)
           })
 
-        } else if (input$typeOfData == "Microarray") {
+        } else
+          {
           # Add KNN Imputation if the dataset is microarray
           output$output13 <- renderUI({
             radioButtons(
@@ -573,7 +583,7 @@ sourceServer <- function(input, output, session) {
                 errorChecks$continueWorkflow2 <- TRUE
               }
 
-              if (errorChecks$continueWorkflow2 == TRUE) {
+              if (errorChecks$continueWorkflow2) {
                 # Get a list of all the platforms
                 platforms2 <- reactive({
                   extractPlatforms(all$allGset2())
@@ -593,7 +603,7 @@ sourceServer <- function(input, output, session) {
                 })
               }
             })
-          } else if (input$dataSource2 == "Upload")
+          } else
           {
             # File upload widget
             output$output9 <- renderUI({
@@ -620,7 +630,8 @@ sourceServer <- function(input, output, session) {
             output$output11 <- renderUI({})
           }
         })
-      } else if (input$dataSetType == "Single"){
+      } else
+        {
         # Set all UI widgets to blank
         output$output2 <- renderUI({})
         output$output7 <- renderUI({})
@@ -704,7 +715,7 @@ sourceServer <- function(input, output, session) {
       })
 
       # Extract information from GSET including expression data
-      if (errorChecks$continueWorkflow == TRUE) {
+      if (errorChecks$continueWorkflow) {
         if (input$dataSource == "GEO") {
           # Extract the GEO data from the specified platform
           all$gsetData <- tryCatch({
@@ -717,7 +728,7 @@ sourceServer <- function(input, output, session) {
           # Error handling to prevent users
           # trying to run exploratory data analysis
           # without selecting a platform
-          if (is.null(all$gsetData) == TRUE) {
+          if (is.null(all$gsetData)) {
             # Update Error Checks
             errorChecks$geoPlatform <- FALSE
             errorChecks$continueWorkflow <- FALSE
@@ -725,7 +736,8 @@ sourceServer <- function(input, output, session) {
             # Show error
             showNotification("Please select a platform.",
                              type = "error")
-          } else if (is.null(all$gsetData) == FALSE) {
+          } else
+            {
             errorChecks$geoPlatform <- TRUE
             errorChecks$continueWorkflow <- TRUE
 
@@ -745,13 +757,15 @@ sourceServer <- function(input, output, session) {
             all$columnInfo <- extractSampleDetails(all$gsetData)
           }
 
-        } else if (input$dataSource == "Upload") {
+        } else
+          {
           # Error handling to prevent no file being uploaded
-          if (is.null(input$file1) == TRUE) {
+          if (is.null(input$file1)) {
             showNotification("Please ensure you have uploaded a file before
                              clicking analyse.",
                              type = "error")
-          } else if (is.null(input$file1) == FALSE) {
+          } else
+            {
             # Error handling to prevent non-csvs being uploaded
             if (file_ext(input$file1$name) %in% c(
               'text/csv',
@@ -784,11 +798,12 @@ sourceServer <- function(input, output, session) {
                 })
 
               # Expression Error Check
-              if (is.null(all$expressionData) == TRUE) {
+              if (is.null(all$expressionData)) {
                 # Update error checks
                 errorChecks$expressionData <- FALSE
                 errorChecks$continueWorkflow <- FALSE
-              } else if (is.null(all$expressionData) == FALSE) {
+              } else
+                {
                 # Update error checks
                 errorChecks$expressionData <- TRUE
                 errorChecks$continueWorkflow <- TRUE
@@ -824,8 +839,8 @@ sourceServer <- function(input, output, session) {
                                , type = "warning")
             }
           }
-          if (errorChecks$continueWorkflow == TRUE &
-              errorChecks$continueWorkflow2 == TRUE) {
+          if (errorChecks$continueWorkflow &
+              errorChecks$continueWorkflow2) {
 
             # Extract the GEO data from the specified platform
             all$gsetData2 <- tryCatch({
@@ -838,7 +853,7 @@ sourceServer <- function(input, output, session) {
             # Error handling to prevent users
             # trying to run exploratory data analysis
             # without selecting a platform
-            if (is.null(all$gsetData2) == TRUE) {
+            if (is.null(all$gsetData2)) {
               # Update Error Checks
               errorChecks$geoPlatform2 <- FALSE
               errorChecks$continueWorkflow2 <- FALSE
@@ -846,7 +861,8 @@ sourceServer <- function(input, output, session) {
               # Show error
               showNotification("Please select a platform.",
                                type = "error")
-            } else if (is.null(all$gsetData2) == FALSE) {
+            } else
+              {
               errorChecks$geoPlatform2 <- TRUE
               errorChecks$continueWorkflow2 <- TRUE
 
@@ -872,8 +888,7 @@ sourceServer <- function(input, output, session) {
                   all$convertedExperimentInformation2)
             }
           }
-        } else if
-        (input$dataSource2 == "Upload") {
+        } else {
           # Error handling to prevent non-csvs being uploaded
           if (file_ext(input$file2$name) %in% c('text/csv',
                                                 'text/comma-separated-values',
@@ -905,11 +920,12 @@ sourceServer <- function(input, output, session) {
               })
 
             # Expression Error Check
-            if (is.null(all$expressionData2) == TRUE) {
+            if (is.null(all$expressionData2)) {
               # Update error checks
               errorChecks$expressionData2 <- FALSE
               errorChecks$continueWorkflow2 <- FALSE
-            } else if (is.null(all$expressionData2) == FALSE) {
+            } else
+              {
               # Update error checks
               errorChecks$expressionData2 <- TRUE
               errorChecks$continueWorkflow2 <- TRUE
@@ -939,7 +955,7 @@ sourceServer <- function(input, output, session) {
           return(NULL)
         })
 
-        if (is.null(combinedExpressionData) == TRUE) {
+        if (is.null(combinedExpressionData)) {
           # Show error
           showNotification("The two gene expression datasets
                                  could not be merged. Please make sure
@@ -947,7 +963,7 @@ sourceServer <- function(input, output, session) {
                                  gene expression datasets was
                                  processed as a result.",
                            type = "warning")
-        } else if (is.null(combinedExpressionData) == FALSE)
+        } else
         {
           # Perform batch correction
           combinedExpressionDataBatchRemoved <- tryCatch({
@@ -961,7 +977,7 @@ sourceServer <- function(input, output, session) {
               return(NULL)
             })
 
-          if (is.null(combinedExpressionDataBatchRemoved) == TRUE) {
+          if (is.null(combinedExpressionDataBatchRemoved)) {
             # Show error
             showNotification("There was an error performing batch
                                    correction. Therefore the non-batch
@@ -971,8 +987,7 @@ sourceServer <- function(input, output, session) {
             # Update expression data with non-batch corrected data
             all$expressionData <- combinedExpressionData
 
-          } else if (is.null(combinedExpressionDataBatchRemoved)
-                     == FALSE)
+          } else
           {
             # Update expression data
             all$expressionData <-
@@ -985,9 +1000,9 @@ sourceServer <- function(input, output, session) {
       }
 
       # Process Expression Data
-      if (errorChecks$continueWorkflow == TRUE) {
+      if (errorChecks$continueWorkflow) {
         # Error handling to detect wrong format expression data
-        if (isNumeric(all$expressionData) == FALSE) {
+        if (!isNumeric(all$expressionData)) {
           errorChecks$expressionData <- FALSE
           errorChecks$continueWorkflow <- FALSE
           # Display error message
@@ -997,7 +1012,8 @@ sourceServer <- function(input, output, session) {
               ",
             type = "error"
           )
-        } else if (length(all$expressionData) == 0) {
+        } else if (length(all$expressionData) == 0)
+          {
           errorChecks$expressionData <- FALSE
           errorChecks$continueWorkflow <- FALSE
           # Error handling to prevent issues
@@ -1012,7 +1028,7 @@ sourceServer <- function(input, output, session) {
           )
         }
         else if ((isNumeric(all$expressionData)) &
-                 ((length(all$expressionData) == 0) == FALSE) == TRUE) {
+                 ((length(all$expressionData) == 0) == FALSE)) {
           # Error handling to prevent errors caused by
           # expression datasets with only one column
           if (ncol(all$expressionData) <= 1) {
@@ -1026,7 +1042,8 @@ sourceServer <- function(input, output, session) {
                 produced.",
               type = "warning"
             )
-          } else if (ncol(all$expressionData) <= 2) {
+          } else if (ncol(all$expressionData) <= 2)
+            {
             # Update error check
             errorChecks$expressionDataOverTwoColumns <- FALSE
             # Display notification
@@ -1049,7 +1066,7 @@ sourceServer <- function(input, output, session) {
                 return(NULL)
               })
 
-              if (is.null(all$cpm) == TRUE) {
+              if (is.null(all$cpm)) {
                 # Update cpm
                 all$cpm <- all$expressionData
 
@@ -1059,10 +1076,12 @@ sourceServer <- function(input, output, session) {
                   type = "warning"
                 )
               }
-            } else if (input$typeOfData == "Microarray") {
+            } else
+              {
               all$cpm <- all$expressionData
             }
-          } else if (input$dataSource == "GEO") {
+          } else
+            {
             all$cpm <- all$expressionData
           }
 
@@ -1077,7 +1096,7 @@ sourceServer <- function(input, output, session) {
           })
           # Error handling to display a notification if
           # there was an error in log transformation
-          if (is.null(all$dataInput) == TRUE) {
+          if (is.null(all$dataInput)) {
             # Update error check
             errorChecks$dataInput <- FALSE
 
@@ -1138,7 +1157,7 @@ sourceServer <- function(input, output, session) {
 
           # Error handling to display a notification if
           # there was an error in KNN imputation
-          if (is.null(all$knnDataInput) == TRUE) {
+          if (is.null(all$knnDataInput)) {
             # Update error check
             errorChecks$knnDataInput <- FALSE
             # Display notification
@@ -1171,7 +1190,7 @@ sourceServer <- function(input, output, session) {
           })
           # Error handling to display a notification
           # if there was an error in PCA
-          if (is.null(pcaPrcompDataInput) == TRUE) {
+          if (is.null(pcaPrcompDataInput)) {
             # Update error check
             errorChecks$pcaPrcompDataInput <- FALSE
             # Display notification
@@ -1189,7 +1208,7 @@ sourceServer <- function(input, output, session) {
       }
 
       # Process Data Visualisations
-      if (errorChecks$continueWorkflow == TRUE) {
+      if (errorChecks$continueWorkflow) {
         if (input$dataSource == "GEO") {
           # Experimental Information Display
           output$experimentInfo <- tryCatch({
@@ -1200,7 +1219,8 @@ sourceServer <- function(input, output, session) {
             # return a safeError if a parsing error occurs
             stop(safeError(e))
           })
-        } else if (input$dataSource == "Upload") {
+        } else
+          {
           # Update Experimental information
           output$experimentInfo <-  renderUI({
             HTML(
@@ -1293,7 +1313,7 @@ sourceServer <- function(input, output, session) {
         output$interactiveBoxAndWhiskerPlot <-
           tryCatch({
             renderPlotly({
-              interactiveBoxAndWhiskerPlot(naOmitInput)
+              interactiveBoxAndWhiskerPlot(all$knnDataInput)
             })
           },
           error = function(e) {
@@ -1328,7 +1348,7 @@ sourceServer <- function(input, output, session) {
           })
         # Error handling to display a notification
         # if there was an error in PCA
-        if (errorChecks$pcaPrcompDataInput  == TRUE) {
+        if (errorChecks$pcaPrcompDataInput ) {
           # Interactive PCA Scree Plot
           output$interactivePcaScreePlot <- tryCatch({
             renderPlotly({
@@ -1341,7 +1361,7 @@ sourceServer <- function(input, output, session) {
         }
         # Error handling to prevent errors caused by
         # expression datasets with only one column
-        if (errorChecks$expressionDataOverOneColumns == TRUE) {
+        if (errorChecks$expressionDataOverOneColumns) {
           # Update UMAP KNN max
           updateNumericInput(
             session,
@@ -1388,7 +1408,7 @@ sourceServer <- function(input, output, session) {
               # return a safeError if a parsing error occurs
               stop(safeError(e))
             })
-          if (errorChecks$pcaPrcompDataInput == TRUE){
+          if (errorChecks$pcaPrcompDataInput){
             # Interactive PCA Individual Plot
             output$interactivePcaIndividualsPlot <-
               tryCatch({
@@ -1417,7 +1437,7 @@ sourceServer <- function(input, output, session) {
 
             # Only Display 3D PCA Variables Plot if there are more
             # than two experimental samples
-            if (errorChecks$expressionDataOverTwoColumns == TRUE) {
+            if (errorChecks$expressionDataOverTwoColumns) {
               # Interactive 3D PCA Variables Plot
               output$interactive3DPcaVariablesPlot <-
                 tryCatch({
@@ -1434,7 +1454,7 @@ sourceServer <- function(input, output, session) {
         }
       }
 
-      if (errorChecks$continueWorkflow == TRUE) {
+      if (errorChecks$continueWorkflow) {
         showNotification("Exploratory data analysis complete!",
                          type = "message")
 
@@ -1478,7 +1498,7 @@ sourceServer <- function(input, output, session) {
 
       })
 
-      if (errorChecks$continueWorkflow == TRUE)
+      if (errorChecks$continueWorkflow)
       {
         # Differential gene expression analysis
         gsms <- tryCatch({
@@ -1499,7 +1519,7 @@ sourceServer <- function(input, output, session) {
         })
         # Error handling to prevent differential gene expression
         # analysis being performed before exploratory data analysis
-        if (is.null(gsms) == TRUE) {
+        if (is.null(gsms)) {
           # Update error check
           errorChecks$continueWorkflow <- FALSE
           showNotification(
@@ -1508,12 +1528,13 @@ sourceServer <- function(input, output, session) {
                   analysis first.",
             type = "error"
           )
-        } else if (is.null(gsms) == FALSE) {
+        } else
+          {
           # Update error check
           errorChecks$continueWorkflow <- TRUE
         }
 
-        if (errorChecks$continueWorkflow == TRUE) {
+        if (errorChecks$continueWorkflow) {
           # Error handling to ensure at least one
           # group has two samples and the other group
           # has at least one sample
@@ -1536,7 +1557,8 @@ sourceServer <- function(input, output, session) {
                 , error = function(cond) {
                   return(NULL)
                 })
-              } else if (input$dataSetType == "Combine") {
+              } else
+                {
                 results <- tryCatch({
                   calculateDifferentialGeneExpression(
                     gsms,
@@ -1553,7 +1575,8 @@ sourceServer <- function(input, output, session) {
                   return(NULL)
                 })
               }
-            } else if (input$dataSource == "Upload") {
+            } else
+              {
               results <- tryCatch({
                 calculateDifferentialGeneExpression(
                   gsms,
@@ -1602,7 +1625,7 @@ sourceServer <- function(input, output, session) {
 
             # Error handling to ensure Differential Gene
             # Expression Analysis worked
-            if (is.null(results) == TRUE) {
+            if (is.null(results)) {
               # Update Error Check
               errorChecks$continueWorkflow <- FALSE
               # Display notification
@@ -1611,7 +1634,8 @@ sourceServer <- function(input, output, session) {
                  differential gene expression analysis!",
                 type = "error"
               )
-            } else if (is.null(results) == FALSE) {
+            } else
+              {
               # Update error check
               errorChecks$continueWorkflow <- TRUE
             }
@@ -1630,7 +1654,7 @@ sourceServer <- function(input, output, session) {
         }
       }
 
-      if (errorChecks$continueWorkflow == TRUE) {
+      if (errorChecks$continueWorkflow) {
         adjustment <- convertAdjustment(input$pValueAdjustment)
         tT <-
           calculateTopDifferentiallyExpressedGenes(results$fit2,

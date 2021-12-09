@@ -727,6 +727,24 @@ calculateNaOmit <- function(ex) {
 #' @keywords csv
 #' @importFrom utils read.csv
 #' @examples # Extract CSV
+#' rnaExpressionData <- readCsvFile("17cbedyM0aXEJD47wKoL6HhMhsg0w2Vop")
+#' @author Guy Hunt
+#' @noRd
+readCsvFileFromGoogleDocs <- function(id) {
+  # read the file
+  dF <- read.csv(sprintf("https://docs.google.com/uc?id=%s&export=download",
+                         id))
+
+  return(dF)
+}
+
+#' A function to read the input CSVs
+#'
+#' This function allows you to read the input CSVs
+#' @param file A object CSV object
+#' @keywords csv
+#' @importFrom utils read.csv
+#' @examples # Extract CSV
 #' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/
 #' GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
 #' @author Guy Hunt

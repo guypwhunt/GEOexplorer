@@ -45,7 +45,9 @@
 interactiveBoxAndWhiskerPlot <-
   function(ex) {
     ex <- as.data.frame(ex)
-    fig <- plot_ly(type = "box", quartilemethod = "linear")
+
+    fig <- plot_ly(type = "box", quartilemethod = "linear",
+                   boxpoints = FALSE)
     i = 1
     for (col in names(ex)) {
       fig <-
