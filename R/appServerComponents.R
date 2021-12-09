@@ -1293,7 +1293,7 @@ sourceServer <- function(input, output, session) {
         output$interactiveBoxAndWhiskerPlot <-
           tryCatch({
             renderPlotly({
-              interactiveBoxAndWhiskerPlot(all$knnDataInput)
+              interactiveBoxAndWhiskerPlot(naOmitInput)
             })
           },
           error = function(e) {
