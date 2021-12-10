@@ -1,3 +1,54 @@
+#' A Function to Return the Ui Components
+#'
+#' A Function to Return the Ui Components
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @examples navbarPage()
+#' @author Guy Hunt
+#' @noRd
+sourceUi <- function() {
+  uiComponents <- navbarPage(
+    "GEOexplorer",
+    tabPanel("Home",
+             # Source the Side Bar UI Components
+             sourceSideBarUi(),
+             mainPanel(
+               tabsetPanel(
+                 type = "tabs",
+                 # Source the Dataset Information
+                 # UI Components
+                 sourceDatasetInformationUi(),
+                 # Source the Exploratory Data Analysis
+                 # UI Components
+                 sourceExploratoryDataAnalysisUi(),
+                 # Source the Differential Gene Expression
+                 # UI Components
+                 sourceDifferentialGeneExpressionAnalysisUi()
+               )
+             )),
+    tabPanel(
+      "About",
+      helpText(
+        "GEO2R is an interactive web tool that allows
+    users to compare two or more groups of experimental
+    conditions in a GEO Series to identify genes that
+    are differentially expressed across experimental
+    conditions.
+    GEOexplorer extends GEO2R's functionalities by enabling
+    a richer set of analysis and graphics to be
+    performed/generated from the GEO2R gene expression data.
+    The development of GEOexplorer was made possible
+    because of the excellent code provided by GEO2R
+             (https://www.ncbi.nlm.nih.gov/geo/geo2r/)."
+      )
+    ),
+    tabPanel("Tutorial"),
+    tabPanel("Example Datasets",
+             # Source example datasets
+             sourceExampleUI())
+  )
+  return(uiComponents)
+}
+
 #' A Function to Return the Side Bar Ui Component
 #'
 #' A Function to Return the Side Bar Ui Component
@@ -666,12 +717,18 @@ sourceExampleUI <- function() {
     br(),
     br(),
     strong("This tab contains:"),
-    helpText("1. An example GEO accession code that can be
-             loaded into GEOexplorer."),
-    helpText("2. The required format of gene
-             expression files to be processed by GEOexplorer."),
-    helpText("2. An example of a microarray and an RNA seq gene expression
-             file that can be processed by GEOexplorer."),
+    helpText(
+      "1. An example GEO accession code that can be
+             loaded into GEOexplorer."
+    ),
+    helpText(
+      "2. The required format of gene
+             expression files to be processed by GEOexplorer."
+    ),
+    helpText(
+      "2. An example of a microarray and an RNA seq gene expression
+             file that can be processed by GEOexplorer."
+    ),
     br(),
     br(),
     strong("Load an example GEO Accession Code"),
