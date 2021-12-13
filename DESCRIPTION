@@ -2,7 +2,7 @@ Package: GEOexplorer
 Title: GEOexplorer: an R/Bioconductor package for gene expression analysis 
   and visualisation
 Date: 2021/12/13
-Version: 1.1.2
+Version: 1.0.2
 Authors@R: 
   c(person(given = "Guy",
            family = "Hunt",
@@ -59,7 +59,7 @@ Depends:
     Biobase,
     plotly,
     shinyBS,
-    R (>= 2.10)
+    R (>= 4.1.0)
 Imports: 
   DT,
   XML,
@@ -83,6 +83,8 @@ Imports:
   grDevices,
   stats,
   graphics,
+  markdown,
+  knitr,
   utils
 Suggests: 
     rmarkdown,
