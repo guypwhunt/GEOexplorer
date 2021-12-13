@@ -212,7 +212,8 @@ site](https://support.bioconductor.org/) is a good first place to ask
 for help. If you are convinced that there is a bug in GEOexplorer, feel
 free to submit an issue on the [GEOexplorer github
 site](https://github.com/guypwhunt/GEOexplorer). Please include the GEO
-accession code that errors and the operating system
+accession code or gene expression dataset that errors, the operating system, 
+and the browser used.
 
 # Session info
 
