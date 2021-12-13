@@ -26,22 +26,9 @@ sourceUi <- function() {
                  sourceDifferentialGeneExpressionAnalysisUi()
                )
              )),
-    tabPanel(
-      "About",
-      helpText(
-        "GEO2R is an interactive web tool that allows
-    users to compare two or more groups of experimental
-    conditions in a GEO Series to identify genes that
-    are differentially expressed across experimental
-    conditions.
-    GEOexplorer extends GEO2R's functionalities by enabling
-    a richer set of analysis and graphics to be
-    performed/generated from the GEO2R gene expression data.
-    The development of GEOexplorer was made possible
-    because of the excellent code provided by GEO2R
-             (https://www.ncbi.nlm.nih.gov/geo/geo2r/)."
-      )
-    ),
+    tabPanel("About",
+             htmlOutput("about")
+             ),
     tabPanel("GEO Search"),
     tabPanel("Tutorial",
              htmlOutput('tutorial')),

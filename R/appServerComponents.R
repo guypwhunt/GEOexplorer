@@ -29,10 +29,15 @@ sourceServer <- function(input, output, session) {
     errorChecks <- reactiveValues()
     ct <- 1
 
-    # Add tutorial
+    # Add tutorial Page
     output$tutorial <- renderUI({
-      HTML(tutorial)
+      HTML(tutorialPage)
       })
+
+    # Add about Page
+    output$about <- renderUI({
+      HTML(aboutPage)
+    })
 
     # Add Log Tool Tips
     addTooltip(
