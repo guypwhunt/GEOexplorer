@@ -96,7 +96,7 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
     xaxis = list(title = 'Adjusted P-value'),
     yaxis = list(title = 'Number of genes')
   )
-  fig
+  return(fig)
 }
 
 #' A Function to Create an Interactive Mean Difference
@@ -322,7 +322,7 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
     xaxis = list(title = "Average log-expression"),
     yaxis = list(title = "log-fold-change")
   )
-  fig
+  return(fig)
 }
 
 #' A Function to Create an Interactive Volcano Plot of
@@ -550,7 +550,7 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
     xaxis = list(title = "Log2 Fold Change"),
     yaxis = list(title = "-log10(P-value)")
   )
-  fig
+  return(fig)
 }
 
 #' A Function to Create an Interactive QQ Plot of the
@@ -781,7 +781,7 @@ interactiveQQPlot <- function(fit2, dT, ct) {
     xaxis = list(title = "Theoretical Quantiles"),
     yaxis = list(title = "Sample Quantiles")
   )
-  fig
+  return(fig)
 }
 
 

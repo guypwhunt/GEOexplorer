@@ -8,6 +8,8 @@
 #' @importFrom utils write.csv object.size
 #' @importFrom htmltools HTML
 #' @importFrom xfun file_ext
+#' @import markdown
+#' @importFrom knitr knit
 #' @author Guy Hunt
 #' @noRd
 sourceServer <- function(input, output, session) {
@@ -26,6 +28,11 @@ sourceServer <- function(input, output, session) {
     all <- reactiveValues()
     errorChecks <- reactiveValues()
     ct <- 1
+
+    # Add tutorial
+    output$tutorial <- renderUI({
+      HTML(tutorial)
+      })
 
     # Add Log Tool Tips
     addTooltip(
@@ -148,8 +155,9 @@ sourceServer <- function(input, output, session) {
     })
 
     # Download gene expression template
-    geneExpressionTemplate <- tryCatch({as.matrix(readCsvFileFromGoogleDocs(
-      "1-Iqp050vYGwVQ4Aioi3jdoVbtONTPAs0"))
+    geneExpressionTemplate <- tryCatch({
+      as.matrix(geneExpressionTemplate
+      )
       },error = function(e) {
         return(NULL)
       })
@@ -157,8 +165,9 @@ sourceServer <- function(input, output, session) {
       "gene_expression_template.csv", geneExpressionTemplate)
 
     # Download microarray example dataset
-    microarrayExampleDataset <- tryCatch({as.matrix(readCsvFileFromGoogleDocs(
-      "17cbedyM0aXEJD47wKoL6HhMhsg0w2Vop"))
+    microarrayExampleDataset <- tryCatch({as.matrix(
+      microarrayExampleGeneExpressionCsv
+    )
       },error = function(e) {
         return(NULL)
       })
@@ -166,8 +175,7 @@ sourceServer <- function(input, output, session) {
       "microarray_example_dataset.csv", microarrayExampleDataset)
 
     # Download RNAseq example dataset
-    rnaSeqExampleDataset <- tryCatch({as.matrix(readCsvFileFromGoogleDocs(
-      "1ym4Yd12zaRIie8zBN-ZwUw5wWX9owkJm"))
+    rnaSeqExampleDataset <- tryCatch({as.matrix(rnaSeqExampleGeneExpressionCsv)
       },error = function(e) {
         return(NULL)
       })
@@ -315,7 +323,7 @@ sourceServer <- function(input, output, session) {
           # Microarray vs RNA Seq Widget
           if (input$dataSetType == "Combine") {
             observeEvent(input$dataSource2, {
-              if (input$dataSource2 == "GEO") {
+              if ((input$dataSource2 == "GEO")|(input$dataSource2 == "GEO")) {
                 output$output4 <- renderUI({
                   radioButtons(
                     "typeOfData",

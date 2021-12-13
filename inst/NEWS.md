@@ -100,3 +100,9 @@ Changes in version 0.99.32 (2021-10-27)
 + User Upload functionality added
 + 3D PCA Variables Plot
 - PCA Scree Plot
+
+Changes in version 1.1.1 (2021-12-09)
++ Combing datasets functionality added
+
+Changes in version 1.1.2 (2021-12-13)
++ Tutorial added

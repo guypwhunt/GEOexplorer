@@ -4,6 +4,7 @@
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples navbarPage()
 #' @author Guy Hunt
+#' @import markdown
 #' @noRd
 sourceUi <- function() {
   uiComponents <- navbarPage(
@@ -41,7 +42,9 @@ sourceUi <- function() {
              (https://www.ncbi.nlm.nih.gov/geo/geo2r/)."
       )
     ),
-    tabPanel("Tutorial"),
+    tabPanel("GEO Search"),
+    tabPanel("Tutorial",
+             htmlOutput('tutorial')),
     tabPanel("Example Datasets",
              # Source example datasets
              sourceExampleUI())

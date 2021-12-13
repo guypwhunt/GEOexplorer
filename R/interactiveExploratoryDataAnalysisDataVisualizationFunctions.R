@@ -61,7 +61,7 @@ interactiveBoxAndWhiskerPlot <-
     }
     fig <-
       fig %>% layout(title = "Box And Whisker Plot")
-    fig
+    return(fig)
   }
 
 #' A Function to Create an Interactive Density Plot from
@@ -132,7 +132,7 @@ interactiveDensityPlot <- function(ex) {
       xaxis = list(title = 'Intensity'),
       yaxis = list(title = 'Density')
     )
-  fig
+  return(fig)
 }
 
 #' A Function to Create an Interactive Three Dimensional
@@ -209,7 +209,7 @@ interactiveThreeDDensityPlot <-
         zaxis = list(title = "Density")
       )
     )
-    fig
+    return(fig)
   }
 
 #' A Function to Create an Interactive UMAP Plot from
@@ -275,7 +275,7 @@ interactiveUmapPlot <- function(ex, knn) {
   fig <- fig %>% layout(title = (
     paste('UMAP plot, number of nearest neighbors used =', knn)
   ))
-  fig
+  return(fig)
 }
 
 #' A Function to Create an Interactive Mean Variance Plot
@@ -444,7 +444,7 @@ interactiveMeanVariancePlot <-
       )
     fig <- fig %>% layout(title =
       'Mean Variance Plot')
-    fig
+    return(fig)
   }
 
 #' A Function to Create an Interactive Histogram of the
@@ -523,7 +523,7 @@ interactivePrcompPcaScreePlot <-
                      tickformat = ".0%")
       )
 
-    fig
+    return(fig)
   }
 
 #' A Function to Create an Interactive Histogram of the
@@ -600,7 +600,7 @@ interactivePrincompPcaScreePlot <-
                      tickformat = ".0%")
       )
 
-    fig
+    return(fig)
   }
 
 #' A Function to Create an Interactive Scatter Plot of the
@@ -782,7 +782,7 @@ interactivePrincompPcaIndividualsPlot <-
           "Comp.2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
         ))
       )
-    fig
+    return(fig)
   }
 
 #' A Function to Create an Interactive Scatter Plot of the
@@ -869,7 +869,7 @@ interactivePrincompPcaVariablesPlot <-
           "Comp.2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
         ))
       )
-    fig
+    return(fig)
   }
 
 #' A Function to Create an Interactive Heat Map of the
@@ -925,7 +925,7 @@ interactiveHeatMapPlot <- function(ex) {
   }
   colnames(df) <- colnames(corMatrix)
   fig <- heatmaply(df)
-  fig
+  return(fig)
 }
 
 #' A Function to Create an Interactive Scatter Plot of the
@@ -1106,7 +1106,7 @@ interactivePrcompPcaIndividualsPlot <-
           "PC2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
         ))
       )
-    fig
+    return(fig)
   }
 
 #' A Function to Create an Interactive 3D Scatter Plot of the
@@ -1292,7 +1292,7 @@ interactive3DPrcompPcaIndividualsPlot <-
           ))
         )
       )
-    fig
+    return(fig)
   }
 
 #' A Function to Create an Interactive Scatter Plot
@@ -1378,7 +1378,7 @@ interactivePrcompPcaVariablesPlot <-
           "PC2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
         ))
       )
-    fig
+    return(fig)
   }
 
 #' A Function to Create an Interactive 3D Scatter Plot
@@ -1470,5 +1470,5 @@ interactive3DPrcompPcaVariablesPlot <-
         ))
       )
       )
-    fig
+    return(fig)
   }
