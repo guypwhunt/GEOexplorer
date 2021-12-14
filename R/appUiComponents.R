@@ -155,6 +155,10 @@ sourceDatasetInformationUi <- function() {
                                        ),
                                        br(),
                                        br(),
+                                       downloadButton("downloadGeneExpression",
+                                                      "Download"),
+                                       br(),
+                                       br(),
                                        dataTableOutput('table')
                                      )
                                    ))

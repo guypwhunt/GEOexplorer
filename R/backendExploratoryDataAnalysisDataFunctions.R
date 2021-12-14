@@ -52,6 +52,7 @@ extractGeoData <- function(geoAccessionCode, platform) {
 #' FALSE
 #' @keywords GEO
 #' @importFrom GEOquery getGEO
+#' @importFrom stringr str_trim
 #' @examples
 #' # Get the GEO data for all platforms
 #' geoAccessionCode <- "GSE18388"
@@ -71,6 +72,8 @@ getGeoObject <-
     } else {
       platformAnnotation <- TRUE
     }
+    # Remove white space from geoAccessionCode
+    geoAccessionCode <- str_trim(geoAccessionCode, side = "both")
     gset <- tryCatch({
       getGEO(geoAccessionCode,
              GSEMatrix = GSEMatrix,

@@ -80,6 +80,14 @@ second process is differential gene expression analysis, which aims
 to identify the genes that are statistically upregulated or 
 downregulated between two groups.
 
+## Video Tutorial
+
+It is advised to watch the video tutorial of GEOexplorer,
+which is available on the following
+[link](https://youtu.be/SziUG8WOlNk). The video
+tutorial includes an explanation of how to interpret 
+the various results and visualisation.
+
 ## Performing Exploratory Data Analysis
 After loading GEOexplorer perform the following steps, which can be seen in 
 image 1 below. 
@@ -198,12 +206,6 @@ Group 3: Visualisations that display the differentially expressed genes.
 **Image 4:**
 
 ![](Picture7.png)
-
-# Video Demonstration of GEOexplorer
-
-A video demonstrating how to use GEOexplorer's user
-interface is available on the following link 
-(https://youtu.be/8R8yqMlPCVM).
 
 # Reporting problems or bugs
 

@@ -8,6 +8,7 @@
 #' @importFrom utils write.csv object.size
 #' @importFrom htmltools HTML
 #' @importFrom xfun file_ext
+#' @importFrom stringr str_trim
 #' @import markdown
 #' @importFrom knitr knit
 #' @author Guy Hunt
@@ -28,6 +29,11 @@ sourceServer <- function(input, output, session) {
     all <- reactiveValues()
     errorChecks <- reactiveValues()
     ct <- 1
+    userUploadExperimentInformation <- HTML(
+      "<p>Experimental
+          Information is not available when processing
+          user-uploaded files!</p><br>"
+    )
 
     # Add tutorial Page
     output$tutorial <- renderUI({
@@ -161,31 +167,36 @@ sourceServer <- function(input, output, session) {
 
     # Download gene expression template
     geneExpressionTemplate <- tryCatch({
-      as.matrix(geneExpressionTemplate
-      )
-      },error = function(e) {
-        return(NULL)
-      })
-    output$downloadGeneExpressionFileTemplate <- dowloadFile(
-      "gene_expression_template.csv", geneExpressionTemplate)
+      as.matrix(geneExpressionTemplate)
+    }, error = function(e) {
+      return(NULL)
+    })
+    output$downloadGeneExpressionFileTemplate <-
+      try(
+        dowloadFile("gene_expression_template.csv", geneExpressionTemplate))
 
     # Download microarray example dataset
-    microarrayExampleDataset <- tryCatch({as.matrix(
-      microarrayExampleGeneExpressionCsv
-    )
-      },error = function(e) {
-        return(NULL)
-      })
-    output$downloadMicroarrayExample <- dowloadFile(
-      "microarray_example_dataset.csv", microarrayExampleDataset)
+    microarrayExampleDataset <- tryCatch({
+      as.matrix(microarrayExampleGeneExpressionCsv)
+    }, error = function(e) {
+      return(NULL)
+    })
+    output$downloadMicroarrayExample <-
+      try(
+        dowloadFile(
+          "microarray_example_dataset.csv", microarrayExampleDataset))
 
     # Download RNAseq example dataset
-    rnaSeqExampleDataset <- tryCatch({as.matrix(rnaSeqExampleGeneExpressionCsv)
-      },error = function(e) {
+    rnaSeqExampleDataset <-
+      tryCatch({
+        as.matrix(rnaSeqExampleGeneExpressionCsv)
+      }, error = function(e) {
         return(NULL)
       })
-    output$downloadRnaSeqExample <- dowloadFile(
-      "rna_seq_example_dataset.csv", rnaSeqExampleDataset)
+    output$downloadRnaSeqExample <-
+      try(
+        dowloadFile("rna_seq_example_dataset.csv", rnaSeqExampleDataset)
+    )
 
     observeEvent(input$dataSource, {
       # Refresh error checks
@@ -261,7 +272,7 @@ sourceServer <- function(input, output, session) {
               req(input$geoAccessionCode)
               # Notify the user the GEO accession code
               # is not a GEO series accession code
-              if (substr(input$geoAccessionCode, 1, 3) != "GSE")
+              if (substr(str_trim(input$geoAccessionCode), 1, 3) != "GSE")
               {
                 showNotification("Please input a GEO series accession code
                                  with the format GSEXXX",
@@ -317,8 +328,20 @@ sourceServer <- function(input, output, session) {
           }
         })
       } else {
+
         # Define variables
         all$gsetData <- NULL
+
+        # Update variables if combining the dataset with a GEO
+        # Dataset
+        if (input$dataSetType == "Combine") {
+            if (input$dataSource2 == "GEO") {
+              all$gsetData <- all$gsetData2
+            }
+        } else {
+          all$convertedExperimentInformation2 <-
+            userUploadExperimentInformation
+        }
 
         # Update UI side bar with User Upload widgets
         observeEvent(input$dataSetType, {
@@ -327,8 +350,11 @@ sourceServer <- function(input, output, session) {
 
           # Microarray vs RNA Seq Widget
           if (input$dataSetType == "Combine") {
-            observeEvent(input$dataSource2, {
-              if ((input$dataSource2 == "GEO")|(input$dataSource2 == "GEO")) {
+            reactiveDataSources <- reactive(c(input$dataSource,
+                                              input$dataSource2))
+            observeEvent(reactiveDataSources(), {
+              if ((input$dataSource == "GEO")|(input$dataSource2 == "GEO"))
+                {
                 output$output4 <- renderUI({
                   radioButtons(
                     "typeOfData",
@@ -560,7 +586,7 @@ sourceServer <- function(input, output, session) {
                   req(input$geoAccessionCode2)
                   # Notify the user the GEO accession code
                   # is not a GEO series accession code
-                  if (substr(input$geoAccessionCode2, 1, 3) != "GSE")
+                  if (substr(str_trim(input$geoAccessionCode2), 1, 3) != "GSE")
                   {
                     showNotification("Please input a GEO series accession code
                                  with the format GSEXXX",
@@ -803,6 +829,9 @@ sourceServer <- function(input, output, session) {
                 return(NULL)
               })
 
+              # Define experimental information
+              all$convertedExperimentInformation <-
+                userUploadExperimentInformation
 
               # Preprocess the data
               all$expressionData <-
@@ -849,7 +878,7 @@ sourceServer <- function(input, output, session) {
       if (input$dataSetType == "Combine") {
         if (input$dataSource2 == "GEO"){
           if (input$dataSource == "GEO"){
-            if (input$platform != input$platform){
+            if (input$platform != input$platform2){
               showNotification("The two GEO series platforms are not the same.
                                This might cause an error if the datasets do not
                                have the same row names."
@@ -925,7 +954,6 @@ sourceServer <- function(input, output, session) {
               return(NULL)
             })
 
-
             # Preprocess the data
             all$expressionData2 <-
               tryCatch({
@@ -949,6 +977,13 @@ sourceServer <- function(input, output, session) {
               # Extract Column Information
               all$columnInfo2 <- convertExpressionDataToExperimentInformation(
                 all$expressionData2)
+
+              # Define Experimental Information
+              all$convertedExperimentInformation2 <- HTML(
+                "<b>Experimental
+          Information is not available when processing
+          user-uploaded files!</b>"
+              )
             }
           } else {
             # Update error checks
@@ -1187,6 +1222,18 @@ sourceServer <- function(input, output, session) {
             all$knnDataInput <- all$dataInput
           }
 
+
+          # Download Gene Expression Dataset
+          output$downloadGeneExpression <- try(
+            downloadHandler(
+              filename = "transformed_gene_expression_dataset.csv",
+              content = function(file) {
+                write.csv(all$knnDataInput,
+                          file,
+                          row.names = TRUE)
+                })
+          )
+
           # KNN Column Set Plot
           all$knnColumns <-
             extractSampleNames(all$knnDataInput)
@@ -1226,27 +1273,16 @@ sourceServer <- function(input, output, session) {
 
       # Process Data Visualisations
       if (errorChecks$continueWorkflow) {
-        if (input$dataSource == "GEO") {
-          # Experimental Information Display
-          output$experimentInfo <- tryCatch({
-            renderUI({
-              all$convertedExperimentInformation            })
-          },
-          error = function(e) {
-            # return a safeError if a parsing error occurs
-            stop(safeError(e))
+        # Experimental Information Display
+        output$experimentInfo <- tryCatch({
+          renderUI({
+            all$convertedExperimentInformation
           })
-        } else
-          {
-          # Update Experimental information
-          output$experimentInfo <-  renderUI({
-            HTML(
-              "<b>Experimental
-          Information is not available when processing
-          user-uploaded files!</b>"
-            )
-          })
-        }
+        },
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          stop(safeError(e))
+        })
 
         # Column Set Plot
         output$columnTable <-
@@ -1805,9 +1841,15 @@ sourceServer <- function(input, output, session) {
           })
 
         # Download Top Differentially Expressed Genes Table
-        output$downloadData <-
-          output$downloadGeneExpressionFileTemplate <- dowloadFile(
-            "top_differentially_expressed_genes.csv", tT)
+        output$downloadData <- try(
+          downloadHandler(
+            filename = "top_differentially_expressed_genes.csv",
+            content = function(file) {
+              write.csv(tT,
+                        file,
+                        row.names = TRUE)
+            })
+        )
 
         showNotification("Differential gene
                            expression analysis complete!",
