@@ -16,10 +16,12 @@
 #' @importFrom stats complete.cases cor model.matrix
 #' na.omit prcomp princomp quantile
 #' @importFrom shinyBS bsTooltip addTooltip
+#' @importFrom shinybusy add_busy_spinner
 #' @author Guy Hunt
 #' @return Large Shiny App
 loadApp <- function() {
   ui <- fluidPage(
+    add_busy_spinner(spin = "fading-circle"),
     sourceUi()
   )
 

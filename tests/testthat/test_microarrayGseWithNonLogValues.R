@@ -79,7 +79,7 @@ test_that("Microarray GSE with non-log values is handled correctly
             # Get column Details
             columnInfo <- extractSampleDetails(gsetData)
             expect_type(columnInfo, 'list')
-            expect_equal(ncol(columnInfo), 3)
+            expect_equal(ncol(columnInfo), 5)
             expect_equal(nrow(columnInfo), 5)
 
             # Is log transformation auto applied

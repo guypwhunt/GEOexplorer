@@ -29,7 +29,8 @@ sourceUi <- function() {
     tabPanel("About",
              htmlOutput("about")
              ),
-    tabPanel("GEO Search"),
+    tabPanel("GEO Search",
+             sourceGeoSearchUi()),
     tabPanel("Tutorial",
              htmlOutput('tutorial')),
     tabPanel("Example Datasets",
@@ -45,12 +46,10 @@ sourceUi <- function() {
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceSideBarUi()
 #' @importFrom shinyBS bsTooltip
-#' @importFrom shinybusy add_busy_spinner
 #' @author Guy Hunt
 #' @noRd
 sourceSideBarUi <- function() {
   sideBarUi <- sidebarPanel(
-    add_busy_spinner(spin = "fading-circle"),
     radioButtons(
       "dataSetType",
       label = "Would you like analyse a single gene exression dataset or
@@ -706,8 +705,7 @@ sourceExploratoryDataAnalysisUi <- function() {
 #' @author Guy Hunt
 #' @noRd
 sourceExampleUI <- function() {
-  exampleUIComponents <- tabPanel(
-    "Example Datasets and Templates",
+  exampleUIComponents <- mainPanel(
     br(),
     br(),
     strong("This tab contains:"),
@@ -746,4 +744,23 @@ sourceExampleUI <- function() {
     downloadButton("downloadRnaSeqExample", "Download")
   )
   return(exampleUIComponents)
+}
+
+#' A Function to Return the Side Bar Ui Component
+#'
+#' A Function to Return the Side Bar Ui Component
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @examples sourceSideBarUi()
+#' @importFrom DT dataTableOutput
+#' @author Guy Hunt
+#' @noRd
+sourceGeoSearchUi <- function() {
+  geoSearchUiComponents <- mainPanel(
+    textInput("geoSearchTerm", "Keyword", value = ""),
+    actionButton("searchGeo", "Search"),
+    br(),
+    br(),
+    dataTableOutput('geoSearchResults')
+  )
+  return(geoSearchUiComponents)
 }

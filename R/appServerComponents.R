@@ -3,7 +3,7 @@
 #' A Function to Return the Server Component
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceServer()
-#' @importFrom DT renderDataTable JS
+#' @importFrom DT renderDataTable
 #' @importFrom shinyBS addTooltip
 #' @importFrom utils write.csv object.size
 #' @importFrom htmltools HTML
@@ -152,6 +152,58 @@ sourceServer <- function(input, output, session) {
 
     # Define error checks
     errorChecks <- resetErrorChecks(errorChecks)
+
+    # Search GEO server actions
+    observeEvent(input$searchGeo, {
+      # Define Variables
+      firstResultNumber <- "0"
+      lastResultNumber <- "50"
+
+      # Update Variables
+      all$geoSearchTerm <- input$geoSearchTerm
+      all$geoSearchResults <- tryCatch({
+        searchGeo(input$geoSearchTerm, firstResultNumber, lastResultNumber)},
+        error = function(e) {
+          # return a safeError if a parsing error occurs
+          return(NULL)
+        })
+
+
+      # Load search results table
+      output$geoSearchResults <- tryCatch({
+        renderDataTable(
+          all$geoSearchResults,
+          server = FALSE,
+          escape = FALSE,
+          selection = 'none'
+        )
+      },
+      error = function(e) {
+        # return a safeError if a parsing error occurs
+        stop(safeError(e))
+      })
+    })
+
+    # Load GEO Accession Code from GEO Search
+    observeEvent(input$loadGeoSearchAccession, {
+      selectedRow <- as.numeric(
+        strsplit(input$loadGeoSearchAccession, "_")[[1]][2])
+
+      # Update the two Radio buttons to enable the dataset to be processed
+      updateRadioButtons(session, inputId = "dataSetType", selected = "Single")
+      updateRadioButtons(session, inputId = "dataSource", selected = "GEO")
+
+      # Add GEO accession input
+      output$output5 <- renderUI({
+        textInput("geoAccessionCode", "GEO accession code",
+                  all$geoSearchResults[selectedRow,1])
+      })
+
+      #
+      showNotification("The GEO accession code was successfully loaded.
+                       Please click on the 'Home' button to proceed.",
+                       type = "message")
+    })
 
     # Load the example dataset and configurations
     observeEvent(input$loadExampleData, {

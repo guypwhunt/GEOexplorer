@@ -87,7 +87,7 @@ test_that("Microarray GSE with missing values is handled correctly by all
             # Get column Details
             columnInfo <- extractSampleDetails(gsetData)
             expect_type(columnInfo, 'list')
-            expect_equal(ncol(columnInfo), 4)
+            expect_equal(ncol(columnInfo), 5)
             expect_equal(nrow(columnInfo), 12)
 
             # Is log transformation auto applied
