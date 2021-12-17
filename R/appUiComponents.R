@@ -756,6 +756,11 @@ sourceExampleUI <- function() {
 #' @noRd
 sourceGeoSearchUi <- function() {
   geoSearchUiComponents <- mainPanel(
+    helpText("Please input a keyword or phrase (such as a paper
+             title or author name) below, to search the GEO database for
+             relevant datasets."),
+    br(),
+    br(),
     textInput("geoSearchTerm", "Keyword", value = ""),
     actionButton("searchGeo", "Search"),
     br(),

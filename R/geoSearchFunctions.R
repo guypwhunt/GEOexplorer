@@ -4,6 +4,7 @@
 #' @importFrom httr GET
 #' @importFrom stringr str_trim str_replace str_replace_all
 #' @importFrom xml2 read_xml as_list
+#' @importFrom XML xmlParse xmlToList
 #' @author Guy Hunt
 #' @noRd
 searchGeo <- function(searchTerm,

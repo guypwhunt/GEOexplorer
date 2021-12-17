@@ -505,7 +505,7 @@ test_that("Microarray GSE with missing values is handled correctly by all
             tT <- calculateTopDifferentiallyExpressedGenes(results$fit2,
                                                            adjustment)
             expect_type(tT, "list")
-            expect_type(tT$ID, "NULL")
+            expect_type(tT$ID, "character")
             expect_type(tT$t, "double")
             expect_type(tT$Gene.symbol, "NULL")
             expect_type(tT$adj.P.Val, "double")

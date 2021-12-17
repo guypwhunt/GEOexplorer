@@ -606,11 +606,11 @@ convertAdjustment <- function(adjustment) {
 #' @seealso [calculateDifferentialGeneExpression()]
 #' for differential gene expression object
 calculateTopDifferentiallyExpressedGenes <-
-  function(fit2, adjustment) {
+  function(fit2, adjustment, numberOfGenes = 250) {
     tT <- topTable(fit2,
                    adjust.method = adjustment,
                    sort.by = "B",
-                   number = 250)
+                   number = numberOfGenes)
     columnNamesList <- c()
     optionalColumnNamesList <-
       c(

@@ -109,3 +109,6 @@ Changes in version 0.99.34 (2021-12-13)
 
 Changes in version 0.99.34 (2021-12-15)
 + GEO Search Functionality Added
+
+Changes in version 1.1.1 (2021-12-17)
++ Bug fixes
