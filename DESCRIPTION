@@ -55,6 +55,7 @@ Depends:
     Biobase,
     plotly,
     shinyBS,
+    enrichR,
     R (>= 4.1.0)
 Imports: 
   DT,
@@ -82,8 +83,7 @@ Imports:
   markdown,
   knitr,
   utils,
-  xml2,
-  enrichR
+  xml2
 Suggests: 
     rmarkdown,
     usethis,
