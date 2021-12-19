@@ -23,7 +23,10 @@ sourceUi <- function() {
                  sourceExploratoryDataAnalysisUi(),
                  # Source the Differential Gene Expression
                  # UI Components
-                 sourceDifferentialGeneExpressionAnalysisUi()
+                 sourceDifferentialGeneExpressionAnalysisUi(),
+                 # Source the Enrichment
+                 # UI Components
+                 sourceEnrichmentnUi()
                )
              )),
     tabPanel("About",
@@ -768,4 +771,106 @@ sourceGeoSearchUi <- function() {
     dataTableOutput('geoSearchResults')
   )
   return(geoSearchUiComponents)
+}
+
+
+#' A Function to Return the Enrichment Ui Component
+#'
+#' A Function to Return the Enrichment Ui Component
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @importFrom DT dataTableOutput
+#' @examples sourceEnrichmentnUi()
+#' @author Guy Hunt
+#' @noRd
+sourceEnrichmentnUi <- function() {
+  enrichmentUi <- tabPanel("Enrichment Analysis",
+                                   tabsetPanel(
+                                     type = "tabs",
+                                     tabPanel(
+                                       "Set Parameters",
+                                       br(),
+                                       br(),
+                                       selectInput("enrichDatabases",
+                                                   "Select a database to use
+                                                   for gene enrich analysis",
+                                                   c("GO_Molecular_
+                                                     Function_2015",
+                                                     "GO_Cellular_
+                                                     Component_2015",
+                                                     "GO_Biological_
+                                                     Process_2015"),
+                                                   selected =
+                                                     "GO_Biological
+                                                   _Process_2015"),
+                                       br(),
+                                       br(),
+                                       uiOutput("output101")
+                                     ),
+                                     tabPanel(
+                                       "Differentially Expressed Genes Table",
+                                       br(),
+                                       span(
+                                         "Generated using R enrichR."
+                                       ),
+                                       br(),
+                                       br(),
+                                       dataTableOutput(
+                                         'differentiallyExpressedGenesEnrichmentTable')
+                                     ),
+                                     tabPanel(
+                                       "Differentially Expressed Genes Plot",
+                                       br(),
+                                       span(
+                                         "Generated using R enrichR."
+                                       ),
+                                       br(),
+                                       br(),
+                                       plotOutput('differentiallyExpressedGenesEnrichmentPlot')
+                                     ),
+                                     tabPanel(
+                                       "Upregulated Genes Table",
+                                       br(),
+                                       span(
+                                         "Generated using R enrichR."
+                                       ),
+                                       br(),
+                                       br(),
+                                       dataTableOutput(
+                                         'upregulatedGenesEnrichmentTable')
+                                     ),
+                                     tabPanel(
+                                       "Upregulated Genes Plot",
+                                       br(),
+                                       span(
+                                         "Generated using R enrichR."
+                                       ),
+                                       br(),
+                                       br(),
+                                       plotOutput(
+                                         'upregulatedGenesEnrichmentPlot')
+                                     ),
+                                     tabPanel(
+                                       "Downregulated Genes Table",
+                                       br(),
+                                       span(
+                                         "Generated using R enrichR."
+                                       ),
+                                       br(),
+                                       br(),
+                                       dataTableOutput(
+                                         'downregulatedGenesEnrichmentTable')
+                                     ),
+                                     tabPanel(
+                                       "Downregulated Genes Plot",
+                                       br(),
+                                       span(
+                                         "Generated using R enrichR."
+                                       ),
+                                       br(),
+                                       br(),
+                                       plotOutput(
+                                         'downregulatedGenesEnrichmentPlot')
+                                     ),
+                                   ))
+  return(enrichmentUi)
 }

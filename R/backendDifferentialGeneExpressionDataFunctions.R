@@ -233,7 +233,8 @@ calculateDifferentialGeneExpression <-
         exprs(gset) <- ex
       } else if (dataSource == "Upload") {
         if (typeOfData == "RNA Sequencing") {
-          ex = DGEList(ex, group = sml)
+          #ex <- as.matrix(ex)
+          ex <- DGEList(ex, group = sml)
         }
       }
 
