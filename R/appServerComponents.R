@@ -1934,10 +1934,19 @@ sourceServer <- function(input, output, session) {
 
     # Gene Enrichment Functions
     observeEvent(input$enrichmentAnalysisButton,{
+      # Reset all Visualisations
+      output$differentiallyExpressedGenesEnrichmentTable <- renderDataTable({})
+      output$differentiallyExpressedGenesEnrichmentPlot <- renderPlot({})
+      output$upregulatedGenesEnrichmentTable <- renderDataTable({})
+      output$upregulatedGenesEnrichmentPlot <- renderPlot({})
+      output$downregulatedGenesEnrichmentTable <- renderDataTable({})
+      output$downregulatedGenesEnrichmentPlot <- renderPlot({})
+
       # Update enrichment database list
       databaseNames <- tryCatch({extractDatabaseNamesFromEnrichR()},
                                 error = function(e) {
-                                  # return a safeError if a parsing error occurs
+                                  # return a safeError if a parsing
+                                  # error occurs
                                   return(NULL)
                                 })
       if (!is.null(databaseNames)) {
@@ -1972,138 +1981,162 @@ sourceServer <- function(input, output, session) {
           return(NULL)
         })
 
-        # Extract Upregulated genes
-        upregulatedGenes <- tryCatch({
-          extractUpregulatedGenes(differentiallyExpressedGenes)
-        }, error = function(e) {
-          # return a safeError if a parsing error occurs
-          return(NULL)
-        })
-
-        # Extract downregulated genes
-        downregulatedGenes <- tryCatch({
-          extractdowregulatedGenes(differentiallyExpressedGenes)
-        }, error = function(e) {
-          # return a safeError if a parsing error occurs
-          return(NULL)
-        })
-
-        # Extract differentially expressed gene symbols
-        differemtiallyExpressedGeneSymbols <- tryCatch({
-          extractGeneSymbols(differentiallyExpressedGenes, "Gene.symbol")
-        }, error = function(e) {
-          # return a safeError if a parsing error occurs
-          return(NULL)
-        })
-
-        # Extract upregulated gene symbols
-        upregulatedGenesGeneSymbols <- tryCatch({
-          extractGeneSymbols(upregulatedGenes, "Gene.symbol")
-        }, error = function(e) {
-          # return a safeError if a parsing error occurs
-          return(NULL)
-        })
-
-        # Extract downregulated gene symbols
-        downregulatedGenesGeneSymbols <- tryCatch({
-          extractGeneSymbols(downregulatedGenes, "Gene.symbol")
-        }, error = function(e) {
-          # return a safeError if a parsing error occurs
-          return(NULL)
-        })
-
-        # enrich Differentially Expressed Genes
-        enrichedDifferentiallyExpressedGenes <- tryCatch({
-          enrichGenes(differemtiallyExpressedGeneSymbols,
-                      input$enrichDatabases)
-        }, error = function(e) {
-          # return a safeError if a parsing error occurs
-          return(NULL)
-        })
-
-        # enrich upregulated Genes
-        enrichedUpregulatedGenes <- tryCatch({
-          enrichGenes(upregulatedGenesGeneSymbols, input$enrichDatabases)
-        }, error = function(e) {
-          # return a safeError if a parsing error occurs
-          return(NULL)
-        })
-
-        # enrich downregulated Genes
-        enrichedDownregulatedGenes <- tryCatch({
-          enrichGenes(downregulatedGenesGeneSymbols, input$enrichDatabases)
-        }, error = function(e) {
-          # return a safeError if a parsing error occurs
-          return(NULL)
-        })
-
-        # Display table of differentially expressed genes
-        output$differentiallyExpressedGenesEnrichmentTable <- tryCatch({
-          renderDataTable(
-          enrichedDifferentiallyExpressedGenes,
-          server = FALSE,
-          escape = FALSE,
-          selection = 'none'
-          )},
-          error = function(e) {
+        # Error handling if there are no differentially expressed genes
+        if (is.null(differentiallyExpressedGenes) |
+            nrow(differentiallyExpressedGenes)==0) {
+          showNotification("There are no differentially expressed genes.
+                           Therefore, enrichment analysis will not be
+                           performed.", type = "error")
+        } else {
+          # Analyse Differentialy Expressed Genes
+          # Extract differentially expressed gene symbols
+          differemtiallyExpressedGeneSymbols <- tryCatch({
+            extractGeneSymbols(differentiallyExpressedGenes, "Gene.symbol")
+          }, error = function(e) {
             # return a safeError if a parsing error occurs
-            stop(safeError(e))
+            return(NULL)
           })
 
-        # Display table of upregulated genes
-        output$upregulatedGenesEnrichmentTable <- tryCatch({
-          renderDataTable(
-          enrichedUpregulatedGenes,
-          server = FALSE,
-          escape = FALSE,
-          selection = 'none'
-        )},
-        error = function(e) {
-          # return a safeError if a parsing error occurs
-          stop(safeError(e))
-        })
-
-        # Display table of downregulated genes
-        output$downregulatedGenesEnrichmentTable <- tryCatch({renderDataTable(
-          enrichedDownregulatedGenes,
-          server = FALSE,
-          escape = FALSE,
-          selection = 'none'
-        )},
-        error = function(e) {
-          # return a safeError if a parsing error occurs
-          stop(safeError(e))
-        })
-
-        # Plot Differentially Expressed Genes
-        output$differentiallyExpressedGenesEnrichmentPlot <- tryCatch({
-          renderPlot({
-            plotGeneEnrichmentinformation(
-              enrichedDifferentiallyExpressedGenes)})},
-          error = function(e) {
+          # enrich Differentially Expressed Genes
+          enrichedDifferentiallyExpressedGenes <- tryCatch({
+            enrichGenes(differemtiallyExpressedGeneSymbols,
+                        input$enrichDatabases)
+          }, error = function(e) {
             # return a safeError if a parsing error occurs
-            stop(safeError(e))
+            return(NULL)
           })
 
-        # Plot Upregulated Genes
-        output$upregulatedGenesEnrichmentPlot <- tryCatch({renderPlot({
-          plotGeneEnrichmentinformation(enrichedUpregulatedGenes)})},
-          error = function(e) {
+          # Display table of differentially expressed genes
+          output$differentiallyExpressedGenesEnrichmentTable <- tryCatch({
+            renderDataTable(
+              enrichedDifferentiallyExpressedGenes,
+              server = FALSE,
+              escape = FALSE,
+              selection = 'none'
+            )},
+            error = function(e) {
+              # return a safeError if a parsing error occurs
+              stop(safeError(e))
+            })
+
+          # Plot Differentially Expressed Genes
+          output$differentiallyExpressedGenesEnrichmentPlot <- tryCatch({
+            renderPlot({
+              plotGeneEnrichmentinformation(
+                enrichedDifferentiallyExpressedGenes)})},
+            error = function(e) {
+              # return a safeError if a parsing error occurs
+              stop(safeError(e))
+            })
+
+          # Extract Upregulated genes
+          upregulatedGenes <- tryCatch({
+            extractUpregulatedGenes(differentiallyExpressedGenes)
+          }, error = function(e) {
             # return a safeError if a parsing error occurs
-            stop(safeError(e))
+            return(NULL)
           })
 
-        # Plot Downregulated Genes
-        # Plot Upregulated Genes
-        output$downregulatedGenesEnrichmentPlot <- tryCatch({renderPlot({
-          plotGeneEnrichmentinformation(enrichedDownregulatedGenes)})},
-          error = function(e) {
+          if (is.null(upregulatedGenes) | nrow(upregulatedGenes) == 0) {
+            showNotification("There are no upregulated genes.
+                           Therefore, upregulated gene enrichment analysis will
+                           not be performed.", type = "warning")
+          } else {
+            # Extract upregulated gene symbols
+            upregulatedGenesGeneSymbols <- tryCatch({
+              extractGeneSymbols(upregulatedGenes, "Gene.symbol")
+            }, error = function(e) {
+              # return a safeError if a parsing error occurs
+              return(NULL)
+            })
+
+            # enrich upregulated Genes
+            enrichedUpregulatedGenes <- tryCatch({
+              enrichGenes(upregulatedGenesGeneSymbols, input$enrichDatabases)
+            }, error = function(e) {
+              # return a safeError if a parsing error occurs
+              return(NULL)
+            })
+
+            # Display table of upregulated genes
+            output$upregulatedGenesEnrichmentTable <- tryCatch({
+              renderDataTable(
+                enrichedUpregulatedGenes,
+                server = FALSE,
+                escape = FALSE,
+                selection = 'none'
+              )},
+              error = function(e) {
+                # return a safeError if a parsing error occurs
+                stop(safeError(e))
+              })
+
+            # Plot Upregulated Genes
+            output$upregulatedGenesEnrichmentPlot <- tryCatch({renderPlot({
+              plotGeneEnrichmentinformation(enrichedUpregulatedGenes)})},
+              error = function(e) {
+                # return a safeError if a parsing error occurs
+                stop(safeError(e))
+              })
+          }
+
+          # Extract downregulated genes
+          downregulatedGenes <- tryCatch({
+            extractdowregulatedGenes(differentiallyExpressedGenes)
+          }, error = function(e) {
             # return a safeError if a parsing error occurs
-            stop(safeError(e))
+            return(NULL)
           })
 
-        showNotification("Enrichment analysis was successfully completed.
+          # Error handling for no downregulated genes
+          if (is.null(downregulatedGenes) | nrow(downregulatedGenes) == 0) {
+            showNotification("There are no downregulated genes.
+                           Therefore, downregulated gene
+                           enrichment analysis will
+                           not be performed.", type = "warning")
+          } else {
+            # Extract downregulated gene symbols
+            downregulatedGenesGeneSymbols <- tryCatch({
+              extractGeneSymbols(downregulatedGenes, "Gene.symbol")
+            }, error = function(e) {
+              # return a safeError if a parsing error occurs
+              return(NULL)
+            })
+
+            # enrich downregulated Genes
+            enrichedDownregulatedGenes <- tryCatch({
+              enrichGenes(downregulatedGenesGeneSymbols,
+                          input$enrichDatabases)
+            }, error = function(e) {
+              # return a safeError if a parsing error occurs
+              return(NULL)
+            })
+
+            # Display table of downregulated genes
+            output$downregulatedGenesEnrichmentTable <- tryCatch({
+              renderDataTable(
+              enrichedDownregulatedGenes,
+              server = FALSE,
+              escape = FALSE,
+              selection = 'none'
+            )},
+            error = function(e) {
+              # return a safeError if a parsing error occurs
+              stop(safeError(e))
+            })
+
+            # Plot Downregulated Genes
+            output$downregulatedGenesEnrichmentPlot <- tryCatch({renderPlot({
+              plotGeneEnrichmentinformation(enrichedDownregulatedGenes)})},
+              error = function(e) {
+                # return a safeError if a parsing error occurs
+                stop(safeError(e))
+              })
+            }
+
+          showNotification("Enrichment analysis completed.
                          ",type = "message")
+        }
       } else {
         showNotification("The enrichment website enrichR
                          is unavailable. Therefore, enrichment
