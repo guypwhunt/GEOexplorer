@@ -783,7 +783,7 @@ sourceGeoSearchUi <- function() {
 #' @author Guy Hunt
 #' @noRd
 sourceEnrichmentnUi <- function() {
-  enrichmentUi <- tabPanel("Enrichment Analysis",
+  enrichmentUi <- tabPanel("Gene Enrichment Analysis",
                                    tabsetPanel(
                                      type = "tabs",
                                      tabPanel(

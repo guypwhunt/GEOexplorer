@@ -62,7 +62,7 @@ extractGeneSymbols <- function(differentiallyExpressedGenes,
 #' @author Guy Hunt
 #' @noRd
 extractDatabaseNamesFromEnrichR <- function() {
-  library(enrichR)
+
   databases <- listEnrichrDbs()
   databaseNames <- databases$libraryName
   databaseNames <- as.list(databaseNames)
@@ -76,7 +76,7 @@ extractDatabaseNamesFromEnrichR <- function() {
 enrichGenes <- function(geneSymbols,
              databaseNames =
                "GO_Biological_Process_2015") {
-  library(enrichR)
+
   # Query the enrich R database
   enrichedGeneInformation <- enrichr(geneSymbols, databaseNames)
 
@@ -90,7 +90,7 @@ enrichGenes <- function(geneSymbols,
 #' @author Guy Hunt
 #' @noRd
 plotGeneEnrichmentinformation  <- function(geneEnrichmentTable) {
-  library(enrichR)
+
   # Query the enrich R database
   plot <- plotEnrich(geneEnrichmentTable, showTerms = 20, numChar = 40,
              y = "Count", orderBy = "P.value")
