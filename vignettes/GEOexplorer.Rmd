@@ -1,8 +1,11 @@
 ---
 title: "GEOexplorer"
 author: "Guy Hunt"
-date: "December 13, 2021"
-output: rmarkdown::html_vignette
+date: "December 21, 2021"
+output: 
+  rmarkdown::html_vignette:
+    toc: yes
+    toc_depth: 5
 vignette: >
   %\VignetteIndexEntry{my-vignette}
   %\VignetteEncoding{UTF-8}
@@ -34,12 +37,16 @@ The webserver can be accessed on the following [link](https://geoexplorer.rosali
 
 # GEOexplorer Tutorial
 
-GEOexplorer splits gene expression analysis into two distinct 
-processes. The first process is exploratory data analysis, which aims 
-to gain an overall understanding of the gene expression dataset. The 
-second process is differential gene expression analysis, which aims 
-to identify the genes that are statistically upregulated or 
-downregulated between two groups.
+GEOexplorer splits gene expression analysis into three
+distinct processes. 
+The first process is exploratory data analysis, which aims 
+to gain an overall understanding of the gene expression dataset. 
+The second process is differential gene expression analysis, 
+which aims to identify the genes that are statistically
+upregulated or downregulated between two groups. 
+The final process is gene enrichment analysis, which aims to 
+provide the biological processes and mechanisms the 
+differentially expressed genes are involved in.
 
 ## Video Tutorial
 
@@ -48,6 +55,18 @@ which is available on the following
 [link](https://youtu.be/SziUG8WOlNk). The video
 tutorial includes an explanation of how to interpret 
 the various results and visualisation.
+
+## GEOexplorer Structure
+GEOexplorer contains several tabs, each of which serves a distinct purpose. 
+These tabs will be described in the subsections below. 
+
+### Home Tab
+The home tab contains all the widgets to perform gene expression analysis.
+![](Picture1.png)
+
+### About Tab
+The about tab contains information about GEOexplorer including links to 
+additional documentation 
 
 ## Performing Exploratory Data Analysis
 After loading GEOexplorer perform the following steps, which can be seen in 

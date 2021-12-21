@@ -210,10 +210,9 @@ sourceServer <- function(input, output, session) {
                   all$geoSearchResults[selectedRow,1])
       })
 
-      #
-      showNotification("The GEO accession code was successfully loaded.
-                       Please click on the 'Home' button to proceed.",
-                       type = "message")
+      # Change to Home Tab
+      updateTabsetPanel(session, "geoexplorerNavBar",
+                        selected = "Home")
     })
 
     # Load the example dataset and configurations
@@ -226,6 +225,10 @@ sourceServer <- function(input, output, session) {
       output$output5 <- renderUI({
         textInput("geoAccessionCode", "GEO accession code", "GSE18388")
       })
+
+      # Change to Home Tab
+      updateTabsetPanel(session, "geoexplorerNavBar",
+                        selected = "Home")
     })
 
     # Download gene expression template

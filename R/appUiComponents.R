@@ -8,8 +8,8 @@
 #' @noRd
 sourceUi <- function() {
   uiComponents <- navbarPage(
-    "GEOexplorer",
-    tabPanel("Home",
+    "GEOexplorer", id = "geoexplorerNavBar",
+    tabPanel("Home", value = "Home",
              # Source the Side Bar UI Components
              sourceSideBarUi(),
              mainPanel(
