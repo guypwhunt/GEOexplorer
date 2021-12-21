@@ -62,34 +62,92 @@ These tabs will be described in the subsections below.
 
 ### Home Tab
 The home tab contains all the widgets to perform gene expression analysis.
-![](Picture1.png)
+![](homeTab.png)
 
 ### About Tab
 The about tab contains information about GEOexplorer including links to 
-additional documentation 
+additional documentation.
+![](aboutTab.png)
+
+### GEO Search Tab
+The GEO search tab allows you to search for the GEO database for relevant 
+datasets to analyse.
+![](geoSearchTab.png)
+
+### Tutorial Tab
+The tutorial tab provides a step by step guide on how to use GEOexplorer.
+![](tutorialTab.png)
+
+### Example Datasets Tab
+The example datasets tab provides an example GEO dataset, microarray CSV,
+RNA seq CSV and template for user uploaded gene expression data.
+![](exampleDatasetsTab.png)
+## Loading Gene Expression Data Into GEOexplorer
+There are three main ways that gene expression datasets can be loaded into 
+GEOexplorer, which will be described below.
+
+### Using a GEO Accession Code
+Step 1: Navigate to the **Home** tab.
+
+Step 2: Input GEO accession code microarray gene expression dataset you wish 
+to study. GEOexplorer will automatically download the dataset from GEO. The 
+GEO accession code used in this tutorial is **GSE18388**.
+![](geoAccessionInput.png)
+
+### Searching for a GEO dataset
+Step 1: Navigate to the **GEO Search** tab.
+
+Step 2: Input the keywords you which to search.
+
+Step 3: Click the **Search** button. A table containing the results will be
+loaded. The keywords code used in this tutorial are 
+**Microarray Analysis of Space-flown Murine Thymus Tissue**.
+![](geoSearch1.png)
+
+Step 4: Click **Load Dataset** for the gene expression dataset you wish to 
+load.
+![](geoSearch2.png)
+
+### Uploading your own gene expression dataset
+Step 1: Navigate to the **Example Datasets** tab.
+
+Step 2: Download the template.
+![](userUpload1.png)
+
+Step 3: Ensure you gene expression data is in the same format as the template.
+
+Step 4: Navigate to the **Home** tab.
+
+Step 5: Click the **Upload** option.
+![](userUpload2.png)
+
+Step 6: Click **Browse**.
+
+Step 7: Select the file you wish to upload.
+
+Step 8: Click **Open**
+![](userUpload3.png)
+
+Step 9: Wait for the file to upload.
+
 
 ## Performing Exploratory Data Analysis
-After loading GEOexplorer perform the following steps, which can be seen in 
-image 1 below. 
+After loading your dataset onto GEOexplorer performing exploratory data 
+analysis is the same for all microarray gene expression datasets.
+However, there is a slight difference in processing exploratory data analysis.
 
-Step 1: Select "Single" to indicate you want to analyse a single dataset
-rather than merge multiple datasets.
+### Microarray
 
-Step 2: Select "GEO" to indicate you want to source the gene expression 
-dataset from GEO.
+Step 1: Select the platform you wish to analyse. 
+The platform used in this tutorial is **GPL6246**.
 
-Step 3: Input the GEO accession code "GSE18388" as an example gene expression
-dataset.
+Step 2: Select if you want to log transform, not log transform or 
+auto-detect if log transformation should be applied to the gene 
+expression dataset.
 
-Step 4: Select the platform "GPL6246".
+Step 3: Select if you want to fill in missing values using KNN imputation.
 
-Step 5: Select "Auto-Detect" to enable GEOexplorer to determine if the gene
-expression dataset should be log transformed.
-
-Step 6: Select "No" to indicate you don't want missing values to be filled in 
-using KNN imputation.
-
-Step 7: Click the "Analyse" button.
+Step 4: Click the **Analyse** button.
 
 **Image 1:**
 
@@ -98,20 +156,20 @@ Step 7: Click the "Analyse" button.
 After clicking "Analyse", exploratory data analysis will be completed and the 
 results can be reviewed as per the following steps and image 2.
 
-Step 8: Click on the **Dataset Information** tab.
+Step 5: Click on the **Dataset Information** tab.
 
-Step 9: Review the information presented in the subtabs, which includes
+Step 6: Review the information presented in the subtabs, which includes
 details of the experiment, details of the experimental conditions and the 
 gene expression dataset.
 
-Step 10: After reviewing this information, click on the **Exploratory Data
+Step 7: After reviewing this information, click on the **Exploratory Data
 Analysis** tab.
 
 **Image 2:**
 
 ![](Picture2.png)
 
-Step 11: Within the **Exploratory Data Analysis** tab, review the 
+Step 8: Within the **Exploratory Data Analysis** tab, review the 
 visualisations in each of the subtabs. The visualisations can be 
 divided into four groups:
 Group 1: This allows you to identify if the gene expression dataset 
