@@ -54,7 +54,6 @@ Depends:
     limma,
     Biobase,
     plotly,
-    shinyBS,
     enrichR,
     R (>= 4.1.0)
 Imports: 

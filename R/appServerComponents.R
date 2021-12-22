@@ -4,7 +4,6 @@
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceServer()
 #' @importFrom DT renderDataTable
-#' @importFrom shinyBS addTooltip
 #' @importFrom utils write.csv object.size
 #' @importFrom htmltools HTML
 #' @importFrom xfun file_ext
@@ -44,111 +43,6 @@ sourceServer <- function(input, output, session) {
     output$about <- renderUI({
       HTML(aboutPage)
     })
-
-    # Add Log Tool Tips
-    addTooltip(
-      session,
-      id = "logTransformation",
-      title = "The GEO database accepts a variety of data value types,
-              including logged and unlogged data.
-              Limma expects data values to be in log space.
-              To address this, an auto-detect feature that checks
-              the values of selected samples
-              and automatically performs a log2 transformation on
-              values determined not to be in log space.
-              Alternatively, the user can select Yes
-              to force log2 transformation,
-              or No to override the auto-detect feature.
-              The auto-detect feature only considers Sample values that
-              have been assigned to a group, and applies the transformation in
-              an all-or-none fashion",
-      placement = "top",
-      trigger = "hover"
-    )
-
-    # Add KNN Tool Tips
-    addTooltip(
-      session,
-      id = "knnTransformation",
-      title = "Rows with over 50% missing values are imputed using the overall
-              mean per sample. Columns with over 80% will cause an error in
-              the KNN computation. This is only desinged to be used on
-              microarray gene expression datasets.",
-      placement = "top",
-      trigger = "hover"
-    )
-
-    # Add P-value adjustment Tool Tips
-    addTooltip(
-      session,
-      id = "pValueAdjustment",
-      title =
-        "P-value adjustments can be applied to reduce the likelihood of
-        a false positive occurring. The P-value adjustment 'None'
-        indicates
-        no P-value adjustment will be applied and is the least
-        conservative
-        P-value adjustment. The Benjamini & Hochberg
-        (False discovery rate)
-        and Benjamini & Yekutieli methods are slightly more
-        conservative and aim to control the false discovery rate.
-        The Bonferroni
-        and Holm methods are the most conservative as they aim to
-        control the family-wise error rate.",
-      placement = "top",
-      trigger = "hover"
-    )
-
-    # Add Limma Precision Weights adjustment Tool Tips
-    addTooltip(
-      session,
-      id = "limmaPrecisionWeights",
-      title =
-        "Limma precision weights should be applied if there is
-                  a strong
-                  mean-variance trend as can be identified from the
-                  'Mean-Variance Plot' tab. By applying limma precision
-                  weights the
-                  limma vooma function is used to estimate the mean-variance
-                  relationship and uses this to compute appropriate
-                  observational-level weights.",
-      placement = "top",
-      trigger = "hover"
-    )
-
-    # Add Force normalisation adjustment Tool Tips
-    addTooltip(
-      session,
-      id = "forceNormalization",
-      title =
-        "Force normalisation should be selected if the gene
-                  expression
-                  dataset is not normally distributed, as can be identified
-                  from the
-                  'Box-and-Whisper Plot', the 'Expression Density Plot'
-                  and the
-                  '3D Expression Density Plot'. By selecting force
-                  normalisation
-                  quantile normalisation  is applied to the expression dataset
-                  making all selected samples have identical value
-                distributions.",
-      placement = "top",
-      trigger = "hover"
-    )
-
-    #Add Significance Level Cutoff Tool Tips
-    addTooltip(
-      session,
-      id = "significanceLevelCutOff",
-      title =
-        "The significance level cut-off is used to identify genes
-                  that are
-            differentially expressed between the two groups. Genes with
-            adjusted P-values less than the significance level cut-off are
-            determined to be differentially expressed.",
-      placement = "top",
-      trigger = "hover"
-    )
 
     # Update enrichment database list
     databaseNames <- tryCatch({extractDatabaseNamesFromEnrichR()},
@@ -323,29 +217,6 @@ sourceServer <- function(input, output, session) {
           )
         })
 
-        # Add platform tool tip
-        addTooltip(
-          session,
-          id = "platform",
-          title = "Each platform relates to a different microarray experiment
-      performed in the study.",
-          placement = "top",
-          trigger = "hover"
-        )
-
-        # Add knn tool tip
-        addTooltip(
-          session,
-          id = "knnTransformation",
-          title = "Rows with over 50% missing values are
-          imputed using the overall
-              mean per sample. Columns with over
-              80% will cause an error in the KNN
-              computation.",
-          placement = "top",
-          trigger = "hover"
-        )
-
         resetErrorChecksVariables <- reactive(c(input$logTransformation,
                                                 input$platform,
                                                 input$knnTransformation,
@@ -488,19 +359,6 @@ sourceServer <- function(input, output, session) {
               selected = "No"
             )
           })
-
-          # Add knn tool tip
-          addTooltip(
-            session,
-            id = "knnTransformation",
-            title = "Rows with over 50% missing values are imputed
-              using the overall
-              mean per sample. Columns with over
-              80% will cause an error in the KNN
-              computation.",
-            placement = "top",
-            trigger = "hover"
-          )
 
           # Reset error checks when KNN transformation is updated
           observeEvent(input$knnTransformation, {
@@ -752,7 +610,6 @@ sourceServer <- function(input, output, session) {
 #' A Function to Return the Exploratory Data Analysis Server Component
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @importFrom DT renderDataTable
-#' @importFrom shinyBS addTooltip
 #' @importFrom utils write.csv object.size
 #' @importFrom htmltools HTML
 #' @importFrom xfun file_ext
@@ -1649,7 +1506,6 @@ performExploratoryDataAnalysis <- function(input,
 #' A Function to Return the GEO sourcing Server Component
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @importFrom DT renderDataTable
-#' @importFrom shinyBS addTooltip
 #' @importFrom utils write.csv object.size
 #' @importFrom htmltools HTML
 #' @importFrom xfun file_ext
@@ -1734,7 +1590,6 @@ loadGeoDataset <- function (input,
 #' Analysis Server Component
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @importFrom DT renderDataTable
-#' @importFrom shinyBS addTooltip
 #' @importFrom utils write.csv object.size
 #' @importFrom htmltools HTML
 #' @importFrom xfun file_ext
@@ -2063,7 +1918,6 @@ performDifferentialGeneExpressionAnalysis <- function (input,
 #' A Function to Return the Gene Enrichment Analysis Server Component
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @importFrom DT renderDataTable
-#' @importFrom shinyBS addTooltip
 #' @importFrom utils write.csv object.size
 #' @importFrom htmltools HTML
 #' @importFrom xfun file_ext
@@ -2158,6 +2012,17 @@ performGeneEnrichmentAnalysis <- function (input,
               stop(safeError(e))
             })
 
+          # Download differentially expressed gene enrichment
+          output$downloadDifferentiallyExpressedGenesEnrichmentTable <-
+            try(downloadHandler(
+              filename = "differentially_expressed_gene_enrichment.csv",
+              content = function(file) {
+                write.csv(enrichedDifferentiallyExpressedGenes,
+                          file,
+                          row.names = TRUE)
+              }
+            ))
+
           # Plot Differentially Expressed Genes
           output$differentiallyExpressedGenesEnrichmentPlot <- tryCatch({
             renderPlot({
@@ -2209,6 +2074,17 @@ performGeneEnrichmentAnalysis <- function (input,
                 # return a safeError if a parsing error occurs
                 stop(safeError(e))
               })
+
+            # Download up regulated gene enrichment
+            output$downloadUpregulatedGenesEnrichmentTable <-
+              try(downloadHandler(
+                filename = "upregulated_gene_enrichment.csv",
+                content = function(file) {
+                  write.csv(enrichedUpregulatedGenes,
+                            file,
+                            row.names = TRUE)
+                }
+              ))
 
             # Plot Upregulated Genes
             output$upregulatedGenesEnrichmentPlot <- tryCatch({renderPlot({
@@ -2263,6 +2139,17 @@ performGeneEnrichmentAnalysis <- function (input,
                 # return a safeError if a parsing error occurs
                 stop(safeError(e))
               })
+
+            # Download down regulated gene enrichment
+            output$downloadDownregulatedGenesEnrichmentTable <-
+              try(downloadHandler(
+              filename = "downregulated_gene_enrichment.csv",
+              content = function(file) {
+                write.csv(enrichedDownregulatedGenes,
+                          file,
+                          row.names = TRUE)
+              }
+            ))
 
             # Plot Downregulated Genes
             output$downregulatedGenesEnrichmentPlot <- tryCatch({renderPlot({

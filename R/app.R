@@ -15,7 +15,6 @@
 #' @importFrom graphics abline boxplot hist par text
 #' @importFrom stats complete.cases cor model.matrix
 #' na.omit prcomp princomp quantile
-#' @importFrom shinyBS bsTooltip addTooltip
 #' @importFrom shinybusy add_busy_spinner
 #' @author Guy Hunt
 #' @return Large Shiny App

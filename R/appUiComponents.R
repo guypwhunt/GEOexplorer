@@ -8,7 +8,7 @@
 #' @noRd
 sourceUi <- function() {
   uiComponents <- navbarPage(
-    "GEOexplorer", id = "geoexplorerNavBar",
+    "GEOexlplorer", id = "geoexplorerNavBar",
     tabPanel("Home", value = "Home",
              # Source the Side Bar UI Components
              sourceSideBarUi(),
@@ -48,7 +48,6 @@ sourceUi <- function() {
 #' A Function to Return the Side Bar Ui Component
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceSideBarUi()
-#' @importFrom shinyBS bsTooltip
 #' @author Guy Hunt
 #' @noRd
 sourceSideBarUi <- function() {
@@ -84,15 +83,6 @@ sourceSideBarUi <- function() {
     ),
     uiOutput("logTransformationText"),
     uiOutput("output13"),
-    bsTooltip(
-      id = "knnTransformation",
-      title = "Rows with over 50% missing values are imputed using the overall
-              mean per sample. Columns with over
-              80% will cause an error in the KNN
-              computation.",
-      placement = "top",
-      trigger = "hover"
-    ),
     uiOutput("output14"),
     actionButton("exploratoryDataAnalysisButton", "Analyse")
   )
@@ -231,25 +221,6 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
                   "None"
                 )
               ),
-              bsTooltip(
-                id = "pValueAdjustment",
-                title =
-                  "P-value adjustments can be applied to reduce
-                  the likelihood of
-                  a false positive occurring. The P-value adjustment 'None'
-                  indicates
-                  no P-value adjustment will be applied and is the least
-                  conservative
-                  P-value adjustment. The Benjamini & Hochberg
-                  (False discovery rate)
-                  and Benjamini & Yekutieli methods are slightly more
-                  conservative and aim to control the false discovery rate.
-                  The Bonferroni
-                  and Holm methods are the most conservative as they aim to
-                  control the family-wise error rate.",
-                placement = "top",
-                trigger = "hover"
-              ),
               # "Hochberg" and "Hommel" were removed
               radioButtons(
                 "limmaPrecisionWeights",
@@ -259,20 +230,6 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
                   list("Yes", "No"),
                 selected =
                   "No"
-              ),
-              bsTooltip(
-                id = "limmaPrecisionWeights",
-                title =
-                  "Limma precision weights should be applied if there is
-                  a strong
-                  mean-variance trend as can be identified from the
-                  'Mean-Variance Plot' tab. By applying limma precision
-                  weights the
-                  limma vooma function is used to estimate the mean-variance
-                  relationship and uses this to compute appropriate
-                  observational-level weights.",
-                placement = "top",
-                trigger = "hover"
               )
             ),
             br(),
@@ -287,40 +244,12 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
                 selected =
                   "No"
               ),
-              bsTooltip(
-                id = "forceNormalization",
-                title =
-                  "Force normalisation should be selected if the gene
-                  expression
-                  dataset is not normally distributed, as can be identified
-                  from the
-                  'Box-and-Whisper Plot', the 'Expression Density Plot'
-                  and the
-                  '3D Expression Density Plot'. By selecting force
-                  normalisation
-                  quantile normalisation  is applied to the expression dataset
-                  making all selected samples have identical value
-                distributions.",
-                placement = "top",
-                trigger = "hover"
-              ),
               sliderInput(
                 "significanceLevelCutOff",
                 "Significance level cut-off:",
                 min = 0,
                 max = 1,
                 value = 0.05
-              ),
-              bsTooltip(
-                id = "significanceLevelCutOff",
-                title =
-                  "The significance level cut-off is used to identify genes
-                  that are
-            differentially expressed between the two groups. Genes with
-            adjusted P-values less than the significance level cut-off are
-            determined to be differentially expressed.",
-                placement = "top",
-                trigger = "hover"
               ),
               uiOutput("output100"),
               br(),
@@ -702,7 +631,6 @@ sourceExploratoryDataAnalysisUi <- function() {
 #' A Function to Return the Side Bar Ui Component
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceSideBarUi()
-#' @importFrom shinyBS bsTooltip
 #' @importFrom shinybusy add_busy_spinner
 #' @importFrom htmltools HTML
 #' @author Guy Hunt
@@ -814,6 +742,11 @@ sourceEnrichmentnUi <- function() {
                                        ),
                                        br(),
                                        br(),
+                                       downloadButton(
+                                         "downloadDifferentiallyExpressedGenesEnrichmentTable",
+                                         "Download"),
+                                       br(),
+                                       br(),
                                        dataTableOutput(
                                          'differentiallyExpressedGenesEnrichmentTable')
                                      ),
@@ -833,6 +766,11 @@ sourceEnrichmentnUi <- function() {
                                        span(
                                          "Generated using R enrichR."
                                        ),
+                                       br(),
+                                       br(),
+                                       downloadButton(
+                                         "downloadUpregulatedGenesEnrichmentTable",
+                                         "Download"),
                                        br(),
                                        br(),
                                        dataTableOutput(
@@ -855,6 +793,11 @@ sourceEnrichmentnUi <- function() {
                                        span(
                                          "Generated using R enrichR."
                                        ),
+                                       br(),
+                                       br(),
+                                       downloadButton(
+                                         "downloadDownregulatedGenesEnrichmentTable",
+                                         "Download"),
                                        br(),
                                        br(),
                                        dataTableOutput(
