@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Introduction
+# 1. Introduction
 
 GEOexplorer is a web server and R package that enables users to
 perform gene expression analysis and explore the results in a range 
@@ -31,11 +31,11 @@ of interactive graphs. The development of GEOexplorer was made
 possible because of the excellent code provided by [GEO2R](https:
 //www.ncbi.nlm.nih.gov/geo/geo2r/).
 
-# Accessing the Web Server
+# 2. Accessing the Web Server
 
 The web server can be accessed on the following [link](https://geoexplorer.rosalind.kcl.ac.uk/).
 
-# Tutorial
+# 3. Tutorial
 
 GEOexplorer splits gene expression analysis into three
 distinct processes. 
@@ -48,7 +48,7 @@ The final process is gene enrichment analysis, which aims to
 provide the biological processes and mechanisms the 
 differentially expressed genes are involved in.
 
-## Video Tutorial
+## a. Video Tutorial
 
 It is advised to watch the video tutorial of GEOexplorer,
 which is available on the following
@@ -56,38 +56,38 @@ which is available on the following
 tutorial includes an explanation of how to interpret 
 the various results and visualisation.
 
-## GEOexplorer Structure
+## b. GEOexplorer Structure
 GEOexplorer contains several tabs, each of which serves a distinct purpose. 
 These tabs will be described in the subsections below. 
 
-### Home Tab
+### I. Home Tab
 The home tab contains all the widgets to perform gene expression analysis.
 ![](homeTab.png)
 
-### About Tab
+### II. About Tab
 The about tab contains information about GEOexplorer including links to 
 additional documentation.
 ![](aboutTab.png)
 
-### GEO Search Tab
+### III. GEO Search Tab
 The GEO search tab allows you to search for the GEO database for relevant 
 gene expression datasets to analyse.
 ![](geoSearchTab.png)
 
-### Tutorial Tab
+### IV. Tutorial Tab
 The tutorial tab provides a step by step guide on how to use GEOexplorer.
 ![](tutorialTab.png)
 
-### Example Datasets Tab
+### V. Example Datasets Tab
 The example datasets tab provides an example GEO dataset, microarray CSV,
 RNA seq CSV and template for user-uploaded  gene expression data.
 ![](exampleDatasetsTab.png)
 
-## Loading Gene Expression Data Into GEOexplorer
+## c. Loading Gene Expression Data Into GEOexplorer
 There are three main ways that gene expression datasets can be loaded into 
 GEOexplorer, which will be described below.
 
-### Using a GEO Accession Code
+### I. Using a GEO Accession Code
 Step 1: Navigate to the **Home** tab.
 
 Step 2: Input the GEO accession code microarray gene expression dataset you 
@@ -96,7 +96,7 @@ to study. GEOexplorer will automatically download the dataset from GEO. The
 GEO accession code used in this tutorial is **GSE18388**.
 ![](geoAccessionInput.png)
 
-### Searching for a GEO dataset
+### II. Searching for a GEO dataset
 Step 1: Navigate to the **GEO Search** tab.
 
 Step 2: Input the keywords you which to search.
@@ -110,7 +110,7 @@ Step 4: Click **Load Dataset** for the gene expression dataset you wish to
 load. The dataset will then be automatically downloaded from GEO.
 ![](geoSearch2.png)
 
-### Manually Uploading Gene Expression Dataset
+### III. Manually Uploading Gene Expression Dataset
 Step 1: Navigate to the **Example Datasets** tab.
 
 Step 2: Download the template. Ensure your gene expression data is in the same
@@ -134,7 +134,7 @@ Step 8: Click **Open**
 
 Step 9: Wait for the file to upload.
 
-### Combining Two Gene Expression Datasets
+### IV. Combining Two Gene Expression Datasets
 Step 1: Select that you want to combine two gene expression datasets.
 ![](combineData1.png)
 
@@ -152,27 +152,27 @@ Step 6: Select the batch correction method to use. The "Empirical Bayes" method
 is the recommended method.
 ![](combineData4.png)
 
-## Performing Exploratory Data Analysis
+## d. Performing Exploratory Data Analysis
 After loading your dataset onto GEOexplorer performing exploratory data 
 analysis is largely the same for both GEO and user-uploaded  microarray as well
 as RNAseq gene expression datasets. The steps to perform exploratory data
 analysis are outlined below.
 
-### GEO Microarray Datasets Steps
+### I. GEO Microarray Datasets Steps
 Step 1: Select the platform you wish to analyse. 
 The platform used in this tutorial is **GPL6246**.
 ![](geoMicroarrayEda.png)
 
-### RNAseq Datasets
+### II. RNAseq Datasets
 Step 1: Select if you want to convert the gene expression data to counts 
 per million.
 ![](rnaSeqEda.png)
 
-### All Microarray Datasets
+### III. All Microarray Datasets
 Step 1: Select if you want to fill in missing values using KNN imputation.
 ![](microarrayEda.png)
 
-### All Gene Expression Datasets
+### IV. All Gene Expression Datasets
 Step 1: Select if you want to log transform, not log transform or 
 auto-detect if log transformation should be applied to the gene 
 expression dataset.
@@ -208,7 +208,7 @@ contains a large amount of variation.
 Group 4: This allows you to identify groups of similar experimental conditions.
 ![](allEda3.png)
 
-## Performing Differential Gene Expression Analysis
+## e. Performing Differential Gene Expression Analysis
 Step 1: After performing exploratory data analysis, click on the
 **Differential Gene Expression Analysis** tab.
 
@@ -265,7 +265,7 @@ was used.
 Group 3: Visualisations that display the differentially expressed genes.
 ![](dgea5.png)
 
-## Performing Gene Enrichment Analysis
+## f. Performing Gene Enrichment Analysis
 Step 1: After performing differential gene expression analysis, click on the
 **Gene Enrichment Analysis** tab.
 
@@ -286,7 +286,7 @@ Group 2: Contains the enrichment results of upregulated genes.
 
 Group 3: Contains the enrichment results of downregulated genes.
 ![](gea2.png)
-# R Package Installation
+# 4. R Package Installation
 
 GEOexplorer can be installed from Bioconductor:
 
@@ -309,7 +309,7 @@ if (!requireNamespace("devtools", quietly = TRUE))
 devtools::install_github("guypwhunt/GEOexplorer")
 ```
 
-# Launching GEOexplorer from the R package 
+# 5. Launching GEOexplorer from the R package 
 
 GEOexplorer can be launched via the two steps below:
 
@@ -326,7 +326,7 @@ loadApp()
 ```
 
 
-# Reporting problems or bugs
+# 6. Reporting problems or bugs
 
 If you run into problems using GEOexplorer, the [Bioconductor Support
 site](https://support.bioconductor.org/) is a good first place to ask
@@ -336,7 +336,7 @@ site](https://github.com/guypwhunt/GEOexplorer). Please include the GEO
 accession code or gene expression dataset that errors, the operating system, 
 and the browser used.
 
-# Session info
+# 7. Session info
 
 The following package and versions were used in the production of this
 vignette.
