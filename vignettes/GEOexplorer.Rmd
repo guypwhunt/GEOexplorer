@@ -33,9 +33,9 @@ possible because of the excellent code provided by [GEO2R](https:
 
 # Accessing the Web Server
 
-The webserver can be accessed on the following [link](https://geoexplorer.rosalind.kcl.ac.uk/).
+The web server can be accessed on the following [link](https://geoexplorer.rosalind.kcl.ac.uk/).
 
-# GEOexplorer Tutorial
+# Tutorial
 
 GEOexplorer splits gene expression analysis into three
 distinct processes. 
@@ -71,7 +71,7 @@ additional documentation.
 
 ### GEO Search Tab
 The GEO search tab allows you to search for the GEO database for relevant 
-datasets to analyse.
+gene expression datasets to analyse.
 ![](geoSearchTab.png)
 
 ### Tutorial Tab
@@ -80,8 +80,9 @@ The tutorial tab provides a step by step guide on how to use GEOexplorer.
 
 ### Example Datasets Tab
 The example datasets tab provides an example GEO dataset, microarray CSV,
-RNA seq CSV and template for user uploaded gene expression data.
+RNA seq CSV and template for user-uploaded  gene expression data.
 ![](exampleDatasetsTab.png)
+
 ## Loading Gene Expression Data Into GEOexplorer
 There are three main ways that gene expression datasets can be loaded into 
 GEOexplorer, which will be described below.
@@ -89,7 +90,8 @@ GEOexplorer, which will be described below.
 ### Using a GEO Accession Code
 Step 1: Navigate to the **Home** tab.
 
-Step 2: Input GEO accession code microarray gene expression dataset you wish 
+Step 2: Input the GEO accession code microarray gene expression dataset you 
+wish 
 to study. GEOexplorer will automatically download the dataset from GEO. The 
 GEO accession code used in this tutorial is **GSE18388**.
 ![](geoAccessionInput.png)
@@ -105,23 +107,25 @@ loaded. The keywords code used in this tutorial are
 ![](geoSearch1.png)
 
 Step 4: Click **Load Dataset** for the gene expression dataset you wish to 
-load.
+load. The dataset will then be automatically downloaded from GEO.
 ![](geoSearch2.png)
 
-### Uploading your own gene expression dataset
+### Manually Uploading Gene Expression Dataset
 Step 1: Navigate to the **Example Datasets** tab.
 
-Step 2: Download the template.
+Step 2: Download the template. Ensure your gene expression data is in the same
+format as the template.
 ![](userUpload1.png)
 
-Step 3: Ensure you gene expression data is in the same format as the template.
+Step 3: Navigate to the **Home** tab.
 
-Step 4: Navigate to the **Home** tab.
+Step 4: Click the **Upload** option.
 
-Step 5: Click the **Upload** option.
-![](userUpload2.png)
+Step 5: Select the type of gene expression data you are uploading e.g. 
+microarray or RNAseq.
 
 Step 6: Click **Browse**.
+![](userUpload2.png)
 
 Step 7: Select the file you wish to upload.
 
@@ -130,121 +134,158 @@ Step 8: Click **Open**
 
 Step 9: Wait for the file to upload.
 
+### Combining Two Gene Expression Datasets
+Step 1: Select that you want to combine two gene expression datasets.
+![](combineData1.png)
+
+Step 2: Select the source of the first gene expression dataset.
+
+Step 3: Load the first gene expression dataset as mentioned previously.
+![](combineData2.png)
+
+Step 4: Select the source of the second gene expression dataset.
+
+Step 5: Load the second gene expression dataset as mentioned previously.
+![](combineData3.png)
+
+Step 6: Select the batch correction method to use. The "Empirical Bayes" method
+is the recommended method.
+![](combineData4.png)
 
 ## Performing Exploratory Data Analysis
 After loading your dataset onto GEOexplorer performing exploratory data 
-analysis is the same for all microarray gene expression datasets.
-However, there is a slight difference in processing exploratory data analysis.
+analysis is largely the same for both GEO and user-uploaded  microarray as well
+as RNAseq gene expression datasets. The steps to perform exploratory data
+analysis are outlined below.
 
-### Microarray
-
+### GEO Microarray Datasets Steps
 Step 1: Select the platform you wish to analyse. 
 The platform used in this tutorial is **GPL6246**.
+![](geoMicroarrayEda.png)
 
-Step 2: Select if you want to log transform, not log transform or 
+### RNAseq Datasets
+Step 1: Select if you want to convert the gene expression data to counts 
+per million.
+![](rnaSeqEda.png)
+
+### All Microarray Datasets
+Step 1: Select if you want to fill in missing values using KNN imputation.
+![](microarrayEda.png)
+
+### All Gene Expression Datasets
+Step 1: Select if you want to log transform, not log transform or 
 auto-detect if log transformation should be applied to the gene 
 expression dataset.
 
-Step 3: Select if you want to fill in missing values using KNN imputation.
-
-Step 4: Click the **Analyse** button.
-
-**Image 1:**
-
-![](Picture1.png)
+Step 2: Click the **Analyse** button.
+![](allEda1.png)
 
 After clicking "Analyse", exploratory data analysis will be completed and the 
-results can be reviewed as per the following steps and image 2.
+results can be reviewed.
 
-Step 5: Click on the **Dataset Information** tab.
+Step 3: Click on the **Dataset Information** tab.
 
-Step 6: Review the information presented in the subtabs, which includes
+Step 4: Review the information presented in the subtabs, which includes
 details of the experiment, details of the experimental conditions and the 
 gene expression dataset.
+![](allEda2.png)
 
-Step 7: After reviewing this information, click on the **Exploratory Data
-Analysis** tab.
+Step 5: After reviewing this information, click on the 
+**Exploratory Data Analysis** tab.
 
-**Image 2:**
-
-![](Picture2.png)
-
-Step 8: Within the **Exploratory Data Analysis** tab, review the 
+Step 6: Within the **Exploratory Data Analysis** tab, review the 
 visualisations in each of the subtabs. The visualisations can be 
 divided into four groups:
+
 Group 1: This allows you to identify if the gene expression dataset 
 is normalised.
+
 Group 2: Displays the amount of variation within each principal component.
+
 Group 3: This allows you to identify if the gene expression dataset 
 contains a large amount of variation.
-Group 4: This allows you to identify groups of similar 
-experimental conditions.
 
-**Image 3:**
-
-![](Picture3.png)
+Group 4: This allows you to identify groups of similar experimental conditions.
+![](allEda3.png)
 
 ## Performing Differential Gene Expression Analysis
-
 Step 1: After performing exploratory data analysis, click on the
-**Differential Gene Expression Analysis** tab, as per the image 1.
+**Differential Gene Expression Analysis** tab.
 
-**Image 1:**
-
-![](Picture4.png)
+![](dgea1.png)
 
 Note: As part of differential gene expression analysis you will need to 
 define two groups of experimental conditions you want to compare, to 
 identify the genes that are expressed differently between the two groups.
 
-Step 2: Select the first 4 rows (the space-flown mice) in group 1.
+Step 2: Select the experimental conditions you want to include in Group 1.
+In the tutorial, the first 4 rows (space-flown mice) were included in Group 1.
+![](dgea2.png)
 
-**Image 2:**
+Step 3: Select the experimental conditions you want to include in Group 2.
+In the tutorial, the first 4 rows (ground control mice) were included in 
+Group 2.
+![](dgea3.png)
 
-![](Picture5.png)
+Step 4: Select the P-value adjustment you wih to apply.
+In the tutorial, the "Benjamini & Hochberg (False discovery rate)" P-value
+adjustment was selected.
 
-Step 3: Select the last 4 rows (the non-space flown mice) in group 2.
-
-Step 4: Select "Benjamini & Hochberg (False discovery rate)" 
-for the adjustment to P-value from the drop-down.
-
-Step 5: Select "No" for whether to apply limma precision weights. The limma 
+Step 5: Select whether to apply limma precision weights. The limma 
 precision weights improve the accuracy of differential gene expression 
 analysis when a strong mean-variance trend is present as can be identified 
 from the **Mean-Variance Plot** subtab.
 
-Step 6: Select "Yes" to force normalisation.
+Step 6: Select whether to force normalisation.
 Forcing normalisation is advisable if the experimental conditions are
 not median centred as can be identified from the 
 **Box-and-WhisperPlot**, **Expression Density Plot** and 
 **3D Expression Density Plot** subtabs.
 
-Step 7: Select "0.05" as the significance level cut off. 
+Step 7: Select the significance level cut off value you want. 
 The cut off will be used to identify the genes that are under-expressed 
 and the genes that are over-expressed between the two groups.
 
-Step 8: Click the "Analyse" button to perform differential 
+Step 8: Click the **Analyse** button to perform differential 
 gene expression analysis.
-
-**Image 3:**
-
-![](Picture6.png)
+![](dgea4.png)
 
 After clicking analyse, differential gene expression analysis will 
 be performed.
 
 Step: 9: Review the results on the following subtabs which can be divided
 into the following groups:
+
 Group 1: A table containing the statistics of the top 250 differentially 
 expressed genes.
+
 Group 2: Visualisations to indicate if an appropriate P-value adjustment
 was used.
+
 Group 3: Visualisations that display the differentially expressed genes.
+![](dgea5.png)
 
-**Image 4:**
+## Performing Gene Enrichment Analysis
+Step 1: After performing differential gene expression analysis, click on the
+**Gene Enrichment Analysis** tab.
 
-![](Picture7.png)
+Step 2: Select the database you wish to use to enrich the genes.
 
+Step 3: Click the **Analyse** button.
+![](gea1.png)
+
+After clicking analyse, gene enrichment analysis will 
+be performed.
+
+Step 4: Review the results of gene enrichment analysis which can be grouped 
+into 3 groups.
+
+Group 1: Contains the enrichment results of all differentially expressed genes.
+
+Group 2: Contains the enrichment results of upregulated genes.
+
+Group 3: Contains the enrichment results of downregulated genes.
+![](gea2.png)
 # R Package Installation
 
 GEOexplorer can be installed from Bioconductor:
@@ -290,7 +331,7 @@ loadApp()
 If you run into problems using GEOexplorer, the [Bioconductor Support
 site](https://support.bioconductor.org/) is a good first place to ask
 for help. If you are convinced that there is a bug in GEOexplorer, feel
-free to submit an issue on the [GEOexplorer github
+free to submit an issue on the [GEOexplorer GitHub
 site](https://github.com/guypwhunt/GEOexplorer). Please include the GEO
 accession code or gene expression dataset that errors, the operating system, 
 and the browser used.

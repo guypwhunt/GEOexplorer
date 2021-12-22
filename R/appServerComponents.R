@@ -158,7 +158,7 @@ sourceServer <- function(input, output, session) {
                               })
     if (!is.null(databaseNames)) {
       updateSelectInput(session, "enrichDatabases", choices = databaseNames,
-                        selected = "GO_Biological_Process_2015")
+                        selected = "GO_Biological_Process_2021")
     }
 
     # Define error checks
@@ -200,6 +200,10 @@ sourceServer <- function(input, output, session) {
       selectedRow <- as.numeric(
         strsplit(input$loadGeoSearchAccession, "_")[[1]][2])
 
+      # Change to Home Tab
+      updateTabsetPanel(session, "geoexplorerNavBar",
+                        selected = "Home")
+
       # Update the two Radio buttons to enable the dataset to be processed
       updateRadioButtons(session, inputId = "dataSetType", selected = "Single")
       updateRadioButtons(session, inputId = "dataSource", selected = "GEO")
@@ -209,10 +213,6 @@ sourceServer <- function(input, output, session) {
         textInput("geoAccessionCode", "GEO accession code",
                   all$geoSearchResults[selectedRow,1])
       })
-
-      # Change to Home Tab
-      updateTabsetPanel(session, "geoexplorerNavBar",
-                        selected = "Home")
     })
 
     # Load the example dataset, configurations and perform exploratory data
