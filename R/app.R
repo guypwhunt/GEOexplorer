@@ -20,7 +20,9 @@
 #' @return Large Shiny App
 loadApp <- function() {
   ui <- fluidPage(
-    add_busy_spinner(spin = "fading-circle"),
+    add_busy_spinner(spin = "fading-circle",
+                     height = "100px",
+                     width = "100px"),
     sourceUi()
   )
 

@@ -498,7 +498,7 @@ test_that("Microarray GSE with non-log values is handled correctly
             expect_type(tT$Gene.title, "character")
             expect_type(tT$P.Value, "double")
             expect_type(tT$logFC, "double")
-            expect_type(tT$Gene.ID, "NULL")
+            expect_type(tT$Gene.ID, "character")
 
             # Non-Interactive Histogram
             fig <- nonInteractiveHistogramPlot(results$fit2, adjustment)

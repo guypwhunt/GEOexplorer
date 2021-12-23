@@ -8,7 +8,8 @@
 #' @noRd
 sourceUi <- function() {
   uiComponents <- navbarPage(
-    "GEOexlplorer", id = "geoexplorerNavBar",
+    "GEOexplorer",
+    id = "geoexplorerNavBar",
     tabPanel("Home", value = "Home",
              # Source the Side Bar UI Components
              sourceSideBarUi(),
@@ -631,7 +632,6 @@ sourceExploratoryDataAnalysisUi <- function() {
 #' A Function to Return the Side Bar Ui Component
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceSideBarUi()
-#' @importFrom shinybusy add_busy_spinner
 #' @importFrom htmltools HTML
 #' @author Guy Hunt
 #' @noRd

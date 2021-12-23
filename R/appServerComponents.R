@@ -334,13 +334,6 @@ sourceServer <- function(input, output, session) {
               selected = "No"
             )
           })
-          # Add CPM tool tip
-          bsTooltip(
-            id = "cpmTransformation",
-            title = "This is recommended for raw RNA sequence data.",
-            placement = "top",
-            trigger = "hover"
-          )
           # Reset error checks when CPM transformation is updated
           observeEvent(input$cpmTransformation, {
             # Reset error checks
