@@ -1,7 +1,7 @@
 ---
 title: "GEOexplorer"
 author: "Guy Hunt"
-date: "December 21, 2021"
+date: "December 23, 2021"
 output: 
   rmarkdown::html_vignette:
     toc: yes
@@ -26,10 +26,21 @@ knitr::opts_chunk$set(
 # 1. Introduction
 
 GEOexplorer is a web server and R package that enables users to
-perform gene expression analysis and explore the results in a range 
-of interactive graphs. The development of GEOexplorer was made
-possible because of the excellent code provided by [GEO2R](https:
-//www.ncbi.nlm.nih.gov/geo/geo2r/).
+perform gene expression analysis including:
+
+* Searching the GEO database for gene expression datasets.
+
+* Analysing GEO microarray datasets.
+
+* Analysing user uploaded microarray and RNAseq datasets.
+
+* Merging multiple gene expression datasets and performing batch correction.
+
+* Performing exploratory data analysis.
+
+* Performing differential gene expression analysis.
+
+* Performing gene enrichment analysis.
 
 # 2. Accessing the Web Server
 
@@ -106,9 +117,13 @@ loaded. The keywords code used in this tutorial are
 **Microarray Analysis of Space-flown Murine Thymus Tissue**.
 ![](geoSearch1.png)
 
-Step 4: Click **Load Dataset** for the gene expression dataset you wish to 
-load. The dataset will then be automatically downloaded from GEO.
+Step 4: Click **Load Dataset** for the microarray gene expression dataset you 
+wish to load. The dataset will then be automatically downloaded from GEO.
 ![](geoSearch2.png)
+
+Note: to process GEO RNA seq gene expression datasets: the user must first 
+download the RNA seq gene expression dataset and convert it into the template 
+format mentioned in the next section, then upload it to GEOexplorer.
 
 ### III. Manually Uploading Gene Expression Dataset
 Step 1: Navigate to the **Example Datasets** tab.
@@ -336,7 +351,16 @@ site](https://github.com/guypwhunt/GEOexplorer). Please include the GEO
 accession code or gene expression dataset that errors, the operating system, 
 and the browser used.
 
-# 7. Session info
+# 7. Acknowledgements
+
+The development of GEOexplorer was made possible because of the excellent 
+code provided by [GEO2R](https://www.ncbi.nlm.nih.gov/geo/geo2r/). 
+Additionally, several of GEOexplorer's key functionalities were enabled because 
+of the R 
+[limma package](https://bioconductor.org/packages/release/bioc/html/limma.html)
+and [Enrichr](https://maayanlab.cloud/Enrichr/).
+
+# 8. Session info
 
 The following package and versions were used in the production of this
 vignette.
