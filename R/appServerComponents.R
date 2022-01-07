@@ -90,23 +90,44 @@ sourceServer <- function(input, output, session) {
     })
 
     # Load GEO Accession Code from GEO Search
-    observeEvent(input$loadGeoSearchAccession, {
+    observeEvent(input$loadGeoSearchAsFirstDataset, {
       selectedRow <- as.numeric(
-        strsplit(input$loadGeoSearchAccession, "_")[[1]][2])
+        strsplit(input$loadGeoSearchAsFirstDataset, "_")[[1]][2])
 
       # Change to Home Tab
       updateTabsetPanel(session, "geoexplorerNavBar",
                         selected = "Home")
 
-      # Update the two Radio buttons to enable the dataset to be processed
-      updateRadioButtons(session, inputId = "dataSetType", selected = "Single")
+      # Update the Radio button to enable the dataset to be processed
       updateRadioButtons(session, inputId = "dataSource", selected = "GEO")
+
+      # Update UI
+      loadDataSetUiComponents(input, output, session, errorChecks, all)
 
       # Add GEO accession input
       output$output5 <- renderUI({
-        textInput("geoAccessionCode", "GEO accession code",
-                  all$geoSearchResults[selectedRow,1])
+        textInput("geoAccessionCode",
+                  "GEO accession code",
+                  all$geoSearchResults[selectedRow, 1])
       })
+    })
+
+    # Load GEO Accession Code from GEO Search
+    observeEvent(input$loadGeoSearchAsSecondDataset, {
+      selectedRow <- as.numeric(
+        strsplit(input$loadGeoSearchAsSecondDataset, "_")[[1]][2])
+
+      # Change to Home Tab
+      updateTabsetPanel(session, "geoexplorerNavBar",
+                        selected = "Home")
+
+      # Update the Radio button to enable the dataset to be processed
+      updateRadioButtons(session, inputId = "dataSetType", selected =
+                           "Combine")
+
+      loadDataSetCombinationUiComponents(input, output,
+                                         session, errorChecks, all,
+                                         all$geoSearchResults[selectedRow, 1])
     })
 
     # Load the example dataset, configurations and perform exploratory data
@@ -185,389 +206,12 @@ sourceServer <- function(input, output, session) {
         dowloadFile("rna_seq_example_dataset.csv", rnaSeqExampleDataset)
     )
 
-    observeEvent(input$dataSource, {
-      # Refresh error checks
-      errorChecks <- resetErrorChecks(errorChecks)
-      # Update UI side bar with GEO widgets
-      if (input$dataSource == "GEO") {
-        # GEO help text
-        output$output4 <- renderUI({
-          helpText(
-            "Input a GEO series accession code (GSEXXXX format)
-      to examine the gene expression data.
-      This can be obtained from https://www.ncbi.nlm.nih.gov/gds."
-          )
-        })
-        # GEO accession input
-        output$output5 <- renderUI({
-          textInput("geoAccessionCode", "GEO accession code", "")
-        })
-        # Platform
-        output$output6 <- renderUI({
-          selectInput("platform", "Platform", c())
-        })
-        # KNN Imputation Radio Button
-        output$output13 <- renderUI({
-          radioButtons(
-            "knnTransformation",
-            label = "Apply k-nearest neighbors (KNN) algorithm to predict
-      null data:",
-            choices = list("Yes", "No"),
-            selected = "No"
-          )
-        })
-
-        resetErrorChecksVariables <- reactive(c(input$logTransformation,
-                                                input$platform,
-                                                input$knnTransformation,
-                                                input$geoAccessionCode))
-
-        # Reset error checks when input variables are updated
-        observeEvent(resetErrorChecksVariables(), {
-          # Reset error checks
-          errorChecks <- resetErrorChecks(errorChecks)
-        })
-
-        observeEvent(input$geoAccessionCode, loadGeoDataset(input,
-                                                            output,
-                                                            session,
-                                                            errorChecks,
-                                                            all))
-      } else
-        {
-
-        # Define variables
-        all$gsetData <- NULL
-
-        # Update variables if combining the dataset with a GEO
-        # Dataset
-        if (input$dataSetType == "Combine") {
-            if (input$dataSource2 == "GEO") {
-              all$gsetData <- all$gsetData2
-            }
-        } else {
-          all$convertedExperimentInformation2 <-
-            userUploadExperimentInformation
-        }
-
-        # Update UI side bar with User Upload widgets
-        observeEvent(input$dataSetType, {
-          # Reset error checks when data set type is changed
-          errorChecks <- resetErrorChecks(errorChecks)
-
-          # Microarray vs RNA Seq Widget
-          if (input$dataSetType == "Combine") {
-            reactiveDataSources <- reactive(c(input$dataSource,
-                                              input$dataSource2))
-            observeEvent(reactiveDataSources(), {
-              if ((input$dataSource == "GEO")|(input$dataSource2 == "GEO"))
-                {
-                output$output4 <- renderUI({
-                  radioButtons(
-                    "typeOfData",
-                    label = "Is the data from Microarray or RNA Sequencing?",
-                    choices = list("Microarray"),
-                    selected = "Microarray"
-                  )
-                })
-              } else {
-                output$output4 <- renderUI({
-                  radioButtons(
-                    "typeOfData",
-                    label = "Is the data from Microarray or RNA Sequencing?",
-                    choices = list("Microarray", "RNA Sequencing"),
-                    selected = "Microarray"
-                  )
-                })
-              }
-            })
-          } else
-            {
-            output$output4 <- renderUI({
-              radioButtons(
-                "typeOfData",
-                label = "Is the data from Microarray or RNA Sequencing?",
-                choices = list("Microarray", "RNA Sequencing"),
-                selected = "Microarray"
-              )
-            })
-          }
-        })
-
-        # File Upload Widget
-        output$output5 <- renderUI({
-          fileInput(
-            "file1",
-            "Upload CSV Gene Expression Count File",
-            multiple = TRUE,
-            accept = c(
-              "text/csv",
-              "text/comma-separated-values,text/plain",
-              ".csv"
-            )
-          )
-        })
-
-        # Reset error checks when a new file is uploaded
-        observeEvent(input$file1, {
-          # Reset error checks
-          errorChecks <- resetErrorChecks(errorChecks)
-        })
-
-        # Blank Widgets
-        output$output6 <- renderUI({})
-      }
-
-
-      # Add or remove CPM radio button
-      observeEvent(input$typeOfData, {
-        # Define error checks
-        errorChecks <- resetErrorChecks(errorChecks)
-
-        if (input$typeOfData == "RNA Sequencing") {
-          # Add CPM widget if the dataset is microarray
-          output$output13 <- renderUI({
-            radioButtons(
-              "cpmTransformation",
-              label = "Convert data to count per million:",
-              choices = list("Yes", "No"),
-              selected = "No"
-            )
-          })
-          # Reset error checks when CPM transformation is updated
-          observeEvent(input$cpmTransformation, {
-            # Reset error checks
-            errorChecks <- resetErrorChecks(errorChecks)
-          })
-
-        } else
-          {
-          # Add KNN Imputation if the dataset is microarray
-          output$output13 <- renderUI({
-            radioButtons(
-              "knnTransformation",
-              label = "Apply k-nearest neighbors (KNN) algorithm to predict
-      null data:",
-              choices = list("Yes", "No"),
-              selected = "No"
-            )
-          })
-
-          # Reset error checks when KNN transformation is updated
-          observeEvent(input$knnTransformation, {
-            # Reset error checks
-            errorChecks <- resetErrorChecks(errorChecks)
-          })
-        }
-      })
-    })
-
-    observeEvent(input$dataSetType,{
-      # Refresh error checks
-      errorChecks <- resetErrorChecks(errorChecks)
-
-      if (input$dataSetType == "Combine"){
-        # Define error checks
-        errorChecks$continueWorkflow2 <- TRUE
-        errorChecks$geoAccessionCode2 <- TRUE
-        errorChecks$geoMicroarrayAccessionCode2 <- TRUE
-        errorChecks$geoPlatform2 <- TRUE
-        errorChecks$expressionData2 <- TRUE
-        errorChecks$dataInput2 <- TRUE
-        errorChecks$knnDataInput2 <- TRUE
-        errorChecks$pcaPrcompDataInput2 <- TRUE
-        errorChecks$expressionDataOverTwoColumns2 <- TRUE
-        errorChecks$expressionDataOverOneColumns2 <- TRUE
-        errorChecks$differentialGeneExpression2 <- TRUE
-        errorChecks$differentialGeneExpressionGroup2 <- TRUE
-        errorChecks$uploadFile2 <- TRUE
-        errorChecks$uploadFileExtension2 <- TRUE
-        errorChecks$uploadLogData2 <- TRUE
-
-        # First Data Set Information Widget
-        output$output2 <- renderUI({
-          HTML(
-            "<b>First Gene Expression Dataset Information</b><br></br>"
-          )
-        })
-        # Second Data Set Information Widget
-        output$output7 <- renderUI({
-          HTML(
-            "<b>Second Gene Expression Dataset Information</b><br></br>"
-          )
-        })
-        # Second Data Source Widget
-        output$output8 <- renderUI({
-          radioButtons(
-            "dataSource2",
-            label = "Would you like to upload the gene expression data
-      or source the data from GEO?",
-            choices = list("GEO", "Upload"),
-            selected = "GEO"
-          )})
-
-        # Second Data Source Widget
-        output$output14 <- renderUI({
-          radioButtons(
-            "batchCorrection",
-            label = "Batch correction method:",
-            choices = list("Empirical Bayes", "Linear Model", "None"),
-            selected = "None"
-          )})
-
-        inputErrorCheckVariables <- reactive(c(input$batchCorrection,
-                                               input$dataSource2))
-
-        # Reset error checks when input variables are updated
-        observeEvent(inputErrorCheckVariables(), {
-          # Reset error checks
-          errorChecks <- resetErrorChecks(errorChecks)
-        })
-
-        observeEvent(input$dataSource2,{
-          if (input$dataSource2 == "GEO") {
-            # GEO Help Text Widget
-            output$output9 <- renderUI({
-              helpText(
-                "Input a GEO series accession code (GSEXXXX format)
-      to examine the gene expression data.
-      This can be obtained from https://www.ncbi.nlm.nih.gov/gds."
-              )
-            })
-            # GEO Accession Code Input Widget
-            output$output10 <- renderUI({
-              textInput("geoAccessionCode2", "GEO accession code", "")
-            })
-            # Platform input text
-            output$output11 <- renderUI({
-              selectInput("platform2", "Platform", c())
-            })
-            # KNN Input
-            output$output13 <- renderUI({
-              radioButtons(
-                "knnTransformation",
-                label = "Apply k-nearest neighbors (KNN) algorithm to predict
-      null data:",
-                choices = list("Yes", "No"),
-                selected = "No"
-              )
-            })
-
-            resetErrorChecksVariables2 <- reactive(c(input$logTransformation,
-                                                    input$platform2,
-                                                    input$knnTransformation,
-                                                    input$geoAccessionCode2))
-
-            # Reset error checks when Platform is updated
-            observeEvent(resetErrorChecksVariables2(), {
-              # Reset error checks
-              errorChecks <- resetErrorChecks(errorChecks)
-            })
-
-            # Process second GEO accession code
-            observeEvent(input$geoAccessionCode2, {
-              # Get the GEO data for all platforms
-              all$allGset2 <- reactive({
-                tryCatch({
-                  # Error handling to ensure geoAccessionCode is populated
-                  req(input$geoAccessionCode2)
-                  # Notify the user the GEO accession code
-                  # is not a GEO series accession code
-                  if (substr(str_trim(input$geoAccessionCode2), 1, 3) != "GSE")
-                  {
-                    showNotification("Please input a GEO series accession code
-                                 with the format GSEXXX",
-                                     type = "warning")
-                    return(NULL)
-                  } else {
-                    return(getGeoObject(input$geoAccessionCode2))
-                  }
-                }, error = function(err) {
-                  # Return null if there is a error in the
-                  # getGeoObject function
-                  return(NULL)
-                })
-              })
-
-              # Update error check
-              if (is.null(all$allGset2())) {
-                # Update error check
-                errorChecks$geoAccessionCode2 <- FALSE
-                errorChecks$continueWorkflow2 <- FALSE
-                if (input$geoAccessionCode2 != "") {
-                  # Display notification
-                  showNotification(
-                    "There was an error obtaining the GEO dataset.
-                           Please ensure you entered the correct GEO Accession
-                           Code.",
-                    type = "warning"
-                  )
-                }
-              } else {
-                # Update error checks
-                errorChecks$geoAccessionCode2 <- TRUE
-                errorChecks$continueWorkflow2 <- TRUE
-              }
-
-              if (errorChecks$continueWorkflow2) {
-                # Get a list of all the platforms
-                platforms2 <- reactive({
-                  extractPlatforms(all$allGset2())
-                })
-
-                # Select the top platform
-                platform2 <- reactive({
-                  platforms2()[1]
-                })
-
-                # Update Platform Options
-                platformObserve2 <- observe({
-                  updateSelectInput(session,
-                                    "platform2",
-                                    choices = platforms2(),
-                                    selected = platform2())
-                })
-              }
-            })
-          } else
-          {
-            # File upload widget
-            output$output9 <- renderUI({
-              fileInput(
-                "file2",
-                "Upload CSV Gene Expression Count File",
-                multiple = TRUE,
-                accept = c(
-                  "text/csv",
-                  "text/comma-separated-values,text/plain",
-                  ".csv"
-                )
-              )
-            })
-
-            # Reset error checks when a file is uploaded
-            observeEvent(input$file2, {
-              # Reset error checks
-              errorChecks <- resetErrorChecks(errorChecks)
-            })
-
-            # Blank widgets
-            output$output10 <- renderUI({})
-            output$output11 <- renderUI({})
-          }
-        })
-      } else
-        {
-        # Set all UI widgets to blank
-        output$output2 <- renderUI({})
-        output$output7 <- renderUI({})
-        output$output8 <- renderUI({})
-        output$output9 <- renderUI({})
-        output$output10 <- renderUI({})
-        output$output11 <- renderUI({})
-        output$output14 <- renderUI({})
-      }
-    })
+    # Load logic to update UI
+    observeEvent(input$dataSource, loadDataSetUiComponents(
+      input, output, session, errorChecks, all))
+    observeEvent(input$dataSetType,
+                 loadDataSetCombinationUiComponents(input, output,
+                                                    session, errorChecks, all))
 
     # Exploratory data analysis visualisation
     observeEvent(input$exploratoryDataAnalysisButton,
@@ -2165,4 +1809,447 @@ performGeneEnrichmentAnalysis <- function (input,
     }
   }
   return(geneEnrichmentAnalysisServerComponents)
+}
+
+#' A Function to load the UI for different datasets
+#'
+#' A Function to load the UI for different datasets
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @author Guy Hunt
+#' @noRd
+loadDataSetUiComponents <- function(input,
+                                    output,
+                                    session,
+                                    errorChecks,
+                                    all) {
+  dataSetUiComponents <- {
+    # Refresh error checks
+    errorChecks <- resetErrorChecks(errorChecks)
+    # Update UI side bar with GEO widgets
+    if (input$dataSource == "GEO") {
+      # GEO help text
+      output$output4 <- renderUI({
+        helpText(
+          "Input a GEO series accession code (GSEXXXX format)
+      to examine the gene expression data.
+      This can be obtained from https://www.ncbi.nlm.nih.gov/gds."
+        )
+      })
+      # GEO accession input
+      output$output5 <- renderUI({
+        textInput("geoAccessionCode", "GEO accession code", "")
+      })
+      # Platform
+      output$output6 <- renderUI({
+        selectInput("platform", "Platform", c())
+      })
+      # KNN Imputation Radio Button
+      output$output13 <- renderUI({
+        radioButtons(
+          "knnTransformation",
+          label = "Apply k-nearest neighbors (KNN) algorithm to predict
+      null data:",
+          choices = list("Yes", "No"),
+          selected = "No"
+        )
+      })
+
+      resetErrorChecksVariables <-
+        reactive(
+          c(
+            input$logTransformation,
+            input$platform,
+            input$knnTransformation,
+            input$geoAccessionCode
+          )
+        )
+
+      # Reset error checks when input variables are updated
+      observeEvent(resetErrorChecksVariables(), {
+        # Reset error checks
+        errorChecks <- resetErrorChecks(errorChecks)
+      })
+
+      observeEvent(
+        input$geoAccessionCode,
+        loadGeoDataset(input,
+                       output,
+                       session,
+                       errorChecks,
+                       all)
+      )
+    } else
+    {
+      # Define variables
+      all$gsetData <- NULL
+
+      # Update variables if combining the dataset with a GEO
+      # Dataset
+      if (input$dataSetType == "Combine") {
+        if (input$dataSource2 == "GEO") {
+          all$gsetData <- all$gsetData2
+        }
+      } else {
+        all$convertedExperimentInformation2 <-
+          userUploadExperimentInformation
+      }
+
+      # Update UI side bar with User Upload widgets
+      observeEvent(input$dataSetType, {
+        # Reset error checks when data set type is changed
+        errorChecks <- resetErrorChecks(errorChecks)
+
+        # Microarray vs RNA Seq Widget
+        if (input$dataSetType == "Combine") {
+          reactiveDataSources <- reactive(c(input$dataSource,
+                                            input$dataSource2))
+          observeEvent(reactiveDataSources(), {
+            if ((input$dataSource == "GEO") | (input$dataSource2 == "GEO"))
+            {
+              output$output4 <- renderUI({
+                radioButtons(
+                  "typeOfData",
+                  label = "Is the data from Microarray or RNA Sequencing?",
+                  choices = list("Microarray"),
+                  selected = "Microarray"
+                )
+              })
+            } else {
+              output$output4 <- renderUI({
+                radioButtons(
+                  "typeOfData",
+                  label = "Is the data from Microarray or RNA Sequencing?",
+                  choices = list("Microarray", "RNA Sequencing"),
+                  selected = "Microarray"
+                )
+              })
+            }
+          })
+        } else
+        {
+          output$output4 <- renderUI({
+            radioButtons(
+              "typeOfData",
+              label = "Is the data from Microarray or RNA Sequencing?",
+              choices = list("Microarray", "RNA Sequencing"),
+              selected = "Microarray"
+            )
+          })
+        }
+      })
+
+      # File Upload Widget
+      output$output5 <- renderUI({
+        fileInput(
+          "file1",
+          "Upload CSV Gene Expression Count File",
+          multiple = TRUE,
+          accept = c(
+            "text/csv",
+            "text/comma-separated-values,text/plain",
+            ".csv"
+          )
+        )
+      })
+
+      # Reset error checks when a new file is uploaded
+      observeEvent(input$file1, {
+        # Reset error checks
+        errorChecks <- resetErrorChecks(errorChecks)
+      })
+
+      # Blank Widgets
+      output$output6 <- renderUI({
+      })
+    }
+
+
+    # Add or remove CPM radio button
+    observeEvent(input$typeOfData, {
+      # Define error checks
+      errorChecks <- resetErrorChecks(errorChecks)
+
+      if (input$typeOfData == "RNA Sequencing") {
+        # Add CPM widget if the dataset is microarray
+        output$output13 <- renderUI({
+          radioButtons(
+            "cpmTransformation",
+            label = "Convert data to count per million:",
+            choices = list("Yes", "No"),
+            selected = "No"
+          )
+        })
+        # Reset error checks when CPM transformation is updated
+        observeEvent(input$cpmTransformation, {
+          # Reset error checks
+          errorChecks <- resetErrorChecks(errorChecks)
+        })
+
+      } else
+      {
+        # Add KNN Imputation if the dataset is microarray
+        output$output13 <- renderUI({
+          radioButtons(
+            "knnTransformation",
+            label = "Apply k-nearest neighbors (KNN) algorithm to predict
+      null data:",
+            choices = list("Yes", "No"),
+            selected = "No"
+          )
+        })
+
+        # Reset error checks when KNN transformation is updated
+        observeEvent(input$knnTransformation, {
+          # Reset error checks
+          errorChecks <- resetErrorChecks(errorChecks)
+        })
+      }
+    })
+  }
+  return(dataSetUiComponents)
+}
+
+#' A Function to load the UI when using different numbers of datasets
+#'
+#' A Function to load the UI when using different numbers of datasets
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @author Guy Hunt
+#' @noRd
+loadDataSetCombinationUiComponents <- function(input, output, session,
+                                    errorChecks, all, geoAccessionCode = "") {
+  dataSetCombinationUiComponents <- {
+    # Refresh error checks
+    errorChecks <- resetErrorChecks(errorChecks)
+
+    if (input$dataSetType == "Combine"){
+      # Define error checks
+      errorChecks$continueWorkflow2 <- TRUE
+      errorChecks$geoAccessionCode2 <- TRUE
+      errorChecks$geoMicroarrayAccessionCode2 <- TRUE
+      errorChecks$geoPlatform2 <- TRUE
+      errorChecks$expressionData2 <- TRUE
+      errorChecks$dataInput2 <- TRUE
+      errorChecks$knnDataInput2 <- TRUE
+      errorChecks$pcaPrcompDataInput2 <- TRUE
+      errorChecks$expressionDataOverTwoColumns2 <- TRUE
+      errorChecks$expressionDataOverOneColumns2 <- TRUE
+      errorChecks$differentialGeneExpression2 <- TRUE
+      errorChecks$differentialGeneExpressionGroup2 <- TRUE
+      errorChecks$uploadFile2 <- TRUE
+      errorChecks$uploadFileExtension2 <- TRUE
+      errorChecks$uploadLogData2 <- TRUE
+
+      # First Data Set Information Widget
+      output$output2 <- renderUI({
+        HTML(
+          "<b>First Gene Expression Dataset Information</b><br></br>"
+        )
+      })
+      # Second Data Set Information Widget
+      output$output7 <- renderUI({
+        HTML(
+          "<b>Second Gene Expression Dataset Information</b><br></br>"
+        )
+      })
+      # Second Data Source Widget
+      output$output8 <- renderUI({
+        radioButtons(
+          "dataSource2",
+          label = "Would you like to upload the gene expression data
+      or source the data from GEO?",
+          choices = list("GEO", "Upload"),
+          selected = "GEO"
+        )})
+
+      # Second Data Source Widget
+      output$output14 <- renderUI({
+        radioButtons(
+          "batchCorrection",
+          label = "Batch correction method:",
+          choices = list("Empirical Bayes", "Linear Model", "None"),
+          selected = "None"
+        )})
+
+      inputErrorCheckVariables <- reactive(c(input$batchCorrection,
+                                             input$dataSource2))
+
+      # Reset error checks when input variables are updated
+      observeEvent(inputErrorCheckVariables(), {
+        # Reset error checks
+        errorChecks <- resetErrorChecks(errorChecks)
+      })
+
+      # Load UI components
+      observeEvent(input$dataSource2, loadDataSet2UiComponents(input,
+                                                              output,
+                                                              session,
+                                                              errorChecks,
+                                                              all,
+                                                              geoAccessionCode)
+                   )
+    } else
+    {
+      # Set all UI widgets to blank
+      output$output2 <- renderUI({})
+      output$output7 <- renderUI({})
+      output$output8 <- renderUI({})
+      output$output9 <- renderUI({})
+      output$output10 <- renderUI({})
+      output$output11 <- renderUI({})
+      output$output14 <- renderUI({})
+    }
+  }
+  return(dataSetCombinationUiComponents)
+}
+
+#' A Function to load the UI for different datasets
+#'
+#' A Function to load the UI for different datasets
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @author Guy Hunt
+#' @noRd
+loadDataSet2UiComponents <- function(input, output, session, errorChecks, all,
+                                     geoAccessionCode = "")
+{
+  dataSet2UiComponents <- {
+    if (input$dataSource2 == "GEO") {
+      # GEO Help Text Widget
+      output$output9 <- renderUI({
+        helpText(
+          "Input a GEO series accession code (GSEXXXX format)
+      to examine the gene expression data.
+      This can be obtained from https://www.ncbi.nlm.nih.gov/gds."
+        )
+      })
+      # GEO Accession Code Input Widget
+      output$output10 <- renderUI({
+        textInput("geoAccessionCode2", "GEO accession code", geoAccessionCode)
+      })
+
+      # Platform input text
+      output$output11 <- renderUI({
+        selectInput("platform2", "Platform", c())
+      })
+      # KNN Input
+      output$output13 <- renderUI({
+        radioButtons(
+          "knnTransformation",
+          label = "Apply k-nearest neighbors (KNN) algorithm to predict
+      null data:",
+          choices = list("Yes", "No"),
+          selected = "No"
+        )
+      })
+
+      resetErrorChecksVariables2 <-
+        reactive(
+          c(
+            input$logTransformation,
+            input$platform2,
+            input$knnTransformation,
+            input$geoAccessionCode2
+          )
+        )
+
+      # Reset error checks when Platform is updated
+      observeEvent(resetErrorChecksVariables2(), {
+        # Reset error checks
+        errorChecks <- resetErrorChecks(errorChecks)
+      })
+
+      # Process second GEO accession code
+      observeEvent(input$geoAccessionCode2, {
+        # Get the GEO data for all platforms
+        all$allGset2 <- reactive({
+          tryCatch({
+            # Error handling to ensure geoAccessionCode is populated
+            req(input$geoAccessionCode2)
+            # Notify the user the GEO accession code
+            # is not a GEO series accession code
+            if (substr(str_trim(input$geoAccessionCode2), 1, 3) != "GSE")
+            {
+              showNotification("Please input a GEO series accession code
+                                 with the format GSEXXX",
+                               type = "warning")
+              return(NULL)
+            } else {
+              return(getGeoObject(input$geoAccessionCode2))
+            }
+          }, error = function(err) {
+            # Return null if there is a error in the
+            # getGeoObject function
+            return(NULL)
+          })
+        })
+
+        # Update error check
+        if (is.null(all$allGset2())) {
+          # Update error check
+          errorChecks$geoAccessionCode2 <- FALSE
+          errorChecks$continueWorkflow2 <- FALSE
+          if (input$geoAccessionCode2 != "") {
+            # Display notification
+            showNotification(
+              "There was an error obtaining the GEO dataset.
+                           Please ensure you entered the correct GEO Accession
+                           Code.",
+              type = "warning"
+            )
+          }
+        } else {
+          # Update error checks
+          errorChecks$geoAccessionCode2 <- TRUE
+          errorChecks$continueWorkflow2 <- TRUE
+        }
+
+        if (errorChecks$continueWorkflow2) {
+          # Get a list of all the platforms
+          platforms2 <- reactive({
+            extractPlatforms(all$allGset2())
+          })
+
+          # Select the top platform
+          platform2 <- reactive({
+            platforms2()[1]
+          })
+
+          # Update Platform Options
+          platformObserve2 <- observe({
+            updateSelectInput(session,
+                              "platform2",
+                              choices = platforms2(),
+                              selected = platform2())
+          })
+        }
+      })
+    } else
+    {
+      # File upload widget
+      output$output9 <- renderUI({
+        fileInput(
+          "file2",
+          "Upload CSV Gene Expression Count File",
+          multiple = TRUE,
+          accept = c(
+            "text/csv",
+            "text/comma-separated-values,text/plain",
+            ".csv"
+          )
+        )
+      })
+
+      # Reset error checks when a file is uploaded
+      observeEvent(input$file2, {
+        # Reset error checks
+        errorChecks <- resetErrorChecks(errorChecks)
+      })
+
+      # Blank widgets
+      output$output10 <- renderUI({
+      })
+      output$output11 <- renderUI({
+      })
+    }
+  }
+  return(dataSet2UiComponents)
 }

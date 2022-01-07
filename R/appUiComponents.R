@@ -672,7 +672,8 @@ sourceExampleUI <- function() {
     br(),
     strong("Download Example RNASeq File"),
     br(),
-    downloadButton("downloadRnaSeqExample", "Download")
+    downloadButton("downloadRnaSeqExample", "Download"),
+    width = 12
   )
   return(exampleUIComponents)
 }
@@ -696,7 +697,8 @@ sourceGeoSearchUi <- function() {
     actionButton("searchGeo", "Search"),
     br(),
     br(),
-    dataTableOutput('geoSearchResults')
+    dataTableOutput('geoSearchResults'),
+    width = 12
   )
   return(geoSearchUiComponents)
 }

@@ -1,3 +1,22 @@
+#' A Function to create a link to additional study information
+#'
+#' @keywords GEO
+#' @author Guy Hunt
+#' @noRd
+createStudyLink <- function(website, Id) {
+  if (website == "GEO") {
+    link <- paste0("https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=",Id)
+  } else {
+    link <- paste0("https://pubmed.ncbi.nlm.nih.gov/",Id)
+  }
+  linkHtml <- sprintf(
+  paste0('<a href=', link, ' target="_blank" class="btn btn-link">',website
+         ,'</a>'))
+
+  return(linkHtml)
+}
+
+
 #' A Function to Search the GEO database for studies
 #'
 #' @keywords GEO
@@ -62,7 +81,9 @@ searchGeo <- function(searchTerm,
   # Define list variables
   geoAccessionCode <- c()
   studyTitle <- c()
-  #studySummary <- c()
+  platform <- c()
+  pubMedLink <- c()
+  geoLink <- c()
   studyOrganism <- c()
   studyPublishedDate <- c()
   microarrayDataSet <- c()
@@ -88,7 +109,33 @@ searchGeo <- function(searchTerm,
     error = function(cond) {
       return(NA)
     })
-    #studySummary <- append(studySummary, eSummaryDataLevel$summary[[1]])
+
+    platform <- tryCatch({
+      append(platform, paste0("GPL", eSummaryDataLevel$GPL) )
+    },
+    error = function(cond) {
+      return(NA)
+    })
+
+
+    pubMedLink <- tryCatch({
+      append(pubMedLink, createStudyLink("PubMed",
+        eSummaryDataLevel$PubMedIds$int[[1]])
+        )
+      },
+      error = function(cond) {
+        return(NA)
+      })
+
+    geoLink <- tryCatch({
+      append(geoLink, createStudyLink("GEO",
+                                      eSummaryDataLevel$Accession[[1]])
+      )
+    },
+    error = function(cond) {
+      return(NA)
+    })
+
     studyOrganism <- tryCatch({
       append(studyOrganism, eSummaryDataLevel$taxon[[1]])
     },
@@ -110,7 +157,7 @@ searchGeo <- function(searchTerm,
   }
 
   # Define the search results table
-  searchResultsTable <- matrix(ncol = 6, nrow = eSummaryListLength)
+  searchResultsTable <- matrix(ncol = 10, nrow = eSummaryListLength)
 
   # Update the search results table column names
   colnames(searchResultsTable) <- c(
@@ -118,26 +165,39 @@ searchGeo <- function(searchTerm,
     "Title",
     "Organism",
     "Published Date",
-    #"studySummary",
+    "Platform",
     "Microarray DataSet",
-    "Actions"
+    "GEO Link",
+    "PubMed Link",
+    "Load as First Dataset",
+    "Load as Second Dataset"
   )
 
-  # Update the rtesults table with values
+  # Update the results table with values
   searchResultsTable[, "GEO Accession Code"] <- geoAccessionCode
   searchResultsTable[, "Title"] <- studyTitle
   searchResultsTable[, "Organism"] <- studyOrganism
   searchResultsTable[, "Published Date"] <- studyPublishedDate
-  #searchResultsTable[,"studySummary"] <- studySummary
+  searchResultsTable[, "Platform"] <- platform
+  searchResultsTable[, "GEO Link"] <- geoLink
+  searchResultsTable[, "PubMed Link"] <- pubMedLink
   searchResultsTable[, "Microarray DataSet"] <- microarrayDataSet
 
   # Add action buttons
-  searchResultsTable[, "Actions"] <-
+  searchResultsTable[, "Load as First Dataset"] <-
     addActionButtonToTable(actionButton, eSummaryListLength, "button_",
-                           label = "Load Dataset",
+                           label = "Load",
                            onclick =
-                             'Shiny.onInputChange(\"loadGeoSearchAccession\",
+                           'Shiny.onInputChange(\"loadGeoSearchAsFirstDataset\",
                            this.id)' )
+
+  # Add action buttons
+  searchResultsTable[, "Load as Second Dataset"] <-
+    addActionButtonToTable(actionButton, eSummaryListLength, "button_",
+                           label = "Load",
+                           onclick =
+                           'Shiny.onInputChange(\"loadGeoSearchAsSecondDataset\"
+                           ,this.id)' )
 
   return(searchResultsTable)
 }
