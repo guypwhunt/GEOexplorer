@@ -1234,27 +1234,14 @@ performDifferentialGeneExpressionAnalysis <- function (input,
     # analysis outputs to blank, this resets
     # all the visualizations to blank after
     # clicking analyse
-    output$dETable <- renderDataTable({
-
-    })
-    output$iDEHistogram <- renderPlotly({
-
-    })
-    output$dEVennDiagram <- renderPlot({
-
-    })
-    output$iDEQQ <- renderPlotly({
-
-    })
-    output$iDEVolcano <- renderPlotly({
-
-    })
-    output$iDEMd <- renderPlotly({
-
-    })
-    output$iHeatmap <- renderPlotly({
-
-    })
+    output$dETable <- renderDataTable({})
+    output$iDEHistogram <- renderPlotly({})
+    output$dEVennDiagram <- renderPlot({})
+    output$iDEQQ <- renderPlotly({})
+    output$iDEVolcano <- renderPlotly({})
+    output$iDEMd <- renderPlotly({})
+    output$iHeatmap <- renderPlotly({})
+    output$geneAnnotationTable <- renderDataTable({})
 
     if (errorChecks$continueWorkflow)
     { if (!exampleDataSet) {
@@ -1529,6 +1516,40 @@ performDifferentialGeneExpressionAnalysis <- function (input,
       output$output101 <- renderUI({
         actionButton("enrichmentAnalysisButton", "Analyse")
       })
+
+      # Define Gene Annotation Table
+      all$geneAnnotationTable <- NULL
+
+      if(input$dataSource == "GEO") {
+        all$geneAnnotationTable <- tryCatch({
+          createGeneAnnotationTable(
+          input, output, session, errorChecks, all, dT)
+        }, error = function(e) {
+          # return a safeError if a parsing error occurs
+          return(NULL)})
+
+      } else if (input$dataSetType == "Combine") {
+        if (input$dataSource2 == "GEO") {
+          all$geneAnnotationTable <- tryCatch({
+            createGeneAnnotationTable(
+              input, output, session, errorChecks, all, dT)
+          }, error = function(e) {
+            # return a safeError if a parsing error occurs
+            return(NULL)})
+        }}
+
+      output$geneAnnotationTable <-
+        tryCatch({
+          renderDataTable(
+            all$geneAnnotationTable,
+            server = FALSE,
+            escape = FALSE,
+            selection = list(target = 'column')
+          )},
+          error = function(e) {
+            # return a safeError if a parsing error occurs
+            stop(safeError(e))
+          })
     }
     # Reset error check
     errorChecks$continueWorkflow <- TRUE
@@ -1594,6 +1615,14 @@ performGeneEnrichmentAnalysis <- function (input,
           # return a safeError if a parsing error occurs
           return(NULL)
         })
+
+        #differentiallyExpressedGenes <- merge(
+        #  differentiallyExpressedGenes,
+        #  all$geneAnnotationTable[,input$geneAnnotationTable_columns_selected],
+        #  by=0, all=TRUE)
+
+        #output$geneAnnotationTable <- renderDataTable({
+        #  differentiallyExpressedGenes})
 
         # Error handling if there are no differentially expressed genes
         if (is.null(differentiallyExpressedGenes) |
@@ -2238,3 +2267,28 @@ loadDataSet2UiComponents <- function(input, output, session, errorChecks, all,
   }
   return(dataSet2UiComponents)
 }
+
+#' A Function to create the gene annotation table
+#'
+#' A Function to create the gene annotation table
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @author Guy Hunt
+#' @noRd
+createGeneAnnotationTable <- function(input, output, session, errorChecks, all,
+                                      dT) {
+  # Output gene annotation table
+  geneAnnotation <- tryCatch({fData(all$gsetData)},
+                             error = function(e) {
+                               # return a safeError if a parsing
+                               # error occurs
+                               return(NULL)})
+
+  # Extract the differentially Expressed Gene Annotation
+  differentiallyExressedGeneAnnotation <- tryCatch({
+    extractDifferenitallyExpressedGenes(geneAnnotation, dT)},
+    error = function(e) {
+      # return a safeError if a parsing
+      # error occurs
+      return(NULL)})
+}
+

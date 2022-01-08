@@ -720,6 +720,9 @@ sourceEnrichmentnUi <- function() {
                                        "Set Parameters",
                                        br(),
                                        br(),
+                                       dataTableOutput('geneAnnotationTable'),
+                                       br(),
+                                       br(),
                                        selectInput("enrichDatabases",
                                                    "Select a database to use
                                                    for gene enrich analysis",
