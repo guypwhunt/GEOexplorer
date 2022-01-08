@@ -157,7 +157,7 @@ searchGeo <- function(searchTerm,
   }
 
   # Define the search results table
-  searchResultsTable <- matrix(ncol = 10, nrow = eSummaryListLength)
+  searchResultsTable <- matrix(ncol = 9, nrow = eSummaryListLength)
 
   # Update the search results table column names
   colnames(searchResultsTable) <- c(
@@ -169,8 +169,8 @@ searchGeo <- function(searchTerm,
     "Microarray DataSet",
     "GEO Link",
     "PubMed Link",
-    "Load as First Dataset",
-    "Load as Second Dataset"
+    "Load as First Dataset"
+    #, "Load as Second Dataset"
   )
 
   # Update the results table with values
@@ -192,12 +192,12 @@ searchGeo <- function(searchTerm,
                            this.id)' )
 
   # Add action buttons
-  searchResultsTable[, "Load as Second Dataset"] <-
-    addActionButtonToTable(actionButton, eSummaryListLength, "button_",
-                           label = "Load",
-                           onclick =
-                           'Shiny.onInputChange(\"loadGeoSearchAsSecondDataset\"
-                           ,this.id)' )
+  #searchResultsTable[, "Load as Second Dataset"] <-
+  #  addActionButtonToTable(actionButton, eSummaryListLength, "button_",
+  #                         label = "Load",
+  #                         onclick =
+  #                         'Shiny.onInputChange(\"loadGeoSearchAsSecondDataset\"
+  #                         ,this.id)' )
 
   return(searchResultsTable)
 }

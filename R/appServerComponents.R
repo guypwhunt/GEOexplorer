@@ -102,7 +102,8 @@ sourceServer <- function(input, output, session) {
       updateRadioButtons(session, inputId = "dataSource", selected = "GEO")
 
       # Update UI
-      loadDataSetUiComponents(input, output, session, errorChecks, all)
+      loadDataSetUiComponents(input, output, session, errorChecks, all,
+                              userUploadExperimentInformation)
 
       # Add GEO accession input
       output$output5 <- renderUI({
@@ -110,24 +111,6 @@ sourceServer <- function(input, output, session) {
                   "GEO accession code",
                   all$geoSearchResults[selectedRow, 1])
       })
-    })
-
-    # Load GEO Accession Code from GEO Search
-    observeEvent(input$loadGeoSearchAsSecondDataset, {
-      selectedRow <- as.numeric(
-        strsplit(input$loadGeoSearchAsSecondDataset, "_")[[1]][2])
-
-      # Change to Home Tab
-      updateTabsetPanel(session, "geoexplorerNavBar",
-                        selected = "Home")
-
-      # Update the Radio button to enable the dataset to be processed
-      updateRadioButtons(session, inputId = "dataSetType", selected =
-                           "Combine")
-
-      loadDataSetCombinationUiComponents(input, output,
-                                         session, errorChecks, all,
-                                         all$geoSearchResults[selectedRow, 1])
     })
 
     # Load the example dataset, configurations and perform exploratory data
@@ -208,7 +191,8 @@ sourceServer <- function(input, output, session) {
 
     # Load logic to update UI
     observeEvent(input$dataSource, loadDataSetUiComponents(
-      input, output, session, errorChecks, all))
+      input, output, session, errorChecks, all,
+      userUploadExperimentInformation))
     observeEvent(input$dataSetType,
                  loadDataSetCombinationUiComponents(input, output,
                                                     session, errorChecks, all))
@@ -1821,7 +1805,8 @@ loadDataSetUiComponents <- function(input,
                                     output,
                                     session,
                                     errorChecks,
-                                    all) {
+                                    all,
+                                    userUploadExperimentInformation) {
   dataSetUiComponents <- {
     # Refresh error checks
     errorChecks <- resetErrorChecks(errorChecks)
