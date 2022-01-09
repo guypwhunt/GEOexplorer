@@ -5,10 +5,24 @@
 #' @examples navbarPage()
 #' @author Guy Hunt
 #' @import markdown
+#' @importFrom htmltools HTML
 #' @noRd
 sourceUi <- function() {
   uiComponents <- navbarPage(
     "GEOexplorer",
+    tags$head(
+      tags$style(
+        HTML(
+          '.navbar-static-top {background-color: #011f4b;
+          color: white;}',
+          '.navbar-default .navbar-nav>.active>a {background-color: #03396c;
+          color: white;}',
+          '.nav-tabs {background-color: #005b96; color: white;}',
+          '#sidebar {background-color: #b3cde0;}',
+          #'.nav-tabs-default .navbar-nav>.active>a
+          #{background-color: #b3cde0; color: white;}',
+          #,'body {background-color: #b3cde0;}'
+          ))),
     id = "geoexplorerNavBar",
     tabPanel("Home", value = "Home",
              # Source the Side Bar UI Components
@@ -52,7 +66,7 @@ sourceUi <- function() {
 #' @author Guy Hunt
 #' @noRd
 sourceSideBarUi <- function() {
-  sideBarUi <- sidebarPanel(
+  sideBarUi <- sidebarPanel(id="sidebar",
     radioButtons(
       "dataSetType",
       label = "Would you like analyse a single gene exression dataset or

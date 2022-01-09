@@ -116,7 +116,11 @@ Changes in version 1.1.1 (2021-12-17)
 Changes in version 1.1.2 (2021-12-19)
 + Gene enrichment analysis added
 
-Changes in version 1.1.2 (2021-12-23)
+Changes in version 1.1.3 (2021-12-23)
 + Bug fixes
 + UI Updates
 + Image Compression
+
+Changes in version 1.1.4 (2022-01-09)
++ Gene Annotation Updates
++ Tutorial Updates

@@ -1,13 +1,13 @@
 Package: GEOexplorer
 Title: GEOexplorer: an R/Bioconductor package and web application for gene 
   expression analysis and visualisation
-Date: 2021/12/23
-Version: 1.1.3
+Date: 2022/01/09
+Version: 1.1.4
 Authors@R: 
   c(person(given = "Guy",
            family = "Hunt",
            role = c("aut", "cre"),
-           email = "guypwhunt1992@gmail.com",
+           email = "guy.hunt@kcl.ac.uk",
            comment = c(ORCID = "0000-0002-5217-2678")),
     person(given = "Rafael",
            family = "Henkin",
