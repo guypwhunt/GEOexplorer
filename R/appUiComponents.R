@@ -720,6 +720,10 @@ sourceEnrichmentnUi <- function() {
                                        "Set Parameters",
                                        br(),
                                        br(),
+                                       tags$b("Select the column containg
+                                              the gene symbols."),
+                                       br(),
+                                       br(),
                                        dataTableOutput('geneAnnotationTable'),
                                        br(),
                                        br(),

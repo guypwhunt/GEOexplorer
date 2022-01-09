@@ -1546,6 +1546,7 @@ performDifferentialGeneExpressionAnalysis <- function (input,
             all$geneAnnotationTable,
             server = FALSE,
             escape = FALSE,
+            options = list(pageLength = 3),
             selection = list(target = 'column', mode = "single")
           )},
           error = function(e) {
