@@ -53,7 +53,10 @@ sourceUi <- function() {
              htmlOutput('tutorial')),
     tabPanel("Example Datasets",
              # Source example datasets
-             sourceExampleUI())
+             sourceExampleUI()),
+    tabPanel("Contact Details",
+             # Source example datasets
+             sourceContactUI())
   )
   return(uiComponents)
 }
@@ -839,4 +842,35 @@ sourceEnrichmentnUi <- function() {
                                      ),
                                    ))
   return(enrichmentUi)
+}
+
+
+#' A Function to Return the Contact details Ui Component
+#'
+#' A Function to Return the Contact details Ui Component
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @examples sourceContactUI()
+#' @author Guy Hunt
+#' @noRd
+sourceContactUI <- function() {
+  contactUIComponents <- mainPanel(
+    br(),
+    br(),
+    strong("The authors' contact details are:"),
+    br(),
+    br(),
+    tags$a(href="mailto:guy.hunt@kcl.ac.uk", "Guy P Hunt*"),
+    br(),
+    br(),
+    tags$a(href="mailto:alfredo.iacoangeli@kcl.ac.uk",
+           "Dr Alfredo Iacoangeli"),
+    br(),
+    br(),
+    tags$a(href="mailto:m.r.barnes@qmul.ac.uk", "Professor Michael R Barnes"),
+    br(),
+    br(),
+    tags$p("*  To whom correspondence should be addressed."),
+    width = 12
+  )
+  return(contactUIComponents)
 }
