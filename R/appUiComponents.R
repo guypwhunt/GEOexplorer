@@ -17,7 +17,7 @@ sourceUi <- function() {
           color: white;}',
           '.navbar-default .navbar-nav>.active>a {background-color: #03396c;
           color: white;}',
-          '.nav-tabs {background-color: #005b96; color: white;}',
+          #'.nav-tabs {background-color: #005b96; color: white;}',
           '#sidebar {background-color: #b3cde0;}',
           #'.nav-tabs-default .navbar-nav>.active>a
           #{background-color: #b3cde0; color: white;}',

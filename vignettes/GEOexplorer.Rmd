@@ -26,26 +26,34 @@ knitr::opts_chunk$set(
 ![](qmul.png)
 ![](murdoch.png)
 ![](perron.png)
-
+![](kclDriveHealth.png)
 
 # 1. Introduction
 
-GEOexplorer is a web server and R package that enables users to
-perform gene expression analysis including:
+GEOexplorer is a web server and R package for the exploration, generation, 
+and analysis of 
+transcriptomic datasets. GEOexplorer can be used for the exploration, 
+integration, and harmonization of different datasets available in GEO or 
+uploaded by the user. GEOexplorer is based on widely used and validated 
+protocols and enables users to take full advantage of the great availability 
+of high-throughput data both from in-house experiments and publicly 
+available databases. Additionally, GEOexplorer does not require programming proficiency or in-depth statistical knowledge to use.
 
-* Searching the GEO database for gene expression datasets.
+GEOexplorer enables users to:
 
-* Analysing GEO microarray datasets.
+* Search the GEO database for gene expression datasets.
 
-* Analysing user uploaded microarray and RNAseq datasets.
+* Retrieve GEO expression datasets or upload their expression datasets.
 
-* Merging multiple gene expression datasets and performing batch correction.
+* Merge multiple gene expression datasets and perform batch correction.
 
-* Performing exploratory data analysis.
+* Explore gene expression dataset.
 
-* Performing differential gene expression analysis.
+* Identify the differentially expressed genes in the gene expression dataset.
 
-* Performing gene enrichment analysis.
+* Perform gene enrichment analysis on the differentially expressed genes.
+
+* Explore the results in interactive visualisations.
 
 # 2. Accessing the Web Server
 
