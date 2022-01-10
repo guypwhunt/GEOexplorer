@@ -44,6 +44,11 @@ sourceServer <- function(input, output, session) {
       HTML(aboutPage)
     })
 
+    # Add icon
+    output$icon <- renderUI({
+      HTML(icon)
+    })
+
     # Update enrichment database list
     databaseNames <- tryCatch({extractDatabaseNamesFromEnrichR()},
                               error = function(e) {

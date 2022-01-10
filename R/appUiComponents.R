@@ -9,7 +9,7 @@
 #' @noRd
 sourceUi <- function() {
   uiComponents <- navbarPage(
-    title = "GEOexplorer",
+    title = htmlOutput("icon"),
     tags$head(
       tags$style(
         HTML(
