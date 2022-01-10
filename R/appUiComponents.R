@@ -9,7 +9,7 @@
 #' @noRd
 sourceUi <- function() {
   uiComponents <- navbarPage(
-    "GEOexplorer",
+    title = "GEOexplorer",
     tags$head(
       tags$style(
         HTML(
@@ -17,11 +17,9 @@ sourceUi <- function() {
           color: white;}',
           '.navbar-default .navbar-nav>.active>a {background-color: #03396c;
           color: white;}',
-          #'.nav-tabs {background-color: #005b96; color: white;}',
-          '#sidebar {background-color: #b3cde0;}',
-          #'.nav-tabs-default .navbar-nav>.active>a
-          #{background-color: #b3cde0; color: white;}',
-          #,'body {background-color: #b3cde0;}'
+          '.tabbable > .nav > li[class=active]>a
+          {background-color: #005b96; color:white}',
+          '#sidebar {background-color: #b3cde0;}'
           ))),
     id = "geoexplorerNavBar",
     tabPanel("Home", value = "Home",
@@ -53,10 +51,7 @@ sourceUi <- function() {
              htmlOutput('tutorial')),
     tabPanel("Example Datasets",
              # Source example datasets
-             sourceExampleUI()),
-    tabPanel("Contact Details",
-             # Source example datasets
-             sourceContactUI())
+             sourceExampleUI())
   )
   return(uiComponents)
 }
