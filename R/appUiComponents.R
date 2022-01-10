@@ -45,10 +45,10 @@ sourceUi <- function() {
     tabPanel("About",
              htmlOutput("about")
              ),
-    tabPanel("GEO Search",
-             sourceGeoSearchUi()),
     tabPanel("Tutorial",
              htmlOutput('tutorial')),
+    tabPanel("GEO Search",
+             sourceGeoSearchUi()),
     tabPanel("Example Datasets",
              # Source example datasets
              sourceExampleUI())
