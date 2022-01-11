@@ -124,3 +124,6 @@ Changes in version 1.1.3 (2021-12-23)
 Changes in version 1.1.4 (2022-01-09)
 + Gene Annotation Updates
 + Tutorial Updates
+
+Changes in version 1.1.5 (2022-01-11)
++ Gene Enrichment Updates

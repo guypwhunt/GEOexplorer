@@ -1525,24 +1525,34 @@ performDifferentialGeneExpressionAnalysis <- function (input,
       })
 
       # Define Gene Annotation Table
-      all$geneAnnotationTable <- NULL
+      all$geneAnnotationTable <- tryCatch({
+        differentiallyExpressedGenes <-
+          all$dT[!(all$dT[, "Group1-Group2"] == 0),]
+
+        differentiallyExpressedGenes <- as.data.frame(
+          differentiallyExpressedGenes)
+
+        try({differentiallyExpressedGenes[, "Gene.symbol"] <- NA
+        differentiallyExpressedGenes <-
+          differentiallyExpressedGenes[, c(2,1)]})
+
+        differentiallyExpressedGenes
+      }, error = function(e) {
+        # return a safeError if a parsing error occurs
+        return(NULL)})
 
       if(input$dataSource == "GEO") {
-        all$geneAnnotationTable <- tryCatch({
+        all$geneAnnotationTable <- try({
           createGeneAnnotationTable(
           input, output, session, errorChecks, all)
-        }, error = function(e) {
-          # return a safeError if a parsing error occurs
-          return(NULL)})
+        })
 
       } else if (input$dataSetType == "Combine") {
         if (input$dataSource2 == "GEO") {
-          all$geneAnnotationTable <- tryCatch({
+          all$geneAnnotationTable <- try({
             createGeneAnnotationTable(
               input, output, session, errorChecks, all)
-          }, error = function(e) {
-            # return a safeError if a parsing error occurs
-            return(NULL)})
+          })
         }}
 
       output$geneAnnotationTable <-
@@ -1552,12 +1562,21 @@ performDifferentialGeneExpressionAnalysis <- function (input,
             server = FALSE,
             escape = FALSE,
             options = list(pageLength = 3),
+            editable = TRUE,
             selection = list(target = 'column', mode = "single")
           )},
           error = function(e) {
             # return a safeError if a parsing error occurs
             stop(safeError(e))
           })
+
+      # Update gene annotation data with user input values
+      observeEvent(input$geneAnnotationTable_cell_edit, {
+        info <- input$geneAnnotationTable_cell_edit
+        str(info)
+        try(all$geneAnnotationTable[info$row,info$col] <- info$value)
+        })
+
     }
     # Reset error check
     errorChecks$continueWorkflow <- TRUE
