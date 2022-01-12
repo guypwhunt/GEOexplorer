@@ -258,73 +258,27 @@ performExploratoryDataAnalysis <- function(input,
 
     # Set all outputs to blank, this resets
     # all the visualizations to blank after clicking analyse
-    output$table <- renderDataTable({
-
-    })
-    output$logTransformationText <- renderUI({
-
-    })
-    output$experimentInfo <- renderUI({
-
-    })
-    output$knnColumnTable <- renderDataTable({
-
-    })
-    output$interactiveBoxAndWhiskerPlot <- renderPlotly({
-
-    })
-
-    output$nonInteractiveBoxAndWhiskerPlot <- renderPlot({
-
-    })
-    output$interactiveDensityPlot <- renderPlotly({
-
-    })
-    output$interactiveThreeDDensityPlot <- renderPlotly({
-
-    })
-    output$interactiveUmapPlot <- renderPlotly({
-
-    })
-    output$interactiveHeatMapPlot <- renderPlotly({
-
-    })
-    output$interactiveMeanVariancePlot <- renderPlotly({
-
-    })
-    output$interactivePcaScreePlot <- renderPlotly({
-
-    })
-    output$interactivePcaIndividualsPlot <- renderPlotly({
-
-    })
-    output$interactivePcaVariablesPlot <- renderPlotly({
-
-    })
-    output$interactive3DPcaVariablesPlot <- renderPlotly({
-
-    })
-    output$dETable <- renderDataTable({
-
-    })
-    output$iDEHistogram <- renderPlotly({
-
-    })
-    output$dEVennDiagram <- renderPlot({
-
-    })
-    output$iDEQQ <- renderPlotly({
-
-    })
-    output$iDEVolcano <- renderPlotly({
-
-    })
-    output$iDEMd <- renderPlotly({
-
-    })
-    output$iHeatmap <- renderPlotly({
-
-    })
+    output$table <- renderDataTable({})
+    output$logTransformationText <- renderUI({})
+    output$experimentInfo <- renderUI({})
+    output$knnColumnTable <- renderDataTable({})
+    output$boxAndWhiskerPlot <- renderUI({})
+    output$interactiveDensityPlot <- renderPlotly({})
+    output$interactiveThreeDDensityPlot <- renderPlotly({})
+    output$interactiveUmapPlot <- renderPlotly({})
+    output$interactiveHeatMapPlot <- renderPlotly({})
+    output$interactiveMeanVariancePlot <- renderPlotly({})
+    output$interactivePcaScreePlot <- renderPlotly({})
+    output$interactivePcaIndividualsPlot <- renderPlotly({})
+    output$interactivePcaVariablesPlot <- renderPlotly({})
+    output$interactive3DPcaVariablesPlot <- renderPlotly({})
+    output$dETable <- renderDataTable({})
+    output$iDEHistogram <- renderPlotly({})
+    output$dEVennDiagram <- renderPlot({})
+    output$iDEQQ <- renderPlotly({})
+    output$iDEVolcano <- renderPlotly({})
+    output$iDEMd <- renderPlotly({})
+    output$iHeatmap <- renderPlotly({})
 
     # Extract information from GSET including expression data
     if (errorChecks$continueWorkflow) {
@@ -931,6 +885,10 @@ performExploratoryDataAnalysis <- function(input,
         })
 
       if (object.size(all$knnDataInput) < 10000000) {
+        output$boxAndWhiskerPlot <- renderUI({
+          plotlyOutput('interactiveBoxAndWhiskerPlot')
+          })
+
         # Interactive Box-and-Whisker Plot
         output$interactiveBoxAndWhiskerPlot <-
           tryCatch({
@@ -950,6 +908,10 @@ performExploratoryDataAnalysis <- function(input,
                                      removed.",
           type = "warning"
         )
+        output$boxAndWhiskerPlot <- renderUI({
+          plotlyOutput('interactiveBoxAndWhiskerPlot')
+        })
+
         # Interactive Box-and-Whisker Plot
         output$interactiveBoxAndWhiskerPlot <-
           tryCatch({
@@ -968,6 +930,10 @@ performExploratoryDataAnalysis <- function(input,
                            of an interactive one.",
           type = "warning"
         )
+
+        output$boxAndWhiskerPlot <- renderUI({
+          plotOutput('nonInteractiveBoxAndWhiskerPlot')
+        })
 
         output$nonInteractiveBoxAndWhiskerPlot <- tryCatch({
           renderPlot({
