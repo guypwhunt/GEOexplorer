@@ -9,7 +9,7 @@
 #' @noRd
 sourceUi <- function() {
   uiComponents <- navbarPage(
-    title = htmlOutput("icon"),
+    title = tags$div(HTML(icon)),
     tags$head(
       tags$style(
         HTML(
@@ -43,10 +43,14 @@ sourceUi <- function() {
                )
              )),
     tabPanel("About",
-             htmlOutput("about")
+             tags$div(HTML(aboutPage))
+             ),
+    tabPanel("Workflow",
+             tags$div(HTML(workflow))
              ),
     tabPanel("Tutorial",
-             htmlOutput('tutorial')),
+             tags$div(HTML(tutorialPage))
+                          ),
     tabPanel("GEO Search",
              sourceGeoSearchUi()),
     tabPanel("Example Datasets",
