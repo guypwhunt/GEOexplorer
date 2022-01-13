@@ -8,10 +8,10 @@
 #' @importFrom htmltools HTML
 #' @noRd
 sourceUi <- function() {
-  uiComponents <- navbarPage(
-    title = tags$div(HTML(icon)),
-    tags$head(
-      tags$style(
+  uiComponents <- fluidPage(title ="GEOexplorer",
+    navbarPage(
+      title = tags$html(HTML(icon)),
+      tags$head(tags$style(
         HTML(
           '.navbar-static-top {background-color: #011f4b;
           color: white;}',
@@ -20,42 +20,35 @@ sourceUi <- function() {
           '.tabbable > .nav > li[class=active]>a
           {background-color: #005b96; color:white}',
           '#sidebar {background-color: #b3cde0;}'
-          ))),
-    id = "geoexplorerNavBar",
-    tabPanel("Home", value = "Home",
-             # Source the Side Bar UI Components
-             sourceSideBarUi(),
-             mainPanel(
-               tabsetPanel(
-                 type = "tabs",
-                 # Source the Dataset Information
-                 # UI Components
-                 sourceDatasetInformationUi(),
-                 # Source the Exploratory Data Analysis
-                 # UI Components
-                 sourceExploratoryDataAnalysisUi(),
-                 # Source the Differential Gene Expression
-                 # UI Components
-                 sourceDifferentialGeneExpressionAnalysisUi(),
-                 # Source the Enrichment
-                 # UI Components
-                 sourceEnrichmentnUi()
-               )
-             )),
-    tabPanel("About",
-             tags$div(HTML(aboutPage))
-             ),
-    tabPanel("Workflow",
-             tags$div(HTML(workflow))
-             ),
-    tabPanel("Tutorial",
-             tags$div(HTML(tutorialPage))
-                          ),
-    tabPanel("GEO Search",
-             sourceGeoSearchUi()),
-    tabPanel("Example Datasets",
-             # Source example datasets
-             sourceExampleUI())
+        )
+      )),
+      id = "geoexplorerNavBar",
+      tabPanel("Home", value = "Home",
+               # Source the Side Bar UI Components
+               sourceSideBarUi(),
+               mainPanel(
+                 tabsetPanel(
+                   type = "tabs",
+                   # Source the Dataset Information
+                   # UI Components
+                   sourceDatasetInformationUi(),
+                   # Source the Exploratory Data Analysis
+                   # UI Components
+                   sourceExploratoryDataAnalysisUi(),
+                   # Source the Differential Gene Expression
+                   # UI Components
+                   sourceDifferentialGeneExpressionAnalysisUi(),
+                   # Source the Enrichment
+                   # UI Components
+                   sourceEnrichmentnUi()
+                 )
+               )),
+      tabPanel("About", tags$html(HTML(aboutPage))),
+      tabPanel("Workflow", tags$html(HTML(workflow))),
+      tabPanel("Tutorial", tags$html(HTML(tutorialPage))),
+      tabPanel("GEO Search", sourceGeoSearchUi()),
+      tabPanel("Example Datasets", sourceExampleUI())
+    )
   )
   return(uiComponents)
 }

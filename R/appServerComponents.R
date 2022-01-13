@@ -34,21 +34,6 @@ sourceServer <- function(input, output, session) {
           user-uploaded files!</p><br>"
     )
 
-    # Add tutorial Page
-    #output$tutorial <- renderUI({
-    #  HTML(tutorialPage)
-    #  })
-
-    # Add about Page
-    #output$about <- renderUI({
-    #  HTML(aboutPage)
-    #})
-
-    # Add icon
-    #output$icon <- renderUI({
-    #  HTML(icon)
-    #})
-
     # Update enrichment database list
     databaseNames <- tryCatch({extractDatabaseNamesFromEnrichR()},
                               error = function(e) {
