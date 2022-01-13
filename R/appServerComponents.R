@@ -1521,11 +1521,13 @@ performDifferentialGeneExpressionAnalysis <- function (input,
             stop(safeError(e))
           })
 
+      all$updatedGeneAnnotationTable <- all$geneAnnotationTable
+
       # Update gene annotation data with user input values
       observeEvent(input$geneAnnotationTable_cell_edit, {
         info <- input$geneAnnotationTable_cell_edit
         str(info)
-        try(all$geneAnnotationTable[info$row,info$col] <- info$value)
+        try(all$updatedGeneAnnotationTable[info$row,info$col] <- info$value)
         })
 
     }
@@ -1576,11 +1578,10 @@ performGeneEnrichmentAnalysis <- function (input,
 
         if (!is.null(columnNumber)) {
           differentiallyExpressedGenes <- tryCatch({
-            differentiallyExpressedGenes <- all$geneAnnotationTable[
-              ,c(columnNumber,ncol(
-                all$geneAnnotationTable))]
-            colnames(differentiallyExpressedGenes) <-
-              c("Gene.symbol", "Group1-Group2")
+            differentiallyExpressedGenes <- all$updatedGeneAnnotationTable[
+              ,c(columnNumber,ncol(all$updatedGeneAnnotationTable))]
+            colnames(differentiallyExpressedGenes) <- c("Gene.symbol",
+                                                        "Group1-Group2")
             differentiallyExpressedGenes
           }, error = function(e) {
             # return a safeError if a parsing error occurs
