@@ -1174,6 +1174,7 @@ loadGeoDataset <- function (input,
 #' @importFrom stringr str_trim
 #' @import markdown
 #' @importFrom knitr knit
+#' @importFrom utils str
 #' @author Guy Hunt
 #' @noRd
 performDifferentialGeneExpressionAnalysis <- function (input,

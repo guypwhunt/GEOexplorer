@@ -127,3 +127,6 @@ Changes in version 1.1.4 (2022-01-09)
 
 Changes in version 1.1.5 (2022-01-11)
 + Gene Enrichment Updates
+
+Changes in version 1.1.6 (2022-01-14)
++ Gene Enrichment Updates
