@@ -752,10 +752,25 @@ sourceEnrichmentnUi <- function() {
                                        uiOutput("output101")
                                      ),
                                      tabPanel(
-                                       "Differentially Expressed Genes Table",
+                                       "Enriched Genes Table",
                                        br(),
                                        span(
                                          "Generated using R enrichR."
+                                       ),
+                                       br(),
+                                       br(),
+                                       selectInput(
+                                         "geneEnrichmentDataTable",
+                                         "Select if you want to view results
+                                         for all differentially expressed
+                                         genes, upregulated genes or
+                                         downregulated genes",
+                                         choices = c("All differentially
+                                         expressed genes",
+                                                     "Upregulated genes",
+                                                     "Downregulated genes"),
+                                         selected = "All differentially
+                                         expressed genes"
                                        ),
                                        br(),
                                        br(),
@@ -768,70 +783,114 @@ sourceEnrichmentnUi <- function() {
                                          'differentiallyExpressedGenesEnrichmentTable')
                                      ),
                                      tabPanel(
-                                       "Differentially Expressed Genes Plot",
+                                       "Volcano Plot",
                                        br(),
                                        span(
                                          "Generated using R enrichR."
                                        ),
                                        br(),
                                        br(),
-                                       plotOutput('differentiallyExpressedGenesEnrichmentPlot')
+                                       selectInput(
+                                         "geneEnrichmentDataVolcanoPlot",
+                                         "Select if you want to view results
+                                         for all differentially expressed
+                                         genes, upregulated genes or
+                                         downregulated genes",
+                                         choices = c("All differentially
+                                         expressed genes",
+                                                     "Upregulated genes",
+                                                     "Downregulated genes"),
+                                         selected = "All differentially
+                                         expressed genes"
+                                       ),
+                                       br(),
+                                       br(),
+                                       plotlyOutput('genesEnrichmentVolcanoPlot')
                                      ),
                                      tabPanel(
-                                       "Upregulated Genes Table",
+                                       "Manhattan Plot",
                                        br(),
                                        span(
                                          "Generated using R enrichR."
                                        ),
                                        br(),
                                        br(),
-                                       downloadButton(
-                                         "downloadUpregulatedGenesEnrichmentTable",
-                                         "Download"),
+                                       selectInput(
+                                         "geneEnrichmentDataManhattanPlot",
+                                         "Select if you want to view results
+                                         for all differentially expressed
+                                         genes, upregulated genes or
+                                         downregulated genes",
+                                         choices = c("All differentially
+                                         expressed genes",
+                                                     "Upregulated genes",
+                                                     "Downregulated genes"),
+                                         selected = "All differentially
+                                         expressed genes"
+                                       ),
                                        br(),
                                        br(),
-                                       dataTableOutput(
-                                         'upregulatedGenesEnrichmentTable')
+                                       plotlyOutput('genesEnrichmentManhattanPlot')
                                      ),
                                      tabPanel(
-                                       "Upregulated Genes Plot",
+                                       "Barchart Plot",
                                        br(),
                                        span(
                                          "Generated using R enrichR."
                                        ),
                                        br(),
                                        br(),
-                                       plotOutput(
-                                         'upregulatedGenesEnrichmentPlot')
-                                     ),
-                                     tabPanel(
-                                       "Downregulated Genes Table",
-                                       br(),
-                                       span(
-                                         "Generated using R enrichR."
+                                       selectInput(
+                                         "geneEnrichmentDataBarchartPlot",
+                                         "Select if you want to view results
+                                         for all differentially expressed
+                                         genes, upregulated genes or
+                                         downregulated genes",
+                                         choices = c("All differentially
+                                         expressed genes",
+                                                     "Upregulated genes",
+                                                     "Downregulated genes"),
+                                         selected = "All differentially
+                                         expressed genes"
                                        ),
                                        br(),
                                        br(),
-                                       downloadButton(
-                                         "downloadDownregulatedGenesEnrichmentTable",
-                                         "Download"),
-                                       br(),
-                                       br(),
-                                       dataTableOutput(
-                                         'downregulatedGenesEnrichmentTable')
-                                     ),
-                                     tabPanel(
-                                       "Downregulated Genes Plot",
-                                       br(),
-                                       span(
-                                         "Generated using R enrichR."
+                                       selectInput(
+                                         "columnToSort",
+                                         "Select the column to display:",
+                                         choices = c("P.value",
+                                                     "Adjusted.P.value",
+                                                     "Odds.Ratio",
+                                                     "Combined.Score",
+                                                     "Log.P.Value",
+                                                     "Overlap.Value"),
+                                         selected = "P.value"
                                        ),
                                        br(),
                                        br(),
-                                       plotOutput(
-                                         'downregulatedGenesEnrichmentPlot')
-                                     ),
-                                   ))
+                                       sliderInput(
+                                         "recordsToDisplay",
+                                         "The number of gene sets to display:",
+                                         min = 0,
+                                         max = 100,
+                                         step = 1,
+                                         value = 10
+                                       ),
+                                       br(),
+                                       br(),
+                                       radioButtons(
+                                         "sortDecreasingly",
+                                         label = "Sort the values ascendingly
+                                         or descendingly:",
+                                         choices = list("Ascendingly", "Descendingly"),
+                                         selected = "Ascendingly"
+                                       ),
+                                       br(),
+                                       br(),
+                                       plotlyOutput('genesEnrichmentBarchartPlot')
+                                     )
+                                   )
+                           )
   return(enrichmentUi)
 }
 

@@ -1174,7 +1174,6 @@ loadGeoDataset <- function (input,
 #' @importFrom stringr str_trim
 #' @import markdown
 #' @importFrom knitr knit
-#' @importFrom utils str
 #' @author Guy Hunt
 #' @noRd
 performDifferentialGeneExpressionAnalysis <- function (input,
@@ -1527,7 +1526,6 @@ performDifferentialGeneExpressionAnalysis <- function (input,
       # Update gene annotation data with user input values
       observeEvent(input$geneAnnotationTable_cell_edit, {
         info <- input$geneAnnotationTable_cell_edit
-        str(info)
         try(all$updatedGeneAnnotationTable[info$row,info$col] <- info$value)
         })
 
@@ -1615,38 +1613,18 @@ performGeneEnrichmentAnalysis <- function (input,
               return(NULL)
             })
 
-            # Display table of differentially expressed genes
-            output$differentiallyExpressedGenesEnrichmentTable <- tryCatch({
-              renderDataTable(
-                enrichedDifferentiallyExpressedGenes,
-                server = FALSE,
-                escape = FALSE,
-                selection = 'none'
-              )},
+            enrichedDifferentiallyExpressedGenes <- tryCatch({
+              calculateLogPValue(enrichedDifferentiallyExpressedGenes)},
               error = function(e) {
                 # return a safeError if a parsing error occurs
-                stop(safeError(e))
+                return(enrichedDifferentiallyExpressedGenes)
               })
 
-            # Download differentially expressed gene enrichment
-            output$downloadDifferentiallyExpressedGenesEnrichmentTable <-
-              try(downloadHandler(
-                filename = "differentially_expressed_gene_enrichment.csv",
-                content = function(file) {
-                  write.csv(enrichedDifferentiallyExpressedGenes,
-                            file,
-                            row.names = TRUE)
-                }
-              ))
-
-            # Plot Differentially Expressed Genes
-            output$differentiallyExpressedGenesEnrichmentPlot <- tryCatch({
-              renderPlot({
-                plotGeneEnrichmentinformation(
-                  enrichedDifferentiallyExpressedGenes)})},
-              error = function(e) {
+            enrichedDifferentiallyExpressedGenes <- tryCatch({
+              calculateOverlapFractions(
+                enrichedDifferentiallyExpressedGenes)}, error = function(e) {
                 # return a safeError if a parsing error occurs
-                stop(safeError(e))
+                return(enrichedDifferentiallyExpressedGenes)
               })
 
             # Extract Upregulated genes
@@ -1661,6 +1639,8 @@ performGeneEnrichmentAnalysis <- function (input,
               showNotification("There are no upregulated genes.
                            Therefore, upregulated gene enrichment analysis will
                            not be performed.", type = "warning")
+
+              enrichedUpregulatedGenes <- NULL
             } else {
               # Extract upregulated gene symbols
               upregulatedGenesGeneSymbols <- tryCatch({
@@ -1678,38 +1658,21 @@ performGeneEnrichmentAnalysis <- function (input,
                 return(NULL)
               })
 
-              # Display table of upregulated genes
-              output$upregulatedGenesEnrichmentTable <- tryCatch({
-                renderDataTable(
-                  enrichedUpregulatedGenes,
-                  server = FALSE,
-                  escape = FALSE,
-                  selection = 'none'
-                )},
+              enrichedUpregulatedGenes <- tryCatch({
+                calculateLogPValue(enrichedUpregulatedGenes)},
                 error = function(e) {
                   # return a safeError if a parsing error occurs
-                  stop(safeError(e))
+                  return(enrichedUpregulatedGenes)
                 })
 
-              # Download up regulated gene enrichment
-              output$downloadUpregulatedGenesEnrichmentTable <-
-                try(downloadHandler(
-                  filename = "upregulated_gene_enrichment.csv",
-                  content = function(file) {
-                    write.csv(enrichedUpregulatedGenes,
-                              file,
-                              row.names = TRUE)
-                  }
-                ))
-
-              # Plot Upregulated Genes
-              output$upregulatedGenesEnrichmentPlot <- tryCatch({renderPlot({
-                plotGeneEnrichmentinformation(enrichedUpregulatedGenes)})},
-                error = function(e) {
-                  # return a safeError if a parsing error occurs
-                  stop(safeError(e))
-                })
+              enrichedUpregulatedGenes <- tryCatch({
+                calculateOverlapFractions(
+                  enrichedUpregulatedGenes)}, error = function(e) {
+                    # return a safeError if a parsing error occurs
+                    return(enrichedUpregulatedGenes)
+                  })
             }
+
 
             # Extract downregulated genes
             downregulatedGenes <- tryCatch({
@@ -1725,6 +1688,7 @@ performGeneEnrichmentAnalysis <- function (input,
                            Therefore, downregulated gene
                            enrichment analysis will
                            not be performed.", type = "warning")
+              enrichedDownregulatedGenes <- NULL
             } else {
               # Extract downregulated gene symbols
               downregulatedGenesGeneSymbols <- tryCatch({
@@ -1743,10 +1707,47 @@ performGeneEnrichmentAnalysis <- function (input,
                 return(NULL)
               })
 
-              # Display table of downregulated genes
-              output$downregulatedGenesEnrichmentTable <- tryCatch({
+              enrichedDownregulatedGenes <- tryCatch({
+                calculateLogPValue(enrichedDownregulatedGenes)},
+                error = function(e) {
+                  # return a safeError if a parsing error occurs
+                  return(enrichedDownregulatedGenes)
+                })
+
+              enrichedDownregulatedGenes <- tryCatch({
+                calculateOverlapFractions(
+                  enrichedDownregulatedGenes)}, error = function(e) {
+                    # return a safeError if a parsing error occurs
+                    return(enrichedDownregulatedGenes)
+                  })
+            }
+
+            observeEvent(input$geneEnrichmentDataBarchartPlot,{
+              updateSelectInput(session, "geneEnrichmentDataManhattanPlot",
+                                selected =
+                                  input$geneEnrichmentDataBarchartPlot)
+              updateSelectInput(session, "geneEnrichmentDataVolcanoPlot",
+                                selected =
+                                  input$geneEnrichmentDataBarchartPlot)
+
+              updateSelectInput(session, "geneEnrichmentDataTable",
+                                selected =
+                                  input$geneEnrichmentDataBarchartPlot)
+
+              if (input$geneEnrichmentDataBarchartPlot == "All differentially
+                                         expressed genes") {
+                enrichedGenes <- enrichedDifferentiallyExpressedGenes
+              } else if (input$geneEnrichmentDataBarchartPlot ==
+              "Upregulated genes") {
+                enrichedGenes <- enrichedUpregulatedGenes
+              } else {
+                enrichedGenes <- enrichedDownregulatedGenes
+              }
+
+              # Display table of differentially expressed genes
+              output$differentiallyExpressedGenesEnrichmentTable <- tryCatch({
                 renderDataTable(
-                  enrichedDownregulatedGenes,
+                  enrichedGenes,
                   server = FALSE,
                   escape = FALSE,
                   selection = 'none'
@@ -1756,25 +1757,123 @@ performGeneEnrichmentAnalysis <- function (input,
                   stop(safeError(e))
                 })
 
-              # Download down regulated gene enrichment
-              output$downloadDownregulatedGenesEnrichmentTable <-
+              # Download differentially expressed gene enrichment
+              output$downloadDifferentiallyExpressedGenesEnrichmentTable <-
                 try(downloadHandler(
-                  filename = "downregulated_gene_enrichment.csv",
+                  filename = "gene_enrichment.csv",
                   content = function(file) {
-                    write.csv(enrichedDownregulatedGenes,
+                    write.csv(enrichedGenes,
                               file,
                               row.names = TRUE)
                   }
                 ))
 
-              # Plot Downregulated Genes
-              output$downregulatedGenesEnrichmentPlot <- tryCatch({renderPlot({
-                plotGeneEnrichmentinformation(enrichedDownregulatedGenes)})},
+              # Plot Differentially Expressed Genes
+              output$differentiallyExpressedGenesEnrichmentPlot <- tryCatch({
+                renderPlot({
+                  plotGeneEnrichmentinformation(enrichedGenes)})},
                 error = function(e) {
                   # return a safeError if a parsing error occurs
                   stop(safeError(e))
                 })
-            }
+
+              output$genesEnrichmentVolcanoPlot <- tryCatch({renderPlotly({
+                interactiveGeneEnrichmentVolcanoPlot(
+                  enrichedGenes)
+              })},
+              error = function(e) {
+                # return a safeError if a parsing error occurs
+                stop(safeError(e))
+              })
+
+              output$genesEnrichmentManhattanPlot <- tryCatch({renderPlotly({
+                interactiveGeneEnrichmentManhattanPlot(
+                  enrichedGenes)
+              })},
+              error = function(e) {
+                # return a safeError if a parsing error occurs
+                stop(safeError(e))
+              })
+
+              reloadBarChart <-
+                reactive(
+                  c(
+                    input$sortDecreasingly,
+                    input$columnToSort,
+                    input$recordsToDisplay,
+                    input$geneEnrichmentDataBarchartPlot
+                  )
+                )
+
+              observeEvent(reloadBarChart(),
+                           {sortDecreasingly <- convertUiSortingMethod(
+                             input$sortDecreasingly)
+
+                           sortedEnrichedDifferentiallyExpressedGenes <- try(
+                             sortGeneEnrichmentTable(enrichedGenes,
+                                                     input$columnToSort,
+                                                     sortDecreasingly))
+
+                           topSortedEnrichedDifferentiallyExpressedGenes <-
+                             try(selectTopGeneEnrichmentRecords(
+                               sortedEnrichedDifferentiallyExpressedGenes,
+                               input$recordsToDisplay))
+
+                           output$genesEnrichmentBarchartPlot <- tryCatch({
+                             renderPlotly({
+                             interactiveGeneEnrichmentBarPlot(
+                               topSortedEnrichedDifferentiallyExpressedGenes,
+                               input$columnToSort)
+                           })},
+                           error = function(e) {
+                             # return a safeError if a parsing error occurs
+                             stop(safeError(e))
+                           })})
+
+              updateSliderInput(
+                session,
+                "recordsToDisplay",
+                max = nrow(enrichedGenes)
+              )
+
+
+            })
+
+            observeEvent(input$geneEnrichmentDataManhattanPlot,{
+              updateSelectInput(session, "geneEnrichmentDataBarchartPlot",
+                                selected =
+                                  input$geneEnrichmentDataManhattanPlot)
+              updateSelectInput(session, "geneEnrichmentDataVolcanoPlot",
+                                selected =
+                                  input$geneEnrichmentDataManhattanPlot)
+              updateSelectInput(session, "geneEnrichmentDataTable",
+                                selected =
+                                  input$geneEnrichmentDataManhattanPlot)
+            })
+
+            observeEvent(input$geneEnrichmentDataVolcanoPlot,{
+              updateSelectInput(session, "geneEnrichmentDataBarchartPlot",
+                                selected =
+                                  input$geneEnrichmentDataVolcanoPlot)
+              updateSelectInput(session, "geneEnrichmentDataManhattanPlot",
+                                selected =
+                                  input$geneEnrichmentDataVolcanoPlot)
+              updateSelectInput(session, "geneEnrichmentDataTable",
+                                selected =
+                                  input$geneEnrichmentDataVolcanoPlot)
+            })
+
+            observeEvent(input$geneEnrichmentDataTable,{
+              updateSelectInput(session, "geneEnrichmentDataBarchartPlot",
+                                selected =
+                                  input$geneEnrichmentDataTable)
+              updateSelectInput(session, "geneEnrichmentDataManhattanPlot",
+                                selected =
+                                  input$geneEnrichmentDataTable)
+              updateSelectInput(session, "geneEnrichmentDataVolcanoPlot",
+                                selected =
+                                  input$geneEnrichmentDataTable)
+            })
 
             showNotification("Gene enrichment analysis completed!",
                              type = "message")

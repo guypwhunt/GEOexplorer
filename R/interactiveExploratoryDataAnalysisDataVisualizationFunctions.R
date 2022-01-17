@@ -370,19 +370,19 @@ interactiveMeanVariancePlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Gene ID: ',
                     Gene.ID,
-                    '<br></br>',
+                    '<br>',
                     'Amean: ',
                     Amean,
-                    '<br></br>',
+                    '<br>',
                     'Sigma: ',
                     sigma
                   )
@@ -390,16 +390,16 @@ interactiveMeanVariancePlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Amean: ',
                     Amean,
-                    '<br></br>',
+                    '<br>',
                     'Sigma: ',
                     sigma
                   )
@@ -408,13 +408,13 @@ interactiveMeanVariancePlot <-
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Amean: ',
                   Amean,
-                  '<br></br>',
+                  '<br>',
                   'Sigma: ',
                   sigma
                 )
@@ -422,15 +422,15 @@ interactiveMeanVariancePlot <-
             } else {
               ~ paste('ID: ',
                       ID,
-                      '<br></br>',
+                      '<br>',
                       'Amean: ',
                       Amean,
-                      '<br></br>',
+                      '<br>',
                       'Sigma: ',
                       sigma)
             }
           } else{
-            ~ paste('Amean: ', Amean, '<br></br>', 'Sigma: ', sigma)
+            ~ paste('Amean: ', Amean, '<br>', 'Sigma: ', sigma)
           }
         ,
         hoverinfo = text,
@@ -700,19 +700,19 @@ interactivePrincompPcaIndividualsPlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Gene ID: ',
                     Gene.ID,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 1: ',
                     Comp.1,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 2: ',
                     Comp.2
                   )
@@ -720,16 +720,16 @@ interactivePrincompPcaIndividualsPlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 1: ',
                     Comp.1,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 2: ',
                     Comp.2
                   )
@@ -738,13 +738,13 @@ interactivePrincompPcaIndividualsPlot <-
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Dimension 1: ',
                   Comp.1,
-                  '<br></br>',
+                  '<br>',
                   'Dimension 2: ',
                   Comp.2
                 )
@@ -753,16 +753,16 @@ interactivePrincompPcaIndividualsPlot <-
               ~ paste(
                 'ID: ',
                 ID,
-                '<br></br>',
+                '<br>',
                 'Dimension 1: ',
                 Comp.1,
-                '<br></br>',
+                '<br>',
                 'Dimension 2: ',
                 Comp.2
               )
             }
           } else {
-            ~ paste('Dimension 1: ', Comp.1, '<br></br>',
+            ~ paste('Dimension 1: ', Comp.1, '<br>',
                     'Dimension 2: ', Comp.2)
           }
         ,
@@ -1026,19 +1026,19 @@ interactivePrcompPcaIndividualsPlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Gene ID: ',
                     Gene.ID,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 1: ',
                     PC1,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 2: ',
                     PC2
                   )
@@ -1046,16 +1046,16 @@ interactivePrcompPcaIndividualsPlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 1: ',
                     PC1,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 2: ',
                     PC2
                   )
@@ -1064,13 +1064,13 @@ interactivePrcompPcaIndividualsPlot <-
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Dimension 1: ',
                   PC1,
-                  '<br></br>',
+                  '<br>',
                   'Dimension 2: ',
                   PC2
                 )
@@ -1078,15 +1078,15 @@ interactivePrcompPcaIndividualsPlot <-
             } else {
               ~ paste('ID: ',
                       ID,
-                      '<br></br>',
+                      '<br>',
                       'Dimension 1: ',
                       PC1,
-                      '<br></br>',
+                      '<br>',
                       'Dimension 2: ',
                       PC2)
             }
           } else {
-            ~ paste('Dimension 1: ', PC1, '<br></br>',
+            ~ paste('Dimension 1: ', PC1, '<br>',
                     'Dimension 2: ', PC2)
           }
         ,
@@ -1207,19 +1207,19 @@ interactive3DPrcompPcaIndividualsPlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Gene ID: ',
                     Gene.ID,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 1: ',
                     PC1,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 2: ',
                     PC2
                   )
@@ -1227,16 +1227,16 @@ interactive3DPrcompPcaIndividualsPlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 1: ',
                     PC1,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 2: ',
                     PC2
                   )
@@ -1245,13 +1245,13 @@ interactive3DPrcompPcaIndividualsPlot <-
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Dimension 1: ',
                   PC1,
-                  '<br></br>',
+                  '<br>',
                   'Dimension 2: ',
                   PC2
                 )
@@ -1259,15 +1259,15 @@ interactive3DPrcompPcaIndividualsPlot <-
             } else {
               ~ paste('ID: ',
                       ID,
-                      '<br></br>',
+                      '<br>',
                       'Dimension 1: ',
                       PC1,
-                      '<br></br>',
+                      '<br>',
                       'Dimension 2: ',
                       PC2)
             }
           } else {
-            ~ paste('Dimension 1: ', PC1, '<br></br>',
+            ~ paste('Dimension 1: ', PC1, '<br>',
                     'Dimension 2: ', PC2)
           }
         ,

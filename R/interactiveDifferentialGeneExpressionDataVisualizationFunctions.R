@@ -243,19 +243,19 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
               ~ paste(
                 'ID: ',
                 ID,
-                '<br></br>',
+                '<br>',
                 'Gene Symbol: ',
                 Gene.symbol,
-                '<br></br>',
+                '<br>',
                 'Gene Title: ',
                 Gene.title,
-                '<br></br>',
+                '<br>',
                 'Gene ID: ',
                 Gene.ID,
-                '<br></br>',
+                '<br>',
                 'Average Log-Expression: ',
                 aMean,
-                '<br></br>',
+                '<br>',
                 'Log-Fold-Change: ',
                 coefficients
               )
@@ -263,16 +263,16 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
               ~ paste(
                 'ID: ',
                 ID,
-                '<br></br>',
+                '<br>',
                 'Gene Symbol: ',
                 Gene.symbol,
-                '<br></br>',
+                '<br>',
                 'Gene Title: ',
                 Gene.title,
-                '<br></br>',
+                '<br>',
                 'Average Log-Expression: ',
                 aMean,
-                '<br></br>',
+                '<br>',
                 'Log-Fold-Change: ',
                 coefficients
               )
@@ -281,14 +281,14 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
             ~ paste(
               'ID: ',
               ID,
-              '<br></br>',
+              '<br>',
               'Gene Symbol: ',
               Gene.symbol,
-              '<br></br>',
-              '<br></br>',
+              '<br>',
+              '<br>',
               'Average Log-Expression: ',
               aMean,
-              '<br></br>',
+              '<br>',
               'Log-Fold-Change: ',
               coefficients
             )
@@ -297,10 +297,10 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
           ~ paste(
             'ID: ',
             ID,
-            '<br></br>',
+            '<br>',
             'Average Log-Expression: ',
             aMean,
-            '<br></br>',
+            '<br>',
             'Log-Fold-Change: ',
             coefficients
           )
@@ -308,7 +308,7 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
       } else {
         ~ paste('Average Log-Expression: ',
                 aMean,
-                '<br></br>',
+                '<br>',
                 'Log-Fold-Change: ',
                 coefficients)
       }
@@ -471,19 +471,19 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Gene Title: ',
                   Gene.title,
-                  '<br></br>',
+                  '<br>',
                   'Gene ID: ',
                   Gene.ID,
-                  '<br></br>',
+                  '<br>',
                   'Log2 Fold Change: ',
                   coefficients,
-                  '<br></br>',
+                  '<br>',
                   '-Log10(P-Value): ',
                   pValues
                 )
@@ -491,16 +491,16 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Gene Title: ',
                   Gene.title,
-                  '<br></br>',
+                  '<br>',
                   'Log2 Fold Change: ',
                   coefficients,
-                  '<br></br>',
+                  '<br>',
                   '-Log10(P-Value): ',
                   pValues
                 )
@@ -509,14 +509,14 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
               ~ paste(
                 'ID: ',
                 ID,
-                '<br></br>',
+                '<br>',
                 'Gene Symbol: ',
                 Gene.symbol,
-                '<br></br>',
-                '<br></br>',
+                '<br>',
+                '<br>',
                 'Log2 Fold Change: ',
                 coefficients,
-                '<br></br>',
+                '<br>',
                 '-Log10(P-Value): ',
                 pValues
               )
@@ -525,10 +525,10 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
             ~ paste(
               'ID: ',
               ID,
-              '<br></br>',
+              '<br>',
               'Log2 Fold Change: ',
               coefficients,
-              '<br></br>',
+              '<br>',
               '-Log10(P-Value): ',
               pValues
             )
@@ -536,7 +536,7 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
         } else {
           ~ paste('Log2 Fold Change: ',
                   coefficients,
-                  '<br></br>',
+                  '<br>',
                   '-Log10(P-Value): ',
                   pValues)
         }
@@ -704,19 +704,19 @@ interactiveQQPlot <- function(fit2, dT, ct) {
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Gene Title: ',
                   Gene.title,
-                  '<br></br>',
+                  '<br>',
                   'Gene ID: ',
                   Gene.ID,
-                  '<br></br>',
+                  '<br>',
                   'Theoretical Quantiles: ',
                   x,
-                  '<br></br>',
+                  '<br>',
                   'Sample Quantiles: ',
                   y
                 )
@@ -724,16 +724,16 @@ interactiveQQPlot <- function(fit2, dT, ct) {
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Gene Title: ',
                   Gene.title,
-                  '<br></br>',
+                  '<br>',
                   'Theoretical Quantiles: ',
                   x,
-                  '<br></br>',
+                  '<br>',
                   'Sample Quantiles: ',
                   y
                 )
@@ -742,13 +742,13 @@ interactiveQQPlot <- function(fit2, dT, ct) {
               ~ paste(
                 'ID: ',
                 ID,
-                '<br></br>',
+                '<br>',
                 'Gene Symbol: ',
                 Gene.symbol,
-                '<br></br>',
+                '<br>',
                 'Theoretical Quantiles: ',
                 x,
-                '<br></br>',
+                '<br>',
                 'Sample Quantiles: ',
                 y
               )
@@ -757,10 +757,10 @@ interactiveQQPlot <- function(fit2, dT, ct) {
             ~ paste(
               'ID: ',
               ID,
-              '<br></br>',
+              '<br>',
               'Theoretical Quantiles: ',
               x,
-              '<br></br>',
+              '<br>',
               'Sample Quantiles: ',
               y
             )
@@ -768,7 +768,7 @@ interactiveQQPlot <- function(fit2, dT, ct) {
         } else {
           ~ paste('Theoretical Quantiles: ',
                   x,
-                  '<br></br>',
+                  '<br>',
                   'Sample Quantiles: ',
                   y)
         }
