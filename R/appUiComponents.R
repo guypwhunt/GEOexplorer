@@ -752,7 +752,7 @@ sourceEnrichmentnUi <- function() {
                                        uiOutput("output101")
                                      ),
                                      tabPanel(
-                                       "Enriched Genes Table",
+                                       "Gene Enrichment Table",
                                        br(),
                                        span(
                                          "Generated using R enrichR."
@@ -765,8 +765,7 @@ sourceEnrichmentnUi <- function() {
                                          for all differentially expressed
                                          genes, upregulated genes or
                                          downregulated genes",
-                                         choices = c("All differentially
-                                         expressed genes",
+                                         choices = c("All differentially expressed genes",
                                                      "Upregulated genes",
                                                      "Downregulated genes"),
                                          selected = "All differentially
@@ -796,12 +795,10 @@ sourceEnrichmentnUi <- function() {
                                          for all differentially expressed
                                          genes, upregulated genes or
                                          downregulated genes",
-                                         choices = c("All differentially
-                                         expressed genes",
+                                         choices = c("All differentially expressed genes",
                                                      "Upregulated genes",
                                                      "Downregulated genes"),
-                                         selected = "All differentially
-                                         expressed genes"
+                                         selected = "All differentially expressed genes"
                                        ),
                                        br(),
                                        br(),
@@ -815,19 +812,38 @@ sourceEnrichmentnUi <- function() {
                                        ),
                                        br(),
                                        br(),
-                                       selectInput(
-                                         "geneEnrichmentDataManhattanPlot",
-                                         "Select if you want to view results
+                                       fluidRow(column(
+                                         6,
+                                         selectInput(
+                                           "geneEnrichmentDataManhattanPlot",
+                                           "Select if you want to view results
                                          for all differentially expressed
                                          genes, upregulated genes or
                                          downregulated genes",
-                                         choices = c("All differentially
-                                         expressed genes",
-                                                     "Upregulated genes",
-                                                     "Downregulated genes"),
-                                         selected = "All differentially
-                                         expressed genes"
+                                           choices = c(
+                                             "All differentially expressed genes",
+                                             "Upregulated genes",
+                                             "Downregulated genes"
+                                           ),
+                                           selected = "All differentially expressed genes"
+                                         )
                                        ),
+                                       column(
+                                         6,
+                                         selectInput(
+                                           "columnToSortManhattanPlot",
+                                           "Select the column to display:",
+                                           choices = c(
+                                             "P.value",
+                                             "Adjusted.P.value",
+                                             "Odds.Ratio",
+                                             "Combined.Score",
+                                             "Log.P.Value",
+                                             "Overlap.Value"
+                                           ),
+                                           selected = "P.value"
+                                         )
+                                       )),
                                        br(),
                                        br(),
                                        plotlyOutput('genesEnrichmentManhattanPlot')
@@ -840,51 +856,50 @@ sourceEnrichmentnUi <- function() {
                                        ),
                                        br(),
                                        br(),
-                                       selectInput(
-                                         "geneEnrichmentDataBarchartPlot",
-                                         "Select if you want to view results
-                                         for all differentially expressed
-                                         genes, upregulated genes or
-                                         downregulated genes",
-                                         choices = c("All differentially
-                                         expressed genes",
-                                                     "Upregulated genes",
-                                                     "Downregulated genes"),
-                                         selected = "All differentially
-                                         expressed genes"
-                                       ),
-                                       br(),
-                                       br(),
-                                       selectInput(
-                                         "columnToSort",
-                                         "Select the column to display:",
-                                         choices = c("P.value",
-                                                     "Adjusted.P.value",
-                                                     "Odds.Ratio",
-                                                     "Combined.Score",
-                                                     "Log.P.Value",
-                                                     "Overlap.Value"),
-                                         selected = "P.value"
-                                       ),
-                                       br(),
-                                       br(),
-                                       sliderInput(
-                                         "recordsToDisplay",
-                                         "The number of gene sets to display:",
-                                         min = 0,
-                                         max = 100,
-                                         step = 1,
-                                         value = 10
-                                       ),
-                                       br(),
-                                       br(),
-                                       radioButtons(
-                                         "sortDecreasingly",
-                                         label = "Sort the values ascendingly
+                                       fluidRow(
+                                         column(6,
+                                           selectInput(
+                                             "geneEnrichmentDataBarchartPlot",
+                                             "Select if you want to view results
+                                             for all differentially expressed
+                                             genes, upregulated genes or
+                                             downregulated genes",
+                                             choices = c("All differentially expressed genes",
+                                                         "Upregulated genes",
+                                                         "Downregulated genes"),
+                                             selected = "All differentially expressed genes"
+                                           ),
+                                           br(),
+                                           br(),
+                                           selectInput(
+                                             "columnToSortBarChartPlot",
+                                             "Select the column to display:",
+                                             choices = c("P.value",
+                                                         "Adjusted.P.value",
+                                                         "Odds.Ratio",
+                                                         "Combined.Score",
+                                                         "Log.P.Value",
+                                                         "Overlap.Value"),
+                                             selected = "P.value"
+                                           )),
+                                         column(6,
+                                           sliderInput(
+                                             "recordsToDisplay",
+                                             "The number of gene sets to display:",
+                                             min = 0,
+                                             max = 100,
+                                             step = 1,
+                                             value = 10
+                                           ),
+                                           br(),
+                                           br(),
+                                           radioButtons(
+                                             "sortDecreasingly",
+                                             label = "Sort the values ascendingly
                                          or descendingly:",
-                                         choices = list("Ascendingly", "Descendingly"),
-                                         selected = "Ascendingly"
-                                       ),
+                                             choices = list("Ascendingly", "Descendingly"),
+                                             selected = "Ascendingly"
+                                           ))),
                                        br(),
                                        br(),
                                        plotlyOutput('genesEnrichmentBarchartPlot')

@@ -1,8 +1,8 @@
 Package: GEOexplorer
 Title: GEOexplorer: an R/Bioconductor package and web application for gene 
   expression analysis and visualisation
-Date: 2022/01/14
-Version: 1.1.6
+Date: 2022/01/18
+Version: 1.1.7
 Authors@R: 
   c(person(given = "Guy",
            family = "Hunt",

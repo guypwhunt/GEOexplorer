@@ -143,19 +143,27 @@ calculateOverlapFractions  <- function(geneEnrichmentTable) {
 #' @import plotly
 #' @author Guy Hunt
 #' @noRd
-interactiveGeneEnrichmentManhattanPlot  <- function(geneEnrichmentTable) {
+interactiveGeneEnrichmentManhattanPlot  <- function(geneEnrichmentTable,
+                                                    columnToSort) {
+
+  selectedColumn <- geneEnrichmentColumnSelection(geneEnrichmentTable,
+                                                  columnToSort)
+
   fig <- plot_ly(geneEnrichmentTable,
+                 y = selectedColumn,
                  x = ~Term,
-                 y = ~Log.P.Value,
+                 color = selectedColumn,
                  type = "scatter",
                  mode = 'markers',
-                 text = geneEnrichmentPlotText(geneEnrichmentTable),
-                 color = ~Log.P.Value
+                 text = geneEnrichmentPlotText(geneEnrichmentTable)
   )
 
-  fig <- fig %>% layout(xaxis = list(showticklabels = FALSE,
-                                     title = ""),
-                        yaxis = list(title = "-log10(P-value)"))
+  fig <- fig %>% layout(xaxis = list(categoryorder = "array",
+                                     categoryarray = selectedColumn,
+                                     showticklabels = FALSE,
+                                     title = ""
+                                     ),
+                        yaxis = list(title = columnToSort))
 
   return(fig)
 }
@@ -188,17 +196,19 @@ interactiveGeneEnrichmentVolcanoPlot  <- function(geneEnrichmentTable) {
 #' @noRd
 interactiveGeneEnrichmentBarPlot  <- function(geneEnrichmentTable,
                                               columnToSort) {
+  selectedColumn <- geneEnrichmentColumnSelection(geneEnrichmentTable,
+                                                  columnToSort)
+
   fig <- plot_ly(geneEnrichmentTable,
-                 x = geneEnrichmentColumnSelection(geneEnrichmentTable,
-                                                   columnToSort),
-                 color =
-                   geneEnrichmentColumnSelection(geneEnrichmentTable,
-                                                 columnToSort),
+                 x = selectedColumn,
+                 color = selectedColumn,
                  text = geneEnrichmentPlotText(geneEnrichmentTable),
                  y = ~Term, type = 'bar', orientation = 'h')
 
   fig <- fig %>% layout(xaxis = list(title = columnToSort),
-                        yaxis = list(title = "Term"))
+                        yaxis = list(title = "Term",
+                                     categoryorder = "array",
+                                     categoryarray = selectedColumn))
 
   return(fig)
 }

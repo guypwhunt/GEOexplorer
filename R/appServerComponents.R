@@ -1558,11 +1558,46 @@ performGeneEnrichmentAnalysis <- function (input,
   geneEnrichmentAnalysisServerComponents <- {
     # Reset all Visualisations
     output$differentiallyExpressedGenesEnrichmentTable <- renderDataTable({})
-    output$differentiallyExpressedGenesEnrichmentPlot <- renderPlot({})
-    output$upregulatedGenesEnrichmentTable <- renderDataTable({})
-    output$upregulatedGenesEnrichmentPlot <- renderPlot({})
-    output$downregulatedGenesEnrichmentTable <- renderDataTable({})
-    output$downregulatedGenesEnrichmentPlot <- renderPlot({})
+    output$genesEnrichmentVolcanoPlot <- renderPlotly({})
+    output$genesEnrichmentManhattanPlot <- renderPlotly({})
+    output$genesEnrichmentBarchartPlot <- renderPlotly({})
+
+    updateSelectInput(
+      session,
+      "geneEnrichmentDataManhattanPlot",
+      choices = c(
+        "All differentially expressed genes",
+        "Upregulated genes",
+        "Downregulated genes"
+      )
+    )
+    updateSelectInput(
+      session,
+      "geneEnrichmentDataBarchartPlot",
+      choices = c(
+        "All differentially expressed genes",
+        "Upregulated genes",
+        "Downregulated genes"
+      )
+    )
+    updateSelectInput(
+      session,
+      "geneEnrichmentDataTable",
+      choices = c(
+        "All differentially expressed genes",
+        "Upregulated genes",
+        "Downregulated genes"
+      )
+    )
+    updateSelectInput(
+      session,
+      "geneEnrichmentDataVolcanoPlot",
+      choices = c(
+        "All differentially expressed genes",
+        "Upregulated genes",
+        "Downregulated genes"
+      )
+    )
 
     if(errorChecks$continueWorkflow) {
       if (!is.null(databaseNames)) {
@@ -1641,6 +1676,16 @@ performGeneEnrichmentAnalysis <- function (input,
                            not be performed.", type = "warning")
 
               enrichedUpregulatedGenes <- NULL
+
+              updateSelectInput(session, "geneEnrichmentDataManhattanPlot",
+                                choices = c("All differentially expressed genes",
+                                            "Downregulated genes"))
+              updateSelectInput(session, "geneEnrichmentDataBarchartPlot",
+                                choices = c("All differentially expressed genes", "Downregulated genes"))
+              updateSelectInput(session, "geneEnrichmentDataTable",
+                                choices = c("All differentially expressed genes", "Downregulated genes"))
+              updateSelectInput(session, "geneEnrichmentDataVolcanoPlot",
+                                choices = c("All differentially expressed genes", "Downregulated genes"))
             } else {
               # Extract upregulated gene symbols
               upregulatedGenesGeneSymbols <- tryCatch({
@@ -1689,6 +1734,16 @@ performGeneEnrichmentAnalysis <- function (input,
                            enrichment analysis will
                            not be performed.", type = "warning")
               enrichedDownregulatedGenes <- NULL
+
+              updateSelectInput(session, "geneEnrichmentDataManhattanPlot",
+                                choices = c("All differentially expressed genes", "Upregulated genes"))
+              updateSelectInput(session, "geneEnrichmentDataBarchartPlot",
+                                choices = c("All differentially expressed genes", "Upregulated genes"))
+              updateSelectInput(session, "geneEnrichmentDataTable",
+                                choices = c("All differentially expressed genes", "Upregulated genes"))
+              updateSelectInput(session, "geneEnrichmentDataVolcanoPlot",
+                                choices = c("All differentially expressed genes", "Upregulated genes"))
+
             } else {
               # Extract downregulated gene symbols
               downregulatedGenesGeneSymbols <- tryCatch({
@@ -1734,8 +1789,7 @@ performGeneEnrichmentAnalysis <- function (input,
                                 selected =
                                   input$geneEnrichmentDataBarchartPlot)
 
-              if (input$geneEnrichmentDataBarchartPlot == "All differentially
-                                         expressed genes") {
+              if (input$geneEnrichmentDataBarchartPlot == "All differentially expressed genes") {
                 enrichedGenes <- enrichedDifferentiallyExpressedGenes
               } else if (input$geneEnrichmentDataBarchartPlot ==
               "Upregulated genes") {
@@ -1786,32 +1840,42 @@ performGeneEnrichmentAnalysis <- function (input,
                 stop(safeError(e))
               })
 
-              output$genesEnrichmentManhattanPlot <- tryCatch({renderPlotly({
-                interactiveGeneEnrichmentManhattanPlot(
-                  enrichedGenes)
+              observeEvent(input$columnToSortManhattanPlot,{
+                updateSelectInput(session, "columnToSortBarChartPlot",
+                                  selected = input$columnToSortManhattanPlot)
+
+                output$genesEnrichmentManhattanPlot <- tryCatch({renderPlotly({
+                  interactiveGeneEnrichmentManhattanPlot(
+                    enrichedGenes,
+                    input$columnToSortManhattanPlot)
               })},
               error = function(e) {
                 # return a safeError if a parsing error occurs
                 stop(safeError(e))
+              })
               })
 
               reloadBarChart <-
                 reactive(
                   c(
                     input$sortDecreasingly,
-                    input$columnToSort,
+                    input$columnToSortBarChartPlot,
                     input$recordsToDisplay,
                     input$geneEnrichmentDataBarchartPlot
                   )
                 )
 
               observeEvent(reloadBarChart(),
-                           {sortDecreasingly <- convertUiSortingMethod(
+                           {updateSelectInput(
+                             session, "columnToSortManhattanPlot",
+                             selected = input$columnToSortBarChartPlot)
+
+                             sortDecreasingly <- convertUiSortingMethod(
                              input$sortDecreasingly)
 
                            sortedEnrichedDifferentiallyExpressedGenes <- try(
                              sortGeneEnrichmentTable(enrichedGenes,
-                                                     input$columnToSort,
+                                                     input$columnToSortBarChartPlot,
                                                      sortDecreasingly))
 
                            topSortedEnrichedDifferentiallyExpressedGenes <-
@@ -1823,7 +1887,7 @@ performGeneEnrichmentAnalysis <- function (input,
                              renderPlotly({
                              interactiveGeneEnrichmentBarPlot(
                                topSortedEnrichedDifferentiallyExpressedGenes,
-                               input$columnToSort)
+                               input$columnToSortBarChartPlot)
                            })},
                            error = function(e) {
                              # return a safeError if a parsing error occurs
