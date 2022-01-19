@@ -271,7 +271,8 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           "Top Differentially Expressed Genes",
           br(),
           span(
-            "The table below displays the top differentially expressed genes
+            "Generated using R limma. The table below displays the top
+            differentially expressed genes
             between the groups selected."
           ),
           br(),
@@ -318,7 +319,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           "Histogram Plot",
           br(),
           span(
-            "Generated using hist. Use to view the distribution of
+            "Generated using R limma and plotly. Use to view the distribution of
             the P-values in the analysis results.
             The P-value here is the same as in the Top differentially
             expressed genes table and computed
@@ -345,7 +346,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           "Q-Q Plot",
           br(),
           span(
-            "Generated using limma (qqt) and R plotly.
+            "Generated using R limma (qqt) and plotly.
             Plots the quantiles of a data sample against the
             theoretical quantiles of a Student's t distribution.
             This plot helps to assess the quality of the limma
@@ -361,8 +362,8 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           "Volcano Plot",
           br(),
           span(
-            "Generated using R plotly.
-            A volcano plot displays statistical significance
+            "Generated using R limma and plotly.
+            The volcano plot displays statistical significance
             (-log10 P value) versus magnitude of change (log2 fold change)
             and is useful for visualizing differentially expressed genes.
             Highlighted genes are significantly differentially expressed at
@@ -376,8 +377,8 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           "Mean Difference Plot",
           br(),
           span(
-            "Generated using R plotly.
-            A mean difference (MD) plot displays
+            "Generated using R limma and plotly.
+            The mean difference (MD) plot displays
             log2 fold change versus average
             log2 expression values and is useful for visualizing differentially
             expressed genes. Highlighted genes are significantly differentially
@@ -391,7 +392,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           "Heatmap Plot",
           br(),
           span(
-            "Generated using R heatmaply.
+            "Generated using R limma and heatmaply.
             A heatmap plot displaying the top differentially expressed genes
             expression values for each experimental condition. The expression
             values are displayed post KNN imputation, count per million
@@ -729,7 +730,8 @@ sourceEnrichmentnUi <- function() {
                                        br(),
                                        br(),
                                        tags$b("Select the column containg
-                                              the gene symbols."),
+                                              the gene symbols and input any
+                                              missing gene symbols."),
                                        br(),
                                        br(),
                                        dataTableOutput('geneAnnotationTable'),
@@ -755,7 +757,11 @@ sourceEnrichmentnUi <- function() {
                                        "Gene Enrichment Table",
                                        br(),
                                        span(
-                                         "Generated using R enrichR."
+                                         "Generated using R enrichR. The table
+                                         below displays the gene sets
+                                         identified from the genes, including
+                                         several summary and statistical
+                                         values."
                                        ),
                                        br(),
                                        br(),
@@ -785,7 +791,13 @@ sourceEnrichmentnUi <- function() {
                                        "Volcano Plot",
                                        br(),
                                        span(
-                                         "Generated using R enrichR."
+                                         "Generated using R enrichR. The
+                                         volcano plot displays statistical
+                                         significance (-log10 P value) versus
+                                         odds ratio and is useful for
+                                         visualizing
+                                         the statistically significant gene
+                                         sets."
                                        ),
                                        br(),
                                        br(),
@@ -808,7 +820,13 @@ sourceEnrichmentnUi <- function() {
                                        "Manhattan Plot",
                                        br(),
                                        span(
-                                         "Generated using R enrichR."
+                                         "Generated using R enrichR and
+                                         plotly. The
+                                         manhattan plot displays the gene sets
+                                         along the x axis and the user selected
+                                         column along the y axis. The points
+                                         are ordered based on the user selected
+                                         column."
                                        ),
                                        br(),
                                        br(),
@@ -852,7 +870,13 @@ sourceEnrichmentnUi <- function() {
                                        "Barchart Plot",
                                        br(),
                                        span(
-                                         "Generated using R enrichR."
+                                         "Generated using R enrichR and
+                                         plotly. The
+                                         Barchart plot displays the gene sets
+                                         along the y axis and the user selected
+                                         column along the y axis. The points
+                                         are ordered based on the user selected
+                                         column."
                                        ),
                                        br(),
                                        br(),

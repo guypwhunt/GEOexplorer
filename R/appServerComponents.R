@@ -7,7 +7,7 @@
 #' @importFrom utils write.csv object.size
 #' @importFrom htmltools HTML
 #' @importFrom xfun file_ext
-#' @importFrom stringr str_trim
+#' @importFrom stringr str_trim str_trunc
 #' @import markdown
 #' @importFrom knitr knit
 #' @author Guy Hunt
@@ -1505,6 +1505,9 @@ performDifferentialGeneExpressionAnalysis <- function (input,
               input, output, session, errorChecks, all)
           })
         }}
+
+      try(all$geneAnnotationTable[] <- lapply(all$geneAnnotationTable,
+                                            str_trunc, 20, ellipsis = ""))
 
       output$geneAnnotationTable <-
         tryCatch({
