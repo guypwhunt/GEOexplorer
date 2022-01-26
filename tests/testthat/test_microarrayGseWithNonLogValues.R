@@ -5,145 +5,153 @@ test_that("Microarray GSE with non-log values is handled correctly
           by all functions",
           {
             # Input Values
-            logTransformation <- "Auto-Detect"
-            knnTransformation <- "Yes"
-            knn <- 2
-            pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
-            limmaPrecisionWeights <- "Yes"
-            forceNormalization <- "Yes"
-            platformAnnotation <- "NCBI generated"
-            significanceLevelCutOff <- 0.05
-            dataSource <- "GEO"
-            typeOfData <- "Microarray"
-            dataSetType <- "Single"
+            input <- NULL
+            all <- NULL
+            input$logTransformation <- "Auto-Detect"
+            input$knnTransformation <- "Yes"
+            input$knn <- 2
+            input$pValueAdjustment <- 
+              "Benjamini & Hochberg (False discovery rate)"
+            input$limmaPrecisionWeights <- "Yes"
+            input$forceNormalization <- "Yes"
+            input$platformAnnotation <- "NCBI generated"
+            input$significanceLevelCutOff <- 0.05
+            input$dataSource <- "GEO"
+            all$typeOfData <- "Microarray"
+            input$dataSetType <- "Single"
 
-            # Get the GEO data for all platforms
-            geoAccessionCode <- "GSE2"
-            allGset <- getGeoObject(geoAccessionCode)
-            ed <- experimentData(allGset[[1]])
-            expect_equal(pubMedIds(ed), "")
-            ei <- expinfo(ed)
-            expect_equal(ei[1], "Yoshihiro,,Kagami", ignore_attr = TRUE)
-            expect_equal(ei[2], "", ignore_attr = TRUE) #lab
-            expect_equal(ei[3], "ykagami@brain.riken.go.jp",
+            # Get the GEO data for all all$platforms
+            input$geoAccessionCode <- "GSE2"
+            all$allGset <- getGeoObject(input$geoAccessionCode)
+            all$ed <- experimentData(all$allGset[[1]])
+            expect_equal(pubMedIds(all$ed), "")
+            all$ei <- expinfo(all$ed)
+            expect_equal(all$ei[1], "Yoshihiro,,Kagami", ignore_attr = TRUE)
+            expect_equal(all$ei[2], "", ignore_attr = TRUE) #lab
+            expect_equal(all$ei[3], "ykagami@brain.riken.go.jp",
                          ignore_attr = TRUE)
-            expect_equal(ei[4], "Cerebellar development", ignore_attr = TRUE)
+            expect_equal(all$ei[4], "Cerebellar development", 
+                         ignore_attr = TRUE)
             expect_equal(
-              ei[5],
+              all$ei[5],
               "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE2",
               ignore_attr = TRUE)
 
-            # Extract platforms
-            platforms <- extractPlatforms(allGset)
-            platform <- platforms[1]
-            expect_type(platforms, 'character')
-            expect_type(platform, 'character')
-            expect_equal(platform, "GPL8")
+            # Extract all$platforms
+            all$platforms <- extractPlatforms(all$allGset)
+            all$platform <- all$platforms[1]
+            expect_type(all$platforms, 'character')
+            expect_type(all$platform, 'character')
+            expect_equal(all$platform, "GPL8")
 
-            # Extract the GEO2R data from the specified platform
-            gsetData <- extractPlatformGset(allGset, platform)
-            expect_type(gsetData, 'S4')
-            expect_s4_class(gsetData, 'ExpressionSet')
-            expect_equal(nrow(pData(gsetData)), 5)
-            expect_equal(nrow(fData(gsetData)), 897)
+            # Extract the GEO2R data from the specified all$platform
+            all$gsetData <- extractPlatformGset(all$allGset, all$platform)
+            expect_type(all$gsetData, 'S4')
+            expect_s4_class(all$gsetData, 'ExpressionSet')
+            expect_equal(nrow(pData(all$gsetData)), 5)
+            expect_equal(nrow(fData(all$gsetData)), 897)
 
             # Extract the experiment information
-            experimentInformation <-
-              extractExperimentInformation(gsetData)
-            expect_type(experimentInformation, 'S4')
-            expect_s4_class(experimentInformation, 'MIAME')
-            expect_equal(experimentInformation@name, "Yoshihiro,,Kagami")
-            expect_equal(experimentInformation@lab, "")
-            expect_equal(experimentInformation@contact,
+            all$experimentInformation <-
+              extractExperimentInformation(all$gsetData)
+            expect_type(all$experimentInformation, 'S4')
+            expect_s4_class(all$experimentInformation, 'MIAME')
+            expect_equal(all$experimentInformation@name, "Yoshihiro,,Kagami")
+            expect_equal(all$experimentInformation@lab, "")
+            expect_equal(all$experimentInformation@contact,
                          "ykagami@brain.riken.go.jp")
-            expect_equal(experimentInformation@title, "Cerebellar development")
-            expect_equal(nchar(experimentInformation@title), 22)
+            expect_equal(all$experimentInformation@title, 
+                         "Cerebellar development")
+            expect_equal(nchar(all$experimentInformation@title), 22)
             expect_equal(
-              experimentInformation@url,
+              all$experimentInformation@url,
               "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE2"
             )
-            expect_equal(experimentInformation@pubMedIds, "")
+            expect_equal(all$experimentInformation@pubMedIds, "")
 
             # Extract Sample Information
-            sampleInfo <- extractSampleInformation(gsetData)
-            expect_type(sampleInfo, 'list')
-            expect_equal(nrow(sampleInfo), 5)
-            expect_equal(ncol(sampleInfo), 30)
+            all$sampleInfo <- extractSampleInformation(all$gsetData)
+            expect_type(all$sampleInfo, 'list')
+            expect_equal(nrow(all$sampleInfo), 5)
+            expect_equal(ncol(all$sampleInfo), 30)
 
             # Extract expression data
-            expressionData <- extractExpressionData(gsetData)
-            expect_type(expressionData, 'double')
-            expect_equal(ncol(expressionData), 5)
-            expect_equal(nrow(expressionData), 897)
+            all$expressionData <- extractExpressionData(all$gsetData)
+            expect_type(all$expressionData, 'double')
+            expect_equal(ncol(all$expressionData), 5)
+            expect_equal(nrow(all$expressionData), 897)
 
             # Get column Details
-            columnInfo <- extractSampleDetails(gsetData)
-            expect_type(columnInfo, 'list')
-            expect_equal(ncol(columnInfo), 5)
-            expect_equal(nrow(columnInfo), 5)
+            all$columnInfo <- extractSampleDetails(all$gsetData)
+            expect_type(all$columnInfo, 'list')
+            expect_equal(ncol(all$columnInfo), 5)
+            expect_equal(nrow(all$columnInfo), 5)
 
             # Is log transformation auto applied
-            autoLogInformation <-
-              calculateAutoLogTransformApplication(expressionData)
-            expect_type(autoLogInformation, 'character')
-            expect_equal(autoLogInformation,
+            all$autoLogInformation <-
+              calculateAutoLogTransformApplication(all$expressionData)
+            expect_type(all$autoLogInformation, 'character')
+            expect_equal(all$autoLogInformation,
                          "The auto-detect option applied log transformation.")
 
-            # Get a list of all the columns
-            columns <- extractSampleNames(expressionData)
-            expect_type(columns, 'character')
-            expect_equal(columns[1], "GSM50")
+            # Get a list of all the all$columns
+            all$columns <- extractSampleNames(all$expressionData)
+            expect_type(all$columns, 'character')
+            expect_equal(all$columns[1], "GSM50")
 
             # Apply log transformation to expression data if necessary
-            dataInput <-
-              calculateLogTransformation(expressionData, logTransformation)
-            expect_type(dataInput, 'double')
-            expect_equal(ncol(dataInput), 5)
-            expect_equal(nrow(dataInput), 897)
-            expect_equal(dataInput[1, 1], 6.5833085)
+            all$dataInput <-
+              calculateLogTransformation(all$expressionData, 
+                                         input$logTransformation)
+            expect_type(all$dataInput, 'double')
+            expect_equal(ncol(all$dataInput), 5)
+            expect_equal(nrow(all$dataInput), 897)
+            expect_equal(all$dataInput[1, 1], 6.5833085)
 
-            # Perform KNN transformation on log expression data if necessary
-            knnDataInput <- calculateKnnImpute(dataInput, "Yes")
-            expect_type(knnDataInput, 'double')
-            expect_equal(ncol(knnDataInput), 5)
-            expect_equal(nrow(knnDataInput), 897)
-            expect_equal(knnDataInput[1, 1], 6.5833085)
+            # Perform input$knn transformation on log expression data 
+            # if necessary
+            all$knnDataInput <- calculateKnnImpute(all$dataInput, "Yes")
+            expect_type(all$knnDataInput, 'double')
+            expect_equal(ncol(all$knnDataInput), 5)
+            expect_equal(nrow(all$knnDataInput), 897)
+            expect_equal(all$knnDataInput[1, 1], 6.5833085)
 
-            # Get a list of all the columns in the KNN output
-            knnColumns <- extractSampleNames(knnDataInput)
+            # Get a list of all the all$columns in the input$knn output
+            all$knnColumns <- extractSampleNames(all$knnDataInput)
 
-            # Get knn output column Details
-            knnColumnInfo <- extractSampleDetails(gsetData)
-            knnColumnInfo <- knnColumnInfo[knnColumns,]
+            # Get input$knn output column Details
+            all$knnColumnInfo <- extractSampleDetails(all$gsetData)
+            all$knnColumnInfo <- all$knnColumnInfo[all$knnColumns,]
 
             # Remove all incomplete rows
-            naOmitInput <- calculateNaOmit(knnDataInput)
-            expect_type(naOmitInput, 'double')
-            expect_equal(ncol(naOmitInput), 5)
-            expect_equal(nrow(naOmitInput), 897)
-            expect_equal(naOmitInput[1, 1], 6.5833085)
+            all$naOmitInput <- calculateNaOmit(all$knnDataInput)
+            expect_type(all$naOmitInput, 'double')
+            expect_equal(ncol(all$naOmitInput), 5)
+            expect_equal(nrow(all$naOmitInput), 897)
+            expect_equal(all$naOmitInput[1, 1], 6.5833085)
 
-            # Perform Princomp PCA analysis on KNN transformation
+            # Perform Princomp PCA analysis on input$knn transformation
             # expression data
-            pcaPrincompDataInput <-
-              calculatePrincompPca(naOmitInput)
-            expect_type(pcaPrincompDataInput, 'list')
-            expect_s3_class(pcaPrincompDataInput, 'princomp')
+            all$pcaPrincompDataInput <-
+              calculatePrincompPca(all$naOmitInput)
+            expect_type(all$pcaPrincompDataInput, 'list')
+            expect_s3_class(all$pcaPrincompDataInput, 'princomp')
 
-            # Perform Prcomp PCA analysis on KNN transformation expression data
-            pcaPrcompDataInput <- calculatePrcompPca(naOmitInput)
-            expect_type(pcaPrcompDataInput, 'list')
-            expect_s3_class(pcaPrcompDataInput, 'prcomp')
+            # Perform Prcomp PCA analysis on input$knn transformation 
+            # expression data
+            all$pcaPrcompDataInput <- calculatePrcompPca(all$naOmitInput)
+            expect_type(all$pcaPrcompDataInput, 'list')
+            expect_s3_class(all$pcaPrcompDataInput, 'prcomp')
 
             # Extract Experiment Information
             extractedExperimentInformation <-
-              convertExperimentInformation(experimentInformation)
+              convertExperimentInformation(all$experimentInformation)
             expect_type(extractedExperimentInformation, 'character')
             expect_equal(nchar(extractedExperimentInformation[1]), 1216)
 
             # Non-Interactive Box-and-Whisker Plot
             fig <-
-              nonInteractiveBoxAndWhiskerPlot(ex = knnDataInput)
+              nonInteractiveBoxAndWhiskerPlot(ex = all$knnDataInput)
             expect_type(fig, 'list')
             expect_type(fig$stats, 'double')
             expect_type(fig$n, 'double')
@@ -154,7 +162,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Box-and-Whisker Plot
             fig <-
-              interactiveBoxAndWhiskerPlot(knnDataInput)
+              interactiveBoxAndWhiskerPlot(all$knnDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -168,14 +176,14 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Non-Interactive Density Plot
             fig <-
-              nonInteractiveDensityPlot(ex = naOmitInput)
+              nonInteractiveDensityPlot(ex = all$naOmitInput)
             expect_type(fig, 'list')
             expect_type(fig$X, 'double')
             expect_type(fig$Y, 'double')
 
             # Interactive Density Plot
             fig <-
-              interactiveDensityPlot(naOmitInput)
+              interactiveDensityPlot(all$naOmitInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -189,7 +197,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # 3D Interactive Density Plot
             fig <-
-              interactiveThreeDDensityPlot(naOmitInput)
+              interactiveThreeDDensityPlot(all$naOmitInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -203,7 +211,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive UMAP
             fig <-
-              interactiveUmapPlot(naOmitInput, knn)
+              interactiveUmapPlot(all$naOmitInput, input$knn)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -217,7 +225,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Mean Variance Plot
             fig <-
-              interactiveMeanVariancePlot(naOmitInput, gsetData)
+              interactiveMeanVariancePlot(all$naOmitInput, all$gsetData)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -231,7 +239,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Princomp PCA Scree Plot
             fig <-
-              interactivePrincompPcaScreePlot(pcaPrincompDataInput)
+              interactivePrincompPcaScreePlot(all$pcaPrincompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -245,8 +253,8 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Princomp PCA Individual Plot
             fig <-
-              interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput,
-                                                    gsetData)
+              interactivePrincompPcaIndividualsPlot(all$pcaPrincompDataInput,
+                                                    all$gsetData)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -260,7 +268,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Princomp PCA Variables Plot
             fig <-
-              interactivePrincompPcaVariablesPlot(pcaPrincompDataInput)
+              interactivePrincompPcaVariablesPlot(all$pcaPrincompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -274,7 +282,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Prcomp PCA Scree Plot
             fig <-
-              interactivePrcompPcaScreePlot(pcaPrcompDataInput)
+              interactivePrcompPcaScreePlot(all$pcaPrcompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -288,7 +296,8 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Prcomp PCA Individual Plot
             fig <-
-              interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput, gsetData)
+              interactivePrcompPcaIndividualsPlot(all$pcaPrcompDataInput, 
+                                                  all$gsetData)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -302,7 +311,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Interactive Prcomp PCA Variables Plot
             fig <-
-              interactivePrcompPcaVariablesPlot(pcaPrcompDataInput)
+              interactivePrcompPcaVariablesPlot(all$pcaPrcompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -315,7 +324,7 @@ test_that("Microarray GSE with non-log values is handled correctly
             expect_type(fig$jsHooks, 'list')
 
             # Correlation Matrix of samples
-            fig <- interactiveHeatMapPlot(naOmitInput)
+            fig <- interactiveHeatMapPlot(all$naOmitInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$x, 'list')
@@ -329,17 +338,17 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Non-Interactive UMAP
             fig <-
-              nonInteractiveUmapPlot(naOmitInput, knn)
+              nonInteractiveUmapPlot(all$naOmitInput, input$knn)
             expect_type(fig, 'list')
             expect_type(fig$x, 'double')
             expect_type(fig$y, 'double')
 
             # Non-Interactive Mean Variance Plot
             fig <-
-              nonInteractiveMeanVariancePlot(naOmitInput)
+              nonInteractiveMeanVariancePlot(all$naOmitInput)
 
             # Non-Interactive Princomp PCA Scree Plot
-            fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)
+            fig <- nonInteractivePcaScreePlot(all$pcaPrincompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$data, 'list')
@@ -353,7 +362,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Non-Interactive Princomp PCA Individual Plot
             fig <-
-              nonInteractivePcaIndividualsPlot(pcaPrincompDataInput)
+              nonInteractivePcaIndividualsPlot(all$pcaPrincompDataInput)
             fig
             expect_type(fig$data, "list")
             expect_type(fig$layers, "list")
@@ -367,7 +376,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Non-Interactive Princomp PCA Variables Plot
             fig <-
-              nonInteractivePcaVariablesPlot(pcaPrincompDataInput)
+              nonInteractivePcaVariablesPlot(all$pcaPrincompDataInput)
             fig
             expect_type(fig$data, "list")
             expect_type(fig$layers, "list")
@@ -380,12 +389,12 @@ test_that("Microarray GSE with non-log values is handled correctly
             expect_type(fig$labels, "list")
 
             # Non-Interactive Princomp PCA Individual and Variables Bilot
-            fig <- nonInteractivePcaBiplotPlot(pcaPrincompDataInput)
+            fig <- nonInteractivePcaBiplotPlot(all$pcaPrincompDataInput)
             fig
 
             # Differential gene expression analysis functions
             # Get column names
-            columnNames <- extractSampleNames(expressionData)
+            columnNames <- extractSampleNames(all$expressionData)
 
             # Define Groups
             numberOfColumns <- length(columnNames)
@@ -406,7 +415,7 @@ test_that("Microarray GSE with non-log values is handled correctly
               }
             }
 
-            # Select columns in group2
+            # Select all$columns in group2
             column2 <-
               calculateExclusiveColumns(columnNames, group1)
             expect_type(column2, "character")
@@ -415,52 +424,47 @@ test_that("Microarray GSE with non-log values is handled correctly
             expect_equal(column2[3], "NA")
             expect_equal(length(column2), 2)
 
-            # Calculate gsms
-            gsms <-
+            # Calculate all$gsms
+            all$gsms <-
               calculateEachGroupsSamples(columnNames, group1, group2)
-            expect_type(gsms, "character")
-            expect_equal(gsms, "00011")
-            expect_equal(nchar(gsms), 5)
+            expect_type(all$gsms, "character")
+            expect_equal(all$gsms, "00011")
+            expect_equal(nchar(all$gsms), 5)
 
             # Convert P value adjustment
-            pValueAdjustment <-
+            input$pValueAdjustment <-
               "Benjamini & Hochberg (False discovery rate)"
-            adjustment <- convertAdjustment(pValueAdjustment)
+            adjustment <- convertAdjustment(input$pValueAdjustment)
             expect_type(adjustment, "character")
             expect_equal(adjustment, "fdr")
 
-            pValueAdjustment <- "Benjamini & Yekutieli"
-            adjustment <- convertAdjustment(pValueAdjustment)
+            input$pValueAdjustment <- "Benjamini & Yekutieli"
+            adjustment <- convertAdjustment(input$pValueAdjustment)
             expect_type(adjustment, "character")
             expect_equal(adjustment, "BY")
 
-            pValueAdjustment <- "Bonferroni"
-            adjustment <- convertAdjustment(pValueAdjustment)
+            input$pValueAdjustment <- "Bonferroni"
+            adjustment <- convertAdjustment(input$pValueAdjustment)
             expect_type(adjustment, "character")
             expect_equal(adjustment, "bonferroni")
 
-            pValueAdjustment <- "Holm"
-            adjustment <- convertAdjustment(pValueAdjustment)
+            input$pValueAdjustment <- "Holm"
+            adjustment <- convertAdjustment(input$pValueAdjustment)
             expect_type(adjustment, "character")
             expect_equal(adjustment, "holm")
 
-            pValueAdjustment <- "None"
-            adjustment <- convertAdjustment(pValueAdjustment)
+            input$pValueAdjustment <- "None"
+            adjustment <- convertAdjustment(input$pValueAdjustment)
             expect_type(adjustment, "character")
             expect_equal(adjustment, "none")
 
-            adjustment <- convertAdjustment(pValueAdjustment)
+            adjustment <- convertAdjustment(input$pValueAdjustment)
 
             # Get fit 2
             results <-
-              calculateDifferentialGeneExpression(gsms,
-                                                  limmaPrecisionWeights,
-                                                  forceNormalization,
-                                                  gsetData,
-                                                  expressionData,
-                                                  dataSource,
-                                                  typeOfData,
-                                                  dataSetType)
+              calculateDifferentialGeneExpression(all$gsms,
+                                                  input,
+                                                  all)
             expect_type(results$fit2, "list")
             expect_type(results$fit2$coefficients, "double")
             expect_type(results$fit2$sigma, "double")
@@ -524,7 +528,7 @@ test_that("Microarray GSE with non-log values is handled correctly
 
             # Summarize test results as "up", "down" or "not expressed"
             dT <- calculateDifferentialGeneExpressionSummary(
-              results$fit2, adjustment, significanceLevelCutOff)
+              results$fit2, adjustment, input$significanceLevelCutOff)
             expect_type(dT, 'double')
             expect_equal(ncol(dT), 1)
             expect_equal(nrow(dT), 897)
@@ -580,11 +584,11 @@ test_that("Microarray GSE with non-log values is handled correctly
             expect_type(fig$dependencies, 'list')
             expect_type(fig$preRenderHook, 'closure')
             expect_type(fig$jsHooks, 'list')
-
+            
             # Plot Interactive Heatmap Plot
             numberOfGenes <- 20
             fig <- interactiveDGEHeatMapPlot(results$ex,
-                                             limmaPrecisionWeights,
+                                             input$limmaPrecisionWeights,
                                              numberOfGenes, tT)
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')

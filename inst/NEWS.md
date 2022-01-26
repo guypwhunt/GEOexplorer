@@ -133,3 +133,6 @@ Changes in version 1.1.6 (2022-01-14)
 
 Changes in version 1.1.7 (2022-01-18)
 + Gene Enrichment Updates
+
+Changes in version 1.1.8 (2022-01-26)
++ GEO RNA SEQ Updates

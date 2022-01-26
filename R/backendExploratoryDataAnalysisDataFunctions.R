@@ -1097,3 +1097,116 @@ dowloadFile <- function(fileName, dataFrame) {
     }
   )
 }
+
+#' A Function to remove the lowly expressed genes
+#' @importFrom edgeR filterByExpr
+#' @author Guy Hunt
+#' @noRd
+removeLowlyExpressedGenes <- function(ex) {
+  keep.exprs <- filterByExpr(rnaExpressionData, group=group)
+  ex <- ex[keep.exprs,, keep.lib.sizes=FALSE]
+
+  return(ex)
+
+}
+
+#' A function to download the GEO supplementary files
+#'
+#' @keywords GEO rnaSeq
+#' @importFrom GEOquery getGEOSuppFiles
+#' @author Guy Hunt
+#' @noRd
+downloadGeoSupFiles <- function(geoAccessionCode) {
+  # DOWNLOAD TAR FILE
+  geoTarFile <- getGEOSuppFiles(geoAccessionCode)
+}
+
+#' A function to extract the GEO supplementary files and extract the expression data
+#'
+#' @keywords GEO rnaSeq
+#' @importFrom utils untar
+#' @importFrom R.utils gunzip
+#' @author Guy Hunt
+#' @noRd
+extractGeoSupFiles <- function(geoAccessionCode) {
+  path <- paste0(".\\", geoAccessionCode)
+  tarFileName <- paste0(geoAccessionCode, "_RAW.tar")
+
+  # Set working directory
+  setwd(path)
+
+  # Untar the file
+  untar(tarFileName, exdir = ".")
+
+  # Obtain list of file names in the directory
+  listOfFileInDir <- list.files(path = path)
+
+  # Remove tar file name from list
+  listOfFileInDir <- listOfFileInDir[listOfFileInDir != tarFileName]
+
+  # For each file save as a gz file
+  for(i in listOfFileInDir){
+    try(gunzip(i, overwrite=TRUE))
+  }
+
+  return(tarFileName)
+
+}
+
+#' A function to extract the expression data from raw files
+#'
+#' @author Guy Hunt
+#' @importFrom edgeR readDGE
+#' @noRd
+extractExpressionDataFromGeoSupRawFiles <- function(tarFileName, geneNamesCol,
+                                                    countsCol) {
+  # Define file names
+  files <- list.files(".")
+  files <- files[files != tarFileName]
+
+  # Combine the text files into a matrix of counts using edgeR
+  expressionData <- tryCatch({
+    readDGE(files, columns=c(geneNamesCol,countsCol))},
+    error = function(e) {
+      # return a safeError if a parsing error occurs
+      return(NULL)
+    })
+
+  # Delete files in directory
+  for (fileName in list.files(".")){
+    file.remove(fileName)
+  }
+
+  # Set Working directory
+  setwd("..")
+
+  return(expressionData)
+}
+
+#' A function to update the expression data sample names
+#'
+#' This function allows you to update the expression data sample names
+#' @param rnaExpressionData A object containing the RNA seq expression data
+#' @keywords rnaSeq
+#' @importFrom stringr str_locate
+#' @examples # Define Variables
+#' geoAccessionCode <- "GSE63310"
+#'
+#' # Update Sample Names
+#' rnaExpressionData <- calculateSampleNames(rnaExpressionData)
+#'
+#' # Update Sample Names
+#' rnaExpressionData <- calculateSampleNames(rnaExpressionData)
+#' @author Guy Hunt
+#' @noRd
+calculateSampleNames <- function(rnaExpressionData) {
+  # Extract the sample information
+  samplenames <- substring(colnames(rnaExpressionData), 0,
+                           (str_locate(colnames(
+                             rnaExpressionData), "_")-1)[,1])
+  
+  # Update the colnames with the sample names
+  colnames(rnaExpressionData) <- samplenames
+  
+  return(rnaExpressionData)
+}
