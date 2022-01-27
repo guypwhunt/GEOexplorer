@@ -1116,9 +1116,9 @@ removeLowlyExpressedGenes <- function(ex) {
 #' @importFrom GEOquery getGEOSuppFiles
 #' @author Guy Hunt
 #' @noRd
-downloadGeoSupFiles <- function(geoAccessionCode) {
+downloadGeoSupFiles <- function(geoAccessionCode, directoryPath) {
   # DOWNLOAD TAR FILE
-  geoTarFile <- getGEOSuppFiles(geoAccessionCode)
+  geoTarFile <- getGEOSuppFiles(geoAccessionCode, baseDir = directoryPath)
 }
 
 #' A function to extract the GEO supplementary files and extract the expression data
@@ -1128,18 +1128,16 @@ downloadGeoSupFiles <- function(geoAccessionCode) {
 #' @importFrom R.utils gunzip
 #' @author Guy Hunt
 #' @noRd
-extractGeoSupFiles <- function(geoAccessionCode) {
-  path <- paste0(".\\", geoAccessionCode)
+extractGeoSupFiles <- function(geoAccessionCode, filePath, directoryPath) {
   tarFileName <- paste0(geoAccessionCode, "_RAW.tar")
-
-  # Set working directory
-  setwd(path)
+  
+  setwd(directoryPath)
 
   # Untar the file
-  untar(tarFileName, exdir = ".")
+  untar(filePath, exdir = ".")
 
   # Obtain list of file names in the directory
-  listOfFileInDir <- list.files(path = path)
+  listOfFileInDir <- list.files(path = directoryPath)
 
   # Remove tar file name from list
   listOfFileInDir <- listOfFileInDir[listOfFileInDir != tarFileName]
@@ -1150,7 +1148,6 @@ extractGeoSupFiles <- function(geoAccessionCode) {
   }
 
   return(tarFileName)
-
 }
 
 #' A function to extract the expression data from raw files
@@ -1158,8 +1155,10 @@ extractGeoSupFiles <- function(geoAccessionCode) {
 #' @author Guy Hunt
 #' @importFrom edgeR readDGE
 #' @noRd
-extractExpressionDataFromGeoSupRawFiles <- function(tarFileName, geneNamesCol,
-                                                    countsCol) {
+extractExpressionDataFromGeoSupRawFiles <- function(directoryPath, tarFileName, 
+                                                    geneNamesCol, countsCol) {
+  setwd(directoryPath)
+  
   # Define file names
   files <- list.files(".")
   files <- files[files != tarFileName]
@@ -1171,11 +1170,6 @@ extractExpressionDataFromGeoSupRawFiles <- function(tarFileName, geneNamesCol,
       # return a safeError if a parsing error occurs
       return(NULL)
     })
-
-  # Delete files in directory
-  for (fileName in list.files(".")){
-    file.remove(fileName)
-  }
 
   # Set Working directory
   setwd("..")
@@ -1209,4 +1203,33 @@ calculateSampleNames <- function(rnaExpressionData) {
   colnames(rnaExpressionData) <- samplenames
   
   return(rnaExpressionData)
+}
+
+#' Create a directory for GEO supplementary files
+#' @author Guy Hunt
+#' @noRd
+createGeoSupplementaryFilesDirectory <- function() {
+  directoryPath <- file.path(getwd(),"geoSupFiles")
+  
+  if(!dir.exists(directoryPath)){
+    try(dir.create(directoryPath, showWarnings = FALSE))
+    try(Sys.chmod(directoryPath, "777"))
+  }
+  
+  return(directoryPath)
+}
+
+#' Delete directory for GEO supplementary files
+#' @author Guy Hunt
+#' @noRd
+deleteGeoSupplementaryFilesDirectory <- function(directoryPath) {
+  unlink(directoryPath, recursive = TRUE, force = TRUE)
+}
+
+#' Delete directory for GEO supplementary files
+#' @author Guy Hunt
+#' @noRd
+calculateGeoAccessionDirectory <- function(directoryPath, geoAccessionCode) {
+  directoryPath <- file.path(directoryPath,geoAccessionCode)
+  return(directoryPath)
 }

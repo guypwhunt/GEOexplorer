@@ -582,22 +582,33 @@ performExploratoryDataAnalysis <- function(input,
         )
       } else if (length(all$expressionData) == 0)
       {
-        #Download Supplementary files
-        try(
-          downloadGeoSupFiles(input$geoAccessionCode)
-        )
+        baseDirectory <- getwd()
         
-        tarFileName <- tryCatch({
-          extractGeoSupFiles(input$geoAccessionCode)
-        }, error = function(err) {return(NULL)})
+        try(geoSupplementaryFilesDirectoryPath <- 
+              createGeoSupplementaryFilesDirectory())
+        try(geoAccessionDirectoryPath <- 
+              calculateGeoAccessionDirectory(
+                geoSupplementaryFilesDirectoryPath, input$geoAccessionCode))
+        try(geoTarFile <- downloadGeoSupFiles(input$geoAccessionCode, 
+                                          geoSupplementaryFilesDirectoryPath))
+        
+        try(filePath <- row.names(geoTarFile)[1])
+        
+        try(tarFileName <- extractGeoSupFiles(input$geoAccessionCode, filePath, 
+                                          geoAccessionDirectoryPath))
         
         geneNamesCol <- 1
         countsCol <- 3
         
         all$expressionData <- tryCatch({
           extractExpressionDataFromGeoSupRawFiles(
-            tarFileName, geneNamesCol, countsCol)},
+            geoAccessionDirectoryPath, tarFileName, 
+            geneNamesCol, countsCol)},
           error = function(err) {return(NULL)})
+        
+        try(deleteGeoSupplementaryFilesDirectory(geoAccessionDirectoryPath))
+        
+        try(setwd(baseDirectory))
         
         all$expressionDataRowNames <- tryCatch({
           row.names(all$expressionData)}, error = function(err) {return(NULL)})
@@ -607,7 +618,7 @@ performExploratoryDataAnalysis <- function(input,
             all$expressionData)},
           error = function(err) {return(NULL)})
         
-        all$expressionData <- as.data.frame(all$expressionData)
+        try(all$expressionData <- as.data.frame(all$expressionData))
         
         try(row.names(all$expressionData) <- all$expressionDataRowNames)
         
