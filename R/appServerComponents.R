@@ -582,56 +582,71 @@ performExploratoryDataAnalysis <- function(input,
         )
       } else if (length(all$expressionData) == 0)
       {
-        baseDirectory <- getwd()
-        
-        try(geoSupplementaryFilesDirectoryPath <- 
-              createGeoSupplementaryFilesDirectory())
-        try(geoAccessionDirectoryPath <- 
-              calculateGeoAccessionDirectory(
-                geoSupplementaryFilesDirectoryPath, input$geoAccessionCode))
-        try(geoTarFile <- downloadGeoSupFiles(input$geoAccessionCode, 
-                                          geoSupplementaryFilesDirectoryPath))
-        
-        try(filePath <- row.names(geoTarFile)[1])
-        
-        try(tarFileName <- extractGeoSupFiles(input$geoAccessionCode, filePath, 
-                                          geoAccessionDirectoryPath))
-        
-        geneNamesCol <- 1
-        countsCol <- 3
-        
-        all$expressionData <- tryCatch({
-          extractExpressionDataFromGeoSupRawFiles(
-            geoAccessionDirectoryPath, tarFileName, 
-            geneNamesCol, countsCol)},
+        try({
+          
+          baseDirectory <- tryCatch({getwd()
+          },error = function(err) {return(NULL)})
+          
+          geoSupplementaryFilesDirectoryPath <- tryCatch({
+            createGeoSupplementaryFilesDirectory()
+          },error = function(err) {return(NULL)})
+          
+          geoAccessionDirectoryPath <- tryCatch({
+            calculateGeoAccessionDirectory(geoSupplementaryFilesDirectoryPath,
+                                           input$geoAccessionCode)
+          },error = function(err) {return(NULL)})
+          
+          geoTarFile <- tryCatch({
+            downloadGeoSupFiles(input$geoAccessionCode,
+                                geoSupplementaryFilesDirectoryPath)
+          },error = function(err) {return(NULL)})
+          
+          filePath <- tryCatch({row.names(geoTarFile)[1]
+            },error = function(err) {return(NULL)})
+          
+          tarFileName <- tryCatch({
+            extractGeoSupFiles(input$geoAccessionCode,
+                               filePath,
+                               geoAccessionDirectoryPath)
+          },
           error = function(err) {return(NULL)})
-        
-        try(deleteGeoSupplementaryFilesDirectory(geoAccessionDirectoryPath))
-        
-        try(setwd(baseDirectory))
-        
-        all$expressionDataRowNames <- tryCatch({
-          row.names(all$expressionData)}, error = function(err) {return(NULL)})
-        
-        all$expressionData <- tryCatch({
-          calculateSampleNames(
-            all$expressionData)},
-          error = function(err) {return(NULL)})
-        
-        try(all$expressionData <- as.data.frame(all$expressionData))
-        
-        try(row.names(all$expressionData) <- all$expressionDataRowNames)
-        
-        all$typeOfData <- "RNA Sequencing"
-        
-        output$output13 <- renderUI({
-          radioButtons(
-            "cpmTransformation",
-            label = "Convert data to count per million:",
-            choices = list("Yes", "No"),
-            selected = "No"
-          )
-        })
+          
+          geneNamesCol <- 1
+          countsCol <- 3
+          
+          all$expressionData <- tryCatch({
+            extractExpressionDataFromGeoSupRawFiles(geoAccessionDirectoryPath,
+                                                    tarFileName,
+                                                    geneNamesCol,
+                                                    countsCol)
+          },error = function(err) {return(NULL)})
+          
+          try(deleteGeoSupplementaryFilesDirectory(geoAccessionDirectoryPath))
+          
+          try(setwd(baseDirectory))
+          
+          all$expressionDataRowNames <- tryCatch({
+            row.names(all$expressionData)
+          }, error = function(err) {return(NULL)})
+          
+          all$expressionData <- tryCatch({
+            calculateSampleNames(all$expressionData)
+          },error = function(err) {return(NULL)})
+          
+          try({all$expressionData <- as.data.frame(all$expressionData)})
+          
+          try({row.names(all$expressionData) <- all$expressionDataRowNames})
+          
+          all$typeOfData <- "RNA Sequencing"
+          
+          output$output13 <- renderUI({
+            radioButtons(
+              "cpmTransformation",
+              label = "Convert data to count per million:",
+              choices = list("Yes", "No"),
+              selected = "No"
+            )
+          })
         
         if (is.null(all$expressionData)) {
           errorChecks$expressionData <- FALSE
@@ -660,7 +675,8 @@ performExploratoryDataAnalysis <- function(input,
                                             annotation=annotation(all$gsetData),
                                             protocolData=protocolData(all$gsetData)))
         }
-      } 
+      
+        })} 
       else {
         all$typeOfData <- "Microarray"
       }
