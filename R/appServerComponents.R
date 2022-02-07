@@ -4,7 +4,7 @@
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceServer()
 #' @importFrom DT renderDataTable
-#' @importFrom utils write.csv object.size
+#' @importFrom utils write.csv object.size tail
 #' @importFrom htmltools HTML
 #' @importFrom xfun file_ext
 #' @importFrom stringr str_trim str_trunc
@@ -122,6 +122,7 @@ sourceServer <- function(input, output, session) {
       
       # Trigger load GEO dataset when the GEO accession code updated
       observeEvent(input$geoAccessionCode, {
+        
         # Load GEO dataset
         try(loadGeoDataset(input, output, session, errorChecks, all))
         
@@ -151,9 +152,7 @@ sourceServer <- function(input, output, session) {
     # Download gene expression template
     geneExpressionTemplate <- tryCatch({
       as.matrix(geneExpressionTemplate)
-    }, error = function(e) {
-      return(NULL)
-    })
+    }, error = function(e) {return(NULL)})
     output$downloadGeneExpressionFileTemplate <-
       try(
         dowloadFile("gene_expression_template.csv", geneExpressionTemplate))
@@ -244,6 +243,9 @@ performExploratoryDataAnalysis <- function(input,
     
     # Set all outputs to blank, this resets
     # all the visualizations to blank after clicking analyse
+    resetGeneEnrichmentOutputs(input, output, session)
+    resetDifferentialGeneExpressionPlots(input, output, session)
+    
     output$table <- renderDataTable({})
     output$logTransformationText <- renderUI({})
     output$experimentInfo <- renderUI({})
@@ -258,13 +260,6 @@ performExploratoryDataAnalysis <- function(input,
     output$interactivePcaIndividualsPlot <- renderPlotly({})
     output$interactivePcaVariablesPlot <- renderPlotly({})
     output$interactive3DPcaVariablesPlot <- renderPlotly({})
-    output$dETable <- renderDataTable({})
-    output$iDEHistogram <- renderPlotly({})
-    output$dEVennDiagram <- renderPlot({})
-    output$iDEQQ <- renderPlotly({})
-    output$iDEVolcano <- renderPlotly({})
-    output$iDEMd <- renderPlotly({})
-    output$iHeatmap <- renderPlotly({})
     
     # Extract information from GSET including expression data
     if (errorChecks$continueWorkflow) {
@@ -593,49 +588,83 @@ performExploratoryDataAnalysis <- function(input,
           
           geoAccessionDirectoryPath <- tryCatch({
             calculateGeoAccessionDirectory(geoSupplementaryFilesDirectoryPath,
-                                           input$geoAccessionCode)
+                                           all$geoAccessionCode())
           },error = function(err) {return(NULL)})
           
           geoTarFile <- tryCatch({
-            downloadGeoSupFiles(input$geoAccessionCode,
+            downloadGeoSupFiles(all$geoAccessionCode(),
                                 geoSupplementaryFilesDirectoryPath)
           },error = function(err) {return(NULL)})
           
           filePath <- tryCatch({row.names(geoTarFile)[1]
             },error = function(err) {return(NULL)})
           
-          tarFileName <- tryCatch({
-            extractGeoSupFiles(input$geoAccessionCode,
-                               filePath,
-                               geoAccessionDirectoryPath)
-          },
-          error = function(err) {return(NULL)})
-          
-          geneNamesCol <- 1
-          countsCol <- 3
-          
-          all$expressionData <- tryCatch({
-            extractExpressionDataFromGeoSupRawFiles(geoAccessionDirectoryPath,
-                                                    tarFileName,
-                                                    geneNamesCol,
-                                                    countsCol)
+          fileExtensions <- tryCatch({extractFileExtensions(geoTarFile)
           },error = function(err) {return(NULL)})
+          
+          uniqueFileExtensions <- tryCatch({unique(fileExtensions)
+          },error = function(err) {return(NULL)})
+          
+          if (uniqueFileExtensions == "xlsx" | uniqueFileExtensions == "csv"){
+            filePath <- tryCatch({tail(row.names(geoTarFile), n = 1)
+            },error = function(err) {return(NULL)})
+            
+            if (uniqueFileExtensions == "xlsx") {
+              all$expressionData <- tryCatch({extractExpressionExcel(filePath)
+              }, error = function(err) {return(NULL)})
+            } else if (uniqueFileExtensions == "csv") {
+              all$expressionData <- tryCatch({extractExpressionCsv(filePath)
+              }, error = function(err) {return(NULL)})
+            }
+            
+            all$expressionData <- tryCatch({deduplicatedExpressiondata(
+              all$expressionData)
+              },error = function(err) {return(all$expressionData)})
+            
+            row.names(all$expressionData) <- tryCatch({all$expressionData[,1]
+            }, error = function(err) {return(all$expressionData)})
+            
+            all$expressionData <- tryCatch({
+              removeNonNumericColumnsFromExpressiondata(all$expressionData)
+            }, error = function(err) {return(all$expressionData)})
+
+          } else if (uniqueFileExtensions == "tar") 
+          {
+            tarFileName <- tryCatch({
+              extractGeoSupFiles(all$geoAccessionCode(),filePath,
+                                 geoAccessionDirectoryPath)
+            },error = function(err) {return(NULL)})
+            
+            geneNamesCol <- 1
+            countsCol <- 3
+            
+            all$expressionData <- tryCatch({
+              extractExpressionDataFromGeoSupRawFiles(
+                geoAccessionDirectoryPath, tarFileName, geneNamesCol, countsCol)
+            },error = function(err) {return(NULL)})
+            
+            all$expressionDataRowNames <- tryCatch({
+              row.names(all$expressionData)
+            }, error = function(err) {return(NULL)})
+            
+            all$expressionData <- tryCatch({
+              calculateSampleNames(all$expressionData)
+            },error = function(err) {return(all$expressionData)})
+            
+            all$expressionData <- tryCatch({as.data.frame(all$expressionData)
+            },error = function(err) {return(all$expressionData)})
+            
+            row.names(all$expressionData) <- tryCatch({
+              all$expressionDataRowNames
+            },error = function(err) {return(all$expressionData)})
+
+          }
+          
+          all$expressionData <- convertNaToZero(all$expressionData)
           
           try(deleteGeoSupplementaryFilesDirectory(geoAccessionDirectoryPath))
           
           try(setwd(baseDirectory))
-          
-          all$expressionDataRowNames <- tryCatch({
-            row.names(all$expressionData)
-          }, error = function(err) {return(NULL)})
-          
-          all$expressionData <- tryCatch({
-            calculateSampleNames(all$expressionData)
-          },error = function(err) {return(NULL)})
-          
-          try({all$expressionData <- as.data.frame(all$expressionData)})
-          
-          try({row.names(all$expressionData) <- all$expressionDataRowNames})
           
           all$typeOfData <- "RNA Sequencing"
           
@@ -667,13 +696,13 @@ performExploratoryDataAnalysis <- function(input,
             convertExpressionDataToExperimentInformation(
               all$expressionData)
           
-          all$gsetData <- try(ExpressionSet(assayData=
-                                              as.matrix(all$expressionData),
-                                            phenoData=phenoData(all$gsetData),
-                                            #featureData=featureData(all$gsetData),
-                                            experimentData=experimentData(all$gsetData),
-                                            annotation=annotation(all$gsetData),
-                                            protocolData=protocolData(all$gsetData)))
+          all$gsetData <- try(
+            ExpressionSet(assayData=as.matrix(all$expressionData),
+                          phenoData=phenoData(all$gsetData),
+                          #featureData=featureData(all$gsetData),
+                          experimentData=experimentData(all$gsetData),
+                          annotation=annotation(all$gsetData),
+                          protocolData=protocolData(all$gsetData)))
         }
       
         })} 
@@ -824,7 +853,10 @@ performExploratoryDataAnalysis <- function(input,
           all$columnInfo[all$knnColumns,]
         
         # Remove all incomplete rows
-        naOmitInput <- calculateNaOmit(all$knnDataInput)
+        naOmitInput <- tryCatch({calculateNaOmit(all$knnDataInput)
+          }, error = function(cond) {return(all$knnDataInput)})
+                                
+                                
         
         # Perform PCA analysis on KNN transformation
         # expression data using princomp
@@ -1165,21 +1197,26 @@ loadGeoDataset <- function (input,
                             errorChecks,
                             all) {
   loadGeoDatasetServerComponents <- {
+    all$geoAccessionCode <- reactive({
+      tryCatch({removeWhiteSpace(input$geoAccessionCode)},
+               error = function(e) {return(input$geoAccessionCode)})
+    })
+    
     # Get the GEO data for all platforms
     all$allGset <- reactive({
       tryCatch({
         # Error handling to ensure geoAccessionCode is populated
-        req(input$geoAccessionCode)
+        req(all$geoAccessionCode())
         # Notify the user the GEO accession code
         # is not a GEO series accession code
-        if (substr(str_trim(input$geoAccessionCode), 1, 3) != "GSE")
+        if (substr(str_trim(all$geoAccessionCode()), 1, 3) != "GSE")
         {
           showNotification("Please input a GEO series accession code
                                  with the format GSEXXX",
                            type = "warning")
           return(NULL)
         } else {
-          return(getGeoObject(input$geoAccessionCode))
+          return(getGeoObject(all$geoAccessionCode()))
         }
       }, error = function(err) {
         # Return null if there is a error in the getGeoObject function
@@ -1192,7 +1229,7 @@ loadGeoDataset <- function (input,
       # Update error check
       errorChecks$geoAccessionCode <- FALSE
       errorChecks$continueWorkflow <- FALSE
-      if (input$geoAccessionCode != "") {
+      if (all$geoAccessionCode() != "") {
         # Display notification
         showNotification(
           "There was an error obtaining the GEO dataset.
@@ -1258,14 +1295,8 @@ performDifferentialGeneExpressionAnalysis <- function (input,
     # analysis outputs to blank, this resets
     # all the visualizations to blank after
     # clicking analyse
-    output$dETable <- renderDataTable({})
-    output$iDEHistogram <- renderPlotly({})
-    output$dEVennDiagram <- renderPlot({})
-    output$iDEQQ <- renderPlotly({})
-    output$iDEVolcano <- renderPlotly({})
-    output$iDEMd <- renderPlotly({})
-    output$iHeatmap <- renderPlotly({})
-    output$geneAnnotationTable <- renderDataTable({})
+    resetGeneEnrichmentOutputs(input, output, session)
+    resetDifferentialGeneExpressionPlots(input, output, session)
     
     if (errorChecks$continueWorkflow)
     { if (!exampleDataSet) {
@@ -1308,12 +1339,11 @@ performDifferentialGeneExpressionAnalysis <- function (input,
              lengths(regmatches(gsms, gregexpr("1", gsms))) > 1) |
             (lengths(regmatches(gsms, gregexpr("0", gsms))) > 1 &
              lengths(regmatches(gsms, gregexpr("1", gsms))) > 0)) {
+          
           all$results <- tryCatch({
             calculateDifferentialGeneExpression(gsms, input, all)
           }
-          , error = function(cond) {
-            return(NULL)
-          })
+          , error = function(cond) {return(NULL)}) 
           
             if (is.null(all$results)) {
               if (all$typeOfData == "RNA Sequencing") {
@@ -1332,6 +1362,20 @@ performDifferentialGeneExpressionAnalysis <- function (input,
               using the log data. So the non-log data was used instead!",
                   type = "warning"
                 )
+              }
+              if (is.null(all$results)) {
+                all$gset <- all$gsetData
+                
+                all$gsetData <- NULL
+                
+                all$results <- tryCatch({
+                  calculateDifferentialGeneExpression(gsms, input, all)
+                }
+                , error = function(cond) {return(NULL)})
+                
+                all$gsetData <- all$gset
+                
+                all$gset <- NULL
               }
             }
 
@@ -1572,10 +1616,7 @@ performGeneEnrichmentAnalysis <- function (input,
 ) {
   geneEnrichmentAnalysisServerComponents <- {
     # Reset all Visualisations
-    output$differentiallyExpressedGenesEnrichmentTable <- renderDataTable({})
-    output$genesEnrichmentVolcanoPlot <- renderPlotly({})
-    output$genesEnrichmentManhattanPlot <- renderPlotly({})
-    output$genesEnrichmentBarchartPlot <- renderPlotly({})
+    resetGeneEnrichmentOutputs(input, output, session)
     
     updateSelectInput(
       session,
@@ -1654,6 +1695,13 @@ performGeneEnrichmentAnalysis <- function (input,
               return(NULL)
             })
             
+            differemtiallyExpressedGeneSymbols <- tryCatch({
+              unique(differemtiallyExpressedGeneSymbols)
+            }, error = function(e) {
+              # return a safeError if a parsing error occurs
+              return(differemtiallyExpressedGeneSymbols)
+            })
+            
             # enrich Differentially Expressed Genes
             enrichedDifferentiallyExpressedGenes <- tryCatch({
               enrichGenes(differemtiallyExpressedGeneSymbols,
@@ -1692,15 +1740,22 @@ performGeneEnrichmentAnalysis <- function (input,
               
               enrichedUpregulatedGenes <- NULL
               
-              updateSelectInput(session, "geneEnrichmentDataManhattanPlot",
-                                choices = c("All differentially expressed genes",
-                                            "Downregulated genes"))
+              updateSelectInput(
+                session, "geneEnrichmentDataManhattanPlot",
+                choices = c("All differentially expressed genes",
+                            "Downregulated genes"))
               updateSelectInput(session, "geneEnrichmentDataBarchartPlot",
-                                choices = c("All differentially expressed genes", "Downregulated genes"))
+                                choices = 
+                                  c("All differentially expressed genes",
+                                    "Downregulated genes"))
               updateSelectInput(session, "geneEnrichmentDataTable",
-                                choices = c("All differentially expressed genes", "Downregulated genes"))
+                                choices = 
+                                  c("All differentially expressed genes", 
+                                    "Downregulated genes"))
               updateSelectInput(session, "geneEnrichmentDataVolcanoPlot",
-                                choices = c("All differentially expressed genes", "Downregulated genes"))
+                                choices = 
+                                  c("All differentially expressed genes", 
+                                    "Downregulated genes"))
             } else {
               # Extract upregulated gene symbols
               upregulatedGenesGeneSymbols <- tryCatch({
@@ -1708,6 +1763,13 @@ performGeneEnrichmentAnalysis <- function (input,
               }, error = function(e) {
                 # return a safeError if a parsing error occurs
                 return(NULL)
+              })
+              
+              upregulatedGenesGeneSymbols <- tryCatch({
+                unique(upregulatedGenesGeneSymbols)
+              }, error = function(e) {
+                # return a safeError if a parsing error occurs
+                return(upregulatedGenesGeneSymbols)
               })
               
               # enrich upregulated Genes
@@ -1751,13 +1813,21 @@ performGeneEnrichmentAnalysis <- function (input,
               enrichedDownregulatedGenes <- NULL
               
               updateSelectInput(session, "geneEnrichmentDataManhattanPlot",
-                                choices = c("All differentially expressed genes", "Upregulated genes"))
+                                choices = 
+                                  c("All differentially expressed genes", 
+                                    "Upregulated genes"))
               updateSelectInput(session, "geneEnrichmentDataBarchartPlot",
-                                choices = c("All differentially expressed genes", "Upregulated genes"))
+                                choices = 
+                                  c("All differentially expressed genes", 
+                                    "Upregulated genes"))
               updateSelectInput(session, "geneEnrichmentDataTable",
-                                choices = c("All differentially expressed genes", "Upregulated genes"))
+                                choices = 
+                                  c("All differentially expressed genes", 
+                                    "Upregulated genes"))
               updateSelectInput(session, "geneEnrichmentDataVolcanoPlot",
-                                choices = c("All differentially expressed genes", "Upregulated genes"))
+                                choices = 
+                                  c("All differentially expressed genes", 
+                                    "Upregulated genes"))
               
             } else {
               # Extract downregulated gene symbols
@@ -1766,6 +1836,13 @@ performGeneEnrichmentAnalysis <- function (input,
               }, error = function(e) {
                 # return a safeError if a parsing error occurs
                 return(NULL)
+              })
+              
+              downregulatedGenesGeneSymbols <- tryCatch({
+                unique(downregulatedGenesGeneSymbols)
+              }, error = function(e) {
+                # return a safeError if a parsing error occurs
+                return(downregulatedGenesGeneSymbols)
               })
               
               # enrich downregulated Genes
@@ -1804,7 +1881,8 @@ performGeneEnrichmentAnalysis <- function (input,
                                 selected =
                                   input$geneEnrichmentDataBarchartPlot)
               
-              if (input$geneEnrichmentDataBarchartPlot == "All differentially expressed genes") {
+              if (input$geneEnrichmentDataBarchartPlot == 
+                  "All differentially expressed genes") {
                 enrichedGenes <- enrichedDifferentiallyExpressedGenes
               } else if (input$geneEnrichmentDataBarchartPlot ==
                          "Upregulated genes") {
@@ -1889,9 +1967,9 @@ performGeneEnrichmentAnalysis <- function (input,
                                input$sortDecreasingly)
                              
                              sortedEnrichedDifferentiallyExpressedGenes <- try(
-                               sortGeneEnrichmentTable(enrichedGenes,
-                                                       input$columnToSortBarChartPlot,
-                                                       sortDecreasingly))
+                               sortGeneEnrichmentTable(
+                                 enrichedGenes,input$columnToSortBarChartPlot,
+                                 sortDecreasingly))
                              
                              topSortedEnrichedDifferentiallyExpressedGenes <-
                                try(selectTopGeneEnrichmentRecords(
@@ -2172,7 +2250,8 @@ loadDataSetUiComponents <- function(input,
 #' @author Guy Hunt
 #' @noRd
 loadDataSetCombinationUiComponents <- function(input, output, session,
-                                               errorChecks, all, geoAccessionCode = "") {
+                                               errorChecks, all, 
+                                               geoAccessionCode = "") {
   dataSetCombinationUiComponents <- {
     # Refresh error checks
     errorChecks <- resetErrorChecks(errorChecks)
@@ -2236,12 +2315,8 @@ loadDataSetCombinationUiComponents <- function(input, output, session,
       })
       
       # Load UI components
-      observeEvent(input$dataSource2, loadDataSet2UiComponents(input,
-                                                               output,
-                                                               session,
-                                                               errorChecks,
-                                                               all,
-                                                               geoAccessionCode)
+      observeEvent(input$dataSource2, loadDataSet2UiComponents(
+        input,output,session,errorChecks,all,geoAccessionCode)
       )
     } else
     {
@@ -2432,4 +2507,30 @@ createGeneAnnotationTable <- function(input, output, session, errorChecks, all)
       # return a safeError if a parsing
       # error occurs
       return(NULL)})
+  return(differentiallyExressedGeneAnnotation)
+}
+
+#' A Function to reset the gene enrichment plots
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @author Guy Hunt
+#' @noRd
+resetGeneEnrichmentOutputs <- function(input, output, session) {
+  output$differentiallyExpressedGenesEnrichmentTable <- renderDataTable({})
+  output$genesEnrichmentVolcanoPlot <- renderPlotly({})
+  output$genesEnrichmentManhattanPlot <- renderPlotly({})
+  output$genesEnrichmentBarchartPlot <- renderPlotly({})
+}
+#' A Function to reset the gene enrichment plots
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @author Guy Hunt
+#' @noRd
+resetDifferentialGeneExpressionPlots <- function(input, output, session) {
+  output$dETable <- renderDataTable({})
+  output$iDEHistogram <- renderPlotly({})
+  output$dEVennDiagram <- renderPlot({})
+  output$iDEQQ <- renderPlotly({})
+  output$iDEVolcano <- renderPlotly({})
+  output$iDEMd <- renderPlotly({})
+  output$iHeatmap <- renderPlotly({})
+  output$geneAnnotationTable <- renderDataTable({})
 }

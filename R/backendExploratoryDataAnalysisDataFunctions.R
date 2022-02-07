@@ -52,7 +52,6 @@ extractGeoData <- function(geoAccessionCode, platform) {
 #' FALSE
 #' @keywords GEO
 #' @importFrom GEOquery getGEO
-#' @importFrom stringr str_trim
 #' @examples
 #' # Get the GEO data for all platforms
 #' geoAccessionCode <- "GSE18388"
@@ -73,7 +72,6 @@ getGeoObject <-
       platformAnnotation <- TRUE
     }
     # Remove white space from geoAccessionCode
-    geoAccessionCode <- str_trim(geoAccessionCode, side = "both")
     gset <- tryCatch({
       getGEO(geoAccessionCode,
              GSEMatrix = GSEMatrix,
@@ -1117,6 +1115,7 @@ removeLowlyExpressedGenes <- function(ex) {
 #' @author Guy Hunt
 #' @noRd
 downloadGeoSupFiles <- function(geoAccessionCode, directoryPath) {
+  geoAccessionCode <- 
   # DOWNLOAD TAR FILE
   geoTarFile <- getGEOSuppFiles(geoAccessionCode, baseDir = directoryPath)
 }
@@ -1232,4 +1231,83 @@ deleteGeoSupplementaryFilesDirectory <- function(directoryPath) {
 calculateGeoAccessionDirectory <- function(directoryPath, geoAccessionCode) {
   directoryPath <- file.path(directoryPath,geoAccessionCode)
   return(directoryPath)
+}
+
+#' Extract file extensions
+#' @importFrom xfun file_ext
+#' @author Guy Hunt
+#' @noRd
+extractFileExtensions <- function(geoTarFile) {
+  fileExtensions <- c()
+  
+  for (file in row.names(geoTarFile)) {
+    fileExtensions <-append(fileExtensions, file_ext(file))
+  }
+  return(fileExtensions)
+}
+
+#' Extract expression data from excel
+#' @importFrom readxl read_excel
+#' @author Guy Hunt
+#' @noRd
+extractExpressionExcel <- function(filePath) {
+  expressionData <- read_excel(filePath)
+  
+  expressionData <- as.data.frame(expressionData)
+  
+  return(expressionData)
+}
+
+#' Extract expression data from csv
+#' @importFrom utils read.csv
+#' @author Guy Hunt
+#' @noRd
+extractExpressionCsv <- function(filePath) {
+  expressionData <- read.csv(filePath)
+  
+  expressionData <- as.data.frame(expressionData)
+  
+  return(expressionData)
+}
+
+
+#' Deduplicated expression data 
+#' @importFrom readxl read_excel
+#' @author Guy Hunt
+#' @noRd
+deduplicatedExpressiondata <- function(expressionData) {
+  expressionData <- expressionData[!duplicated(expressionData[,1]),] 
+  
+  return(expressionData)
+}
+
+#' Remove non numeric columns from expression data 
+#' @importFrom readxl read_excel
+#' @author Guy Hunt
+#' @noRd
+removeNonNumericColumnsFromExpressiondata <- function(expressionData) {
+  for (column in seq_len(ncol(expressionData))) {
+    try({expressionData[,column] <- as.numeric(expressionData[,column])})
+  }
+  
+  expressionData <- expressionData[,colSums(is.na(expressionData))<
+                                     nrow(expressionData)]  
+  return(expressionData)
+}
+
+#' Remove White Space from expression data 
+#' @importFrom stringr str_trim
+#' @author Guy Hunt
+#' @noRd
+removeWhiteSpace <- function(stringText) {
+  stringText <- str_trim(stringText, side = "both")
+  return(stringText)
+}
+
+#' Converts NAs to 0s in expression data 
+#' @author Guy Hunt
+#' @noRd
+convertNaToZero <- function(expressionData) {
+  expressionData[is.na(expressionData)] <- 0
+  return(expressionData)
 }

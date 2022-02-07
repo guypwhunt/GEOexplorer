@@ -9,7 +9,8 @@ test_that("Microarray GSE without missing values is handled correctly by all
             input$logTransformation <- "Auto-Detect"
             input$knnTransformation <- "Yes"
             input$knn <- 2
-            input$pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+            input$pValueAdjustment <- 
+              "Benjamini & Hochberg (False discovery rate)"
             input$limmaPrecisionWeights <- "Yes"
             input$forceNormalization <- "Yes"
             input$platformAnnotation <- "NCBI generated"
@@ -104,13 +105,15 @@ test_that("Microarray GSE without missing values is handled correctly by all
 
             # Apply log transformation to expression data if necessary
             dataInput <-
-              calculateLogTransformation(expressionData, input$logTransformation)
+              calculateLogTransformation(expressionData, 
+                                         input$logTransformation)
             expect_type(dataInput, 'double')
             expect_equal(ncol(dataInput), 8)
             expect_equal(nrow(dataInput), 35557)
             expect_equal(dataInput[1, 1], 11.711505)
 
-            # Perform input$knn transformation on log expression data if necessary
+            # Perform input$knn transformation on log expression data if 
+            # necessary
             all$knnDataInput <- calculateKnnImpute(dataInput, "Yes")
             expect_type(all$knnDataInput, 'double')
             expect_equal(ncol(all$knnDataInput), 8)
@@ -137,7 +140,8 @@ test_that("Microarray GSE without missing values is handled correctly by all
             expect_type(pcaPrincompDataInput, 'list')
             expect_s3_class(pcaPrincompDataInput, 'princomp')
 
-            # Perform Prcomp PCA analysis on input$knn transformation expression data
+            # Perform Prcomp PCA analysis on input$knn transformation 
+            # expression data
             pcaPrcompDataInput <- calculatePrcompPca(naOmitInput)
             expect_type(pcaPrcompDataInput, 'list')
             expect_s3_class(pcaPrcompDataInput, 'prcomp')
@@ -408,9 +412,12 @@ test_that("Microarray GSE without missing values is handled correctly by all
             expect_type(all$gsms, "character")
             expect_equal(all$gsms, "00000111")
             expect_equal(nchar(all$gsms), 8)
+            
+            all$gsms <- "00001111"
 
             # Convert P value adjustment
-            input$pValueAdjustment <- "Benjamini & Hochberg (False discovery rate)"
+            input$pValueAdjustment <- 
+              "Benjamini & Hochberg (False discovery rate)"
             adjustment <- convertAdjustment(input$pValueAdjustment)
             expect_type(adjustment, "character")
             expect_equal(adjustment, "fdr")
@@ -466,18 +473,18 @@ test_that("Microarray GSE without missing values is handled correctly by all
             expect_type(results$fit2$F, "double")
 
             # Print Top deferentially expressed genes
-            tT <- calculateTopDifferentiallyExpressedGenes(results$fit2,
+            all$tT <- calculateTopDifferentiallyExpressedGenes(results$fit2,
                                                            adjustment)
-            expect_type(tT, "list")
-            expect_type(tT$ID, "character")
-            expect_type(tT$t, "double")
-            expect_type(tT$Gene.symbol, "character")
-            expect_type(tT$adj.P.Val, "double")
-            expect_type(tT$B, "double")
-            expect_type(tT$Gene.title, "character")
-            expect_type(tT$P.Value, "double")
-            expect_type(tT$logFC, "double")
-            expect_type(tT$Gene.ID, "character")
+            expect_type(all$tT, "list")
+            expect_type(all$tT$ID, "character")
+            expect_type(all$tT$t, "double")
+            expect_type(all$tT$Gene.symbol, "character")
+            expect_type(all$tT$adj.P.Val, "double")
+            expect_type(all$tT$B, "double")
+            expect_type(all$tT$Gene.title, "character")
+            expect_type(all$tT$P.Value, "double")
+            expect_type(all$tT$logFC, "double")
+            expect_type(all$tT$Gene.ID, "character")
 
             # Non-Interactive Histogram
             fig <- nonInteractiveHistogramPlot(results$fit2, adjustment)
@@ -502,14 +509,14 @@ test_that("Microarray GSE without missing values is handled correctly by all
             expect_type(fig$jsHooks, 'list')
 
             # Summarize test results as "up", "down" or "not expressed"
-            dT <- calculateDifferentialGeneExpressionSummary(
+            all$dT <- calculateDifferentialGeneExpressionSummary(
               results$fit2, adjustment, input$significanceLevelCutOff)
-            expect_type(dT, 'double')
-            expect_equal(ncol(dT), 1)
-            expect_equal(nrow(dT), 35557)
+            expect_type(all$dT, 'double')
+            expect_equal(ncol(all$dT), 1)
+            expect_equal(nrow(all$dT), 35557)
 
             # Non-Interactive Venn diagram
-            fig <- nonInteractiveVennDiagramPlot(dT)
+            fig <- nonInteractiveVennDiagramPlot(all$dT)
 
             # Non-Interactive Q-Q plot
             fig <- nonInteractiveQQPlot(results$fit2)
@@ -519,7 +526,7 @@ test_that("Microarray GSE without missing values is handled correctly by all
 
             # Interactive Q-Q plot
             ct <- 1
-            fig <- interactiveQQPlot(results$fit2, dT, ct)
+            fig <- interactiveQQPlot(results$fit2, all$dT, ct)
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
             expect_type(fig$height, 'NULL')
@@ -531,10 +538,10 @@ test_that("Microarray GSE without missing values is handled correctly by all
             expect_type(fig$jsHooks, 'list')
 
             # Non-Interactive volcano plot (log P-value vs log fold change)
-            fig <- nonInteractiveVolcanoPlot(results$fit2, dT, ct)
+            fig <- nonInteractiveVolcanoPlot(results$fit2, all$dT, ct)
 
             # Interactive volcano plot (log P-value vs log fold change)
-            fig <- interactiveVolcanoPlot(results$fit2, dT, ct)
+            fig <- interactiveVolcanoPlot(results$fit2, all$dT, ct)
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
             expect_type(fig$height, 'NULL')
@@ -546,10 +553,10 @@ test_that("Microarray GSE without missing values is handled correctly by all
             expect_type(fig$jsHooks, 'list')
 
             # MD plot (log fold change vs mean log expression)
-            fig <- noninteractiveMeanDifferencePlot(results$fit2, dT, ct)
+            fig <- noninteractiveMeanDifferencePlot(results$fit2, all$dT, ct)
 
             # Plot Interactive Mean Difference of fit 2 data
-            fig <- interactiveMeanDifferencePlot(results$fit2, dT, ct)
+            fig <- interactiveMeanDifferencePlot(results$fit2, all$dT, ct)
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
             expect_type(fig$height, 'NULL')
@@ -564,7 +571,247 @@ test_that("Microarray GSE without missing values is handled correctly by all
             numberOfGenes <- 20
             fig <- interactiveDGEHeatMapPlot(results$ex,
                                              input$limmaPrecisionWeights,
-                                             numberOfGenes, tT)
+                                             numberOfGenes, all$tT)
+            expect_type(fig, 'list')
+            expect_type(fig$elementId, 'NULL')
+            expect_type(fig$height, 'NULL')
+            expect_type(fig$width, 'NULL')
+            expect_type(fig$x, 'list')
+            expect_type(fig$sizingPolicy, 'list')
+            expect_type(fig$dependencies, 'list')
+            expect_type(fig$preRenderHook, 'closure')
+            expect_type(fig$jsHooks, 'list')
+            
+            output <- NULL
+            session <- NULL
+            errorChecks <- NULL
+            
+            differentiallyExressedGeneAnnotation <- 
+              createGeneAnnotationTable(input, output, session, errorChecks, 
+                                        all)
+            expect_type(differentiallyExressedGeneAnnotation, 'list')
+            
+            
+            x <- differentiallyExressedGeneAnnotation[,c(4,ncol(
+              differentiallyExressedGeneAnnotation))]
+            expect_type(x, 'list')
+            
+            colnames(x) <- c("Gene.symbol", "Group1-Group2")
+            expect_type(x, 'list')
+            
+            # Extract differentially expressed gene symbols
+            differemtiallyExpressedGeneSymbols <-
+              extractGeneSymbols(x, "Gene.symbol")
+            expect_type(differemtiallyExpressedGeneSymbols, 'character')
+            
+            # enrich Differentially Expressed Genes
+            enrichedDifferentiallyExpressedGenes <-
+              enrichGenes(differemtiallyExpressedGeneSymbols, 
+                          "GO_Biological_Process_2015")
+            expect_type(enrichedDifferentiallyExpressedGenes, 'list')
+            
+            
+            enrichedDifferentiallyExpressedGenes <-calculateLogPValue(
+              enrichedDifferentiallyExpressedGenes)
+            expect_type(enrichedDifferentiallyExpressedGenes, 'list')
+            
+            
+            enrichedDifferentiallyExpressedGenes <- calculateOverlapFractions(
+              enrichedDifferentiallyExpressedGenes)
+            expect_type(enrichedDifferentiallyExpressedGenes, 'list')
+            
+            
+            columnToSort <- "P.value"
+            recordsToDisplay <- 20
+            sortDecreasingly <- TRUE
+            
+            fig <- interactiveGeneEnrichmentVolcanoPlot(
+              enrichedDifferentiallyExpressedGenes)
+            expect_type(fig, 'list')
+            expect_type(fig$elementId, 'NULL')
+            expect_type(fig$height, 'NULL')
+            expect_type(fig$width, 'NULL')
+            expect_type(fig$x, 'list')
+            expect_type(fig$sizingPolicy, 'list')
+            expect_type(fig$dependencies, 'list')
+            expect_type(fig$preRenderHook, 'closure')
+            expect_type(fig$jsHooks, 'list')
+            
+            fig <- interactiveGeneEnrichmentManhattanPlot(
+              enrichedDifferentiallyExpressedGenes, columnToSort)
+            expect_type(fig, 'list')
+            expect_type(fig$elementId, 'NULL')
+            expect_type(fig$height, 'NULL')
+            expect_type(fig$width, 'NULL')
+            expect_type(fig$x, 'list')
+            expect_type(fig$sizingPolicy, 'list')
+            expect_type(fig$dependencies, 'list')
+            expect_type(fig$preRenderHook, 'closure')
+            expect_type(fig$jsHooks, 'list')
+            
+            sortedEnrichedDifferentiallyExpressedGenes <-
+              sortGeneEnrichmentTable(enrichedDifferentiallyExpressedGenes, 
+                                      columnToSort,
+                                      sortDecreasingly)
+            expect_type(sortedEnrichedDifferentiallyExpressedGenes, 'list')
+            
+            
+            topSortedEnrichedDifferentiallyExpressedGenes <-
+              selectTopGeneEnrichmentRecords(
+                enrichedDifferentiallyExpressedGenes, recordsToDisplay)
+            expect_type(topSortedEnrichedDifferentiallyExpressedGenes, 'list')
+            
+            fig <- interactiveGeneEnrichmentBarPlot(
+              topSortedEnrichedDifferentiallyExpressedGenes, columnToSort)
+            expect_type(fig, 'list')
+            expect_type(fig$elementId, 'NULL')
+            expect_type(fig$height, 'NULL')
+            expect_type(fig$width, 'NULL')
+            expect_type(fig$x, 'list')
+            expect_type(fig$sizingPolicy, 'list')
+            expect_type(fig$dependencies, 'list')
+            expect_type(fig$preRenderHook, 'closure')
+            expect_type(fig$jsHooks, 'list')
+            
+            # Extract differentially expressed genes
+            differentiallyExpressedGenes <- 
+              extractDifferenitallyExpressedGenes(all$tT, all$dT)
+            expect_type(differentiallyExpressedGenes, 'list')
+            
+            
+            # Extract differentially expressed gene symbols
+            differemtiallyExpressedGeneSymbols <-
+              extractGeneSymbols(differentiallyExpressedGenes, "Gene.symbol")
+            expect_type(differemtiallyExpressedGeneSymbols, 'character')
+            
+            
+            # enrich Differentially Expressed Genes
+            enrichedDifferentiallyExpressedGenes <-
+              enrichGenes(differemtiallyExpressedGeneSymbols, 
+                          "GO_Biological_Process_2015")
+            expect_type(enrichedDifferentiallyExpressedGenes, 'list')
+            
+            # Extract Upregulated genes
+            upregulatedGenes <- extractUpregulatedGenes(
+              differentiallyExpressedGenes)
+            expect_type(upregulatedGenes, 'list')
+            
+            # Extract upregulated gene symbols
+            upregulatedGenesGeneSymbols <-
+              extractGeneSymbols(upregulatedGenes, "Gene.symbol")
+            expect_type(upregulatedGenesGeneSymbols, 'character')
+            
+            # enrich upregulated Genes
+            enrichedUpregulatedGenes <-
+              enrichGenes(upregulatedGenesGeneSymbols, 
+                          "GO_Biological_Process_2015")
+            expect_type(enrichedUpregulatedGenes, 'list')
+            
+            enrichedUpregulatedGenes <-calculateLogPValue(
+              enrichedUpregulatedGenes)
+            expect_type(enrichedUpregulatedGenes, 'list')
+            
+            enrichedUpregulatedGenes <- calculateOverlapFractions(
+              enrichedUpregulatedGenes)
+            expect_type(enrichedUpregulatedGenes, 'list')
+            
+            # enrich downregulated Genes
+            # Extract downregulated genes
+            downregulatedGenes <- extractdowregulatedGenes(
+              differentiallyExpressedGenes)
+            expect_type(downregulatedGenes, 'list')
+            
+            
+            # Extract downregulated gene symbols
+            downregulatedGenesGeneSymbols <-
+              extractGeneSymbols(downregulatedGenes, "Gene.symbol")
+            expect_type(downregulatedGenesGeneSymbols, 'character')
+            
+            enrichedDownregulatedGenes <-
+              enrichGenes(downregulatedGenesGeneSymbols, 
+                          "GO_Biological_Process_2015")
+            expect_type(enrichedDownregulatedGenes, 'list')
+            
+            enrichedDownregulatedGenes <-calculateLogPValue(
+              enrichedDownregulatedGenes)
+            expect_type(enrichedDownregulatedGenes, 'list')
+            
+            
+            enrichedDownregulatedGenes <- calculateOverlapFractions(
+              enrichedDownregulatedGenes)
+            expect_type(enrichedDownregulatedGenes, 'list')
+            
+            fig <- interactiveGeneEnrichmentVolcanoPlot(
+              enrichedUpregulatedGenes)
+            expect_type(fig, 'list')
+            expect_type(fig$elementId, 'NULL')
+            expect_type(fig$height, 'NULL')
+            expect_type(fig$width, 'NULL')
+            expect_type(fig$x, 'list')
+            expect_type(fig$sizingPolicy, 'list')
+            expect_type(fig$dependencies, 'list')
+            expect_type(fig$preRenderHook, 'closure')
+            expect_type(fig$jsHooks, 'list')
+            
+            fig <- interactiveGeneEnrichmentManhattanPlot(
+              enrichedUpregulatedGenes, columnToSort)
+            expect_type(fig, 'list')
+            expect_type(fig$elementId, 'NULL')
+            expect_type(fig$height, 'NULL')
+            expect_type(fig$width, 'NULL')
+            expect_type(fig$x, 'list')
+            expect_type(fig$sizingPolicy, 'list')
+            expect_type(fig$dependencies, 'list')
+            expect_type(fig$preRenderHook, 'closure')
+            expect_type(fig$jsHooks, 'list')
+            
+            sortedEnrichedDifferentiallyExpressedGenes <-
+              sortGeneEnrichmentTable(enrichedUpregulatedGenes, columnToSort,
+                                      sortDecreasingly)
+            expect_type(sortedEnrichedDifferentiallyExpressedGenes, 'list')
+            
+            topSortedEnrichedDifferentiallyExpressedGenes <-
+              selectTopGeneEnrichmentRecords(
+                sortedEnrichedDifferentiallyExpressedGenes,recordsToDisplay)
+            expect_type(topSortedEnrichedDifferentiallyExpressedGenes, 'list')
+            
+            fig <- interactiveGeneEnrichmentVolcanoPlot(
+              enrichedDownregulatedGenes)
+            expect_type(fig, 'list')
+            expect_type(fig$elementId, 'NULL')
+            expect_type(fig$height, 'NULL')
+            expect_type(fig$width, 'NULL')
+            expect_type(fig$x, 'list')
+            expect_type(fig$sizingPolicy, 'list')
+            expect_type(fig$dependencies, 'list')
+            expect_type(fig$preRenderHook, 'closure')
+            expect_type(fig$jsHooks, 'list')
+            
+            fig <- interactiveGeneEnrichmentManhattanPlot(
+              enrichedDownregulatedGenes, columnToSort)
+            expect_type(fig, 'list')
+            expect_type(fig$elementId, 'NULL')
+            expect_type(fig$height, 'NULL')
+            expect_type(fig$width, 'NULL')
+            expect_type(fig$x, 'list')
+            expect_type(fig$sizingPolicy, 'list')
+            expect_type(fig$dependencies, 'list')
+            expect_type(fig$preRenderHook, 'closure')
+            expect_type(fig$jsHooks, 'list')
+            
+            sortedEnrichedDifferentiallyExpressedGenes <-
+              sortGeneEnrichmentTable(enrichedDownregulatedGenes, columnToSort,
+                                      sortDecreasingly)
+            expect_type(sortedEnrichedDifferentiallyExpressedGenes, 'list')
+            
+            topSortedEnrichedDifferentiallyExpressedGenes <-
+              selectTopGeneEnrichmentRecords(enrichedDownregulatedGenes,
+                                             recordsToDisplay)
+            expect_type(topSortedEnrichedDifferentiallyExpressedGenes, 'list')
+            
+            
+            fig <- interactiveGeneEnrichmentBarPlot(enrichedDownregulatedGenes, 
+                                                    columnToSort)
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
             expect_type(fig$height, 'NULL')

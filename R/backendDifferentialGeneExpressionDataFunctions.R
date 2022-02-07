@@ -205,9 +205,15 @@ calculateDifferentialGeneExpression <-
            all) {
     # Define results variable
     results <- NULL
+    
+    dataSource <- input$dataSource
+    
+    if (is.null(all$gsetData)){
+      dataSource <- "Upload"
+    }
 
     if (input$dataSetType == "Single") {
-      if (input$dataSource == "GEO" & all$typeOfData == "Microarray") {
+      if (dataSource == "GEO" & all$typeOfData == "Microarray") {
         # make proper column names to match toptable
         fvarLabels(all$gsetData) <- make.names(fvarLabels(all$gsetData))
 
@@ -222,7 +228,7 @@ calculateDifferentialGeneExpression <-
       sml <- sml[sel]
       all$knnDataInput <- all$knnDataInput[, sel]
 
-      if (input$dataSource == "GEO" & all$typeOfData == "Microarray") {
+      if (dataSource == "GEO" & all$typeOfData == "Microarray") {
         # Update gset data
         all$gsetData <- all$gsetData[, sel]
         exprs(all$gsetData) <- all$knnDataInput
@@ -232,7 +238,7 @@ calculateDifferentialGeneExpression <-
       }
 
       if (input$forceNormalization == "Yes") {
-        if (input$dataSource == "GEO" & all$typeOfData == "Microarray") {
+        if (dataSource == "GEO" & all$typeOfData == "Microarray") {
           # normalize data
           exprs(all$gsetData) <- normalizeBetweenArrays(all$knnDataInput)
         } 
@@ -248,7 +254,7 @@ calculateDifferentialGeneExpression <-
       groups <- make.names(c("Group1", "Group2"))
       levels(gs) <- groups
 
-      if (input$dataSource == "GEO" & all$typeOfData == "Microarray") {
+      if (dataSource == "GEO" & all$typeOfData == "Microarray") {
         # Update gset data
         all$gsetData$group <- gs
 
@@ -270,7 +276,7 @@ calculateDifferentialGeneExpression <-
       colnames(design) <- levels(gs)
 
       if (input$limmaPrecisionWeights == "Yes") {
-        if (input$dataSource == "GEO" & all$typeOfData == "Microarray") {
+        if (dataSource == "GEO" & all$typeOfData == "Microarray") {
           all$gsetData <- all$gsetData[complete.cases(exprs(all$gsetData)), ]
 
           # calculate precision weights and show plot of
@@ -301,7 +307,7 @@ calculateDifferentialGeneExpression <-
         results$ex <- v
 
       } else if (input$limmaPrecisionWeights == "No") {
-        if (input$dataSource == "GEO" & all$typeOfData == "Microarray") {
+        if (dataSource == "GEO" & all$typeOfData == "Microarray") {
           # fit linear model
           fit <- lmFit(all$gsetData, design)
           # Update results
@@ -339,7 +345,7 @@ calculateDifferentialGeneExpression <-
 
     } else if (input$dataSetType == "Combine")
     {
-      if (input$dataSource == "GEO" & all$typeOfData == "Microarray") {
+      if (dataSource == "GEO" & all$typeOfData == "Microarray") {
         # make proper column names to match toptable
         fvarLabels(all$gsetData) <- make.names(fvarLabels(all$gsetData))
 
@@ -354,14 +360,14 @@ calculateDifferentialGeneExpression <-
       sml <- sml[sel]
       all$knnDataInput <- all$knnDataInput[, sel]
 
-      if (input$dataSource == "Upload") {
+      if (dataSource == "Upload") {
         if (all$typeOfData == "RNA Sequencing") {
           all$knnDataInput = DGEList(all$knnDataInput, group = sml)
         }
       }
 
       if (input$forceNormalization == "Yes") {
-        if (input$dataSource == "GEO" & all$typeOfData == "Microarray") {
+        if (dataSource == "GEO" & all$typeOfData == "Microarray") {
           # normalize data
           all$knnDataInput <- normalizeBetweenArrays(all$knnDataInput)
         } else if (all$typeOfData == "RNA Sequencing") {
@@ -376,7 +382,7 @@ calculateDifferentialGeneExpression <-
       groups <- make.names(c("Group1", "Group2"))
       levels(gs) <- groups
 
-      if (input$dataSource == "GEO" & all$typeOfData == "Microarray") {
+      if (dataSource == "GEO" & all$typeOfData == "Microarray") {
         # Update all$gsetData data
         all$knnDataInput <- ExpressionSet(all$knnDataInput)
         all$knnDataInput$group <- gs
@@ -398,7 +404,7 @@ calculateDifferentialGeneExpression <-
       colnames(design) <- levels(gs)
 
       if (input$limmaPrecisionWeights == "Yes") {
-        if (input$dataSource == "GEO" & all$typeOfData == "Microarray") {
+        if (dataSource == "GEO" & all$typeOfData == "Microarray") {
           # Convert to matrix
           all$knnDataInput <- as.matrix(all$knnDataInput)
           all$knnDataInput <- all$knnDataInput[complete.cases(all$knnDataInput), ]
@@ -433,7 +439,7 @@ calculateDifferentialGeneExpression <-
         results$ex <- v
 
       } else if (input$limmaPrecisionWeights == "No") {
-        if (input$dataSource == "GEO" & all$typeOfData == "Microarray") {
+        if (dataSource == "GEO" & all$typeOfData == "Microarray") {
           # fit linear model
           fit <- lmFit(all$knnDataInput, design)
           # Update gene information
