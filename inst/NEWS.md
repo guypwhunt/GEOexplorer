@@ -140,3 +140,6 @@ Changes in version 1.1.8 (2022-01-26)
 Changes in version 1.1.9 (2022-02-07)
 + GEO RNA SEQ Updates
 + Test updates
+
+Changes in version 1.1.10 (2022-02-09)
++ GEO RNA SEQ Updates and bug fixes

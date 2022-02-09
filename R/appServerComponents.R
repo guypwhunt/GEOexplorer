@@ -222,12 +222,14 @@ sourceServer <- function(input, output, session) {
 #' A Function to Return the Exploratory Data Analysis Server Component
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @importFrom DT renderDataTable
-#' @importFrom utils write.csv object.size
+#' @importFrom utils write.csv object.size read.delim head tail
 #' @importFrom htmltools HTML
 #' @importFrom xfun file_ext
 #' @importFrom stringr str_trim
 #' @import markdown
 #' @importFrom knitr knit
+#' @importFrom R.utils gunzip
+#' @importFrom xfun file_ext
 #' @author Guy Hunt
 #' @noRd
 performExploratoryDataAnalysis <- function(input,
@@ -596,7 +598,7 @@ performExploratoryDataAnalysis <- function(input,
                                 geoSupplementaryFilesDirectoryPath)
           },error = function(err) {return(NULL)})
           
-          filePath <- tryCatch({row.names(geoTarFile)[1]
+          filePath <- tryCatch({head(row.names(geoTarFile), n=1)
             },error = function(err) {return(NULL)})
           
           fileExtensions <- tryCatch({extractFileExtensions(geoTarFile)
@@ -605,62 +607,134 @@ performExploratoryDataAnalysis <- function(input,
           uniqueFileExtensions <- tryCatch({unique(fileExtensions)
           },error = function(err) {return(NULL)})
           
-          if (uniqueFileExtensions == "xlsx" | uniqueFileExtensions == "csv"){
-            filePath <- tryCatch({tail(row.names(geoTarFile), n = 1)
-            },error = function(err) {return(NULL)})
-            
-            if (uniqueFileExtensions == "xlsx") {
-              all$expressionData <- tryCatch({extractExpressionExcel(filePath)
-              }, error = function(err) {return(NULL)})
-            } else if (uniqueFileExtensions == "csv") {
-              all$expressionData <- tryCatch({extractExpressionCsv(filePath)
-              }, error = function(err) {return(NULL)})
+          if (uniqueFileExtensions == "gz"){
+            gunzip(filePath, overwrite=TRUE)
+            files <- list.files(path = geoAccessionDirectoryPath)
+            fileExtensions <- c()
+            for (file in files) {
+              fileExtensions <-append(fileExtensions, file_ext(file))
             }
+            uniqueFileExtensions <- unique(fileExtensions)
             
-            all$expressionData <- tryCatch({deduplicatedExpressiondata(
-              all$expressionData)
-              },error = function(err) {return(all$expressionData)})
-            
-            row.names(all$expressionData) <- tryCatch({all$expressionData[,1]
-            }, error = function(err) {return(all$expressionData)})
-            
-            all$expressionData <- tryCatch({
-              removeNonNumericColumnsFromExpressiondata(all$expressionData)
-            }, error = function(err) {return(all$expressionData)})
-
-          } else if (uniqueFileExtensions == "tar") 
-          {
-            tarFileName <- tryCatch({
-              extractGeoSupFiles(all$geoAccessionCode(),filePath,
-                                 geoAccessionDirectoryPath)
-            },error = function(err) {return(NULL)})
-            
-            geneNamesCol <- 1
-            countsCol <- 3
-            
-            all$expressionData <- tryCatch({
-              extractExpressionDataFromGeoSupRawFiles(
-                geoAccessionDirectoryPath, tarFileName, geneNamesCol, countsCol)
-            },error = function(err) {return(NULL)})
-            
-            all$expressionDataRowNames <- tryCatch({
-              row.names(all$expressionData)
-            }, error = function(err) {return(NULL)})
-            
-            all$expressionData <- tryCatch({
-              calculateSampleNames(all$expressionData)
-            },error = function(err) {return(all$expressionData)})
-            
-            all$expressionData <- tryCatch({as.data.frame(all$expressionData)
-            },error = function(err) {return(all$expressionData)})
-            
-            row.names(all$expressionData) <- tryCatch({
-              all$expressionDataRowNames
-            },error = function(err) {return(all$expressionData)})
-
+            filePath <- paste0(geoAccessionDirectoryPath, "/", 
+                               tail(files, n=1))
+          } 
+          
+          all$expressionData <- NULL
+          
+          if (typeof(uniqueFileExtensions)=="character"){
+          
+            if (uniqueFileExtensions == "xlsx" |
+                uniqueFileExtensions == "csv" |
+                uniqueFileExtensions == "txt" |
+                uniqueFileExtensions == "tsv") {
+              if (uniqueFileExtensions == "xlsx") {
+                all$expressionData <- tryCatch({
+                  extractExpressionExcel(filePath)
+                }, error = function(err) {
+                  return(all$expressionData)
+                })
+              }
+              else if (uniqueFileExtensions == "csv") {
+                all$expressionData <- tryCatch({
+                  extractExpressionCsv(filePath)
+                }, error = function(err) {
+                  return(all$expressionData)
+                })
+              }
+              else if (uniqueFileExtensions == "txt" |
+                       uniqueFileExtensions == "tsv") {
+                all$expressionData <- tryCatch({
+                  read.delim(filePath,
+                             header = TRUE,
+                             sep = "\t",
+                             dec = ".")
+                }, error = function(err) {
+                  return(all$expressionData)
+                })
+              }
+              
+              all$expressionData <-
+                tryCatch({
+                  deduplicatedExpressiondata(all$expressionData)
+                }, error = function(err) {
+                  return(all$expressionData)
+                })
+              
+              row.names(all$expressionData) <-
+                tryCatch({
+                  all$expressionData[, 1]
+                }, error = function(err) {
+                  return(all$expressionData)
+                })
+              
+              all$expressionData <- tryCatch({
+                removeNonNumericColumnsFromExpressiondata(all$expressionData)
+              }, error = function(err) {
+                return(all$expressionData)
+              })
+              
+            } else if (uniqueFileExtensions == "tar")
+            {
+              tarFileName <- tryCatch({
+                extractGeoSupFiles(all$geoAccessionCode(),
+                                   filePath,
+                                   geoAccessionDirectoryPath)
+              }, error = function(err) {
+                return(NULL)
+              })
+              
+              geneNamesCol <- 1
+              countsCol <- 3
+              
+              all$expressionData <- tryCatch({
+                extractExpressionDataFromGeoSupRawFiles(
+                  geoAccessionDirectoryPath,tarFileName,geneNamesCol,countsCol)
+              }, error = function(err) {
+                return(NULL)
+              })
+              
+              if (is.null(all$expressionData)) {
+                all$expressionData <- tryCatch({
+                  extractExpressionDataFromGeoSupRawFiles(
+                    geoAccessionDirectoryPath, tarFileName, geneNamesCol, 2)
+                }, error = function(err) {
+                  return(NULL)
+                })
+              }
+              
+              all$expressionDataRowNames <- tryCatch({
+                row.names(all$expressionData)
+              }, error = function(err) {
+                return(all$expressionData)
+              })
+              
+              all$expressionData <- tryCatch({
+                calculateSampleNames(all$expressionData)
+              }, error = function(err) {
+                return(all$expressionData)
+              })
+              
+              all$expressionData <-
+                tryCatch({
+                  as.data.frame(all$expressionData)
+                }, error = function(err) {
+                  return(all$expressionData)
+                })
+              
+              row.names(all$expressionData) <- tryCatch({
+                all$expressionDataRowNames
+              }, error = function(err) {
+                return(all$expressionData)
+              })
+            }
           }
           
-          all$expressionData <- convertNaToZero(all$expressionData)
+          all$expressionData <- tryCatch({
+            convertNaToZero(all$expressionData)}, 
+            error = function(err) {
+              return(all$expressionData)
+            })
           
           try(deleteGeoSupplementaryFilesDirectory(geoAccessionDirectoryPath))
           
