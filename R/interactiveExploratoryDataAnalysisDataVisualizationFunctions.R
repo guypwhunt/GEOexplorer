@@ -339,6 +339,9 @@ interactiveMeanVariancePlot <-
 
     if (is.null(gset)) {
       combineData <- exData
+    } else if (length(gset@featureData@data)==0)
+      {
+      combineData <- exData
     } else {
       # Extract gene data
       geneData <- gset@featureData@data
@@ -667,6 +670,9 @@ interactivePrincompPcaIndividualsPlot <-
     pcaDf["ID"] <- rownames(pcaDf)
     if (is.null(gset)) {
       combineData <- pcaDf
+    } else if (length(gset@featureData@data)==0)
+    {
+      combineData <- pcaDf
     } else {
       geneData <- gset@featureData@data
       # Error handling for gset without featureData@data
@@ -992,6 +998,9 @@ interactivePrcompPcaIndividualsPlot <-
     pcaDf["ID"] <- rownames(pcaDf)
     if (is.null(gset)) {
       combineData <- pcaDf
+    } else if (length(gset@featureData@data)==0)
+    {
+      combineData <- pcaDf
     } else {
       geneData <- gset@featureData@data
       # Error handling for gset without featureData@data
@@ -1173,6 +1182,9 @@ interactive3DPrcompPcaIndividualsPlot <-
     pcaDf["ID"] <- rownames(pcaDf)
     gset <- NULL
     if (is.null(gset)) {
+      combineData <- pcaDf
+    } else if (length(gset@featureData@data)==0)
+    {
       combineData <- pcaDf
     } else {
       geneData <- gset@featureData@data

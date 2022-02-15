@@ -1623,7 +1623,8 @@ performDifferentialGeneExpressionAnalysis <- function (input,
         # return a safeError if a parsing error occurs
         return(NULL)})
       
-      if(input$dataSource == "GEO") {
+      if(input$dataSource == "GEO" & length(all$gsetData@featureData@data)!=0) 
+        {
         all$geneAnnotationTable <- try({
           createGeneAnnotationTable(
             input, output, session, errorChecks, all)
