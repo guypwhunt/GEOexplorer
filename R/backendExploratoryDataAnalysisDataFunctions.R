@@ -826,59 +826,6 @@ calculateCountsPerMillion <- function(rnaExpressionData, applyCpm) {
 }
 
 
-#' A function to search for datasets in GEO
-#'
-#' This function allows you to search for datasets in GEO
-#' @param expressionData A object containing the gene expression data
-#' @keywords rnaSeq
-#' @importFrom htmltools HTML
-#' @importFrom stringr str_replace
-#' @importFrom httr GET
-#' @importFrom XML xmlParse xmlToList xmlTreeParse
-#' @author Guy Hunt
-#' @noRd
-searchGeo <- function(searchTerm, resultsLimit) {
-  # Convert resultsLimit to a string
-  resultsLimit <- as.character(resultsLimit)
-
-  # Define the two URLs
-  firstURL <- 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?
-  db=gds&term=searchTerm&retmax=resultsLimit&usehistory=y'
-  secondURL <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?
-  db=gds&version=2.0&query_key=X&WebEnv=ENTER_WEBENV_PARAMETER_HERE"
-
-  # Update the first url with the search parameters
-  firstURL <- str_replace(firstURL, "searchTerm", searchTerm)
-  firstURL <- str_replace(firstURL, "resultsLimit", resultsLimit)
-
-  # Perform the API call
-  firstResults <- GET(firstURL)
-
-  # Parse the response
-  firstResultsData <- xmlParse(firstResults)
-  firstResultsData <- xmlToList(firstResultsData)
-
-  # Update the second url with the search parameters
-  secondURL <- str_replace(secondURL, "X", firstResultsData$QueryKey)
-  secondURL <- str_replace(secondURL, "ENTER_WEBENV_PARAMETER_HERE",
-                           firstResultsData$WebEnv)
-
-  # Perform the API call
-  secondResults <- GET(secondURL)
-
-  # Parse the response
-  #secondResultsData <- xmlTreeParse(secondResults)
-
-  # Convert from list to character
-  #secondResultsData <- unlist(secondResultsData)
-
-  # Convert to HTML
-  #secondResultsData <- HTML(secondResultsData)
-
-  return(secondResults)
-  #return(secondResultsData$doc$children)
-}
-
 #' A function to apply batch correction
 #'
 #' This function allows you to apply batch correction

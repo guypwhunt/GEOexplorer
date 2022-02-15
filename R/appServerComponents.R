@@ -627,8 +627,10 @@ performExploratoryDataAnalysis <- function(input,
             if (uniqueFileExtensions == "xlsx" |
                 uniqueFileExtensions == "csv" |
                 uniqueFileExtensions == "txt" |
-                uniqueFileExtensions == "tsv") {
-              if (uniqueFileExtensions == "xlsx") {
+                uniqueFileExtensions == "tsv" |
+                uniqueFileExtensions == "xls") {
+              if (uniqueFileExtensions == "xlsx" |
+                  uniqueFileExtensions == "xls") {
                 all$expressionData <- tryCatch({
                   extractExpressionExcel(filePath)
                 }, error = function(err) {
