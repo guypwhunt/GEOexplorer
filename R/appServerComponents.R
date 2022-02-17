@@ -771,14 +771,6 @@ performExploratoryDataAnalysis <- function(input,
           all$columnInfo <-
             convertExpressionDataToExperimentInformation(
               all$expressionData)
-          
-          all$gsetData <- try(
-            ExpressionSet(assayData=as.matrix(all$expressionData),
-                          phenoData=phenoData(all$gsetData),
-                          #featureData=featureData(all$gsetData),
-                          experimentData=experimentData(all$gsetData),
-                          annotation=annotation(all$gsetData),
-                          protocolData=protocolData(all$gsetData)))
         }
       
         })} 
