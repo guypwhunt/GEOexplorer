@@ -1612,25 +1612,33 @@ performDifferentialGeneExpressionAnalysis <- function (input,
         differentiallyExpressedGenes <-
           differentiallyExpressedGenes[, c(2,1)]})
         
+        try(
+          differentiallyExpressedGenes[, "Gene.symbol"] 
+          <- row.names(differentiallyExpressedGenes))
+        
         differentiallyExpressedGenes
       }, error = function(e) {
         # return a safeError if a parsing error occurs
         return(NULL)})
       
-      if(input$dataSource == "GEO" & length(all$gsetData@featureData@data)!=0) 
+      try({
+        if (input$dataSource == "GEO" &
+            length(all$gsetData@featureData@data) != 0)
         {
-        all$geneAnnotationTable <- try({
-          createGeneAnnotationTable(
-            input, output, session, errorChecks, all)
-        })
-        
-      } else if (input$dataSetType == "Combine") {
-        if (input$dataSource2 == "GEO") {
           all$geneAnnotationTable <- try({
-            createGeneAnnotationTable(
-              input, output, session, errorChecks, all)
+            createGeneAnnotationTable(input, output, session, errorChecks, all)
           })
-        }}
+          
+        } else if (input$dataSetType == "Combine") {
+          if (input$dataSource2 == "GEO") {
+            all$geneAnnotationTable <- try({
+              createGeneAnnotationTable(input, output, session, errorChecks, 
+                                        all)
+            })
+          }
+        }
+      }
+      )
       
       try(all$geneAnnotationTable[] <- lapply(all$geneAnnotationTable,
                                               str_trunc, 20, ellipsis = ""))
