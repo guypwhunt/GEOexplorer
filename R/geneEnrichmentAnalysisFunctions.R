@@ -164,6 +164,8 @@ interactiveGeneEnrichmentManhattanPlot  <- function(geneEnrichmentTable,
                                      title = ""
                                      ),
                         yaxis = list(title = columnToSort))
+  
+  try(fig <- toWebGL(fig))
 
   return(fig)
 }
@@ -186,7 +188,9 @@ interactiveGeneEnrichmentVolcanoPlot  <- function(geneEnrichmentTable) {
     xaxis = list(title = "Odds Ratio"),
     yaxis = list(title = "-log10(P-value)")
   )
-
+  
+  try(fig <- toWebGL(fig))
+  
   return(fig)
 }
 
@@ -209,7 +213,7 @@ interactiveGeneEnrichmentBarPlot  <- function(geneEnrichmentTable,
                         yaxis = list(title = "Term",
                                      categoryorder = "array",
                                      categoryarray = selectedColumn))
-
+  
   return(fig)
 }
 

@@ -61,6 +61,9 @@ interactiveBoxAndWhiskerPlot <-
     }
     fig <-
       fig %>% layout(title = "Box And Whisker Plot")
+    
+    try(fig <- toWebGL(fig))
+    
     return(fig)
   }
 
@@ -132,6 +135,9 @@ interactiveDensityPlot <- function(ex) {
       xaxis = list(title = 'Intensity'),
       yaxis = list(title = 'Density')
     )
+  
+  try(fig <- toWebGL(fig))
+  
   return(fig)
 }
 
@@ -209,6 +215,9 @@ interactiveThreeDDensityPlot <-
         zaxis = list(title = "Density")
       )
     )
+    
+    try(fig <- toWebGL(fig))
+    
     return(fig)
   }
 
@@ -275,6 +284,9 @@ interactiveUmapPlot <- function(ex, knn) {
   fig <- fig %>% layout(title = (
     paste('UMAP plot, number of nearest neighbors used =', knn)
   ))
+  
+  try(fig <- toWebGL(fig))
+  
   return(fig)
 }
 
@@ -447,6 +459,9 @@ interactiveMeanVariancePlot <-
       )
     fig <- fig %>% layout(title =
       'Mean Variance Plot')
+    
+    try(fig <- toWebGL(fig))
+      
     return(fig)
   }
 
@@ -526,6 +541,8 @@ interactivePrcompPcaScreePlot <-
                      tickformat = ".0%")
       )
 
+    try(fig <- toWebGL(fig))
+    
     return(fig)
   }
 
@@ -602,6 +619,8 @@ interactivePrincompPcaScreePlot <-
         yaxis = list(title = "Percentage of Explained Variances",
                      tickformat = ".0%")
       )
+    
+    try(fig <- toWebGL(fig))
 
     return(fig)
   }
@@ -788,6 +807,9 @@ interactivePrincompPcaIndividualsPlot <-
           "Comp.2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
         ))
       )
+    
+    try(fig <- toWebGL(fig))
+    
     return(fig)
   }
 
@@ -875,6 +897,9 @@ interactivePrincompPcaVariablesPlot <-
           "Comp.2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
         ))
       )
+    
+    try(fig <- toWebGL(fig))
+    
     return(fig)
   }
 
@@ -930,8 +955,9 @@ interactiveHeatMapPlot <- function(ex) {
     i <- i + 1
   }
   colnames(df) <- colnames(corMatrix)
-  fig <- heatmaply(df)
-  return(fig)
+  heatmapFig <- heatmaply(df)
+  
+  return(heatmapFig)
 }
 
 #' A Function to Create an Interactive Scatter Plot of the
@@ -1115,6 +1141,9 @@ interactivePrcompPcaIndividualsPlot <-
           "PC2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
         ))
       )
+    
+    try(fig <- toWebGL(fig))
+    
     return(fig)
   }
 
@@ -1304,6 +1333,9 @@ interactive3DPrcompPcaIndividualsPlot <-
           ))
         )
       )
+    
+    try(fig <- toWebGL(fig))
+    
     return(fig)
   }
 
@@ -1390,6 +1422,9 @@ interactivePrcompPcaVariablesPlot <-
           "PC2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
         ))
       )
+    
+    try(fig <- toWebGL(fig))
+    
     return(fig)
   }
 
@@ -1482,5 +1517,8 @@ interactive3DPrcompPcaVariablesPlot <-
         ))
       )
       )
+    
+    try(fig <- toWebGL(fig))
+    
     return(fig)
   }

@@ -96,6 +96,9 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
     xaxis = list(title = 'Adjusted P-value'),
     yaxis = list(title = 'Number of genes')
   )
+  
+  try(fig <- toWebGL(fig))
+  
   return(fig)
 }
 
@@ -322,6 +325,9 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
     xaxis = list(title = "Average log-expression"),
     yaxis = list(title = "log-fold-change")
   )
+  
+  try(fig <- toWebGL(fig))
+  
   return(fig)
 }
 
@@ -550,6 +556,9 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
     xaxis = list(title = "Log2 Fold Change"),
     yaxis = list(title = "-log10(P-value)")
   )
+  
+  try(fig <- toWebGL(fig))
+  
   return(fig)
 }
 
@@ -781,6 +790,9 @@ interactiveQQPlot <- function(fit2, dT, ct) {
     xaxis = list(title = "Theoretical Quantiles"),
     yaxis = list(title = "Sample Quantiles")
   )
+  
+  try(fig <- toWebGL(fig))
+  
   return(fig)
 }
 
@@ -804,10 +816,11 @@ interactiveDGEHeatMapPlot <- function(ex, limmaPrecisionWeights,
 
   # Create the heatmap
   if (limmaPrecisionWeights == "Yes") {
-    fig <- heatmaply(ex$E[i, ])
+    heatmapFig <- heatmaply(ex$E[i, ])
   } else if (limmaPrecisionWeights == "No") {
-    fig <- heatmaply(ex[i, ])
+    heatmapFig <- heatmaply(ex[i, ])
   }
-  return(fig)
+  
+  return(heatmapFig)
 
 }
