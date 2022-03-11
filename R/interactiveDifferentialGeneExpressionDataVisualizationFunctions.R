@@ -88,18 +88,18 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
                   adjust.method = adjustment,
                   sort.by = "B",
                   number = Inf)
-  fig <- plot_ly(x = tT2$adj.P.Val,
+  fig15 <- plot_ly(x = tT2$adj.P.Val,
                  type = "histogram",
                  nbinsx = 30)
-  fig <- fig %>% layout(
+  fig15 <- fig15 %>% layout(
     title = 'Adjusted P-value distribution',
     xaxis = list(title = 'Adjusted P-value'),
     yaxis = list(title = 'Number of genes')
   )
   
-  try(fig <- toWebGL(fig))
+  try(fig15 <- toWebGL(fig15))
   
-  return(fig)
+  return(fig15)
 }
 
 #' A Function to Create an Interactive Mean Difference
@@ -230,7 +230,7 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
     "Similar Expression"
   fit2Df$regulation[fit2Df$regulation == "-1"] <- "Downregulation"
 
-  fig <-
+  fig16 <-
     plot_ly(
       data = fit2Df,
       x = ~ aMean,
@@ -320,15 +320,15 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
       marker = list(size = 3)
     )
 
-  fig <- fig %>% layout(
+  fig16 <- fig16 %>% layout(
     title = ('Group1-Group2'),
     xaxis = list(title = "Average log-expression"),
     yaxis = list(title = "log-fold-change")
   )
   
-  try(fig <- toWebGL(fig))
+  try(fig16 <- toWebGL(fig16))
   
-  return(fig)
+  return(fig16)
 }
 
 #' A Function to Create an Interactive Volcano Plot of
@@ -460,7 +460,7 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
     "Similar Expression"
   fit2Df$regulation[fit2Df$regulation == "-1"] <- "Downregulation"
 
-  fig <-
+  fig17 <-
     plot_ly(
       data = fit2Df,
       x = ~ coefficients,
@@ -551,15 +551,15 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
       marker = list(size = 3)
     )
 
-  fig <- fig %>% layout(
+  fig17 <- fig17 %>% layout(
     title = ('Group1-Group2'),
     xaxis = list(title = "Log2 Fold Change"),
     yaxis = list(title = "-log10(P-value)")
   )
   
-  try(fig <- toWebGL(fig))
+  try(fig17 <- toWebGL(fig17))
   
-  return(fig)
+  return(fig17)
 }
 
 #' A Function to Create an Interactive QQ Plot of the
@@ -695,9 +695,9 @@ interactiveQQPlot <- function(fit2, dT, ct) {
     "Similar Expression"
   qqData2$regulation[qqData2$regulation == "-1"] <- "Downregulation"
 
-  fig <- plot_ly()
-  fig <-
-    fig %>% add_trace(
+  fig18 <- plot_ly()
+  fig18 <-
+    fig18 %>% add_trace(
       data = qqData2,
       x = ~ x,
       y = ~ y,
@@ -785,15 +785,15 @@ interactiveQQPlot <- function(fit2, dT, ct) {
       hoverinfo = text,
       marker = list(size = 3)
     )
-  fig <- fig %>% layout(
+  fig18 <- fig18 %>% layout(
     title = ('Moderated t statistic'),
     xaxis = list(title = "Theoretical Quantiles"),
     yaxis = list(title = "Sample Quantiles")
   )
   
-  try(fig <- toWebGL(fig))
+  try(fig18 <- toWebGL(fig18))
   
-  return(fig)
+  return(fig18)
 }
 
 

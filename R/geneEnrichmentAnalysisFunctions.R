@@ -149,7 +149,7 @@ interactiveGeneEnrichmentManhattanPlot  <- function(geneEnrichmentTable,
   selectedColumn <- geneEnrichmentColumnSelection(geneEnrichmentTable,
                                                   columnToSort)
 
-  fig <- plot_ly(geneEnrichmentTable,
+  fig19 <- plot_ly(geneEnrichmentTable,
                  y = selectedColumn,
                  x = ~Term,
                  color = selectedColumn,
@@ -158,16 +158,16 @@ interactiveGeneEnrichmentManhattanPlot  <- function(geneEnrichmentTable,
                  text = geneEnrichmentPlotText(geneEnrichmentTable)
   )
 
-  fig <- fig %>% layout(xaxis = list(categoryorder = "array",
+  fig19 <- fig19 %>% layout(xaxis = list(categoryorder = "array",
                                      categoryarray = selectedColumn,
                                      showticklabels = FALSE,
                                      title = ""
                                      ),
                         yaxis = list(title = columnToSort))
   
-  try(fig <- toWebGL(fig))
+  try(fig19 <- toWebGL(fig19))
 
-  return(fig)
+  return(fig19)
 }
 
 #' A Function to create an interactive gene enrichment volcano plot
@@ -175,7 +175,7 @@ interactiveGeneEnrichmentManhattanPlot  <- function(geneEnrichmentTable,
 #' @author Guy Hunt
 #' @noRd
 interactiveGeneEnrichmentVolcanoPlot  <- function(geneEnrichmentTable) {
-  fig <- plot_ly(
+  fig20 <- plot_ly(
     data = geneEnrichmentTable,
     x = ~ Odds.Ratio,
     y = ~ Log.P.Value,
@@ -184,14 +184,14 @@ interactiveGeneEnrichmentVolcanoPlot  <- function(geneEnrichmentTable) {
     type = 'scatter',
     mode = 'markers')
 
-  fig <- fig %>% layout(
+  fig20 <- fig20 %>% layout(
     xaxis = list(title = "Odds Ratio"),
     yaxis = list(title = "-log10(P-value)")
   )
   
-  try(fig <- toWebGL(fig))
+  try(fig20 <- toWebGL(fig20))
   
-  return(fig)
+  return(fig20)
 }
 
 #' A Function to create an interactive gene enrichment bar plot
@@ -203,18 +203,18 @@ interactiveGeneEnrichmentBarPlot  <- function(geneEnrichmentTable,
   selectedColumn <- geneEnrichmentColumnSelection(geneEnrichmentTable,
                                                   columnToSort)
 
-  fig <- plot_ly(geneEnrichmentTable,
+  fig21 <- plot_ly(geneEnrichmentTable,
                  x = selectedColumn,
                  color = selectedColumn,
                  text = geneEnrichmentPlotText(geneEnrichmentTable),
                  y = ~Term, type = 'bar', orientation = 'h')
 
-  fig <- fig %>% layout(xaxis = list(title = columnToSort),
+  fig21 <- fig21 %>% layout(xaxis = list(title = columnToSort),
                         yaxis = list(title = "Term",
                                      categoryorder = "array",
                                      categoryarray = selectedColumn))
   
-  return(fig)
+  return(fig21)
 }
 
 #' A Function to return the gene enrichment column selection logic

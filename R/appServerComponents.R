@@ -577,7 +577,8 @@ performExploratoryDataAnalysis <- function(input,
               ",
           type = "error"
         )
-      } else if (length(all$expressionData) == 0)
+      } 
+      else if (length(all$expressionData) == 0)
       {
         try({
           
@@ -774,7 +775,7 @@ performExploratoryDataAnalysis <- function(input,
         }
       
         })} 
-      else {
+      else if (input$dataSource == "GEO") {
         all$typeOfData <- "Microarray"
       }
       if ((isNumeric(all$expressionData)) &
@@ -805,6 +806,12 @@ performExploratoryDataAnalysis <- function(input,
         }
         
         if (all$typeOfData == "RNA Sequencing") {
+          
+          try({
+            keep.exprs <- filterByExpr(all$expressionData, min.count=10)
+            all$expressionData <- all$expressionData[keep.exprs,]
+            })
+          
           # Raw counts are converted to counts-per-million (CPM)
           all$cpm <- tryCatch({
             calculateCountsPerMillion(all$expressionData,
@@ -827,6 +834,8 @@ performExploratoryDataAnalysis <- function(input,
           }
         } else
         {
+          
+          
           all$cpm <- all$expressionData
         }
         

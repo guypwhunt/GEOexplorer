@@ -46,12 +46,12 @@ interactiveBoxAndWhiskerPlot <-
   function(ex) {
     ex <- as.data.frame(ex)
 
-    fig <- plot_ly(type = "box", quartilemethod = "linear",
+    fig1 <- plot_ly(type = "box", quartilemethod = "linear",
                    boxpoints = FALSE)
     i = 1
     for (col in names(ex)) {
-      fig <-
-        fig %>% add_trace(
+      fig1 <-
+        fig1 %>% add_trace(
           x = names(ex)[i],
           y = ex[, i],
           quartilemethod = "linear",
@@ -59,12 +59,12 @@ interactiveBoxAndWhiskerPlot <-
         )
       i <- i + 1
     }
-    fig <-
-      fig %>% layout(title = "Box And Whisker Plot")
+    fig1 <-
+      fig1 %>% layout(title = "Box And Whisker Plot")
     
-    try(fig <- toWebGL(fig))
+    try(fig1 <- toWebGL(fig1))
     
-    return(fig)
+    return(fig1)
   }
 
 #' A Function to Create an Interactive Density Plot from
@@ -116,29 +116,29 @@ interactiveBoxAndWhiskerPlot <-
 #' @seealso [extractExpressionData()] for expression object
 interactiveDensityPlot <- function(ex) {
   ex <- as.data.frame(ex)
-  fig <-
+  fig2 <-
     plot_ly(type = 'scatter',
             mode = 'lines')
   i <- 1
   for (col in names(ex)) {
     density <- density(ex[, i])
-    fig <-
-      fig %>% add_trace(x = density$x,
+    fig2 <-
+      fig2 %>% add_trace(x = density$x,
                         y = density$y,
                         name = col)
     i <- i + 1
   }
 
-  fig <-
-    fig %>% layout(
+  fig2 <-
+    fig2 %>% layout(
       title = "Density Plot",
       xaxis = list(title = 'Intensity'),
       yaxis = list(title = 'Density')
     )
   
-  try(fig <- toWebGL(fig))
+  try(fig2 <- toWebGL(fig2))
   
-  return(fig)
+  return(fig2)
 }
 
 #' A Function to Create an Interactive Three Dimensional
@@ -191,14 +191,14 @@ interactiveDensityPlot <- function(ex) {
 interactiveThreeDDensityPlot <-
   function(ex) {
     ex <- as.data.frame(ex)
-    fig <-
+    fig3 <-
       plot_ly(type = 'scatter3d',
               mode = 'lines')
     i <- 1
     for (col in names(ex)) {
       density <- density(ex[, i])
-      fig <-
-        fig %>% add_trace(
+      fig3 <-
+        fig3 %>% add_trace(
           x = density$x,
           y = i,
           z = density$y,
@@ -207,7 +207,7 @@ interactiveThreeDDensityPlot <-
       i <- i + 1
     }
 
-    fig <- fig %>% layout(
+    fig3 <- fig3 %>% layout(
       title = "Density Plot",
       scene = list(
         xaxis = list(title = "Intensity"),
@@ -216,9 +216,9 @@ interactiveThreeDDensityPlot <-
       )
     )
     
-    try(fig <- toWebGL(fig))
+    try(fig3 <- toWebGL(fig3))
     
-    return(fig)
+    return(fig3)
   }
 
 #' A Function to Create an Interactive UMAP Plot from
@@ -273,21 +273,21 @@ interactiveUmapPlot <- function(ex, knn) {
   ex <- ex[!duplicated(ex),]  # remove duplicates
   ump <- umap(t(ex), n_neighbors = knn, random_state = 123)
   i <- 1
-  fig <- plot_ly(type = 'scatter', mode = 'markers')
+  fig5 <- plot_ly(type = 'scatter', mode = 'markers')
   for (row in row.names(ump$layout)) {
-    fig <-
-      fig %>% add_trace(x = ump$layout[i, ][1],
+    fig5 <-
+      fig5 %>% add_trace(x = ump$layout[i, ][1],
                         y = ump$layout[i, ][2],
                         name = row)
     i <- i + 1
   }
-  fig <- fig %>% layout(title = (
+  fig5 <- fig5 %>% layout(title = (
     paste('UMAP plot, number of nearest neighbors used =', knn)
   ))
   
-  try(fig <- toWebGL(fig))
+  try(fig5 <- toWebGL(fig5))
   
-  return(fig)
+  return(fig5)
 }
 
 #' A Function to Create an Interactive Mean Variance Plot
@@ -370,7 +370,7 @@ interactiveMeanVariancePlot <-
       }
     }
     # Plot mean variance
-    fig <-
+    fig6 <-
       plot_ly(
         data = combineData,
         x = ~ Amean,
@@ -457,12 +457,12 @@ interactiveMeanVariancePlot <-
                       width = 1)
         )
       )
-    fig <- fig %>% layout(title =
+    fig6 <- fig6 %>% layout(title =
       'Mean Variance Plot')
     
-    try(fig <- toWebGL(fig))
+    try(fig6 <- toWebGL(fig6))
       
-    return(fig)
+    return(fig6)
   }
 
 #' A Function to Create an Interactive Histogram of the
@@ -523,7 +523,7 @@ interactivePrcompPcaScreePlot <-
     proportionOfVariance <- pcaData$sdev ^ 2 / sum(pcaData$sdev ^ 2)
     pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
 
-    fig <-
+    fig7 <-
       plot_ly(
         data = pcaDataFrame,
         x = ~ columnNames,
@@ -541,9 +541,9 @@ interactivePrcompPcaScreePlot <-
                      tickformat = ".0%")
       )
 
-    try(fig <- toWebGL(fig))
+    try(fig7 <- toWebGL(fig7))
     
-    return(fig)
+    return(fig7)
   }
 
 #' A Function to Create an Interactive Histogram of the
@@ -602,7 +602,7 @@ interactivePrincompPcaScreePlot <-
     columnNames <-   colnames(pcaData$loadings)
     proportionOfVariance <- pcaData$sdev ^ 2 / sum(pcaData$sdev ^ 2)
     pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
-    fig <-
+    fig8 <-
       plot_ly(
         data = pcaDataFrame,
         x = ~ columnNames,
@@ -620,9 +620,9 @@ interactivePrincompPcaScreePlot <-
                      tickformat = ".0%")
       )
     
-    try(fig <- toWebGL(fig))
+    try(fig8 <- toWebGL(fig8))
 
-    return(fig)
+    return(fig8)
   }
 
 #' A Function to Create an Interactive Scatter Plot of the
@@ -710,7 +710,7 @@ interactivePrincompPcaIndividualsPlot <-
     individualsStats <- get_pca_ind(pcaData)
     eigenValue <- get_eigenvalue(pcaData)
 
-    fig <-
+    fig9 <-
       plot_ly(
         combineData,
         x =  ~ Comp.1,
@@ -796,9 +796,9 @@ interactivePrincompPcaIndividualsPlot <-
                       size = 3)
       )
 
-    fig <-
+    fig9 <-
       layout(
-        fig,
+        fig9,
         title = "PCA Individuals Plot",
         xaxis = list(title = paste(
           "Comp.1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
@@ -808,9 +808,9 @@ interactivePrincompPcaIndividualsPlot <-
         ))
       )
     
-    try(fig <- toWebGL(fig))
+    try(fig9 <- toWebGL(fig9))
     
-    return(fig)
+    return(fig9)
   }
 
 #' A Function to Create an Interactive Scatter Plot of the
@@ -873,7 +873,7 @@ interactivePrincompPcaVariablesPlot <-
     eigenValue <- get_eigenvalue(pcaData)
     pcaData <- as.data.frame(unclass(pcaData$loadings))
 
-    fig <-
+    fig10 <-
       plot_ly(
         pcaData,
         x =  ~ Comp.1,
@@ -886,9 +886,9 @@ interactivePrincompPcaVariablesPlot <-
         name = rownames(pcaData)
       )
 
-    fig <-
+    fig10 <-
       layout(
-        fig,
+        fig10,
         title ="PCA Variables Plot",
         xaxis = list(title = paste(
           "Comp.1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
@@ -898,9 +898,9 @@ interactivePrincompPcaVariablesPlot <-
         ))
       )
     
-    try(fig <- toWebGL(fig))
+    try(fig10 <- toWebGL(fig10))
     
-    return(fig)
+    return(fig10)
   }
 
 #' A Function to Create an Interactive Heat Map of the
@@ -1046,7 +1046,7 @@ interactivePrcompPcaIndividualsPlot <-
     eigenValue <- get_eigenvalue(pcaData)
 
 
-    fig <-
+    fig11 <-
       plot_ly(
         combineData,
         x =  ~ PC1,
@@ -1130,9 +1130,9 @@ interactivePrcompPcaIndividualsPlot <-
                       size = 3)
       )
 
-    fig <-
+    fig11 <-
       layout(
-        fig,
+        fig11,
         title = "PCA Individuals Plot",
         xaxis = list(title = paste(
           "PC1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
@@ -1142,9 +1142,9 @@ interactivePrcompPcaIndividualsPlot <-
         ))
       )
     
-    try(fig <- toWebGL(fig))
+    try(fig11 <- toWebGL(fig11))
     
-    return(fig)
+    return(fig11)
   }
 
 #' A Function to Create an Interactive 3D Scatter Plot of the
@@ -1232,7 +1232,7 @@ interactive3DPrcompPcaIndividualsPlot <-
     individualsStats <- get_pca_ind(pcaData)
     eigenValue <- get_eigenvalue(pcaData)
 
-    fig <-
+    fig12 <-
       plot_ly(
         combineData,
         x =  ~ PC1,
@@ -1317,9 +1317,9 @@ interactive3DPrcompPcaIndividualsPlot <-
                       size = 3)
       )
 
-    fig <-
+    fig12 <-
       layout(
-        fig,
+        fig12,
         title = "PCA Individuals Plot",
         scene = list(
           xaxis = list(title = paste(
@@ -1334,9 +1334,9 @@ interactive3DPrcompPcaIndividualsPlot <-
         )
       )
     
-    try(fig <- toWebGL(fig))
+    try(fig12 <- toWebGL(fig12))
     
-    return(fig)
+    return(fig12)
   }
 
 #' A Function to Create an Interactive Scatter Plot
@@ -1398,7 +1398,7 @@ interactivePrcompPcaVariablesPlot <-
     eigenValue <- get_eigenvalue(pcaData)
     pcaData <- as.data.frame(unclass(pcaData$rotation))
 
-    fig <-
+    fig13 <-
       plot_ly(
         pcaData,
         x =  ~ PC1,
@@ -1411,9 +1411,9 @@ interactivePrcompPcaVariablesPlot <-
         name = rownames(pcaData)
       )
 
-    fig <-
+    fig13 <-
       layout(
-        fig,
+        fig13,
         title = "PCA Variables Plot",
         xaxis = list(title = paste(
           "PC1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
@@ -1423,9 +1423,9 @@ interactivePrcompPcaVariablesPlot <-
         ))
       )
     
-    try(fig <- toWebGL(fig))
+    try(fig13 <- toWebGL(fig13))
     
-    return(fig)
+    return(fig13)
   }
 
 #' A Function to Create an Interactive 3D Scatter Plot
@@ -1487,7 +1487,7 @@ interactive3DPrcompPcaVariablesPlot <-
     eigenValue <- get_eigenvalue(pcaData)
     pcaData <- as.data.frame(unclass(pcaData$rotation))
 
-    fig <-
+    fig14 <-
       plot_ly(
         pcaData,
         x =  ~ PC1,
@@ -1501,9 +1501,9 @@ interactive3DPrcompPcaVariablesPlot <-
         name = rownames(pcaData)
       )
 
-    fig <-
+    fig14 <-
       layout(
-        fig,
+        fig14,
         title = "PCA Variables Plot",
         scene = list(
         xaxis = list(title = paste(
@@ -1518,7 +1518,7 @@ interactive3DPrcompPcaVariablesPlot <-
       )
       )
     
-    try(fig <- toWebGL(fig))
+    try(fig14 <- toWebGL(fig14))
     
-    return(fig)
+    return(fig14)
   }

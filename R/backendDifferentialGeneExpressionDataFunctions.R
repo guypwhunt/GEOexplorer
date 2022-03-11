@@ -226,7 +226,14 @@ calculateDifferentialGeneExpression <-
       sml <- strsplit(gsms, split = "")[[1]]
       sel <- which(sml != "X")
       sml <- sml[sel]
-      all$knnDataInput <- all$knnDataInput[, sel]
+      
+      if (dataSource == "GEO" & all$typeOfData == "Microarray") {
+        all$knnDataInput <- all$knnDataInput[, sel]
+      } else {
+        keep.exprs <- filterByExpr(all$expressionData, group=gsms)
+        all$expressionData <- all$expressionData[keep.exprs,]
+        all$expressionData <- all$expressionData[, sel]
+      }
 
       if (dataSource == "GEO" & all$typeOfData == "Microarray") {
         # Update gset data
@@ -234,7 +241,7 @@ calculateDifferentialGeneExpression <-
         exprs(all$gsetData) <- all$knnDataInput
       } 
       else if (all$typeOfData == "RNA Sequencing") {
-        all$knnDataInput <- DGEList(all$knnDataInput, group = sml)
+        all$expressionData <- DGEList(all$expressionData, group = sml)
       }
 
       if (input$forceNormalization == "Yes") {
@@ -243,7 +250,8 @@ calculateDifferentialGeneExpression <-
           exprs(all$gsetData) <- normalizeBetweenArrays(all$knnDataInput)
         } 
         else if (all$typeOfData == "RNA Sequencing") {
-          all$knnDataInput = calcNormFactors(all$knnDataInput, method = "TMM")
+          all$expressionData = calcNormFactors(all$expressionData, 
+                                               method = "TMM")
         } else if (all$typeOfData == "Microarray") {
           all$knnDataInput <- normalizeBetweenArrays(all$knnDataInput)
         }
@@ -268,9 +276,9 @@ calculateDifferentialGeneExpression <-
         # Create design
         design <- model.matrix(~ group + 0, all$knnDataInput)
       } else if (all$typeOfData == "RNA Sequencing") {
-        all$knnDataInput$samples$group <- gs
+        all$expressionData$samples$group <- gs
         # Create design
-        design <- model.matrix(~ group + 0, all$knnDataInput$samples)
+        design <- model.matrix(~ group + 0, all$expressionData$samples)
       }
 
       colnames(design) <- levels(gs)
@@ -297,7 +305,7 @@ calculateDifferentialGeneExpression <-
         }
         else if (all$typeOfData == "RNA Sequencing") {
           # calculate precision weights
-          v <- voom(all$knnDataInput, design, plot = FALSE)
+          v <- voom(all$expressionData, design, plot = FALSE)
         }
 
         # fit linear model
@@ -324,9 +332,9 @@ calculateDifferentialGeneExpression <-
           results$ex <- as.matrix(all$knnDataInput)
         } else if (all$typeOfData == "RNA Sequencing") {
           # fit linear model
-          fit <- lmFit(as.matrix.DGEList(all$knnDataInput), design)
+          fit <- lmFit(as.matrix.DGEList(all$expressionData), design)
           # Update results
-          results$ex <- all$knnDataInput$counts
+          results$ex <- all$expressionData$counts
         }
       }
 
@@ -362,7 +370,7 @@ calculateDifferentialGeneExpression <-
 
       if (dataSource == "Upload") {
         if (all$typeOfData == "RNA Sequencing") {
-          all$knnDataInput = DGEList(all$knnDataInput, group = sml)
+          all$expressionData = DGEList(all$expressionData, group = sml)
         }
       }
 
@@ -371,7 +379,8 @@ calculateDifferentialGeneExpression <-
           # normalize data
           all$knnDataInput <- normalizeBetweenArrays(all$knnDataInput)
         } else if (all$typeOfData == "RNA Sequencing") {
-          all$knnDataInput = calcNormFactors(all$knnDataInput, method = "TMM")
+          all$expressionData = calcNormFactors(all$expressionData, 
+                                               method = "TMM")
         } else if (all$typeOfData == "Microarray") {
           all$knnDataInput <- normalizeBetweenArrays(all$knnDataInput)
         }
@@ -396,9 +405,9 @@ calculateDifferentialGeneExpression <-
         # Create design
         design <- model.matrix(~ group + 0, all$knnDataInput)
       } else if (all$typeOfData == "RNA Sequencing") {
-        all$knnDataInput$samples$group <- gs
+        all$expressionData$samples$group <- gs
         # Create design
-        design <- model.matrix(~ group + 0, all$knnDataInput$samples)
+        design <- model.matrix(~ group + 0, all$expressionData$samples)
       }
 
       colnames(design) <- levels(gs)
@@ -425,7 +434,7 @@ calculateDifferentialGeneExpression <-
         }
         else if (all$typeOfData == "RNA Sequencing") {
           # calculate precision weights
-          v <- voom(all$knnDataInput, design, plot = FALSE)
+          v <- voom(all$expressionData, design, plot = FALSE)
           # fit linear model
           fit  <- lmFit(v)
           # Udate results
@@ -458,9 +467,9 @@ calculateDifferentialGeneExpression <-
           results$ex <- as.matrix(all$knnDataInput)
         } else if (input$dataSetType == "RNA Sequencing") {
           # fit linear model
-          fit <- lmFit(as.matrix.DGEList(all$knnDataInput), design)
+          fit <- lmFit(as.matrix.DGEList(all$expressionData), design)
           # Update results
-          results$ex <- all$knnDataInput$counts
+          results$ex <- all$expressionData$counts
         }
       }
 
@@ -868,4 +877,15 @@ calculateEachGroupsSamplesGsms <-
     gsms <- paste(columnInfo$group, collapse = '')
 
     return(gsms)
+  }
+
+#' A Function to remove lowly expressed genes
+#' @importFrom edgeR filterByExpr 
+#' @author Guy Hunt
+#' @noRd
+removeLowlyExpressedGenes <- function(expressionData, gsms) {
+    keep.exprs <- filterByExpr(expressionData, group=gsms)
+    expressionData <- expressionData[keep.exprs,]
+    
+    return(expressionData)
   }
