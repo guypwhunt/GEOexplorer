@@ -147,7 +147,9 @@ Changes in version 1.1.10 (2022-02-09)
 Changes in version 1.1.11 (2022-02-14)
 + GEO RNA SEQ bug fixes
 
-
 Changes in version 1.1.12 (2022-02-17)
 + GEO RNA SEQ bug fixes
 + GEO Search Updates
+
+Changes in version 1.1.13 (2022-03-21)
++ Improved plots speed

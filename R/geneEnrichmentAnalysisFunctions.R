@@ -166,7 +166,9 @@ interactiveGeneEnrichmentManhattanPlot  <- function(geneEnrichmentTable,
                         yaxis = list(title = columnToSort))
   
   try(fig19 <- toWebGL(fig19))
-
+  
+  try(fig19 <- partial_bundle(fig19, type = "strict"))
+  
   return(fig19)
 }
 
@@ -191,6 +193,8 @@ interactiveGeneEnrichmentVolcanoPlot  <- function(geneEnrichmentTable) {
   
   try(fig20 <- toWebGL(fig20))
   
+  try(fig20 <- partial_bundle(fig20, type = "strict"))
+  
   return(fig20)
 }
 
@@ -213,6 +217,8 @@ interactiveGeneEnrichmentBarPlot  <- function(geneEnrichmentTable,
                         yaxis = list(title = "Term",
                                      categoryorder = "array",
                                      categoryarray = selectedColumn))
+  
+  try(fig21 <- partial_bundle(fig21, type = "strict"))
   
   return(fig21)
 }
