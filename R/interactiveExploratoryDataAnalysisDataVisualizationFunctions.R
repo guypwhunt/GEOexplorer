@@ -64,7 +64,7 @@ interactiveBoxAndWhiskerPlot <-
     
     try(fig1 <- toWebGL(fig1))
     
-    try(fig1 <- partial_bundle(fig1, type = "strict"))
+    try(fig1 <- partial_bundle(fig1, type = "main"))
     
     return(fig1)
   }
@@ -140,7 +140,7 @@ interactiveDensityPlot <- function(ex) {
   
   try(fig2 <- toWebGL(fig2))
   
-  try(fig2 <- partial_bundle(fig2, type = "strict"))
+  try(fig2 <- partial_bundle(fig2, type = "main"))
   
   return(fig2)
 }
@@ -222,7 +222,7 @@ interactiveThreeDDensityPlot <-
     
     try(fig3 <- toWebGL(fig3))
     
-    try(fig3 <- partial_bundle(fig3, type = "strict"))
+    try(fig3 <- partial_bundle(fig3, type = "main"))
     
     return(fig3)
   }
@@ -293,7 +293,7 @@ interactiveUmapPlot <- function(ex, knn) {
   
   try(fig5 <- toWebGL(fig5))
   
-  try(fig5 <- partial_bundle(fig5, type = "strict"))
+  try(fig5 <- partial_bundle(fig5, type = "main"))
   
   return(fig5)
 }
@@ -470,7 +470,7 @@ interactiveMeanVariancePlot <-
     
     try(fig6 <- toWebGL(fig6))
     
-    try(fig6 <- partial_bundle(fig6, type = "strict"))
+    try(fig6 <- partial_bundle(fig6, type = "main"))
       
     return(fig6)
   }
@@ -553,7 +553,7 @@ interactivePrcompPcaScreePlot <-
 
     try(fig7 <- toWebGL(fig7))
     
-    try(fig7 <- partial_bundle(fig7, type = "strict"))
+    try(fig7 <- partial_bundle(fig7, type = "main"))
     
     return(fig7)
   }
@@ -634,7 +634,7 @@ interactivePrincompPcaScreePlot <-
     
     try(fig8 <- toWebGL(fig8))
     
-    try(fig8 <- partial_bundle(fig8, type = "strict"))
+    try(fig8 <- partial_bundle(fig8, type = "main"))
 
     return(fig8)
   }
@@ -824,7 +824,7 @@ interactivePrincompPcaIndividualsPlot <-
     
     try(fig9 <- toWebGL(fig9))
     
-    try(fig9 <- partial_bundle(fig9, type = "strict"))
+    try(fig9 <- partial_bundle(fig9, type = "main"))
     
     return(fig9)
   }
@@ -916,7 +916,7 @@ interactivePrincompPcaVariablesPlot <-
     
     try(fig10 <- toWebGL(fig10))
     
-    try(fig10 <- partial_bundle(fig10, type = "strict"))
+    try(fig10 <- partial_bundle(fig10, type = "main"))
     
     return(fig10)
   }
@@ -975,7 +975,7 @@ interactiveHeatMapPlot <- function(ex) {
   colnames(df) <- colnames(corMatrix)
   heatmapFig <- heatmaply(df)
   
-  try(heatmapFig <- partial_bundle(heatmapFig, type = "strict"))
+  try(heatmapFig <- partial_bundle(heatmapFig, type = "main"))
   
   return(heatmapFig)
 }
@@ -1164,7 +1164,7 @@ interactivePrcompPcaIndividualsPlot <-
     
     try(fig11 <- toWebGL(fig11))
     
-    try(fig11 <- partial_bundle(fig11, type = "strict"))
+    try(fig11 <- partial_bundle(fig11, type = "main"))
     
     return(fig11)
   }
@@ -1358,7 +1358,7 @@ interactive3DPrcompPcaIndividualsPlot <-
     
     try(fig12 <- toWebGL(fig12))
     
-    try(fig12 <- partial_bundle(fig12, type = "strict"))
+    try(fig12 <- partial_bundle(fig12, type = "main"))
     
     return(fig12)
   }
@@ -1449,7 +1449,7 @@ interactivePrcompPcaVariablesPlot <-
     
     try(fig13 <- toWebGL(fig13))
     
-    try(fig13 <- partial_bundle(fig13, type = "strict"))
+    try(fig13 <- partial_bundle(fig13, type = "main"))
     
     return(fig13)
   }
@@ -1546,7 +1546,7 @@ interactive3DPrcompPcaVariablesPlot <-
     
     try(fig14 <- toWebGL(fig14))
     
-    try(fig14 <- partial_bundle(fig14, type = "strict"))
+    try(fig14 <- partial_bundle(fig14, type = "main"))
     
     return(fig14)
   }

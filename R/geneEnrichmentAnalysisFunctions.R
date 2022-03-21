@@ -167,7 +167,7 @@ interactiveGeneEnrichmentManhattanPlot  <- function(geneEnrichmentTable,
   
   try(fig19 <- toWebGL(fig19))
   
-  try(fig19 <- partial_bundle(fig19, type = "strict"))
+  try(fig19 <- partial_bundle(fig19, type = "main"))
   
   return(fig19)
 }
@@ -193,7 +193,7 @@ interactiveGeneEnrichmentVolcanoPlot  <- function(geneEnrichmentTable) {
   
   try(fig20 <- toWebGL(fig20))
   
-  try(fig20 <- partial_bundle(fig20, type = "strict"))
+  try(fig20 <- partial_bundle(fig20, type = "main"))
   
   return(fig20)
 }
@@ -218,7 +218,7 @@ interactiveGeneEnrichmentBarPlot  <- function(geneEnrichmentTable,
                                      categoryorder = "array",
                                      categoryarray = selectedColumn))
   
-  try(fig21 <- partial_bundle(fig21, type = "strict"))
+  try(fig21 <- partial_bundle(fig21, type = "main"))
   
   return(fig21)
 }

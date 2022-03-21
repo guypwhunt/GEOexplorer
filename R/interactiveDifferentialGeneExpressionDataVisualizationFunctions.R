@@ -99,7 +99,7 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
   
   try(fig15 <- toWebGL(fig15))
   
-  try(fig15 <- partial_bundle(fig15, type = "strict"))
+  try(fig15 <- partial_bundle(fig15, type = "main"))
   
   return(fig15)
 }
@@ -330,7 +330,7 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
   
   try(fig16 <- toWebGL(fig16))
   
-  try(fig16 <- partial_bundle(fig16, type = "strict"))
+  try(fig16 <- partial_bundle(fig16, type = "main"))
   
   return(fig16)
 }
@@ -563,7 +563,7 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
   
   try(fig17 <- toWebGL(fig17))
   
-  try(fig17 <- partial_bundle(fig17, type = "strict"))
+  try(fig17 <- partial_bundle(fig17, type = "main"))
   
   return(fig17)
 }
@@ -799,7 +799,7 @@ interactiveQQPlot <- function(fit2, dT, ct) {
   
   try(fig18 <- toWebGL(fig18))
   
-  try(fig18 <- partial_bundle(fig18, type = "strict"))
+  try(fig18 <- partial_bundle(fig18, type = "main"))
   
   return(fig18)
 }
@@ -829,7 +829,7 @@ interactiveDGEHeatMapPlot <- function(ex, limmaPrecisionWeights,
     heatmapFig <- heatmaply(ex[i, ])
   }
   
-  try(heatmapFig <- partial_bundle(heatmapFig, type = "strict"))
+  try(heatmapFig <- partial_bundle(heatmapFig, type = "main"))
   
   return(heatmapFig)
 
