@@ -174,6 +174,7 @@ sourceDatasetInformationUi <- function() {
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceDifferentialGeneExpressionAnalysisUi()
 #' @importFrom DT dataTableOutput
+#' @importFrom shinycssloaders withSpinner
 #' @author Guy Hunt
 #' @noRd
 sourceDifferentialGeneExpressionAnalysisUi <- function() {
@@ -330,7 +331,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           ),
           br(),
           br(),
-          plotlyOutput('iDEHistogram')
+          plotlyOutput('iDEHistogram') %>% withSpinner(color="#0dc5c1")
         ),
         tabPanel(
           "Venn Diagram Plot",
@@ -340,7 +341,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
             Displays the number of differentially expressed genes versus the
             number of non-differentially expressed genes."
           ),
-          plotOutput('dEVennDiagram')
+          plotOutput('dEVennDiagram') %>% withSpinner(color="#0dc5c1")
         ),
         tabPanel(
           "Q-Q Plot",
@@ -356,7 +357,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           ),
           br(),
           br(),
-          plotlyOutput('iDEQQ')
+          plotlyOutput('iDEQQ') %>% withSpinner(color="#0dc5c1")
         ),
         tabPanel(
           "Volcano Plot",
@@ -371,7 +372,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           ),
           br(),
           br(),
-          plotlyOutput('iDEVolcano')
+          plotlyOutput('iDEVolcano') %>% withSpinner(color="#0dc5c1")
         ),
         tabPanel(
           "Mean Difference Plot",
@@ -386,7 +387,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
           ),
           br(),
           br(),
-          plotlyOutput('iDEMd')
+          plotlyOutput('iDEMd') %>% withSpinner(color="#0dc5c1")
         ),
         tabPanel(
           "Heatmap Plot",
@@ -410,7 +411,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
             step = 1
           ),
           br(),
-          plotlyOutput('iHeatmap')
+          plotlyOutput('iHeatmap') %>% withSpinner(color="#0dc5c1")
         )
       )
     )
@@ -421,6 +422,7 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
 #'
 #' A Function to Return the Exploratory Data Analysis Ui Component
 #' @import plotly
+#' @importFrom shinycssloaders withSpinner
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @examples sourceExploratoryDataAnalysisUi()
 #' @author Guy Hunt
@@ -429,6 +431,7 @@ sourceExploratoryDataAnalysisUi <- function() {
   exploratoryDataAnalysisUi <- tabPanel(
     "Exploratory Data Analysis",
     tabsetPanel(
+      id = "edaTabs",
       type = "tabs",
       tabPanel(
         "Expression Density Plot",
@@ -447,7 +450,7 @@ sourceExploratoryDataAnalysisUi <- function() {
         ),
         br(),
         br(),
-        plotlyOutput('interactiveDensityPlot')
+        plotlyOutput('interactiveDensityPlot') %>% withSpinner(color="#0dc5c1")
       ),
       tabPanel(
         "3D Expression Density Plot",
@@ -465,10 +468,12 @@ sourceExploratoryDataAnalysisUi <- function() {
         ),
         br(),
         br(),
-        plotlyOutput('interactiveThreeDDensityPlot')
+        plotlyOutput('interactiveThreeDDensityPlot') %>% withSpinner(
+          color="#0dc5c1")
       ),
       tabPanel(
-        "Box-and-Whisper Plot",
+        value = "Box-and-Whisper Plot",
+        title = "Box-and-Whisper Plot",
         br(),
         span(
           "Generated using R plotly.
@@ -484,7 +489,7 @@ sourceExploratoryDataAnalysisUi <- function() {
         ),
         br(),
         br(),
-        uiOutput("boxAndWhiskerPlot")
+        uiOutput("boxAndWhiskerPlot") %>% withSpinner(color="#0dc5c1")
       ),
       tabPanel(
         "PCA Scree Plot",
@@ -506,7 +511,8 @@ sourceExploratoryDataAnalysisUi <- function() {
         ),
         br(),
         br(),
-        plotlyOutput('interactivePcaScreePlot')
+        plotlyOutput('interactivePcaScreePlot') %>% withSpinner(
+          color="#0dc5c1")
       ),
       tabPanel(
         "PCA Individuals Plot",
@@ -529,11 +535,13 @@ sourceExploratoryDataAnalysisUi <- function() {
               transformation and log transformation if selected."
         ),
         br(),
-        br(),
-        plotlyOutput('interactivePcaIndividualsPlot')
+        br(), 
+        plotlyOutput('interactivePcaIndividualsPlot') %>% withSpinner(
+          color="#0dc5c1")
       ),
       tabPanel(
-        "Mean-Variance Plot",
+        value = "Mean-Variance Plot",
+        title = "Mean-Variance Plot",
         br(),
         span(
           "Generated using R limma and plotly.
@@ -546,7 +554,8 @@ sourceExploratoryDataAnalysisUi <- function() {
         ),
         br(),
         br(),
-        plotlyOutput('interactiveMeanVariancePlot')
+        plotlyOutput('interactiveMeanVariancePlot') %>% withSpinner(
+          color="#0dc5c1")
       ),
       tabPanel(
         "Heatmap Plot",
@@ -559,7 +568,7 @@ sourceExploratoryDataAnalysisUi <- function() {
         ),
         br(),
         br(),
-        plotlyOutput('interactiveHeatMapPlot')
+        plotlyOutput('interactiveHeatMapPlot') %>% withSpinner(color="#0dc5c1")
       ),
       tabPanel(
         "PCA Variables Plot",
@@ -581,7 +590,8 @@ sourceExploratoryDataAnalysisUi <- function() {
         ),
         br(),
         br(),
-        plotlyOutput('interactivePcaVariablesPlot')
+        plotlyOutput('interactivePcaVariablesPlot') %>% withSpinner(
+          color="#0dc5c1")
       ),
       tabPanel(
         "3D PCA Variables Plot",
@@ -605,7 +615,8 @@ sourceExploratoryDataAnalysisUi <- function() {
         ),
         br(),
         br(),
-        plotlyOutput('interactive3DPcaVariablesPlot')
+        plotlyOutput('interactive3DPcaVariablesPlot') %>% withSpinner(
+          color="#0dc5c1")
       ),
       tabPanel(
         "UMAP Plot",
@@ -629,7 +640,7 @@ sourceExploratoryDataAnalysisUi <- function() {
           step = 1
         ),
         br(),
-        plotlyOutput('interactiveUmapPlot')
+        plotlyOutput('interactiveUmapPlot') %>% withSpinner(color="#0dc5c1")
       )
     )
   )
@@ -847,7 +858,7 @@ sourceEnrichmentnUi <- function() {
                                                 ))),
                                        br(),
                                        br(),
-                                       plotlyOutput('genesEnrichmentBarchartPlot')
+                                       plotlyOutput('genesEnrichmentBarchartPlot') %>% withSpinner(color="#0dc5c1")
                                      ),
                                      tabPanel(
                                        "Volcano Plot",
@@ -876,7 +887,7 @@ sourceEnrichmentnUi <- function() {
                                        ),
                                        br(),
                                        br(),
-                                       plotlyOutput('genesEnrichmentVolcanoPlot')
+                                       plotlyOutput('genesEnrichmentVolcanoPlot') %>% withSpinner(color="#0dc5c1")
                                      ),
                                      tabPanel(
                                        "Manhattan Plot",
@@ -926,7 +937,7 @@ sourceEnrichmentnUi <- function() {
                                        )),
                                        br(),
                                        br(),
-                                       plotlyOutput('genesEnrichmentManhattanPlot')
+                                       plotlyOutput('genesEnrichmentManhattanPlot') %>% withSpinner(color="#0dc5c1")
                                      )
                                    )
                            )

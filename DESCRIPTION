@@ -84,7 +84,8 @@ Imports:
   utils,
   xml2,
   R.utils,
-  readxl
+  readxl,
+  shinycssloaders
 Suggests: 
     rmarkdown,
     usethis,

@@ -1047,7 +1047,8 @@ performExploratoryDataAnalysis <- function(input,
       
       if (object.size(all$knnDataInput) < 10000000) {
         output$boxAndWhiskerPlot <- renderUI({
-          plotlyOutput('interactiveBoxAndWhiskerPlot')
+          plotlyOutput('interactiveBoxAndWhiskerPlot') %>% withSpinner(
+            color="#0dc5c1")
         })
         
         # Interactive Box-and-Whisker Plot
@@ -1070,14 +1071,16 @@ performExploratoryDataAnalysis <- function(input,
           type = "warning"
         )
         output$boxAndWhiskerPlot <- renderUI({
-          plotlyOutput('interactiveBoxAndWhiskerPlot')
+          plotlyOutput('interactiveBoxAndWhiskerPlot') %>% withSpinner(
+            color="#0dc5c1")
         })
         
         # Interactive Box-and-Whisker Plot
         output$interactiveBoxAndWhiskerPlot <-
           tryCatch({
             renderPlotly({
-              interactiveBoxAndWhiskerPlot(naOmitInput)
+              interactiveBoxAndWhiskerPlot(naOmitInput) %>% withSpinner(
+                color="#0dc5c1")
             })
           },
           error = function(e) {
