@@ -805,8 +805,9 @@ performExploratoryDataAnalysis <- function(input,
           )
         }
         
+        try(all$expressionData <- as.matrix(all$expressionData))
+        
         if (all$typeOfData == "RNA Sequencing") {
-          
           try({
             keep.exprs <- filterByExpr(all$expressionData, min.count=10)
             all$expressionData <- all$expressionData[keep.exprs,]
@@ -834,8 +835,6 @@ performExploratoryDataAnalysis <- function(input,
           }
         } else
         {
-          
-          
           all$cpm <- all$expressionData
         }
         

@@ -99,8 +99,6 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
   
   try(fig15 <- toWebGL(fig15))
   
-  try(fig15 <- partial_bundle(fig15, type = "main"))
-  
   return(fig15)
 }
 
@@ -327,10 +325,6 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
     xaxis = list(title = "Average log-expression"),
     yaxis = list(title = "log-fold-change")
   )
-  
-  try(fig16 <- toWebGL(fig16))
-  
-  try(fig16 <- partial_bundle(fig16, type = "main"))
   
   return(fig16)
 }
@@ -560,11 +554,7 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
     xaxis = list(title = "Log2 Fold Change"),
     yaxis = list(title = "-log10(P-value)")
   )
-  
-  try(fig17 <- toWebGL(fig17))
-  
-  try(fig17 <- partial_bundle(fig17, type = "main"))
-  
+
   return(fig17)
 }
 
@@ -673,26 +663,32 @@ interactiveQQPlot <- function(fit2, dT, ct) {
         fit2$df.total[t.good],
         main = "Moderated t statistic",
         plot.it = FALSE)
-
+  
   attributes_list <- c('ID', 'Gene.symbol', 'Gene.title',
                        'Gene.ID')
   final_attributes_list <- c()
-
+  
   for (attribute in attributes_list) {
     if (attribute %in% colnames(fit2$genes))
       final_attributes_list <- c(final_attributes_list,
                                  attribute)
   }
-
-  if (is.null(fit2$genes[final_attributes_list][t.good, ]) == TRUE) {
+  
+  genes <- tryCatch({
+    fit2$genes[,final_attributes_list][t.good,]
+  }, error=function(cond) {
+    fit2$genes[,final_attributes_list][t.good]
+  }
+  )
+  
+  if (is.null(genes)) {
     qqData2 <- data.frame(qqData, dT[t.good, ct])
   } else {
     qqData2 <-
       data.frame(qqData, dT[t.good, ct],
-                 fit2$genes[final_attributes_list][t.good, ])
+                 genes)
   }
-
-
+  
   colnames(qqData2) <-
     c("x", "y", "regulation", final_attributes_list)
   qqData2$regulation <- as.character(qqData2$regulation)
@@ -700,7 +696,7 @@ interactiveQQPlot <- function(fit2, dT, ct) {
   qqData2$regulation[qqData2$regulation == "0"] <-
     "Similar Expression"
   qqData2$regulation[qqData2$regulation == "-1"] <- "Downregulation"
-
+  
   fig18 <- plot_ly()
   fig18 <-
     fig18 %>% add_trace(
@@ -796,11 +792,7 @@ interactiveQQPlot <- function(fit2, dT, ct) {
     xaxis = list(title = "Theoretical Quantiles"),
     yaxis = list(title = "Sample Quantiles")
   )
-  
-  try(fig18 <- toWebGL(fig18))
-  
-  try(fig18 <- partial_bundle(fig18, type = "main"))
-  
+
   return(fig18)
 }
 
@@ -828,8 +820,6 @@ interactiveDGEHeatMapPlot <- function(ex, limmaPrecisionWeights,
   } else if (limmaPrecisionWeights == "No") {
     heatmapFig <- heatmaply(ex[i, ])
   }
-  
-  try(heatmapFig <- partial_bundle(heatmapFig, type = "main"))
   
   return(heatmapFig)
 

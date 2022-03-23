@@ -44,18 +44,18 @@
 #' @seealso [extractExpressionData()] for expression object
 interactiveBoxAndWhiskerPlot <-
   function(ex) {
-    ex <- as.data.frame(ex)
+    ex <- as.matrix(ex)
 
     fig1 <- plot_ly(type = "box", quartilemethod = "linear",
                    boxpoints = FALSE)
     i = 1
-    for (col in names(ex)) {
+    for (col in colnames(ex)) {
       fig1 <-
         fig1 %>% add_trace(
-          x = names(ex)[i],
+          x = colnames(ex)[i],
           y = ex[, i],
           quartilemethod = "linear",
-          name = names(ex)[i]
+          name = colnames(ex)[i]
         )
       i <- i + 1
     }
@@ -63,8 +63,6 @@ interactiveBoxAndWhiskerPlot <-
       fig1 %>% layout(title = "Box And Whisker Plot")
     
     try(fig1 <- toWebGL(fig1))
-    
-    try(fig1 <- partial_bundle(fig1, type = "main"))
     
     return(fig1)
   }
@@ -117,12 +115,12 @@ interactiveBoxAndWhiskerPlot <-
 #' @noRd
 #' @seealso [extractExpressionData()] for expression object
 interactiveDensityPlot <- function(ex) {
-  ex <- as.data.frame(ex)
+  ex <- as.matrix(ex)
   fig2 <-
     plot_ly(type = 'scatter',
             mode = 'lines')
   i <- 1
-  for (col in names(ex)) {
+  for (col in colnames(ex)) {
     density <- density(ex[, i])
     fig2 <-
       fig2 %>% add_trace(x = density$x,
@@ -139,8 +137,6 @@ interactiveDensityPlot <- function(ex) {
     )
   
   try(fig2 <- toWebGL(fig2))
-  
-  try(fig2 <- partial_bundle(fig2, type = "main"))
   
   return(fig2)
 }
@@ -194,12 +190,12 @@ interactiveDensityPlot <- function(ex) {
 #' @seealso [extractExpressionData()] for expression object
 interactiveThreeDDensityPlot <-
   function(ex) {
-    ex <- as.data.frame(ex)
+    ex <- as.matrix(ex)
     fig3 <-
       plot_ly(type = 'scatter3d',
               mode = 'lines')
     i <- 1
-    for (col in names(ex)) {
+    for (col in colnames(ex)) {
       density <- density(ex[, i])
       fig3 <-
         fig3 %>% add_trace(
@@ -221,8 +217,6 @@ interactiveThreeDDensityPlot <-
     )
     
     try(fig3 <- toWebGL(fig3))
-    
-    try(fig3 <- partial_bundle(fig3, type = "main"))
     
     return(fig3)
   }
@@ -293,8 +287,6 @@ interactiveUmapPlot <- function(ex, knn) {
   
   try(fig5 <- toWebGL(fig5))
   
-  try(fig5 <- partial_bundle(fig5, type = "main"))
-  
   return(fig5)
 }
 
@@ -350,6 +342,9 @@ interactiveUmapPlot <- function(ex, knn) {
 #' for GEO object
 interactiveMeanVariancePlot <-
   function(ex, gset) {
+    # Convert to matrix
+    ex <- as.matrix(ex)
+    
     # Create linear model
     exData <- lmFit(ex)
 
@@ -368,7 +363,7 @@ interactiveMeanVariancePlot <-
 
       # Error handling to catch gset without featureData
       if (ncol(geneData) > 0) {
-        geneData <- as.data.frame(geneData)
+        geneData <- as.matrix(geneData)
         combineData <- merge(exData, geneData, by = "ID")
         colnames(combineData) <-
           str_replace_all(colnames(combineData), " ", ".")
@@ -468,10 +463,6 @@ interactiveMeanVariancePlot <-
     fig6 <- fig6 %>% layout(title =
       'Mean Variance Plot')
     
-    try(fig6 <- toWebGL(fig6))
-    
-    try(fig6 <- partial_bundle(fig6, type = "main"))
-      
     return(fig6)
   }
 
@@ -553,8 +544,6 @@ interactivePrcompPcaScreePlot <-
 
     try(fig7 <- toWebGL(fig7))
     
-    try(fig7 <- partial_bundle(fig7, type = "main"))
-    
     return(fig7)
   }
 
@@ -634,8 +623,6 @@ interactivePrincompPcaScreePlot <-
     
     try(fig8 <- toWebGL(fig8))
     
-    try(fig8 <- partial_bundle(fig8, type = "main"))
-
     return(fig8)
   }
 
@@ -710,7 +697,7 @@ interactivePrincompPcaIndividualsPlot <-
       geneData <- gset@featureData@data
       # Error handling for gset without featureData@data
       if (ncol(geneData) > 0) {
-        geneData <- as.data.frame(geneData)
+        geneData <- as.matrix(geneData)
         combineData <- merge(pcaDf, geneData, by = "ID")
         combineData %>% filter("ID" %in% c(rownames(pcaDf)))
         colnames(combineData) <-
@@ -822,10 +809,6 @@ interactivePrincompPcaIndividualsPlot <-
         ))
       )
     
-    try(fig9 <- toWebGL(fig9))
-    
-    try(fig9 <- partial_bundle(fig9, type = "main"))
-    
     return(fig9)
   }
 
@@ -916,8 +899,6 @@ interactivePrincompPcaVariablesPlot <-
     
     try(fig10 <- toWebGL(fig10))
     
-    try(fig10 <- partial_bundle(fig10, type = "main"))
-    
     return(fig10)
   }
 
@@ -974,8 +955,6 @@ interactiveHeatMapPlot <- function(ex) {
   }
   colnames(df) <- colnames(corMatrix)
   heatmapFig <- heatmaply(df)
-  
-  try(heatmapFig <- partial_bundle(heatmapFig, type = "main"))
   
   return(heatmapFig)
 }
@@ -1051,7 +1030,7 @@ interactivePrcompPcaIndividualsPlot <-
       geneData <- gset@featureData@data
       # Error handling for gset without featureData@data
       if (ncol(geneData) > 0) {
-        geneData <- as.data.frame(geneData)
+        geneData <- as.matrix(geneData)
         combineData <- merge(pcaDf, geneData, by = "ID")
         combineData %>% filter("ID" %in% c(rownames(pcaDf)))
         colnames(combineData) <-
@@ -1060,7 +1039,6 @@ interactivePrcompPcaIndividualsPlot <-
         combineData <- pcaDf
       }
     }
-
 
     individualsStats <- get_pca_ind(pcaData)
     eigenValue <- get_eigenvalue(pcaData)
@@ -1162,10 +1140,6 @@ interactivePrcompPcaIndividualsPlot <-
         ))
       )
     
-    try(fig11 <- toWebGL(fig11))
-    
-    try(fig11 <- partial_bundle(fig11, type = "main"))
-    
     return(fig11)
   }
 
@@ -1241,7 +1215,7 @@ interactive3DPrcompPcaIndividualsPlot <-
       geneData <- gset@featureData@data
       # Error handling for gset without featureData@data
       if (ncol(geneData) > 0) {
-        geneData <- as.data.frame(geneData)
+        geneData <- as.matrix(geneData)
         combineData <- merge(pcaDf, geneData, by = "ID")
         combineData %>% filter("ID" %in% c(rownames(pcaDf)))
         colnames(combineData) <-
@@ -1356,10 +1330,6 @@ interactive3DPrcompPcaIndividualsPlot <-
         )
       )
     
-    try(fig12 <- toWebGL(fig12))
-    
-    try(fig12 <- partial_bundle(fig12, type = "main"))
-    
     return(fig12)
   }
 
@@ -1448,8 +1418,6 @@ interactivePrcompPcaVariablesPlot <-
       )
     
     try(fig13 <- toWebGL(fig13))
-    
-    try(fig13 <- partial_bundle(fig13, type = "main"))
     
     return(fig13)
   }
@@ -1545,8 +1513,6 @@ interactive3DPrcompPcaVariablesPlot <-
       )
     
     try(fig14 <- toWebGL(fig14))
-    
-    try(fig14 <- partial_bundle(fig14, type = "main"))
     
     return(fig14)
   }

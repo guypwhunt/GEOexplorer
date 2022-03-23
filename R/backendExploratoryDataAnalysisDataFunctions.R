@@ -774,26 +774,18 @@ readCsvFile <- function(file) {
 #' @noRd
 preProcessGeneExpressionData <- function(expressionData) {
   # Remove quote marks from column names
-  colnames(expressionData) <- str_remove_all(colnames(expressionData), "'")
-  colnames(expressionData) <- str_remove_all(colnames(expressionData), '"')
+  colnames(expressionData) <- str_remove_all(str_remove_all(
+    colnames(expressionData), "'"), '"')
 
   # Replace row names with gene names
-  row.names(expressionData) <- expressionData$Genes
-
-  # Remove quote marks from row names
-  row.names(expressionData) <- str_remove_all(row.names(expressionData), "'")
-  row.names(expressionData) <- str_remove_all(row.names(expressionData), '"')
-
-
+  row.names(expressionData) <- str_remove_all(str_remove_all(
+    expressionData[,"Genes"], "'"), '"')
+  
   # Delete gene column
   expressionData <- expressionData[ , !(colnames(expressionData) == "Genes")]
-
-  # Convert to matrix
-  expressionData <- data.matrix(expressionData)
-
+  
   # Replace NULL values with NA
   expressionData[expressionData == "NULL"] <- NA
-
   return(expressionData)
 }
 
@@ -1200,7 +1192,7 @@ extractFileExtensions <- function(geoTarFile) {
 extractExpressionExcel <- function(filePath) {
   expressionData <- read_excel(filePath)
   
-  expressionData <- as.data.frame(expressionData)
+  expressionData <- as.matrix(expressionData)
   
   return(expressionData)
 }
@@ -1212,7 +1204,7 @@ extractExpressionExcel <- function(filePath) {
 extractExpressionCsv <- function(filePath) {
   expressionData <- read.csv(filePath)
   
-  expressionData <- as.data.frame(expressionData)
+  expressionData <- as.matrix(expressionData)
   
   return(expressionData)
 }
