@@ -1,19 +1,24 @@
 Package: GEOexplorer
-Title: GEOexplorer: an R/Bioconductor package for gene expression analysis 
-  and visualisation
-Date: 2021/10/27
-Version: 0.99.32
+Title: GEOexplorer: an R/Bioconductor package and web application for gene 
+  expression analysis and visualisation
+Date: 2022/03/21
+Version: 1.1.13
 Authors@R: 
   c(person(given = "Guy",
            family = "Hunt",
            role = c("aut", "cre"),
-           email = "guypwhunt1992@gmail.com",
+           email = "guy.hunt@kcl.ac.uk",
            comment = c(ORCID = "0000-0002-5217-2678")),
     person(given = "Rafael",
            family = "Henkin",
            role = c("ctb", "ths"),
            email = "r.henkin@qmul.ac.uk",
            comment = c(ORCID = "0000-0002-5511-5230")),
+    person(given = "Alfredo",
+           family = "Iacoangeli",
+           role = c("ctb", "ths"),
+           email = "alfredo.iacoangeli@kcl.ac.uk",
+           comment = c(ORCID = "0000-0002-5280-5017")),
     person(given = "Fabrizio",
            family = "Smeraldi",
            role = c("ctb", "ths"),
@@ -24,17 +29,13 @@ Authors@R:
            role = c("ctb", "ths"),
            email = "m.r.barnes@qmul.ac.uk",
            comment = c(ORCID = "0000-0001-9097-7381")))
-Description: GEOexplorer is a Shiny app that enables 
-  exploratory data analysis and differential gene expression 
-  of gene expression analysis on microarray gene expression 
-  datasets held on the GEO database. The outputs are 
-  interactive graphs that enable users to explore the 
-  results of the analysis. The development of GEOexplorer 
-  was made possible because of the excellent code provided 
-  by GEO2R (https: //www.ncbi.nlm.nih.gov/geo/geo2r/).
+Description: GEOexplorer is an R/Bioconductor package and web application
+  that enables users to perform gene expression analysis. The development of 
+  GEOexplorer was made possible because of the excellent code provided  by 
+  GEO2R (https: //www.ncbi.nlm.nih.gov/geo/geo2r/).
 License: GPL-3
 Encoding: UTF-8
-LazyData: true
+LazyData: false
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/guypwhunt/GEOexplorer/
 BugReports: https://github.com/guypwhunt/GEOexplorer/issues
@@ -45,10 +46,22 @@ biocViews:
   mRNAMicroarray,
   DifferentialExpression,
   Microarray,
-  MicroRNAArray
-Depends: shiny, limma, Biobase, plotly, shinyBS
+  MicroRNAArray,
+  Transcriptomics,
+  RNASeq
+Depends: 
+    shiny,
+    limma,
+    Biobase,
+    plotly,
+    enrichR,
+    R (>= 4.1.0)
 Imports: 
   DT,
+  XML,
+  httr,
+  sva,
+  xfun,
   edgeR,
   htmltools,
   factoextra,
@@ -66,10 +79,15 @@ Imports:
   grDevices,
   stats,
   graphics,
-  utils
+  markdown,
+  knitr,
+  utils,
+  xml2,
+  R.utils,
+  readxl,
+  shinycssloaders
 Suggests: 
     rmarkdown,
-    knitr,
     usethis,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr

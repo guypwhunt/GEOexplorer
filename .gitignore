@@ -12,3 +12,12 @@ r/createPackageScript/
 r/deploymentScript/
 r/testScripts/
 tests/testthat/test_microarrayGseWithPoorDataQuality.R
+tests/testthat/testGeoAndUserUploadMergingDatasets.R
+tests/testthat/testGeoMergingDatasets.R
+tests/testthat/testGEOMicroarrayData.R
+tests/testthat/testGEORnaSeq.R
+tests/testthat/testLoadingGEODatasetsPerformance.R
+tests/testthat/testUserUploadMergingDatasets.R
+tests/testthat/testUserUploadMicroarrayData.R
+tests/testthat/testuserUploadRnaSeqData.R
+geoSupFiles/

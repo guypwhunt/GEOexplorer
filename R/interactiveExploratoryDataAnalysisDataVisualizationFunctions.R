@@ -43,25 +43,28 @@
 #' @noRd
 #' @seealso [extractExpressionData()] for expression object
 interactiveBoxAndWhiskerPlot <-
-  function(ex, geoAccessionCode, platform) {
-    ex <- as.data.frame(ex)
-    fig <- plot_ly(type = "box", quartilemethod = "linear")
+  function(ex) {
+    ex <- as.matrix(ex)
+
+    fig1 <- plot_ly(type = "box", quartilemethod = "linear",
+                   boxpoints = FALSE)
     i = 1
-    for (col in names(ex)) {
-      fig <-
-        fig %>% add_trace(
-          x = names(ex)[i],
+    for (col in colnames(ex)) {
+      fig1 <-
+        fig1 %>% add_trace(
+          x = colnames(ex)[i],
           y = ex[, i],
           quartilemethod = "linear",
-          name = names(ex)[i]
+          name = colnames(ex)[i]
         )
       i <- i + 1
     }
-    fig <-
-      fig %>% layout(title = (paste(paste(
-        geoAccessionCode, "/"
-      ), platform)))
-    fig
+    fig1 <-
+      fig1 %>% layout(title = "Box And Whisker Plot")
+    
+    try(fig1 <- toWebGL(fig1))
+    
+    return(fig1)
   }
 
 #' A Function to Create an Interactive Density Plot from
@@ -111,33 +114,31 @@ interactiveBoxAndWhiskerPlot <-
 #' @author Guy Hunt
 #' @noRd
 #' @seealso [extractExpressionData()] for expression object
-interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
-  ex <- as.data.frame(ex)
-  fig <-
+interactiveDensityPlot <- function(ex) {
+  ex <- as.matrix(ex)
+  fig2 <-
     plot_ly(type = 'scatter',
-            mode = 'lines',
-            name = (paste(
-              paste(geoAccessionCode, platform), 'value distribution'
-            )))
+            mode = 'lines')
   i <- 1
-  for (col in names(ex)) {
+  for (col in colnames(ex)) {
     density <- density(ex[, i])
-    fig <-
-      fig %>% add_trace(x = density$x,
+    fig2 <-
+      fig2 %>% add_trace(x = density$x,
                         y = density$y,
                         name = col)
     i <- i + 1
   }
 
-  fig <-
-    fig %>% layout(
-      title = (paste(
-        paste(geoAccessionCode, platform), 'value distribution'
-      )),
+  fig2 <-
+    fig2 %>% layout(
+      title = "Density Plot",
       xaxis = list(title = 'Intensity'),
       yaxis = list(title = 'Density')
     )
-  fig
+  
+  try(fig2 <- toWebGL(fig2))
+  
+  return(fig2)
 }
 
 #' A Function to Create an Interactive Three Dimensional
@@ -188,19 +189,16 @@ interactiveDensityPlot <- function(ex, geoAccessionCode, platform) {
 #' @noRd
 #' @seealso [extractExpressionData()] for expression object
 interactiveThreeDDensityPlot <-
-  function(ex, geoAccessionCode, platform) {
-    ex <- as.data.frame(ex)
-    fig <-
+  function(ex) {
+    ex <- as.matrix(ex)
+    fig3 <-
       plot_ly(type = 'scatter3d',
-              mode = 'lines',
-              name = (paste(
-                paste(geoAccessionCode, platform), 'value distribution'
-              )))
+              mode = 'lines')
     i <- 1
-    for (col in names(ex)) {
+    for (col in colnames(ex)) {
       density <- density(ex[, i])
-      fig <-
-        fig %>% add_trace(
+      fig3 <-
+        fig3 %>% add_trace(
           x = density$x,
           y = i,
           z = density$y,
@@ -209,17 +207,18 @@ interactiveThreeDDensityPlot <-
       i <- i + 1
     }
 
-    fig <- fig %>% layout(
-      title = (paste(
-        paste(geoAccessionCode, platform), 'value distribution'
-      )),
+    fig3 <- fig3 %>% layout(
+      title = "Density Plot",
       scene = list(
         xaxis = list(title = "Intensity"),
         yaxis = list(title = ""),
         zaxis = list(title = "Density")
       )
     )
-    fig
+    
+    try(fig3 <- toWebGL(fig3))
+    
+    return(fig3)
   }
 
 #' A Function to Create an Interactive UMAP Plot from
@@ -270,23 +269,25 @@ interactiveThreeDDensityPlot <-
 #' @author Guy Hunt
 #' @noRd
 #' @seealso [extractExpressionData()] for expression object
-interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
+interactiveUmapPlot <- function(ex, knn) {
   ex <- ex[!duplicated(ex),]  # remove duplicates
   ump <- umap(t(ex), n_neighbors = knn, random_state = 123)
   i <- 1
-  fig <- plot_ly(type = 'scatter', mode = 'markers')
+  fig5 <- plot_ly(type = 'scatter', mode = 'markers')
   for (row in row.names(ump$layout)) {
-    fig <-
-      fig %>% add_trace(x = ump$layout[i, ][1],
+    fig5 <-
+      fig5 %>% add_trace(x = ump$layout[i, ][1],
                         y = ump$layout[i, ][2],
                         name = row)
     i <- i + 1
   }
-  fig <- fig %>% layout(title = (paste(
-    geoAccessionCode,
+  fig5 <- fig5 %>% layout(title = (
     paste('UMAP plot, number of nearest neighbors used =', knn)
-  )))
-  fig
+  ))
+  
+  try(fig5 <- toWebGL(fig5))
+  
+  return(fig5)
 }
 
 #' A Function to Create an Interactive Mean Variance Plot
@@ -340,7 +341,10 @@ interactiveUmapPlot <- function(ex, knn, geoAccessionCode) {
 #' for expression object, [extractPlatformGset()]
 #' for GEO object
 interactiveMeanVariancePlot <-
-  function(ex, geoAccessionCode, gset) {
+  function(ex, gset) {
+    # Convert to matrix
+    ex <- as.matrix(ex)
+    
     # Create linear model
     exData <- lmFit(ex)
 
@@ -350,13 +354,16 @@ interactiveMeanVariancePlot <-
 
     if (is.null(gset)) {
       combineData <- exData
+    } else if (length(gset@featureData@data)==0)
+      {
+      combineData <- exData
     } else {
       # Extract gene data
       geneData <- gset@featureData@data
 
       # Error handling to catch gset without featureData
       if (ncol(geneData) > 0) {
-        geneData <- as.data.frame(geneData)
+        geneData <- as.matrix(geneData)
         combineData <- merge(exData, geneData, by = "ID")
         colnames(combineData) <-
           str_replace_all(colnames(combineData), " ", ".")
@@ -366,7 +373,7 @@ interactiveMeanVariancePlot <-
       }
     }
     # Plot mean variance
-    fig <-
+    fig6 <-
       plot_ly(
         data = combineData,
         x = ~ Amean,
@@ -381,19 +388,19 @@ interactiveMeanVariancePlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Gene ID: ',
                     Gene.ID,
-                    '<br></br>',
+                    '<br>',
                     'Amean: ',
                     Amean,
-                    '<br></br>',
+                    '<br>',
                     'Sigma: ',
                     sigma
                   )
@@ -401,16 +408,16 @@ interactiveMeanVariancePlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Amean: ',
                     Amean,
-                    '<br></br>',
+                    '<br>',
                     'Sigma: ',
                     sigma
                   )
@@ -419,13 +426,13 @@ interactiveMeanVariancePlot <-
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Amean: ',
                   Amean,
-                  '<br></br>',
+                  '<br>',
                   'Sigma: ',
                   sigma
                 )
@@ -433,15 +440,15 @@ interactiveMeanVariancePlot <-
             } else {
               ~ paste('ID: ',
                       ID,
-                      '<br></br>',
+                      '<br>',
                       'Amean: ',
                       Amean,
-                      '<br></br>',
+                      '<br>',
                       'Sigma: ',
                       sigma)
             }
           } else{
-            ~ paste('Amean: ', Amean, '<br></br>', 'Sigma: ', sigma)
+            ~ paste('Amean: ', Amean, '<br>', 'Sigma: ', sigma)
           }
         ,
         hoverinfo = text,
@@ -453,10 +460,10 @@ interactiveMeanVariancePlot <-
                       width = 1)
         )
       )
-    fig <- fig %>% layout(title = (paste(
-      'Mean variance trend, ', geoAccessionCode
-    )))
-    fig
+    fig6 <- fig6 %>% layout(title =
+      'Mean Variance Plot')
+    
+    return(fig6)
   }
 
 #' A Function to Create an Interactive Histogram of the
@@ -512,12 +519,12 @@ interactiveMeanVariancePlot <-
 #' @noRd
 #' @seealso [calculatePrincompPca()] for PCA expression object
 interactivePrcompPcaScreePlot <-
-  function(pcaData, geoAccessionCode) {
+  function(pcaData) {
     columnNames <- colnames(pcaData$x)
     proportionOfVariance <- pcaData$sdev ^ 2 / sum(pcaData$sdev ^ 2)
     pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
 
-    fig <-
+    fig7 <-
       plot_ly(
         data = pcaDataFrame,
         x = ~ columnNames,
@@ -525,7 +532,7 @@ interactivePrcompPcaScreePlot <-
         type = "bar"
       ) %>%
       layout(
-        title = paste(geoAccessionCode, "Scree Plot"),
+        title = "Scree Plot",
         xaxis = list(
           title = "Principal Components/Dimensions",
           categoryorder = "array",
@@ -535,7 +542,9 @@ interactivePrcompPcaScreePlot <-
                      tickformat = ".0%")
       )
 
-    fig
+    try(fig7 <- toWebGL(fig7))
+    
+    return(fig7)
   }
 
 #' A Function to Create an Interactive Histogram of the
@@ -590,11 +599,11 @@ interactivePrcompPcaScreePlot <-
 #' @noRd
 #' @seealso [calculatePrincompPca()] for Princomp PCA expression object
 interactivePrincompPcaScreePlot <-
-  function(pcaData, geoAccessionCode) {
+  function(pcaData) {
     columnNames <-   colnames(pcaData$loadings)
     proportionOfVariance <- pcaData$sdev ^ 2 / sum(pcaData$sdev ^ 2)
     pcaDataFrame <- data.frame(columnNames, proportionOfVariance)
-    fig <-
+    fig8 <-
       plot_ly(
         data = pcaDataFrame,
         x = ~ columnNames,
@@ -602,7 +611,7 @@ interactivePrincompPcaScreePlot <-
         type = "bar"
       ) %>%
       layout(
-        title = paste(geoAccessionCode, "Scree Plot"),
+        title = "Scree Plot",
         xaxis = list(
           title = "Principal Components/Dimensions",
           categoryorder = "array",
@@ -611,8 +620,10 @@ interactivePrincompPcaScreePlot <-
         yaxis = list(title = "Percentage of Explained Variances",
                      tickformat = ".0%")
       )
-
-    fig
+    
+    try(fig8 <- toWebGL(fig8))
+    
+    return(fig8)
   }
 
 #' A Function to Create an Interactive Scatter Plot of the
@@ -673,17 +684,20 @@ interactivePrincompPcaScreePlot <-
 #' for Princomp PCA expression object, [extractPlatformGset()]
 #' for GEO object
 interactivePrincompPcaIndividualsPlot <-
-  function(pcaData, geoAccessionCode, gset) {
+  function(pcaData, gset) {
     pcaDf <- data.frame(pcaData$scores)
     pcaDf <- transform(pcaDf)
     pcaDf["ID"] <- rownames(pcaDf)
     if (is.null(gset)) {
       combineData <- pcaDf
+    } else if (length(gset@featureData@data)==0)
+    {
+      combineData <- pcaDf
     } else {
       geneData <- gset@featureData@data
       # Error handling for gset without featureData@data
       if (ncol(geneData) > 0) {
-        geneData <- as.data.frame(geneData)
+        geneData <- as.matrix(geneData)
         combineData <- merge(pcaDf, geneData, by = "ID")
         combineData %>% filter("ID" %in% c(rownames(pcaDf)))
         colnames(combineData) <-
@@ -697,7 +711,7 @@ interactivePrincompPcaIndividualsPlot <-
     individualsStats <- get_pca_ind(pcaData)
     eigenValue <- get_eigenvalue(pcaData)
 
-    fig <-
+    fig9 <-
       plot_ly(
         combineData,
         x =  ~ Comp.1,
@@ -712,19 +726,19 @@ interactivePrincompPcaIndividualsPlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Gene ID: ',
                     Gene.ID,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 1: ',
                     Comp.1,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 2: ',
                     Comp.2
                   )
@@ -732,16 +746,16 @@ interactivePrincompPcaIndividualsPlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 1: ',
                     Comp.1,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 2: ',
                     Comp.2
                   )
@@ -750,13 +764,13 @@ interactivePrincompPcaIndividualsPlot <-
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Dimension 1: ',
                   Comp.1,
-                  '<br></br>',
+                  '<br>',
                   'Dimension 2: ',
                   Comp.2
                 )
@@ -765,16 +779,16 @@ interactivePrincompPcaIndividualsPlot <-
               ~ paste(
                 'ID: ',
                 ID,
-                '<br></br>',
+                '<br>',
                 'Dimension 1: ',
                 Comp.1,
-                '<br></br>',
+                '<br>',
                 'Dimension 2: ',
                 Comp.2
               )
             }
           } else {
-            ~ paste('Dimension 1: ', Comp.1, '<br></br>',
+            ~ paste('Dimension 1: ', Comp.1, '<br>',
                     'Dimension 2: ', Comp.2)
           }
         ,
@@ -783,10 +797,10 @@ interactivePrincompPcaIndividualsPlot <-
                       size = 3)
       )
 
-    fig <-
+    fig9 <-
       layout(
-        fig,
-        title = paste(geoAccessionCode, "PCA Individuals Plot"),
+        fig9,
+        title = "PCA Individuals Plot",
         xaxis = list(title = paste(
           "Comp.1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
         )),
@@ -794,7 +808,8 @@ interactivePrincompPcaIndividualsPlot <-
           "Comp.2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
         ))
       )
-    fig
+    
+    return(fig9)
   }
 
 #' A Function to Create an Interactive Scatter Plot of the
@@ -852,12 +867,12 @@ interactivePrincompPcaIndividualsPlot <-
 #' for Princomp PCA expression object,
 #' [extractPlatformGset()] for GEO object
 interactivePrincompPcaVariablesPlot <-
-  function(pcaData, geoAccessionCode) {
+  function(pcaData) {
     variableStats <- get_pca_var(pcaData)
     eigenValue <- get_eigenvalue(pcaData)
     pcaData <- as.data.frame(unclass(pcaData$loadings))
 
-    fig <-
+    fig10 <-
       plot_ly(
         pcaData,
         x =  ~ Comp.1,
@@ -870,10 +885,10 @@ interactivePrincompPcaVariablesPlot <-
         name = rownames(pcaData)
       )
 
-    fig <-
+    fig10 <-
       layout(
-        fig,
-        title = paste(geoAccessionCode, "PCA Variables Plot"),
+        fig10,
+        title ="PCA Variables Plot",
         xaxis = list(title = paste(
           "Comp.1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
         )),
@@ -881,7 +896,10 @@ interactivePrincompPcaVariablesPlot <-
           "Comp.2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
         ))
       )
-    fig
+    
+    try(fig10 <- toWebGL(fig10))
+    
+    return(fig10)
   }
 
 #' A Function to Create an Interactive Heat Map of the
@@ -936,8 +954,9 @@ interactiveHeatMapPlot <- function(ex) {
     i <- i + 1
   }
   colnames(df) <- colnames(corMatrix)
-  fig <- heatmaply(df)
-  fig
+  heatmapFig <- heatmaply(df)
+  
+  return(heatmapFig)
 }
 
 #' A Function to Create an Interactive Scatter Plot of the
@@ -998,17 +1017,20 @@ interactiveHeatMapPlot <- function(ex) {
 #' for Princomp PCA expression object,
 #' [extractPlatformGset()] for GEO object
 interactivePrcompPcaIndividualsPlot <-
-  function(pcaData, geoAccessionCode, gset) {
+  function(pcaData, gset) {
     pcaDf <- data.frame(pcaData$x)
     pcaDf <- transform(pcaDf)
     pcaDf["ID"] <- rownames(pcaDf)
     if (is.null(gset)) {
       combineData <- pcaDf
+    } else if (length(gset@featureData@data)==0)
+    {
+      combineData <- pcaDf
     } else {
       geneData <- gset@featureData@data
       # Error handling for gset without featureData@data
       if (ncol(geneData) > 0) {
-        geneData <- as.data.frame(geneData)
+        geneData <- as.matrix(geneData)
         combineData <- merge(pcaDf, geneData, by = "ID")
         combineData %>% filter("ID" %in% c(rownames(pcaDf)))
         colnames(combineData) <-
@@ -1018,12 +1040,11 @@ interactivePrcompPcaIndividualsPlot <-
       }
     }
 
-
     individualsStats <- get_pca_ind(pcaData)
     eigenValue <- get_eigenvalue(pcaData)
 
 
-    fig <-
+    fig11 <-
       plot_ly(
         combineData,
         x =  ~ PC1,
@@ -1038,19 +1059,19 @@ interactivePrcompPcaIndividualsPlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Gene ID: ',
                     Gene.ID,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 1: ',
                     PC1,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 2: ',
                     PC2
                   )
@@ -1058,16 +1079,16 @@ interactivePrcompPcaIndividualsPlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 1: ',
                     PC1,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 2: ',
                     PC2
                   )
@@ -1076,13 +1097,13 @@ interactivePrcompPcaIndividualsPlot <-
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Dimension 1: ',
                   PC1,
-                  '<br></br>',
+                  '<br>',
                   'Dimension 2: ',
                   PC2
                 )
@@ -1090,15 +1111,15 @@ interactivePrcompPcaIndividualsPlot <-
             } else {
               ~ paste('ID: ',
                       ID,
-                      '<br></br>',
+                      '<br>',
                       'Dimension 1: ',
                       PC1,
-                      '<br></br>',
+                      '<br>',
                       'Dimension 2: ',
                       PC2)
             }
           } else {
-            ~ paste('Dimension 1: ', PC1, '<br></br>',
+            ~ paste('Dimension 1: ', PC1, '<br>',
                     'Dimension 2: ', PC2)
           }
         ,
@@ -1107,10 +1128,10 @@ interactivePrcompPcaIndividualsPlot <-
                       size = 3)
       )
 
-    fig <-
+    fig11 <-
       layout(
-        fig,
-        title = paste(geoAccessionCode, "PCA Individuals Plot"),
+        fig11,
+        title = "PCA Individuals Plot",
         xaxis = list(title = paste(
           "PC1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
         )),
@@ -1118,7 +1139,8 @@ interactivePrcompPcaIndividualsPlot <-
           "PC2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
         ))
       )
-    fig
+    
+    return(fig11)
   }
 
 #' A Function to Create an Interactive 3D Scatter Plot of the
@@ -1179,18 +1201,21 @@ interactivePrcompPcaIndividualsPlot <-
 #' for Princomp PCA expression object,
 #' [extractPlatformGset()] for GEO object
 interactive3DPrcompPcaIndividualsPlot <-
-  function(pcaData, geoAccessionCode, gset) {
+  function(pcaData, gset) {
     pcaDf <- data.frame(pcaData$x)
     pcaDf <- transform(pcaDf)
     pcaDf["ID"] <- rownames(pcaDf)
     gset <- NULL
     if (is.null(gset)) {
       combineData <- pcaDf
+    } else if (length(gset@featureData@data)==0)
+    {
+      combineData <- pcaDf
     } else {
       geneData <- gset@featureData@data
       # Error handling for gset without featureData@data
       if (ncol(geneData) > 0) {
-        geneData <- as.data.frame(geneData)
+        geneData <- as.matrix(geneData)
         combineData <- merge(pcaDf, geneData, by = "ID")
         combineData %>% filter("ID" %in% c(rownames(pcaDf)))
         colnames(combineData) <-
@@ -1203,7 +1228,7 @@ interactive3DPrcompPcaIndividualsPlot <-
     individualsStats <- get_pca_ind(pcaData)
     eigenValue <- get_eigenvalue(pcaData)
 
-    fig <-
+    fig12 <-
       plot_ly(
         combineData,
         x =  ~ PC1,
@@ -1219,19 +1244,19 @@ interactive3DPrcompPcaIndividualsPlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Gene ID: ',
                     Gene.ID,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 1: ',
                     PC1,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 2: ',
                     PC2
                   )
@@ -1239,16 +1264,16 @@ interactive3DPrcompPcaIndividualsPlot <-
                   ~ paste(
                     'ID: ',
                     ID,
-                    '<br></br>',
+                    '<br>',
                     'Gene Symbol: ',
                     Gene.symbol,
-                    '<br></br>',
+                    '<br>',
                     'Gene Title: ',
                     Gene.title,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 1: ',
                     PC1,
-                    '<br></br>',
+                    '<br>',
                     'Dimension 2: ',
                     PC2
                   )
@@ -1257,13 +1282,13 @@ interactive3DPrcompPcaIndividualsPlot <-
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Dimension 1: ',
                   PC1,
-                  '<br></br>',
+                  '<br>',
                   'Dimension 2: ',
                   PC2
                 )
@@ -1271,15 +1296,15 @@ interactive3DPrcompPcaIndividualsPlot <-
             } else {
               ~ paste('ID: ',
                       ID,
-                      '<br></br>',
+                      '<br>',
                       'Dimension 1: ',
                       PC1,
-                      '<br></br>',
+                      '<br>',
                       'Dimension 2: ',
                       PC2)
             }
           } else {
-            ~ paste('Dimension 1: ', PC1, '<br></br>',
+            ~ paste('Dimension 1: ', PC1, '<br>',
                     'Dimension 2: ', PC2)
           }
         ,
@@ -1288,10 +1313,10 @@ interactive3DPrcompPcaIndividualsPlot <-
                       size = 3)
       )
 
-    fig <-
+    fig12 <-
       layout(
-        fig,
-        title = paste(geoAccessionCode, "PCA Individuals Plot"),
+        fig12,
+        title = "PCA Individuals Plot",
         scene = list(
           xaxis = list(title = paste(
             "PC1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
@@ -1304,7 +1329,8 @@ interactive3DPrcompPcaIndividualsPlot <-
           ))
         )
       )
-    fig
+    
+    return(fig12)
   }
 
 #' A Function to Create an Interactive Scatter Plot
@@ -1361,12 +1387,12 @@ interactive3DPrcompPcaIndividualsPlot <-
 #' for Princomp PCA expression object,
 #' [extractPlatformGset()] for GEO object
 interactivePrcompPcaVariablesPlot <-
-  function(pcaData, geoAccessionCode) {
+  function(pcaData) {
     variableStats <- get_pca_var(pcaData)
     eigenValue <- get_eigenvalue(pcaData)
     pcaData <- as.data.frame(unclass(pcaData$rotation))
 
-    fig <-
+    fig13 <-
       plot_ly(
         pcaData,
         x =  ~ PC1,
@@ -1379,10 +1405,10 @@ interactivePrcompPcaVariablesPlot <-
         name = rownames(pcaData)
       )
 
-    fig <-
+    fig13 <-
       layout(
-        fig,
-        title = paste(geoAccessionCode, "PCA Variables Plot"),
+        fig13,
+        title = "PCA Variables Plot",
         xaxis = list(title = paste(
           "PC1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
         )),
@@ -1390,7 +1416,10 @@ interactivePrcompPcaVariablesPlot <-
           "PC2", label_percent(accuracy = 0.1)(eigenValue[2, 2] / 100)
         ))
       )
-    fig
+    
+    try(fig13 <- toWebGL(fig13))
+    
+    return(fig13)
   }
 
 #' A Function to Create an Interactive 3D Scatter Plot
@@ -1447,12 +1476,12 @@ interactivePrcompPcaVariablesPlot <-
 #' for Princomp PCA expression object,
 #' [extractPlatformGset()] for GEO object
 interactive3DPrcompPcaVariablesPlot <-
-  function(pcaData, geoAccessionCode) {
+  function(pcaData) {
     variableStats <- get_pca_var(pcaData)
     eigenValue <- get_eigenvalue(pcaData)
     pcaData <- as.data.frame(unclass(pcaData$rotation))
 
-    fig <-
+    fig14 <-
       plot_ly(
         pcaData,
         x =  ~ PC1,
@@ -1466,10 +1495,10 @@ interactive3DPrcompPcaVariablesPlot <-
         name = rownames(pcaData)
       )
 
-    fig <-
+    fig14 <-
       layout(
-        fig,
-        title = paste(geoAccessionCode, "PCA Variables Plot"),
+        fig14,
+        title = "PCA Variables Plot",
         scene = list(
         xaxis = list(title = paste(
           "PC1", label_percent(accuracy = 0.1)(eigenValue[1, 2] / 100)
@@ -1482,5 +1511,8 @@ interactive3DPrcompPcaVariablesPlot <-
         ))
       )
       )
-    fig
+    
+    try(fig14 <- toWebGL(fig14))
+    
+    return(fig14)
   }

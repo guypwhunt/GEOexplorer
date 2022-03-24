@@ -4,20 +4,25 @@ context("With Single Column")
 test_that("Microarray GSE with a single column is handled correctly by all
           functions",
           {
-            logTransformation <- "Auto-Detect"
-            knnTransformation <- "Yes"
-            knn <- 2
-            pValueAdjustment <-
+            input <- NULL
+            all <- NULL
+            input$logTransformation <- "Auto-Detect"
+            input$knnTransformation <- "Yes"
+            input$knn <- 2
+            input$pValueAdjustment <-
               "Benjamini & Hochberg (False discovery rate)"
-            limmaPrecisionWeights <- "Yes"
-            forceNormalization <- "Yes"
-            platformAnnotation <- "NCBI generated"
-            significanceLevelCutOff <- 0.05
+            input$limmaPrecisionWeights <- "Yes"
+            input$forceNormalization <- "Yes"
+            input$platformAnnotation <- "NCBI generated"
+            input$significanceLevelCutOff <- 0.05
+            input$dataSource <- "GEO"
+            all$typeOfData <- "Microarray"
+            input$dataSetType <- "Single"
 
             # Get the GEO data for all platforms
-            geoAccessionCode <- "GSE25758"
-            allGset <- getGeoObject(geoAccessionCode)
-            ed <- experimentData(allGset[[1]])
+            input$geoAccessionCode <- "GSE25758"
+            all$allGset <- getGeoObject(input$geoAccessionCode)
+            ed <- experimentData(all$allGset[[1]])
             expect_equal(pubMedIds(ed), "")
             ei <- expinfo(ed)
             expect_equal(ei[1], "Park,,Jinwoo", ignore_attr = TRUE)
@@ -31,22 +36,22 @@ test_that("Microarray GSE with a single column is handled correctly by all
             )
 
             # Extract platforms
-            platforms <- extractPlatforms(allGset)
+            platforms <- extractPlatforms(all$allGset)
             platform <- platforms[1]
             expect_type(platforms, 'character')
             expect_type(platform, 'character')
             expect_equal(platform, "GPL373")
 
             # Extract the GEO2R data from the specified platform
-            gsetData <- extractPlatformGset(allGset, platform)
-            expect_type(gsetData, 'S4')
-            expect_s4_class(gsetData, 'ExpressionSet')
-            expect_equal(nrow(pData(gsetData)), 1)
-            expect_equal(nrow(fData(gsetData)), 4719)
+            all$gsetData <- extractPlatformGset(all$allGset, platform)
+            expect_type(all$gsetData, 'S4')
+            expect_s4_class(all$gsetData, 'ExpressionSet')
+            expect_equal(nrow(pData(all$gsetData)), 1)
+            expect_equal(nrow(fData(all$gsetData)), 4719)
 
             # Extract the experiment information
             experimentInformation <-
-              extractExperimentInformation(gsetData)
+              extractExperimentInformation(all$gsetData)
             expect_type(experimentInformation, 'S4')
             expect_s4_class(experimentInformation, 'MIAME')
             expect_equal(experimentInformation@name, "Park,,Jinwoo")
@@ -61,75 +66,78 @@ test_that("Microarray GSE with a single column is handled correctly by all
             expect_equal(experimentInformation@pubMedIds, "")
 
             # Extract Sample Information
-            sampleInfo <- extractSampleInformation(gsetData)
+            sampleInfo <- extractSampleInformation(all$gsetData)
             expect_type(sampleInfo, 'list')
             expect_equal(nrow(sampleInfo), 1)
             expect_equal(ncol(sampleInfo), 29)
 
             # Extract expression data
-            expressionData <- extractExpressionData(gsetData)
-            expect_type(expressionData, 'double')
-            expect_equal(ncol(expressionData), 1)
-            expect_equal(nrow(expressionData), 4719)
+            all$expressionData <- extractExpressionData(all$gsetData)
+            expect_type(all$expressionData, 'double')
+            expect_equal(ncol(all$expressionData), 1)
+            expect_equal(nrow(all$expressionData), 4719)
 
             # Get column Details
-            columnInfo <- extractSampleDetails(gsetData)
+            columnInfo <- extractSampleDetails(all$gsetData)
             expect_type(columnInfo, 'list')
-            expect_equal(ncol(columnInfo), 3)
+            expect_equal(ncol(columnInfo), 5)
             expect_equal(nrow(columnInfo), 1)
 
             # Is log transformation auto applied
             autoLogInformation <-
-              calculateAutoLogTransformApplication(expressionData)
+              calculateAutoLogTransformApplication(all$expressionData)
             expect_type(autoLogInformation, 'character')
             expect_equal(
               autoLogInformation,
               "The auto-detect option did not apply log transformation.")
 
             # Get a list of all the columns
-            columns <- extractSampleNames(expressionData)
+            columns <- extractSampleNames(all$expressionData)
             expect_type(columns, 'character')
             expect_equal(columns[1], "GSM8821")
 
             # Apply log transformation to expression data if necessary
             dataInput <-
-              calculateLogTransformation(expressionData, logTransformation)
+              calculateLogTransformation(all$expressionData, 
+                                         input$logTransformation)
             expect_type(dataInput, 'double')
             expect_equal(ncol(dataInput), 1)
             expect_equal(nrow(dataInput), 4719)
             expect_equal(dataInput[1, 1],-0.1123613)
 
-            # Perform KNN transformation on log expression data if necessary
-            expect_error(knnDataInput <-
+            # Perform input$knn transformation on log expression data if 
+            # necessary
+            expect_error(all$knnDataInput <-
                            calculateKnnImpute(dataInput, "Yes"))
-            knnDataInput <- calculateKnnImpute(dataInput, "No")
-            expect_type(knnDataInput, 'double')
-            expect_equal(ncol(knnDataInput), 1)
-            expect_equal(nrow(knnDataInput), 4719)
-            expect_equal(knnDataInput[1, 1],-0.1123613)
+            all$knnDataInput <- calculateKnnImpute(dataInput, "No")
+            expect_type(all$knnDataInput, 'double')
+            expect_equal(ncol(all$knnDataInput), 1)
+            expect_equal(nrow(all$knnDataInput), 4719)
+            expect_equal(all$knnDataInput[1, 1],-0.1123613)
 
-            # Get a list of all the columns in the KNN output
-            knnColumns <- extractSampleNames(knnDataInput)
+            # Get a list of all the columns in the input$knn output
+            knnColumns <- extractSampleNames(all$knnDataInput)
 
-            # Get knn output column Details
-            knnColumnInfo <- extractSampleDetails(gsetData)
+            # Get input$knn output column Details
+            knnColumnInfo <- extractSampleDetails(all$gsetData)
             knnColumnInfo <- knnColumnInfo[knnColumns,]
 
             # Remove all incomplete rows
-            naOmitInput <- calculateNaOmit(knnDataInput)
+            naOmitInput <- calculateNaOmit(all$knnDataInput)
             expect_type(naOmitInput, 'double')
             expect_equal(ncol(naOmitInput), 1)
             expect_equal(nrow(naOmitInput), 4719)
             expect_equal(naOmitInput[1, 1],-0.1123613)
 
-            # Perform Princomp PCA analysis on KNN transformation
+            # Perform Princomp PCA analysis on input$knn transformation
             # expression data
             pcaPrincompDataInput <-
               calculatePrincompPca(naOmitInput)
             expect_type(pcaPrincompDataInput, 'list')
             expect_s3_class(pcaPrincompDataInput, 'princomp')
 
-            # Perform Prcomp PCA analysis on KNN transformation expression data
+            # Perform Prcomp PCA analysis on input$knn transformation 
+            # expression data
             pcaPrcompDataInput <- calculatePrcompPca(naOmitInput)
             expect_type(pcaPrcompDataInput, 'list')
             expect_s3_class(pcaPrcompDataInput, 'prcomp')
@@ -143,9 +151,7 @@ test_that("Microarray GSE with a single column is handled correctly by all
             # Non-Interactive Box-and-Whisker Plot
             fig <-
               nonInteractiveBoxAndWhiskerPlot(
-                ex = knnDataInput,
-                geoAccessionCode = geoAccessionCode,
-                platform = platform)
+                ex = all$knnDataInput)
             expect_type(fig, 'list')
             expect_type(fig$stats, 'double')
             expect_type(fig$n, 'double')
@@ -156,8 +162,7 @@ test_that("Microarray GSE with a single column is handled correctly by all
 
             # Interactive Box-and-Whisker Plot
             fig <-
-              interactiveBoxAndWhiskerPlot(knnDataInput,
-                                           geoAccessionCode, platform)
+              interactiveBoxAndWhiskerPlot(all$knnDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -171,16 +176,14 @@ test_that("Microarray GSE with a single column is handled correctly by all
 
             # Non-Interactive Density Plot
             fig <-
-              nonInteractiveDensityPlot(ex = naOmitInput,
-                                        geoAccessionCode = geoAccessionCode,
-                                        platform = platform)
+              nonInteractiveDensityPlot(ex = naOmitInput)
             expect_type(fig, 'list')
             expect_type(fig$X, 'double')
             expect_type(fig$Y, 'double')
 
             # Interactive Density Plot
             fig <-
-              interactiveDensityPlot(naOmitInput, geoAccessionCode, platform)
+              interactiveDensityPlot(naOmitInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -194,8 +197,7 @@ test_that("Microarray GSE with a single column is handled correctly by all
 
             # 3D Interactive Density Plot
             fig <-
-              interactiveThreeDDensityPlot(naOmitInput,
-                                           geoAccessionCode, platform)
+              interactiveThreeDDensityPlot(naOmitInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -209,7 +211,7 @@ test_that("Microarray GSE with a single column is handled correctly by all
 
             # Interactive UMAP
             fig <-
-              interactiveUmapPlot(naOmitInput, knn, geoAccessionCode)
+              interactiveUmapPlot(naOmitInput, input$knn)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -223,8 +225,7 @@ test_that("Microarray GSE with a single column is handled correctly by all
 
             # Interactive Mean Variance Plot
             fig <-
-              interactiveMeanVariancePlot(naOmitInput,
-                                          geoAccessionCode, gsetData)
+              interactiveMeanVariancePlot(naOmitInput, all$gsetData)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -238,8 +239,7 @@ test_that("Microarray GSE with a single column is handled correctly by all
 
             # Interactive Princomp PCA Scree Plot
             fig <-
-              interactivePrincompPcaScreePlot(pcaPrincompDataInput,
-                                              geoAccessionCode)
+              interactivePrincompPcaScreePlot(pcaPrincompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -255,15 +255,13 @@ test_that("Microarray GSE with a single column is handled correctly by all
             expect_error({
               fig <-
                 interactivePrincompPcaIndividualsPlot(pcaPrincompDataInput,
-                                                      geoAccessionCode,
-                                                      gsetData)
+                                                      all$gsetData)
               fig
             })
 
             # Interactive Prcomp PCA Scree Plot
             fig <-
-              interactivePrcompPcaScreePlot(pcaPrcompDataInput,
-                                            geoAccessionCode)
+              interactivePrcompPcaScreePlot(pcaPrcompDataInput)
             fig
             expect_type(fig, 'list')
             expect_type(fig$elementId, 'NULL')
@@ -279,7 +277,7 @@ test_that("Microarray GSE with a single column is handled correctly by all
             expect_error({
               fig <-
                 interactivePrcompPcaIndividualsPlot(pcaPrcompDataInput,
-                                                    geoAccessionCode, gsetData)
+                                                    all$gsetData)
               fig
             })
 
@@ -288,15 +286,14 @@ test_that("Microarray GSE with a single column is handled correctly by all
 
             # Non-Interactive UMAP
             fig <-
-              nonInteractiveUmapPlot(naOmitInput, knn, geoAccessionCode)
+              nonInteractiveUmapPlot(naOmitInput, input$knn)
             expect_type(fig, 'list')
             expect_type(fig$x, 'double')
             expect_type(fig$y, 'double')
 
             # Non-Interactive Mean Variance Plot
             expect_error(fig <-
-                           nonInteractiveMeanVariancePlot(naOmitInput,
-                                                          geoAccessionCode))
+                           nonInteractiveMeanVariancePlot(naOmitInput))
 
             # Non-Interactive Princomp PCA Scree Plot
             fig <- nonInteractivePcaScreePlot(pcaPrincompDataInput)
@@ -317,7 +314,8 @@ test_that("Microarray GSE with a single column is handled correctly by all
 
             # Non-Interactive Princomp PCA Variables Plot
             expect_error(fig <-
-                           nonInteractivePcaVariablesPlot(pcaPrincompDataInput))
+                           nonInteractivePcaVariablesPlot(pcaPrincompDataInput)
+                         )
 
             # Non-Interactive Princomp PCA Individual and Variables Bilot
             expect_error(fig <-
@@ -325,7 +323,7 @@ test_that("Microarray GSE with a single column is handled correctly by all
 
             # Differential gene expression analysis functions
             # Get column names
-            columnNames <- extractSampleNames(expressionData)
+            columnNames <- extractSampleNames(all$expressionData)
 
             # Define Groups
             numberOfColumns <- length(columnNames)
@@ -352,37 +350,37 @@ test_that("Microarray GSE with a single column is handled correctly by all
             expect_type(column2, "NULL")
             expect_equal(length(column2), 0)
 
-            # Calculate gsms
-            gsms <-
+            # Calculate all$gsms
+            all$gsms <-
               calculateEachGroupsSamples(columnNames, group1, group2)
-            expect_type(gsms, "character")
-            expect_equal(gsms, "0")
-            expect_equal(nchar(gsms), 1)
+            expect_type(all$gsms, "character")
+            expect_equal(all$gsms, "0")
+            expect_equal(nchar(all$gsms), 1)
 
             # Convert P value adjustment
-            pValueAdjustment <-
+            input$pValueAdjustment <-
               "Benjamini & Hochberg (False discovery rate)"
-            adjustment <- convertAdjustment(pValueAdjustment)
+            adjustment <- convertAdjustment(input$pValueAdjustment)
             expect_type(adjustment, "character")
             expect_equal(adjustment, "fdr")
 
-            pValueAdjustment <- "Benjamini & Yekutieli"
-            adjustment <- convertAdjustment(pValueAdjustment)
+            input$pValueAdjustment <- "Benjamini & Yekutieli"
+            adjustment <- convertAdjustment(input$pValueAdjustment)
             expect_type(adjustment, "character")
             expect_equal(adjustment, "BY")
 
-            pValueAdjustment <- "Bonferroni"
-            adjustment <- convertAdjustment(pValueAdjustment)
+            input$pValueAdjustment <- "Bonferroni"
+            adjustment <- convertAdjustment(input$pValueAdjustment)
             expect_type(adjustment, "character")
             expect_equal(adjustment, "bonferroni")
 
-            pValueAdjustment <- "Holm"
-            adjustment <- convertAdjustment(pValueAdjustment)
+            input$pValueAdjustment <- "Holm"
+            adjustment <- convertAdjustment(input$pValueAdjustment)
             expect_type(adjustment, "character")
             expect_equal(adjustment, "holm")
 
-            pValueAdjustment <- "None"
-            adjustment <- convertAdjustment(pValueAdjustment)
+            input$pValueAdjustment <- "None"
+            adjustment <- convertAdjustment(input$pValueAdjustment)
             expect_type(adjustment, "character")
             expect_equal(adjustment, "none")
 
@@ -391,13 +389,8 @@ test_that("Microarray GSE with a single column is handled correctly by all
 
             # Get fit 2
             expect_error(
-              fit2 <-
-                calculateDifferentialGeneExpression(
-                  gsms,
-                  limmaPrecisionWeights,
-                  forceNormalization,
-                  gsetData,
-                  expressionData
-                )
+              results <- calculateDifferentialGeneExpression(all$gsms,input,
+                                                             all)
+              
             )
           })

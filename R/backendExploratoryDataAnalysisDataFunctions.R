@@ -71,6 +71,7 @@ getGeoObject <-
     } else {
       platformAnnotation <- TRUE
     }
+    # Remove white space from geoAccessionCode
     gset <- tryCatch({
       getGEO(geoAccessionCode,
              GSEMatrix = GSEMatrix,
@@ -288,26 +289,54 @@ convertExperimentInformation <- function(experimentData) {
 #' @noRd
 #' @seealso [extractPlatformGset()] for GEO object
 extractSampleDetails <- function(gset) {
+  # Extract the experimental conditions
   phenoDataset <- phenoData(gset)
   phenoData <- phenoDataset@data
+
+  # Define the desired column names and variable
   columnNames <-
     c("title",
       "source_name_ch1",
       "characteristics_ch1",
       "characteristics_ch1.1")
   finalColumnNames <- c()
+  rejectedColumnNames <- c()
   i <- 1
 
+  # Identify the columns that are available and not available
   for (name in columnNames) {
     if (name %in% colnames(phenoData)) {
       finalColumnNames <- c(finalColumnNames, name)
+    } else {
+      rejectedColumnNames <- c(rejectedColumnNames, name)
     }
   }
 
+  # Create the dataframe with the available columns
   df <- data.frame(column = row.names(phenoData))
 
   for (name in finalColumnNames) {
     df <- data.frame(df, phenoData[name])
+  }
+
+  # Create the dataframe with the non-available columns
+  if (!is.null(rejectedColumnNames)) {
+    rejectedDf <- data.frame(column = row.names(phenoData))
+    row.names(rejectedDf) <- row.names(phenoData)
+    x <- 2
+    for (name in rejectedColumnNames) {
+      rejectedDf[x] <- NA
+      x <- x +1
+    }
+
+    # Remove the column column
+    rejectedDf <- subset(rejectedDf, select = -column)
+
+    # Update the column names
+    colnames(rejectedDf) <- rejectedColumnNames
+
+    # Bind the two dataframes
+    df <- cbind(df, rejectedDf)
   }
   return(df)
 }
@@ -699,7 +728,26 @@ calculateNaOmit <- function(ex) {
 #' @keywords csv
 #' @importFrom utils read.csv
 #' @examples # Extract CSV
-#' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
+#' rnaExpressionData <- readCsvFile("17cbedyM0aXEJD47wKoL6HhMhsg0w2Vop")
+#' @author Guy Hunt
+#' @noRd
+readCsvFileFromGoogleDocs <- function(id) {
+  # read the file
+  dF <- read.csv(sprintf("https://docs.google.com/uc?id=%s&export=download",
+                         id))
+
+  return(dF)
+}
+
+#' A function to read the input CSVs
+#'
+#' This function allows you to read the input CSVs
+#' @param file A object CSV object
+#' @keywords csv
+#' @importFrom utils read.csv
+#' @examples # Extract CSV
+#' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/
+#' GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
 #' @author Guy Hunt
 #' @noRd
 readCsvFile <- function(file) {
@@ -716,25 +764,28 @@ readCsvFile <- function(file) {
 #' @keywords csv
 #' @import Biobase
 #' @examples # Extract CSV
-#' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
+#' rnaExpressionData <- readCsvFile("C:/Users/guypw/OneDrive/Documents/
+#' GEOexplorer/R/testScripts/exampleGeneExpressionCsv.csv")
 #'
 #' # Get a list of all the columns
 #' columns <- extractSampleNames(rnaExpressionData)
 #' @author Guy Hunt
+#' @importFrom stringr str_remove_all
 #' @noRd
 preProcessGeneExpressionData <- function(expressionData) {
-  # Replace row names with gene names
-  row.names(expressionData) <- expressionData$Genes
+  # Remove quote marks from column names
+  colnames(expressionData) <- str_remove_all(str_remove_all(
+    colnames(expressionData), "'"), '"')
 
+  # Replace row names with gene names
+  row.names(expressionData) <- str_remove_all(str_remove_all(
+    expressionData[,"Genes"], "'"), '"')
+  
   # Delete gene column
   expressionData <- expressionData[ , !(colnames(expressionData) == "Genes")]
-
-  # Convert to matrix
-  expressionData <- data.matrix(expressionData)
-
-  # Convert to expression set
-  #expressionData <- ExpressionSet(expressionData)
-
+  
+  # Replace NULL values with NA
+  expressionData[expressionData == "NULL"] <- NA
   return(expressionData)
 }
 
@@ -764,4 +815,438 @@ calculateCountsPerMillion <- function(rnaExpressionData, applyCpm) {
     cpm <- rnaExpressionData
   }
   return(cpm)
+}
+
+
+#' A function to apply batch correction
+#'
+#' This function allows you to apply batch correction
+#' @keywords geneExpression
+#' @import limma
+#' @importFrom sva ComBat
+#' @author Guy Hunt
+#' @noRd
+calculateBatchCorrection <- function(expressionData, expressionData2,
+                            combinedExpressionData, batchCorrection) {
+  if (batchCorrection != "None"){
+    # Define the batches
+    batchOne <- replicate(ncol(expressionData), "Batch1")
+    batchTwo <- replicate(ncol(expressionData2), "Batch2")
+    finalBatch <- c(batchOne, batchTwo)
+
+    if (batchCorrection == "Empirical Bayes") {
+      # Remove null values
+      combinedExpressionData <- na.omit(combinedExpressionData)
+      # Remove batch effect
+      combinedExpressionDataBatchRemoved <- ComBat(combinedExpressionData,
+                                                   batch = finalBatch)
+    } else if (batchCorrection == "Linear Model") {
+      # Remove batch effect using Limma
+      # (should not be done prior to fitting a linear mode)
+      combinedExpressionDataBatchRemoved <- removeBatchEffect(
+        combinedExpressionData,
+        batch = finalBatch)
+    }
+  } else {
+    combinedExpressionDataBatchRemoved <- combinedExpressionData
+  }
+  return(combinedExpressionDataBatchRemoved)
+}
+
+#' A GEO Function to Convert Two Experiment Information
+#' Object into HTML
+#'
+#' This function allows you to convert two experiment information
+#' into HTML
+#' @importFrom htmltools HTML
+#' @author Guy Hunt
+#' @noRd
+#' @seealso [extractExperimentInformation()] for GEO object
+convertTwoExperimentInformation <- function(experimentData, experimentData2) {
+  experimentHtml <- HTML(
+    paste(
+      "<b>First Experiment</b> <br>",
+      experimentData,
+      " <br><b>Second Experiment</b><br>",
+      experimentData2
+    )
+  )
+
+  return(experimentHtml)
+}
+
+#' A Function to Convert the Column Names to Experimental Information Table
+#'
+#' This function allows you to Columns to an Experimental Information Table
+#' @author Guy Hunt
+#' @noRd
+convertExpressionDataToExperimentInformation <- function(expressionData) {
+  # Convert expression data columns to data frame
+  column <- colnames(expressionData)
+  # Define other columns
+  title <-
+    source_name_ch1 <-
+    characteristics_ch1 <-
+    characteristics_ch1.1 <- NA
+  # Create dataframe
+  columnInfo <-
+    data.frame(column, title, source_name_ch1, characteristics_ch1,
+               characteristics_ch1.1)
+  # Update rownames
+  rownames(columnInfo) <- columnInfo[, 1]
+  # Update colnames
+  colnames(columnInfo, do.NULL = FALSE)
+  colnames(columnInfo) <- c("column", "title", "source_name_ch1",
+                            "characteristics_ch1",
+                            "characteristics_ch1.1")
+
+  return(columnInfo)
+}
+
+#' A Function to combine expression datasets
+#'
+#' This function allows you to combine expression datasets
+#' @author Guy Hunt
+#' @noRd
+combineExpressionData <- function(expressionData1, expressionData2) {
+  # Convert everything to a dataframe
+  expressionData1 <- as.data.frame(expressionData1)
+  expressionData2 <- as.data.frame(expressionData2)
+  
+  # Identify the rows in expressionData1 that are not in expressionData2
+  expressionData2RowNamesToAdd <- expressionData1[
+    !(rownames(expressionData1) %in% rownames(expressionData2)),]
+  
+  # Identify the rows in expressionData1 that are not in expressionData2
+  expressionDataRowNamesToAdd <-
+    expressionData2[
+      !(rownames(expressionData2) %in% rownames(expressionData1)),]
+  
+  if (nrow(expressionData2RowNamesToAdd) > 0) {
+    # Extract the rownames
+    expressionData2RowNamesToAdd <- rownames(expressionData2RowNamesToAdd)
+    
+    # Convert to a dataframe
+    expressionData2RowNamesToAdd <- as.data.frame(expressionData2RowNamesToAdd)
+    
+    # Update the rownames
+    rownames(expressionData2RowNamesToAdd) <- expressionData2RowNamesToAdd[,1]
+    
+    # Update the colnames
+    colnames(expressionData2RowNamesToAdd) <- c("rowname")
+    
+    # Add the new columns with NA data
+    expressionData2RowNamesToAdd[colnames(expressionData2)] <- NA
+    
+    #x <- data.frame(NA, row.names = row.names(expressionData2RowNamesToAdd))
+    
+    # Remove the rownames column
+    expressionData2RowNamesToAdd <- subset(expressionData2RowNamesToAdd,
+                                           select = -rowname)
+    
+    # Add the new rows to expressionData2
+    expressionData2 <- rbind(expressionData2, expressionData2RowNamesToAdd)
+  }
+  
+  if (nrow(expressionDataRowNamesToAdd) > 0) {
+    # Extract the rownames
+    expressionDataRowNamesToAdd <- rownames(expressionDataRowNamesToAdd)
+    
+    # Convert to a dataframe
+    expressionDataRowNamesToAdd <- as.data.frame(expressionDataRowNamesToAdd)
+    
+    # Update the rownames
+    rownames(expressionDataRowNamesToAdd) <- expressionDataRowNamesToAdd[,1]
+    
+    # Update the colnames
+    colnames(expressionDataRowNamesToAdd) <- c("rowname")
+    
+    # Add the new columns with NA data
+    expressionDataRowNamesToAdd[,colnames(expressionData1)] <- NA
+    
+    # Remove the rownames column
+    expressionDataRowNamesToAdd <- subset(expressionDataRowNamesToAdd,
+                                          select = -rowname)
+    
+    # Add the new rows to expressionData1
+    expressionData1 <- rbind(expressionData1, expressionDataRowNamesToAdd)
+  }
+  
+  mergedExpressionData <- cbind(expressionData1, expressionData2)
+  
+  return(mergedExpressionData)
+}
+
+#' A Function to reset all errorChecks
+#'
+#' This function allows you to reset all errorChecks
+#' @author Guy Hunt
+#' @noRd
+resetErrorChecks <- function(errorChecks) {
+  errorChecks$continueWorkflow <- TRUE
+  errorChecks$geoAccessionCode <- TRUE
+  errorChecks$geoMicroarrayAccessionCode <- TRUE
+  errorChecks$geoPlatform <- TRUE
+  errorChecks$expressionData <- TRUE
+  errorChecks$dataInput <- TRUE
+  errorChecks$knnDataInput <- TRUE
+  errorChecks$pcaPrcompDataInput <- TRUE
+  errorChecks$expressionDataOverTwoColumns <- TRUE
+  errorChecks$expressionDataOverOneColumns <- TRUE
+  errorChecks$differentialGeneExpression <- TRUE
+  errorChecks$differentialGeneExpressionGroup <- TRUE
+  errorChecks$uploadFile <- TRUE
+  errorChecks$uploadFileExtension <- TRUE
+  errorChecks$uploadLogData <- TRUE
+  errorChecks$continueWorkflow2 <- TRUE
+  errorChecks$geoAccessionCode2 <- TRUE
+  errorChecks$geoMicroarrayAccessionCode2 <- TRUE
+  errorChecks$geoPlatform2 <- TRUE
+  errorChecks$expressionData2 <- TRUE
+  errorChecks$dataInput2 <- TRUE
+  errorChecks$knnDataInput2 <- TRUE
+  errorChecks$pcaPrcompDataInput2 <- TRUE
+  errorChecks$expressionDataOverTwoColumns2 <- TRUE
+  errorChecks$expressionDataOverOneColumns2 <- TRUE
+  errorChecks$differentialGeneExpression2 <- TRUE
+  errorChecks$differentialGeneExpressionGroup2 <- TRUE
+  errorChecks$uploadFile2 <- TRUE
+  errorChecks$uploadFileExtension2 <- TRUE
+  errorChecks$uploadLogData2 <- TRUE
+
+  return(errorChecks)
+
+}
+
+#' A Function to Enable users to download dataframes as CSVs
+#' @importFrom utils write.csv
+#' @import shiny
+#' @author Guy Hunt
+#' @noRd
+dowloadFile <- function(fileName, dataFrame) {
+  downloadHandler(
+    filename = function() {
+      fileName
+    },
+    content = function(file) {
+      write.csv(dataFrame, file,
+                row.names = FALSE)
+    }
+  )
+}
+
+#' A Function to remove the lowly expressed genes
+#' @importFrom edgeR filterByExpr
+#' @author Guy Hunt
+#' @noRd
+removeLowlyExpressedGenes <- function(ex) {
+  keep.exprs <- filterByExpr(rnaExpressionData, group=group)
+  ex <- ex[keep.exprs,, keep.lib.sizes=FALSE]
+
+  return(ex)
+
+}
+
+#' A function to download the GEO supplementary files
+#'
+#' @keywords GEO rnaSeq
+#' @importFrom GEOquery getGEOSuppFiles
+#' @author Guy Hunt
+#' @noRd
+downloadGeoSupFiles <- function(geoAccessionCode, directoryPath) {
+  geoAccessionCode <- 
+  # DOWNLOAD TAR FILE
+  geoTarFile <- getGEOSuppFiles(geoAccessionCode, baseDir = directoryPath)
+}
+
+#' A function to extract the GEO supplementary files and extract the expression data
+#'
+#' @keywords GEO rnaSeq
+#' @importFrom utils untar
+#' @importFrom R.utils gunzip
+#' @author Guy Hunt
+#' @noRd
+extractGeoSupFiles <- function(geoAccessionCode, filePath, directoryPath) {
+  tarFileName <- paste0(geoAccessionCode, "_RAW.tar")
+  
+  setwd(directoryPath)
+
+  # Untar the file
+  untar(filePath, exdir = ".")
+
+  # Obtain list of file names in the directory
+  listOfFileInDir <- list.files(path = directoryPath)
+
+  # Remove tar file name from list
+  listOfFileInDir <- listOfFileInDir[listOfFileInDir != tarFileName]
+
+  # For each file save as a gz file
+  for(i in listOfFileInDir){
+    try(gunzip(i, overwrite=TRUE))
+  }
+
+  return(tarFileName)
+}
+
+#' A function to extract the expression data from raw files
+#'
+#' @author Guy Hunt
+#' @importFrom edgeR readDGE
+#' @noRd
+extractExpressionDataFromGeoSupRawFiles <- function(directoryPath, tarFileName, 
+                                                    geneNamesCol, countsCol) {
+  setwd(directoryPath)
+  
+  # Define file names
+  files <- list.files(".")
+  files <- files[files != tarFileName]
+
+  # Combine the text files into a matrix of counts using edgeR
+  expressionData <- tryCatch({
+    readDGE(files, columns=c(geneNamesCol,countsCol))},
+    error = function(e) {
+      # return a safeError if a parsing error occurs
+      return(NULL)
+    })
+
+  # Set Working directory
+  setwd("..")
+
+  return(expressionData)
+}
+
+#' A function to update the expression data sample names
+#'
+#' This function allows you to update the expression data sample names
+#' @param rnaExpressionData A object containing the RNA seq expression data
+#' @keywords rnaSeq
+#' @importFrom stringr str_locate
+#' @examples # Define Variables
+#' geoAccessionCode <- "GSE63310"
+#'
+#' # Update Sample Names
+#' rnaExpressionData <- calculateSampleNames(rnaExpressionData)
+#'
+#' # Update Sample Names
+#' rnaExpressionData <- calculateSampleNames(rnaExpressionData)
+#' @author Guy Hunt
+#' @noRd
+calculateSampleNames <- function(rnaExpressionData) {
+  # Extract the sample information
+  samplenames <- substring(colnames(rnaExpressionData), 0,
+                           (str_locate(colnames(
+                             rnaExpressionData), "_")-1)[,1])
+  
+  # Update the colnames with the sample names
+  colnames(rnaExpressionData) <- samplenames
+  
+  return(rnaExpressionData)
+}
+
+#' Create a directory for GEO supplementary files
+#' @author Guy Hunt
+#' @noRd
+createGeoSupplementaryFilesDirectory <- function() {
+  directoryPath <- file.path(getwd(),"geoSupFiles")
+  
+  if(!dir.exists(directoryPath)){
+    try(dir.create(directoryPath, showWarnings = FALSE))
+    try(Sys.chmod(directoryPath, "777"))
+  }
+  
+  return(directoryPath)
+}
+
+#' Delete directory for GEO supplementary files
+#' @author Guy Hunt
+#' @noRd
+deleteGeoSupplementaryFilesDirectory <- function(directoryPath) {
+  unlink(directoryPath, recursive = TRUE, force = TRUE)
+}
+
+#' Delete directory for GEO supplementary files
+#' @author Guy Hunt
+#' @noRd
+calculateGeoAccessionDirectory <- function(directoryPath, geoAccessionCode) {
+  directoryPath <- file.path(directoryPath,geoAccessionCode)
+  return(directoryPath)
+}
+
+#' Extract file extensions
+#' @importFrom xfun file_ext
+#' @author Guy Hunt
+#' @noRd
+extractFileExtensions <- function(geoTarFile) {
+  fileExtensions <- c()
+  
+  for (file in row.names(geoTarFile)) {
+    fileExtensions <-append(fileExtensions, file_ext(file))
+  }
+  return(fileExtensions)
+}
+
+#' Extract expression data from excel
+#' @importFrom readxl read_excel
+#' @author Guy Hunt
+#' @noRd
+extractExpressionExcel <- function(filePath) {
+  expressionData <- read_excel(filePath)
+  
+  expressionData <- as.matrix(expressionData)
+  
+  return(expressionData)
+}
+
+#' Extract expression data from csv
+#' @importFrom utils read.csv
+#' @author Guy Hunt
+#' @noRd
+extractExpressionCsv <- function(filePath) {
+  expressionData <- read.csv(filePath)
+  
+  expressionData <- as.matrix(expressionData)
+  
+  return(expressionData)
+}
+
+
+#' Deduplicated expression data 
+#' @importFrom readxl read_excel
+#' @author Guy Hunt
+#' @noRd
+deduplicatedExpressiondata <- function(expressionData) {
+  expressionData <- expressionData[!duplicated(expressionData[,1]),] 
+  
+  return(expressionData)
+}
+
+#' Remove non numeric columns from expression data 
+#' @importFrom readxl read_excel
+#' @author Guy Hunt
+#' @noRd
+removeNonNumericColumnsFromExpressiondata <- function(expressionData) {
+  for (column in seq_len(ncol(expressionData))) {
+    try({expressionData[,column] <- as.numeric(expressionData[,column])})
+  }
+  
+  expressionData <- expressionData[,colSums(is.na(expressionData))<
+                                     nrow(expressionData)]  
+  return(expressionData)
+}
+
+#' Remove White Space from expression data 
+#' @importFrom stringr str_trim
+#' @author Guy Hunt
+#' @noRd
+removeWhiteSpace <- function(stringText) {
+  stringText <- str_trim(stringText, side = "both")
+  return(stringText)
+}
+
+#' Converts NAs to 0s in expression data 
+#' @author Guy Hunt
+#' @noRd
+convertNaToZero <- function(expressionData) {
+  expressionData[is.na(expressionData)] <- 0
+  return(expressionData)
 }

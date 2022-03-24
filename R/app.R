@@ -15,39 +15,15 @@
 #' @importFrom graphics abline boxplot hist par text
 #' @importFrom stats complete.cases cor model.matrix
 #' na.omit prcomp princomp quantile
-#' @importFrom shinyBS bsTooltip addTooltip
+#' @importFrom shinybusy add_busy_spinner
 #' @author Guy Hunt
 #' @return Large Shiny App
 loadApp <- function() {
   ui <- fluidPage(
-    titlePanel("GEOexplorer"),
-    helpText(
-      "GEO2R is an interactive web tool that allows
-    users to compare two or more groups of experimental
-    conditions in a GEO Series to identify genes that
-    are differentially expressed across experimental
-    conditions.
-    GEOexplorer extends GEO2R's functionalities by enabling
-    a richer set of analysis and graphics to be
-    performed/generated from the GEO2R gene expression data.
-    The development of GEOexplorer was made possible
-    because of the excellent code provided by GEO2R
-             (https://www.ncbi.nlm.nih.gov/geo/geo2r/)."
-    ),
-
-    # Source the Side Bar UI Components
-    sourceSideBarUi(),
-    mainPanel(
-      tabsetPanel(
-        type = "tabs",
-        # Source the Dataset Information UI Components
-        sourceDatasetInformationUi(),
-        # Source the Exploratory Data Analysis UI Components
-        sourceExploratoryDataAnalysisUi(),
-        # Source the Differential Gene Expression UI Components
-        sourceDifferentialGeneExpressionAnalysisUi()
-      )
-    )
+    add_busy_spinner(spin = "fading-circle",
+                     height = "100px",
+                     width = "100px"),
+    sourceUi()
   )
 
   server <- function(input, output, session) {

@@ -40,17 +40,14 @@
 #' @noRd
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveBoxAndWhiskerPlot <-
-  function(ex,
-           geoAccessionCode = "",
-           platform = "") {
+  function(ex) {
     par(mar = c(7, 4, 2, 1))
-    title <- paste (geoAccessionCode, "/", platform, sep = "")
     fig <-
       boxplot(
         ex,
         boxwex = 0.7,
         notch = TRUE,
-        main = title,
+        main = "",
         outline = FALSE,
         las = 2
       )
