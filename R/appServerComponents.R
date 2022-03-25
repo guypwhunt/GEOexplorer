@@ -619,7 +619,11 @@ performExploratoryDataAnalysis <- function(input,
             
             filePath <- paste0(geoAccessionDirectoryPath, "/", 
                                tail(files, n=1))
-          } 
+          }
+          
+          if (length(uniqueFileExtensions) > 1) {
+            uniqueFileExtensions <- tail(uniqueFileExtensions, n=1)
+          }
           
           all$expressionData <- NULL
           
@@ -738,6 +742,8 @@ performExploratoryDataAnalysis <- function(input,
             error = function(err) {
               return(all$expressionData)
             })
+          
+          try(mode(all$expressionData) <- "double")
           
           try(deleteGeoSupplementaryFilesDirectory(geoAccessionDirectoryPath))
           
