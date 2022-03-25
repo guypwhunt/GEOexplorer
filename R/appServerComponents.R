@@ -1421,12 +1421,12 @@ performDifferentialGeneExpressionAnalysis <- function (input,
           
           try({
             if (all$typeOfData == "RNA Sequencing") {
-              if (typeof(all$expressionData) == "double") {
+              if (!all(all$expressionData%%1==0)) {
+                showNotification(!all(all$expressionData%%1==0))
                 showNotification(
                   "The count file does not appear to contain raw 
-                  RNA seq counts.
-                Please ensure that raw counts are used for differential
-                  gene expression analysis.",
+                  RNAseq counts. Please ensure that raw counts are used 
+                  for differential gene expression analysis.",
                   type = "warning"
                 )
               }
