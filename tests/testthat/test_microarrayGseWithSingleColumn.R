@@ -76,7 +76,8 @@ test_that("Microarray GSE with a single column is handled correctly by all
             expect_type(all$expressionData, 'double')
             expect_equal(ncol(all$expressionData), 1)
             expect_equal(nrow(all$expressionData), 4719)
-
+            all$expressionData <- as.matrix(all$expressionData)
+            
             # Get column Details
             columnInfo <- extractSampleDetails(all$gsetData)
             expect_type(columnInfo, 'list')

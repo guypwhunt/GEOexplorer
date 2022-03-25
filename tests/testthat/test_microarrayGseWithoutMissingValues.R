@@ -83,7 +83,8 @@ test_that("Microarray GSE without missing values is handled correctly by all
             expect_type(expressionData, 'double')
             expect_equal(ncol(expressionData), 8)
             expect_equal(nrow(expressionData), 35557)
-
+            expressionData <- as.matrix(expressionData)
+            
             # Get column Details
             columnInfo <- extractSampleDetails(all$gsetData)
             expect_type(columnInfo, 'list')

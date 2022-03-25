@@ -1419,29 +1419,27 @@ performDifferentialGeneExpressionAnalysis <- function (input,
             (lengths(regmatches(gsms, gregexpr("0", gsms))) > 1 &
              lengths(regmatches(gsms, gregexpr("1", gsms))) > 0)) {
           
+          try({
+            if (all$typeOfData == "RNA Sequencing") {
+              if (typeof(all$expressionData) == "double") {
+                showNotification(
+                  "The count file does not appear to contain raw 
+                  RNA seq counts.
+                Please ensure that raw counts are used for differential
+                  gene expression analysis.",
+                  type = "warning"
+                )
+              }
+            }
+          }
+          )
+          
           all$results <- tryCatch({
             calculateDifferentialGeneExpression(gsms, input, all)
           }
           , error = function(cond) {return(NULL)}) 
           
             if (is.null(all$results)) {
-              if (all$typeOfData == "RNA Sequencing") {
-                # Try again with non-log data
-                all$knnDataInput <- all$cpm
-                all$results <- tryCatch({
-                  calculateDifferentialGeneExpression(gsms, input, all)
-                }
-                , error = function(cond) {
-                  return(NULL)
-                })
-                # Show warning that non-log data was used
-                showNotification(
-                  "There was an error calculating the
-                             differential gene expression analysis
-              using the log data. So the non-log data was used instead!",
-                  type = "warning"
-                )
-              }
               if (is.null(all$results)) {
                 all$gset <- all$gsetData
                 

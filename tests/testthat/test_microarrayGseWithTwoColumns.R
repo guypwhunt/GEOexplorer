@@ -78,7 +78,8 @@ test_that("Microarray GSE with two columns is handled correctly by
             expect_type(expressionData, 'double')
             expect_equal(ncol(expressionData), 2)
             expect_equal(nrow(expressionData), 54675)
-
+            expressionData <- as.matrix(expressionData)
+            
             # Get column Details
             columnInfo <- extractSampleDetails(all$gsetData)
             expect_type(columnInfo, 'list')

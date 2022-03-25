@@ -84,7 +84,8 @@ test_that("Microarray GSE with a blank column is handled correctly by all
             expect_type(all$expressionData, 'double')
             expect_equal(ncol(all$expressionData), 6)
             expect_equal(nrow(all$expressionData), 24351)
-
+            all$expressionData <- as.matrix(all$expressionData)
+            
             # Get column Details
             all$columnInfo <- extractSampleDetails(all$gsetData)
             expect_type(all$columnInfo, 'list')
