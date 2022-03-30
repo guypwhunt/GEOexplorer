@@ -779,10 +779,10 @@ preProcessGeneExpressionData <- function(expressionData) {
 
   # Replace row names with gene names
   row.names(expressionData) <- str_remove_all(str_remove_all(
-    expressionData[,"Genes"], "'"), '"')
+    expressionData[,1], "'"), '"')
   
   # Delete gene column
-  expressionData <- expressionData[ , !(colnames(expressionData) == "Genes")]
+  expressionData <- expressionData[ , seq(2,ncol(expressionData),1)]
   
   # Replace NULL values with NA
   expressionData[expressionData == "NULL"] <- NA

@@ -104,7 +104,7 @@ plotGeneEnrichmentinformation  <- function(geneEnrichmentTable) {
 #' @noRd
 calculateLogPValue  <- function(geneEnrichmentTable) {
 
-  geneEnrichmentTable[,"Log.P.Value"] <-
+  geneEnrichmentTable[,"Minus.Log.P.Value"] <-
     0-log10(geneEnrichmentTable[, "P.value"])
 
   return(geneEnrichmentTable)
@@ -178,7 +178,7 @@ interactiveGeneEnrichmentVolcanoPlot  <- function(geneEnrichmentTable) {
   fig20 <- plot_ly(
     data = geneEnrichmentTable,
     x = ~ Odds.Ratio,
-    y = ~ Log.P.Value,
+    y = ~ Minus.Log.P.Value,
     color = ~ Combined.Score,
     text = geneEnrichmentPlotText(geneEnrichmentTable),
     type = 'scatter',
@@ -232,8 +232,8 @@ geneEnrichmentColumnSelection <- function(geneEnrichmentTable, columnToSort) {
           ~Odds.Ratio} else
           if(columnToSort == "Combined.Score") {
             ~Combined.Score} else
-            if(columnToSort == "Log.P.Value") {
-              ~Log.P.Value} else
+            if(columnToSort == "Minus.Log.P.Value") {
+              ~Minus.Log.P.Value} else
               if(columnToSort == "Overlap.Value") {
                 ~Overlap.Value}
   return(columnSelection)

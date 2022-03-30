@@ -472,8 +472,8 @@ sourceExploratoryDataAnalysisUi <- function() {
           color="#0dc5c1")
       ),
       tabPanel(
-        value = "Box-and-Whisper Plot",
-        title = "Box-and-Whisper Plot",
+        value = "Box-and-Whisker Plot",
+        title = "Box-and-Whisker Plot",
         br(),
         span(
           "Generated using R plotly.
@@ -834,7 +834,7 @@ sourceEnrichmentnUi <- function() {
                                                               "Adjusted.P.value",
                                                               "Odds.Ratio",
                                                               "Combined.Score",
-                                                              "Log.P.Value",
+                                                              "Minus.Log.P.Value",
                                                               "Overlap.Value"),
                                                   selected = "P.value"
                                                 )),
@@ -929,7 +929,7 @@ sourceEnrichmentnUi <- function() {
                                              "Adjusted.P.value",
                                              "Odds.Ratio",
                                              "Combined.Score",
-                                             "Log.P.Value",
+                                             "Minus.Log.P.Value",
                                              "Overlap.Value"
                                            ),
                                            selected = "P.value"

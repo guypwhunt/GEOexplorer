@@ -204,32 +204,51 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
 interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
   attributes_list <- c('ID', 'Gene.symbol', 'Gene.title', 'Gene.ID')
   final_attributes_list <- c()
-
+  
   for (attribute in attributes_list) {
     if (attribute %in% colnames(fit2$genes))
       final_attributes_list <- c(final_attributes_list,
                                  attribute)
   }
-
+  
   if (is.null(fit2$genes[final_attributes_list]) == TRUE) {
     fit2Df <- data.frame(fit2$Amean, fit2$coefficients,
                          dT[, ct])
+    colnames(fit2Df) <- 
+      c("aMean",
+        "coefficients",
+        "regulation"
+      )
   } else {
-    fit2Df <-
-      data.frame(fit2$Amean, fit2$coefficients, dT[, ct],
-                 fit2$genes[final_attributes_list])
+    fit2Df <- tryCatch({
+      fit2DfTemp <- data.frame(fit2$Amean, fit2$coefficients, dT[, ct],
+                      fit2$genes[final_attributes_list])
+      colnames(fit2DfTemp) <- 
+        c("aMean",
+          "coefficients",
+          "regulation",
+          final_attributes_list)
+      fit2DfTemp
+    },
+    error=function(cond) {
+      fit2DfTemp <- data.frame(fit2$Amean, fit2$coefficients,
+                      dT[, ct])
+      colnames(fit2DfTemp) <-
+        c("aMean",
+          "coefficients",
+          "regulation"
+        )
+      fit2DfTemp
+    }
+    )
   }
-
-  colnames(fit2Df) <-
-    c("aMean",
-      "coefficients",
-      "regulation",
-      final_attributes_list)
+  
   fit2Df$regulation[fit2Df$regulation == "1"] <- "Upregulated"
   fit2Df$regulation[fit2Df$regulation == "0"] <-
     "Similar Expression"
   fit2Df$regulation[fit2Df$regulation == "-1"] <- "Downregulation"
-
+  fit2DfColnames <- colnames(fit2Df)
+  
   fig16 <-
     plot_ly(
       data = fit2Df,
@@ -239,10 +258,10 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
       colors = c("blue", "black", "red"),
       type = 'scatter',
       mode = 'markers',
-      text = if ('ID' %in% final_attributes_list) {
-        if ('Gene.symbol' %in% final_attributes_list) {
-          if ('Gene.title' %in% final_attributes_list) {
-            if ('Gene.ID' %in% final_attributes_list) {
+      text = if ('ID' %in% fit2DfColnames) {
+        if ('Gene.symbol' %in% fit2DfColnames) {
+          if ('Gene.title' %in% fit2DfColnames) {
+            if ('Gene.ID' %in% fit2DfColnames) {
               ~ paste(
                 'ID: ',
                 ID,
@@ -296,7 +315,8 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
               coefficients
             )
           }
-        } else {
+        } else 
+        {
           ~ paste(
             'ID: ',
             ID,
@@ -319,7 +339,7 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
       hoverinfo = text,
       marker = list(size = 3)
     )
-
+  
   fig16 <- fig16 %>% layout(
     title = ('Group1-Group2'),
     xaxis = list(title = "Average log-expression"),
@@ -431,33 +451,50 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
   attributes_list <- c('ID', 'Gene.symbol', 'Gene.title',
                        'Gene.ID')
   final_attributes_list <- c()
-
+  
   for (attribute in attributes_list) {
     if (attribute %in% colnames(fit2$genes))
       final_attributes_list <- c(final_attributes_list,
                                  attribute)
   }
-
+  
   if (is.null(fit2$genes[final_attributes_list]) == TRUE) {
     fit2Df <-
       data.frame((0 - log10(fit2$p.value)), fit2$coefficients,
                  dT[, ct])
+    colnames(fit2Df) <-
+      c("pValues",
+        "coefficients",
+        "regulation"
+      )
   } else {
-    fit2Df <-
-      data.frame((0 - log10(fit2$p.value)), fit2$coefficients,
-                 dT[, ct], fit2$genes[final_attributes_list])
+    fit2Df <- tryCatch({
+      fit2DfTemp <- data.frame((0 - log10(fit2$p.value)), fit2$coefficients,
+                      dT[, ct], fit2$genes[final_attributes_list])
+      colnames(fit2DfTemp) <- 
+        c("pValues",
+          "coefficients",
+          "regulation",
+          final_attributes_list)
+      fit2DfTemp},
+      error=function(cond) {
+        fit2DfTemp <- data.frame((0 - log10(fit2$p.value)), fit2$coefficients,
+                        dT[, ct])
+        colnames(fit2DfTemp) <- 
+          c("pValues",
+            "coefficients",
+            "regulation"
+          )
+        fit2DfTemp
+      }
+    )
   }
-
-  colnames(fit2Df) <-
-    c("pValues",
-      "coefficients",
-      "regulation",
-      final_attributes_list)
+  
   fit2Df$regulation[fit2Df$regulation == "1"] <- "Upregulated"
   fit2Df$regulation[fit2Df$regulation == "0"] <-
     "Similar Expression"
   fit2Df$regulation[fit2Df$regulation == "-1"] <- "Downregulation"
-
+  fit2DfColnames <- colnames(fit2Df)
   fig17 <-
     plot_ly(
       data = fit2Df,
@@ -468,10 +505,10 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
       type = 'scatter',
       mode = 'markers',
       text =
-        if ('ID' %in% final_attributes_list) {
-          if ('Gene.symbol' %in% final_attributes_list) {
-            if ('Gene.title' %in% final_attributes_list) {
-              if ('Gene.ID' %in% final_attributes_list) {
+        if ('ID' %in% fit2DfColnames) {
+          if ('Gene.symbol' %in% fit2DfColnames) {
+            if ('Gene.title' %in% fit2DfColnames) {
+              if ('Gene.ID' %in% fit2DfColnames) {
                 ~ paste(
                   'ID: ',
                   ID,
@@ -545,16 +582,17 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
                   pValues)
         }
       ,
+      
       hoverinfo = text,
       marker = list(size = 3)
     )
-
+  
   fig17 <- fig17 %>% layout(
     title = ('Group1-Group2'),
     xaxis = list(title = "Log2 Fold Change"),
     yaxis = list(title = "-log10(P-value)")
   )
-
+  
   return(fig17)
 }
 
