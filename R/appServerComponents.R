@@ -1416,7 +1416,8 @@ performDifferentialGeneExpressionAnalysis <- function (input,
         showNotification(
           "There was an error running differential gene expression
                   analysis. Please ensure you have performed exploratory data
-                  analysis first.",
+                  analysis first and selected samples in group 1 and
+          group 2.",
           type = "error"
         )
       } else
@@ -1451,7 +1452,8 @@ performDifferentialGeneExpressionAnalysis <- function (input,
           all$results <- tryCatch({
             calculateDifferentialGeneExpression(gsms, input, all)
           }
-          , error = function(cond) {return(NULL)}) 
+          , error = function(cond) {
+            return(NULL)}) 
           
             if (is.null(all$results)) {
               if (is.null(all$results)) {
@@ -1462,7 +1464,8 @@ performDifferentialGeneExpressionAnalysis <- function (input,
                 all$results <- tryCatch({
                   calculateDifferentialGeneExpression(gsms, input, all)
                 }
-                , error = function(cond) {return(NULL)})
+                , error = function(cond) {
+                  return(NULL)})
                 
                 all$gsetData <- all$gset
                 
