@@ -344,6 +344,10 @@ performExploratoryDataAnalysis <- function(input,
                 preProcessGeneExpressionData(all$expressionData)
               },
               error = function(e) {
+                showNotification("There was an error processing the (first) 
+                file. Please ensure the file has the same format and 
+                structure as the templates in the 'Example Datasets' tab.",
+                                 type = "error")
                 # return null if there is an error
                 return(NULL)
               })
@@ -468,6 +472,11 @@ performExploratoryDataAnalysis <- function(input,
               preProcessGeneExpressionData(all$expressionData2)
             },
             error = function(e) {
+              showNotification("There was an error processing the second file.
+                                 Please ensure the file has the same format 
+                                 and structure as the templates in the 'Example 
+                                 Datasets' tab.",
+                               type = "error")
               # return null if there is an error
               return(NULL)
             })

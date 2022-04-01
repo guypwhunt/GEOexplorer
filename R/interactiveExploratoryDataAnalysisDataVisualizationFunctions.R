@@ -60,7 +60,9 @@ interactiveBoxAndWhiskerPlot <-
       i <- i + 1
     }
     fig1 <-
-      fig1 %>% layout(title = "Box And Whisker Plot")
+      fig1 %>% layout(title = "Box And Whisker Plot",
+                      xaxis = list(title = 'Experimental Conditions'),
+                      yaxis = list(title = 'Gene Expression'))
     
     try(fig1 <- toWebGL(fig1))
     

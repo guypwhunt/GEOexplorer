@@ -46,6 +46,8 @@ nonInteractiveBoxAndWhiskerPlot <-
       boxplot(
         ex,
         boxwex = 0.7,
+        #xlab = "Experimental Conditions",
+        ylab = "Gene Expression",
         notch = TRUE,
         main = "",
         outline = FALSE,
