@@ -94,7 +94,7 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
   fig15 <- fig15 %>% layout(
     title = 'Adjusted P-value distribution',
     xaxis = list(title = 'Adjusted P-value'),
-    yaxis = list(title = 'Number of genes')
+    yaxis = list(title = 'Number of Genes')
   )
   
   try(fig15 <- toWebGL(fig15))
@@ -342,8 +342,8 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
   
   fig16 <- fig16 %>% layout(
     title = ('Group1-Group2'),
-    xaxis = list(title = "Average log-expression"),
-    yaxis = list(title = "log-fold-change")
+    xaxis = list(title = "log2(expression)"),
+    yaxis = list(title = "log2(fold change)")
   )
   
   return(fig16)
@@ -589,7 +589,7 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
   
   fig17 <- fig17 %>% layout(
     title = ('Group1-Group2'),
-    xaxis = list(title = "Log2 Fold Change"),
+    xaxis = list(title = "log2(fold change)"),
     yaxis = list(title = "-log10(P-value)")
   )
   
@@ -856,7 +856,9 @@ interactiveDGEHeatMapPlot <- function(ex, limmaPrecisionWeights,
   if (limmaPrecisionWeights == "Yes") {
     heatmapFig <- heatmaply(ex$E[i, ])
   } else if (limmaPrecisionWeights == "No") {
-    heatmapFig <- heatmaply(ex[i, ])
+    heatmapFig <- heatmaply(ex[i, ], xlab = "Experimental Conditions", 
+                            ylab = "Probes", 
+                            main = "Heatmap Plot")
   }
   
   return(heatmapFig)

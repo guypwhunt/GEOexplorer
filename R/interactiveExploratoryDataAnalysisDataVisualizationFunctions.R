@@ -285,7 +285,9 @@ interactiveUmapPlot <- function(ex, knn) {
   }
   fig5 <- fig5 %>% layout(title = (
     paste('UMAP plot, number of nearest neighbors used =', knn)
-  ))
+  ),
+  yaxis = list(title = "UMAP 2"),
+  xaxis = list(title = "UMAP 1"))
   
   try(fig5 <- toWebGL(fig5))
   
@@ -462,8 +464,9 @@ interactiveMeanVariancePlot <-
                       width = 1)
         )
       )
-    fig6 <- fig6 %>% layout(title =
-      'Mean Variance Plot')
+    fig6 <- fig6 %>% layout(title = 'Mean Variance Plot',
+      yaxis = list(title = "log2(sigma)"),
+      xaxis = list(title = "Average log-expression"))
     
     return(fig6)
   }
@@ -956,7 +959,9 @@ interactiveHeatMapPlot <- function(ex) {
     i <- i + 1
   }
   colnames(df) <- colnames(corMatrix)
-  heatmapFig <- heatmaply(df)
+  heatmapFig <- heatmaply(df, xlab = "Experimental Conditions", 
+                          ylab = "Experimental Conditions", 
+                          main = "Heatmap Plot")
   
   return(heatmapFig)
 }
