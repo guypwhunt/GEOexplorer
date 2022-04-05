@@ -961,7 +961,7 @@ interactiveHeatMapPlot <- function(ex) {
   colnames(df) <- colnames(corMatrix)
   heatmapFig <- heatmaply(df, xlab = "Experimental Conditions", 
                           ylab = "Experimental Conditions", 
-                          main = "Heatmap Plot")
+                          main = "Heatmap Plot of Correlations")
   
   return(heatmapFig)
 }
