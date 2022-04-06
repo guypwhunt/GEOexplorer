@@ -669,30 +669,50 @@ sourceExampleUI <- function() {
              expression files to be processed by GEOexplorer."
     ),
     helpText(
-      "2. An example of a microarray and an RNA seq gene expression
-             file that can be processed by GEOexplorer."
+      "3. The required format of experimental conditions (sample information) 
+      files to be processed by GEOexplorer."
+    ),
+    helpText(
+      "4. An example of a microarray and an RNA seq gene expression
+             file and experimental conditions file that can be processed by 
+      GEOexplorer."
     ),
     br(),
     br(),
-    strong("Load an example GEO Accession Code"),
+    strong("Example GEO Accession Code"),
     br(),
     actionButton("loadExampleData", "Load"),
     br(),
     br(),
-    strong("Download Gene Expression File Template"),
+    strong("Gene Expression File Template"),
     br(),
-    dataTableOutput('example'),
     downloadButton("downloadGeneExpressionFileTemplate", "Download"),
     br(),
     br(),
-    strong("Download Example Microarray File"),
+    strong("Experimental Conditions File Template"),
+    br(),
+    downloadButton("downloadExperimentalConditionsFileTemplate", "Download"),
+    br(),
+    br(),
+    strong("Example Microarray Gene Expression File"),
     br(),
     downloadButton("downloadMicroarrayExample", "Download"),
     br(),
     br(),
-    strong("Download Example RNASeq File"),
+    strong("Example Microarray Experimental Conditions File"),
+    br(),
+    downloadButton("downloadMicroarrayExperimentalConditionsExample", 
+                   "Download"),
+    br(),
+    br(),
+    strong("Example RNASeq Gene Expression File"),
     br(),
     downloadButton("downloadRnaSeqExample", "Download"),
+    br(),
+    br(),
+    strong("Example RNASeq Experimental Conditions File"),
+    br(),
+    downloadButton("downloadRNASeqExperimentalConditionsExample", "Download"),
     width = 12
   )
   return(exampleUIComponents)

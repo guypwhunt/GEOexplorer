@@ -903,6 +903,42 @@ convertExpressionDataToExperimentInformation <- function(expressionData) {
   return(columnInfo)
 }
 
+#' A Function to Convert user uploaded experimental conditions to the correct 
+#' format
+#' @author Guy Hunt
+#' @noRd
+convertUserUploadedoExperimentInformationToExperimentInformation <- 
+  function(filePath, expressionData) {
+    # Convert expression data columns to data frame
+    experimentalConditions <- read.csv(filePath)
+    
+    if(all(sort(experimentalConditions[,1])==sort(colnames(expressionData)))) {
+      # Define other columns
+      column <- title <- source_name_ch1 <- characteristics_ch1 <- 
+        characteristics_ch1.1 <- rep(c(NA),each=nrow(experimentalConditions))
+      # Create dataframe
+      columnInfo <-
+        data.frame(column, title, source_name_ch1, characteristics_ch1,
+                   characteristics_ch1.1)
+      
+      for (number in seq_len(min(ncol(columnInfo),ncol(experimentalConditions)))) {
+        try(columnInfo[,number] <- experimentalConditions[,number])
+      }
+      
+      # Update rownames
+      rownames(columnInfo) <- columnInfo[, 1]
+      # Update colnames
+      colnames(columnInfo) <- c("column", "title", "source_name_ch1",
+                                "characteristics_ch1",
+                                "characteristics_ch1.1")
+      
+      return(columnInfo)
+    } else {
+      stop("The experimental conditions don't match up to the expression data 
+       column names.")
+    }
+}
+
 #' A Function to combine expression datasets
 #'
 #' This function allows you to combine expression datasets

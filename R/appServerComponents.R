@@ -166,7 +166,7 @@ sourceServer <- function(input, output, session) {
     output$downloadMicroarrayExample <-
       try(
         dowloadFile(
-          "microarray_example_dataset.csv", microarrayExampleDataset))
+          "microarray_example_gene_expression_dataset.csv", microarrayExampleDataset))
     
     # Download RNAseq example dataset
     rnaSeqExampleDataset <-
@@ -177,7 +177,46 @@ sourceServer <- function(input, output, session) {
       })
     output$downloadRnaSeqExample <-
       try(
-        dowloadFile("rna_seq_example_dataset.csv", rnaSeqExampleDataset)
+        dowloadFile("rna_seq_example_gene_expression_dataset.csv", rnaSeqExampleDataset)
+      )
+    
+    # Download Experimental Conditions Template Dataset
+    experimentalConditionsTemplate <-
+      tryCatch({
+        as.matrix(experimentalConditionsTemplate)
+      }, error = function(e) {
+        return(NULL)
+      })
+    output$downloadExperimentalConditionsFileTemplate <-
+      try(
+        dowloadFile("experimental_conditions_template.csv", 
+                    experimentalConditionsTemplate)
+      )
+    
+    # Download Example Microarray Experimental Conditions Dataset
+    microarrayExampleExperimentalConditionsCsv <-
+      tryCatch({
+        as.matrix(microarrayExampleExperimentalConditionsCsv)
+      }, error = function(e) {
+        return(NULL)
+      })
+    output$downloadMicroarrayExperimentalConditionsExample <-
+      try(
+        dowloadFile("microarray_example_experimental_conditions_dataset.csv", 
+                    microarrayExampleExperimentalConditionsCsv)
+      )
+    
+    # Download Example RNA seq Experimental Conditions Dataset
+    rnaSeqExampleExperimentalConditionsCsv <-
+      tryCatch({
+        as.matrix(rnaSeqExampleExperimentalConditionsCsv)
+      }, error = function(e) {
+        return(NULL)
+      })
+    output$downloadRNASeqExperimentalConditionsExample <-
+      try(
+        dowloadFile("rna_seq_example_experimental_conditions_dataset.csv", 
+                    rnaSeqExampleExperimentalConditionsCsv)
       )
     
     # Load logic to update UI
@@ -363,9 +402,24 @@ performExploratoryDataAnalysis <- function(input,
               errorChecks$expressionData <- TRUE
               errorChecks$continueWorkflow <- TRUE
               # Extract Column Information
+              
               all$columnInfo <-
                 convertExpressionDataToExperimentInformation(
                   all$expressionData)
+              
+              if (!is.null(input$metaFile1)) {
+                all$columnInfo <- tryCatch({
+                convertUserUploadedoExperimentInformationToExperimentInformation(
+                  input$metaFile1$datapath, all$expressionData)}, error = function(e) {
+                    showNotification("There was an error incorporating the
+                    (first)
+                    experimental conditions file. Please ensure it is in the 
+                    same format as the example file in the 'Example Datasets' 
+                                     tab",type = "warning")
+                    # return null if there is an error
+                    return(all$columnInfo)
+                  })
+              }
             }
           } else
           {
@@ -491,9 +545,25 @@ performExploratoryDataAnalysis <- function(input,
             # Update error checks
             errorChecks$expressionData2 <- TRUE
             errorChecks$continueWorkflow2 <- TRUE
+            
+            ##########HERE###############
             # Extract Column Information
             all$columnInfo2 <-
               convertExpressionDataToExperimentInformation(all$expressionData2)
+            
+            if (!is.null(input$metaFile2)) {
+              all$columnInfo2 <- tryCatch({
+                convertUserUploadedoExperimentInformationToExperimentInformation(
+                  input$metaFile2$datapath, all$expressionData2)}, error = function(e) {
+                    showNotification("There was an error incorporating the 
+                    second
+                    experimental conditions file. Please ensure it is in the 
+                    same format as the example file in the 'Example Datasets' 
+                                     tab",type = "warning")
+                    # return null if there is an error
+                    return(all$columnInfo2)
+                  })
+            }
             
             # Define Experimental Information
             all$convertedExperimentInformation2 <- HTML(
@@ -2292,6 +2362,16 @@ loadDataSetUiComponents <- function(input,
       
       # Blank Widgets
       output$output6 <- renderUI({
+        fileInput(
+          "metaFile1",
+          "Optionally: Upload a CSV of the Experimental Conditions",
+          multiple = TRUE,
+          accept = c(
+            "text/csv",
+            "text/comma-separated-values,text/plain",
+            ".csv"
+          )
+        )
       })
     }
     
@@ -2580,6 +2660,16 @@ loadDataSet2UiComponents <- function(input, output, session, errorChecks, all,
       
       # Blank widgets
       output$output10 <- renderUI({
+        fileInput(
+          "metaFile2",
+          "Optionally Upload a CSV of the Experimental Conditions",
+          multiple = TRUE,
+          accept = c(
+            "text/csv",
+            "text/comma-separated-values,text/plain",
+            ".csv"
+          )
+        )
       })
       output$output11 <- renderUI({
       })

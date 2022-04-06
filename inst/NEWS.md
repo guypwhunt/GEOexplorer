@@ -153,3 +153,7 @@ Changes in version 1.1.12 (2022-02-17)
 
 Changes in version 1.1.13 (2022-03-21)
 + Improved plots speed
+
+Changes in version 1.2.0 (2022-04-06)
++ Bug fixes
++ User upload of experimental conditions CSV
