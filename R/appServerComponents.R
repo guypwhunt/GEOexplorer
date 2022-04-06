@@ -21,7 +21,7 @@ sourceServer <- function(input, output, session) {
     try(options(timeout = 300))
     
     # Update default max file upload
-    try(options(shiny.maxRequestSize = 10*1024^5))
+    try(options(shiny.maxRequestSize = 10^8*1024))
     
     # Common steps
     # Define variables
