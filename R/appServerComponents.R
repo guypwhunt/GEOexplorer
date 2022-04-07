@@ -324,6 +324,213 @@ performExploratoryDataAnalysis <- function(input,
           all$expressionData <-
             extractExpressionData(all$gsetData)
           
+          if (length(all$expressionData) == 0)
+          {
+            try({
+              
+              baseDirectory <- tryCatch({getwd()
+              },error = function(err) {return(NULL)})
+              
+              geoSupplementaryFilesDirectoryPath <- tryCatch({
+                createGeoSupplementaryFilesDirectory()
+              },error = function(err) {return(NULL)})
+              
+              geoAccessionDirectoryPath <- tryCatch({
+                calculateGeoAccessionDirectory(geoSupplementaryFilesDirectoryPath,
+                                               all$geoAccessionCode())
+              },error = function(err) {return(NULL)})
+              
+              geoTarFile <- tryCatch({
+                downloadGeoSupFiles(all$geoAccessionCode(),
+                                    geoSupplementaryFilesDirectoryPath)
+              },error = function(err) {return(NULL)})
+              
+              filePath <- tryCatch({head(row.names(geoTarFile), n=1)
+              },error = function(err) {return(NULL)})
+              
+              fileExtensions <- tryCatch({extractFileExtensions(geoTarFile)
+              },error = function(err) {return(NULL)})
+              
+              uniqueFileExtensions <- tryCatch({unique(fileExtensions)
+              },error = function(err) {return(NULL)})
+              
+              if (uniqueFileExtensions == "gz"){
+                gunzip(filePath, overwrite=TRUE)
+                files <- list.files(path = geoAccessionDirectoryPath)
+                fileExtensions <- c()
+                for (file in files) {
+                  fileExtensions <-append(fileExtensions, file_ext(file))
+                }
+                uniqueFileExtensions <- unique(fileExtensions)
+                
+                filePath <- paste0(geoAccessionDirectoryPath, "/", 
+                                   tail(files, n=1))
+              }
+              
+              if (length(uniqueFileExtensions) > 1) {
+                uniqueFileExtensions <- tail(uniqueFileExtensions, n=1)
+              }
+              
+              all$expressionData <- NULL
+              
+              if (typeof(uniqueFileExtensions)=="character"){
+                
+                if (uniqueFileExtensions == "xlsx" |
+                    uniqueFileExtensions == "csv" |
+                    uniqueFileExtensions == "txt" |
+                    uniqueFileExtensions == "tsv" |
+                    uniqueFileExtensions == "xls") {
+                  if (uniqueFileExtensions == "xlsx" |
+                      uniqueFileExtensions == "xls") {
+                    all$expressionData <- tryCatch({
+                      extractExpressionExcel(filePath)
+                    }, error = function(err) {
+                      return(all$expressionData)
+                    })
+                  }
+                  else if (uniqueFileExtensions == "csv") {
+                    all$expressionData <- tryCatch({
+                      extractExpressionCsv(filePath)
+                    }, error = function(err) {
+                      return(all$expressionData)
+                    })
+                  }
+                  else if (uniqueFileExtensions == "txt" |
+                           uniqueFileExtensions == "tsv") {
+                    all$expressionData <- tryCatch({
+                      read.delim(filePath,
+                                 header = TRUE,
+                                 sep = "\t",
+                                 dec = ".")
+                    }, error = function(err) {
+                      return(all$expressionData)
+                    })
+                  }
+                  
+                  all$expressionData <-
+                    tryCatch({
+                      deduplicatedExpressiondata(all$expressionData)
+                    }, error = function(err) {
+                      return(all$expressionData)
+                    })
+                  
+                  row.names(all$expressionData) <-
+                    tryCatch({
+                      all$expressionData[, 1]
+                    }, error = function(err) {
+                      return(all$expressionData)
+                    })
+                  
+                  all$expressionData <- tryCatch({
+                    removeNonNumericColumnsFromExpressiondata(all$expressionData)
+                  }, error = function(err) {
+                    return(all$expressionData)
+                  })
+                  
+                } else if (uniqueFileExtensions == "tar")
+                {
+                  tarFileName <- tryCatch({
+                    extractGeoSupFiles(all$geoAccessionCode(),
+                                       filePath,
+                                       geoAccessionDirectoryPath)
+                  }, error = function(err) {
+                    return(NULL)
+                  })
+                  
+                  geneNamesCol <- 1
+                  countsCol <- 3
+                  
+                  all$expressionData <- tryCatch({
+                    extractExpressionDataFromGeoSupRawFiles(
+                      geoAccessionDirectoryPath,tarFileName,geneNamesCol,countsCol)
+                  }, error = function(err) {
+                    return(NULL)
+                  })
+                  
+                  if (is.null(all$expressionData)) {
+                    all$expressionData <- tryCatch({
+                      extractExpressionDataFromGeoSupRawFiles(
+                        geoAccessionDirectoryPath, tarFileName, geneNamesCol, 2)
+                    }, error = function(err) {
+                      return(NULL)
+                    })
+                  }
+                  
+                  all$expressionDataRowNames <- tryCatch({
+                    row.names(all$expressionData)
+                  }, error = function(err) {
+                    return(all$expressionData)
+                  })
+                  
+                  all$expressionData <- tryCatch({
+                    calculateSampleNames(all$expressionData)
+                  }, error = function(err) {
+                    return(all$expressionData)
+                  })
+                  
+                  all$expressionData <-
+                    tryCatch({
+                      as.data.frame(all$expressionData)
+                    }, error = function(err) {
+                      return(all$expressionData)
+                    })
+                  
+                  row.names(all$expressionData) <- tryCatch({
+                    all$expressionDataRowNames
+                  }, error = function(err) {
+                    return(all$expressionData)
+                  })
+                }
+              }
+              
+              all$expressionData <- tryCatch({
+                convertNaToZero(all$expressionData)}, 
+                error = function(err) {
+                  return(all$expressionData)
+                })
+              
+              try(mode(all$expressionData) <- "double")
+              
+              try(deleteGeoSupplementaryFilesDirectory(geoAccessionDirectoryPath))
+              
+              try(setwd(baseDirectory))
+              
+              all$typeOfData <- "RNA Sequencing"
+              
+              output$output13 <- renderUI({
+                radioButtons(
+                  "cpmTransformation",
+                  label = "Convert data to count per million:",
+                  choices = list("Yes", "No"),
+                  selected = "No"
+                )
+              })
+              
+              if (is.null(all$expressionData)) {
+                errorChecks$expressionData <- FALSE
+                errorChecks$continueWorkflow <- FALSE
+                # Error handling to prevent issues
+                # due to expression data with no samples
+                
+                showNotification(
+                  "The GEO expression data is empty and the count matrix could not
+            be extracted from the supplementary files. Please download the
+            supplementary files and manually upload the gene expression count
+            matrix.",
+                  type = "error"
+                )
+              } else {
+                # Extract Column Information
+                all$columnInfo <-
+                  convertExpressionDataToExperimentInformation(
+                    all$expressionData)
+              }
+              
+            })
+          } else if (input$dataSource == "GEO") {
+            all$typeOfData <- "Microarray"
+          }
+          
           # Extract the experiment information
           all$experimentInformation <-
             extractExperimentInformation(all$gsetData)
@@ -471,6 +678,210 @@ performExploratoryDataAnalysis <- function(input,
             # Extract expression data
             all$expressionData2 <-
               extractExpressionData(all$gsetData2)
+            
+            if (length(all$expressionData2) == 0)
+            {
+              try({
+                
+                baseDirectory <- tryCatch({getwd()
+                },error = function(err) {return(NULL)})
+                
+                geoSupplementaryFilesDirectoryPath <- tryCatch({
+                  createGeoSupplementaryFilesDirectory()
+                },error = function(err) {return(NULL)})
+                
+                geoAccessionDirectoryPath <- tryCatch({
+                  calculateGeoAccessionDirectory(geoSupplementaryFilesDirectoryPath,
+                                                 input$geoAccessionCode2)
+                },error = function(err) {return(NULL)})
+                
+                geoTarFile <- tryCatch({
+                  downloadGeoSupFiles(input$geoAccessionCode2,
+                                      geoSupplementaryFilesDirectoryPath)
+                },error = function(err) {return(NULL)})
+                
+                filePath <- tryCatch({head(row.names(geoTarFile), n=1)
+                },error = function(err) {return(NULL)})
+                
+                fileExtensions <- tryCatch({extractFileExtensions(geoTarFile)
+                },error = function(err) {return(NULL)})
+                
+                uniqueFileExtensions <- tryCatch({unique(fileExtensions)
+                },error = function(err) {return(NULL)})
+                
+                if (uniqueFileExtensions == "gz"){
+                  gunzip(filePath, overwrite=TRUE)
+                  files <- list.files(path = geoAccessionDirectoryPath)
+                  fileExtensions <- c()
+                  for (file in files) {
+                    fileExtensions <-append(fileExtensions, file_ext(file))
+                  }
+                  uniqueFileExtensions <- unique(fileExtensions)
+                  
+                  filePath <- paste0(geoAccessionDirectoryPath, "/", 
+                                     tail(files, n=1))
+                }
+                
+                if (length(uniqueFileExtensions) > 1) {
+                  uniqueFileExtensions <- tail(uniqueFileExtensions, n=1)
+                }
+                
+                all$expressionData2 <- NULL
+                
+                if (typeof(uniqueFileExtensions)=="character"){
+                  
+                  if (uniqueFileExtensions == "xlsx" |
+                      uniqueFileExtensions == "csv" |
+                      uniqueFileExtensions == "txt" |
+                      uniqueFileExtensions == "tsv" |
+                      uniqueFileExtensions == "xls") {
+                    if (uniqueFileExtensions == "xlsx" |
+                        uniqueFileExtensions == "xls") {
+                      all$expressionData2 <- tryCatch({
+                        extractExpressionExcel(filePath)
+                      }, error = function(err) {
+                        return(all$expressionData2)
+                      })
+                    }
+                    else if (uniqueFileExtensions == "csv") {
+                      all$expressionData2 <- tryCatch({
+                        extractExpressionCsv(filePath)
+                      }, error = function(err) {
+                        return(all$expressionData2)
+                      })
+                    }
+                    else if (uniqueFileExtensions == "txt" |
+                             uniqueFileExtensions == "tsv") {
+                      all$expressionData2 <- tryCatch({
+                        read.delim(filePath,
+                                   header = TRUE,
+                                   sep = "\t",
+                                   dec = ".")
+                      }, error = function(err) {
+                        return(all$expressionData2)
+                      })
+                    }
+                    
+                    all$expressionData2 <-
+                      tryCatch({
+                        deduplicatedExpressiondata(all$expressionData2)
+                      }, error = function(err) {
+                        return(all$expressionData2)
+                      })
+                    
+                    row.names(all$expressionData2) <-
+                      tryCatch({
+                        all$expressionData2[, 1]
+                      }, error = function(err) {
+                        return(all$expressionData2)
+                      })
+                    
+                    all$expressionData2 <- tryCatch({
+                      removeNonNumericColumnsFromExpressiondata(all$expressionData2)
+                    }, error = function(err) {
+                      return(all$expressionData2)
+                    })
+                    
+                  } else if (uniqueFileExtensions == "tar")
+                  {
+                    tarFileName <- tryCatch({
+                      extractGeoSupFiles(input$geoAccessionCode2,
+                                         filePath,
+                                         geoAccessionDirectoryPath)
+                    }, error = function(err) {
+                      return(NULL)
+                    })
+                    
+                    geneNamesCol <- 1
+                    countsCol <- 3
+                    
+                    all$expressionData2 <- tryCatch({
+                      extractExpressionDataFromGeoSupRawFiles(
+                        geoAccessionDirectoryPath,tarFileName,geneNamesCol,countsCol)
+                    }, error = function(err) {
+                      return(NULL)
+                    })
+                    
+                    if (is.null(all$expressionData2)) {
+                      all$expressionData2 <- tryCatch({
+                        extractExpressionDataFromGeoSupRawFiles(
+                          geoAccessionDirectoryPath, tarFileName, geneNamesCol, 2)
+                      }, error = function(err) {
+                        return(NULL)
+                      })
+                    }
+                    
+                    all$expressionDataRowNames2 <- tryCatch({
+                      row.names(all$expressionData2)
+                    }, error = function(err) {
+                      return(all$expressionData2)
+                    })
+                    
+                    all$expressionData2 <- tryCatch({
+                      calculateSampleNames(all$expressionData2)
+                    }, error = function(err) {
+                      return(all$expressionData2)
+                    })
+                    
+                    all$expressionData2 <-
+                      tryCatch({
+                        as.data.frame(all$expressionData2)
+                      }, error = function(err) {
+                        return(all$expressionData2)
+                      })
+                    
+                    row.names(all$expressionData2) <- tryCatch({
+                      all$expressionDataRowNames2
+                    }, error = function(err) {
+                      return(all$expressionData2)
+                    })
+                  }
+                }
+                
+                all$expressionData2 <- tryCatch({
+                  convertNaToZero(all$expressionData2)}, 
+                  error = function(err) {
+                    return(all$expressionData2)
+                  })
+                
+                try(mode(all$expressionData2) <- "double")
+                
+                try(deleteGeoSupplementaryFilesDirectory(geoAccessionDirectoryPath))
+                
+                try(setwd(baseDirectory))
+                
+                all$typeOfData <- "RNA Sequencing"
+                
+                output$output13 <- renderUI({
+                  radioButtons(
+                    "cpmTransformation",
+                    label = "Convert data to count per million:",
+                    choices = list("Yes", "No"),
+                    selected = "No"
+                  )
+                })
+                
+                if (is.null(all$expressionData2)) {
+                  errorChecks$expressionData2 <- FALSE
+                  errorChecks$continueWorkflow2 <- FALSE
+                  # Error handling to prevent issues
+                  # due to expression data with no samples
+                  
+                  showNotification(
+                    "The GEO expression data is empty and the count matrix could not
+            be extracted from the supplementary files. Please download the
+            supplementary files and manually upload the gene expression count
+            matrix.",
+                    type = "error"
+                  )
+                } else {
+                  # Extract Column Information
+                  all$columnInfo2 <-
+                    convertExpressionDataToExperimentInformation(
+                      all$expressionData2)
+                }
+                
+              })} 
             
             # Extract the experiment information
             all$experimentInformation2 <-
@@ -648,212 +1059,6 @@ performExploratoryDataAnalysis <- function(input,
           type = "error"
         )
       } 
-      else if (length(all$expressionData) == 0)
-      {
-        try({
-          
-          baseDirectory <- tryCatch({getwd()
-          },error = function(err) {return(NULL)})
-          
-          geoSupplementaryFilesDirectoryPath <- tryCatch({
-            createGeoSupplementaryFilesDirectory()
-          },error = function(err) {return(NULL)})
-          
-          geoAccessionDirectoryPath <- tryCatch({
-            calculateGeoAccessionDirectory(geoSupplementaryFilesDirectoryPath,
-                                           all$geoAccessionCode())
-          },error = function(err) {return(NULL)})
-          
-          geoTarFile <- tryCatch({
-            downloadGeoSupFiles(all$geoAccessionCode(),
-                                geoSupplementaryFilesDirectoryPath)
-          },error = function(err) {return(NULL)})
-          
-          filePath <- tryCatch({head(row.names(geoTarFile), n=1)
-            },error = function(err) {return(NULL)})
-          
-          fileExtensions <- tryCatch({extractFileExtensions(geoTarFile)
-          },error = function(err) {return(NULL)})
-          
-          uniqueFileExtensions <- tryCatch({unique(fileExtensions)
-          },error = function(err) {return(NULL)})
-          
-          if (uniqueFileExtensions == "gz"){
-            gunzip(filePath, overwrite=TRUE)
-            files <- list.files(path = geoAccessionDirectoryPath)
-            fileExtensions <- c()
-            for (file in files) {
-              fileExtensions <-append(fileExtensions, file_ext(file))
-            }
-            uniqueFileExtensions <- unique(fileExtensions)
-            
-            filePath <- paste0(geoAccessionDirectoryPath, "/", 
-                               tail(files, n=1))
-          }
-          
-          if (length(uniqueFileExtensions) > 1) {
-            uniqueFileExtensions <- tail(uniqueFileExtensions, n=1)
-          }
-          
-          all$expressionData <- NULL
-          
-          if (typeof(uniqueFileExtensions)=="character"){
-          
-            if (uniqueFileExtensions == "xlsx" |
-                uniqueFileExtensions == "csv" |
-                uniqueFileExtensions == "txt" |
-                uniqueFileExtensions == "tsv" |
-                uniqueFileExtensions == "xls") {
-              if (uniqueFileExtensions == "xlsx" |
-                  uniqueFileExtensions == "xls") {
-                all$expressionData <- tryCatch({
-                  extractExpressionExcel(filePath)
-                }, error = function(err) {
-                  return(all$expressionData)
-                })
-              }
-              else if (uniqueFileExtensions == "csv") {
-                all$expressionData <- tryCatch({
-                  extractExpressionCsv(filePath)
-                }, error = function(err) {
-                  return(all$expressionData)
-                })
-              }
-              else if (uniqueFileExtensions == "txt" |
-                       uniqueFileExtensions == "tsv") {
-                all$expressionData <- tryCatch({
-                  read.delim(filePath,
-                             header = TRUE,
-                             sep = "\t",
-                             dec = ".")
-                }, error = function(err) {
-                  return(all$expressionData)
-                })
-              }
-              
-              all$expressionData <-
-                tryCatch({
-                  deduplicatedExpressiondata(all$expressionData)
-                }, error = function(err) {
-                  return(all$expressionData)
-                })
-              
-              row.names(all$expressionData) <-
-                tryCatch({
-                  all$expressionData[, 1]
-                }, error = function(err) {
-                  return(all$expressionData)
-                })
-              
-              all$expressionData <- tryCatch({
-                removeNonNumericColumnsFromExpressiondata(all$expressionData)
-              }, error = function(err) {
-                return(all$expressionData)
-              })
-              
-            } else if (uniqueFileExtensions == "tar")
-            {
-              tarFileName <- tryCatch({
-                extractGeoSupFiles(all$geoAccessionCode(),
-                                   filePath,
-                                   geoAccessionDirectoryPath)
-              }, error = function(err) {
-                return(NULL)
-              })
-              
-              geneNamesCol <- 1
-              countsCol <- 3
-              
-              all$expressionData <- tryCatch({
-                extractExpressionDataFromGeoSupRawFiles(
-                  geoAccessionDirectoryPath,tarFileName,geneNamesCol,countsCol)
-              }, error = function(err) {
-                return(NULL)
-              })
-              
-              if (is.null(all$expressionData)) {
-                all$expressionData <- tryCatch({
-                  extractExpressionDataFromGeoSupRawFiles(
-                    geoAccessionDirectoryPath, tarFileName, geneNamesCol, 2)
-                }, error = function(err) {
-                  return(NULL)
-                })
-              }
-              
-              all$expressionDataRowNames <- tryCatch({
-                row.names(all$expressionData)
-              }, error = function(err) {
-                return(all$expressionData)
-              })
-              
-              all$expressionData <- tryCatch({
-                calculateSampleNames(all$expressionData)
-              }, error = function(err) {
-                return(all$expressionData)
-              })
-              
-              all$expressionData <-
-                tryCatch({
-                  as.data.frame(all$expressionData)
-                }, error = function(err) {
-                  return(all$expressionData)
-                })
-              
-              row.names(all$expressionData) <- tryCatch({
-                all$expressionDataRowNames
-              }, error = function(err) {
-                return(all$expressionData)
-              })
-            }
-          }
-          
-          all$expressionData <- tryCatch({
-            convertNaToZero(all$expressionData)}, 
-            error = function(err) {
-              return(all$expressionData)
-            })
-          
-          try(mode(all$expressionData) <- "double")
-          
-          try(deleteGeoSupplementaryFilesDirectory(geoAccessionDirectoryPath))
-          
-          try(setwd(baseDirectory))
-          
-          all$typeOfData <- "RNA Sequencing"
-          
-          output$output13 <- renderUI({
-            radioButtons(
-              "cpmTransformation",
-              label = "Convert data to count per million:",
-              choices = list("Yes", "No"),
-              selected = "No"
-            )
-          })
-        
-        if (is.null(all$expressionData)) {
-          errorChecks$expressionData <- FALSE
-          errorChecks$continueWorkflow <- FALSE
-          # Error handling to prevent issues
-          # due to expression data with no samples
-          
-          showNotification(
-            "The GEO expression data is empty and the count matrix could not
-            be extracted from the supplementary files. Please download the
-            supplementary files and manually upload the gene expression count
-            matrix.",
-            type = "error"
-          )
-        } else {
-          # Extract Column Information
-          all$columnInfo <-
-            convertExpressionDataToExperimentInformation(
-              all$expressionData)
-        }
-      
-        })} 
-      else if (input$dataSource == "GEO") {
-        all$typeOfData <- "Microarray"
-      }
       if ((isNumeric(all$expressionData)) &
           ((length(all$expressionData) == 0) == FALSE)) {
         # Error handling to prevent errors caused by
