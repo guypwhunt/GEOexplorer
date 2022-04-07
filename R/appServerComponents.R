@@ -23,6 +23,11 @@ sourceServer <- function(input, output, session) {
     # Update default max file upload
     try(options(shiny.maxRequestSize = 10^6*1024))
     
+    # Set plots to nothing
+    resetExploratoryDataAnalaysisPlots(input, output, session)
+    resetDifferentialGeneExpressionPlots(input, output, session)
+    resetGeneEnrichmentOutputs(input, output, session)
+    
     # Common steps
     # Define variables
     all <- reactiveValues()
@@ -284,23 +289,9 @@ performExploratoryDataAnalysis <- function(input,
     
     # Set all outputs to blank, this resets
     # all the visualizations to blank after clicking analyse
+    resetExploratoryDataAnalaysisPlots(input, output, session)
     resetGeneEnrichmentOutputs(input, output, session)
     resetDifferentialGeneExpressionPlots(input, output, session)
-    
-    output$table <- renderDataTable({})
-    output$logTransformationText <- renderUI({})
-    output$experimentInfo <- renderUI({})
-    output$knnColumnTable <- renderDataTable({})
-    output$boxAndWhiskerPlot <- renderUI({})
-    output$interactiveDensityPlot <- renderPlotly({})
-    output$interactiveThreeDDensityPlot <- renderPlotly({})
-    output$interactiveUmapPlot <- renderPlotly({})
-    output$interactiveHeatMapPlot <- renderPlotly({})
-    output$interactiveMeanVariancePlot <- renderPlotly({})
-    output$interactivePcaScreePlot <- renderPlotly({})
-    output$interactivePcaIndividualsPlot <- renderPlotly({})
-    output$interactivePcaVariablesPlot <- renderPlotly({})
-    output$interactive3DPcaVariablesPlot <- renderPlotly({})
     
     # Extract information from GSET including expression data
     if (errorChecks$continueWorkflow) {
@@ -2240,13 +2231,13 @@ loadDataSetUiComponents <- function(input,
     # Update UI side bar with GEO widgets
     if (input$dataSource == "GEO") {
       # GEO help text
-      output$output4 <- renderUI({
-        helpText(
-          "Input a GEO series accession code (GSEXXXX format)
-      to examine the gene expression data.
-      This can be obtained from https://www.ncbi.nlm.nih.gov/gds."
-        )
-      })
+      #output$output4 <- renderUI({
+      #  helpText(
+      #    "Input a GEO series accession code (GSEXXXX format)
+      #to examine the gene expression data.
+      #This can be obtained from https://www.ncbi.nlm.nih.gov/gds."
+      #  )
+      #})
       # GEO accession input
       output$output5 <- renderUI({
         textInput("geoAccessionCode", "GEO accession code", "")
@@ -2300,44 +2291,6 @@ loadDataSetUiComponents <- function(input,
       observeEvent(input$dataSetType, {
         # Reset error checks when data set type is changed
         errorChecks <- resetErrorChecks(errorChecks)
-        
-        # Microarray vs RNA Seq Widget
-        if (input$dataSetType == "Combine") {
-          reactiveDataSources <- reactive(c(input$dataSource,
-                                            input$dataSource2))
-          observeEvent(reactiveDataSources(), {
-            if ((input$dataSource == "GEO") | (input$dataSource2 == "GEO"))
-            {
-              output$output4 <- renderUI({
-                radioButtons(
-                  "typeOfData",
-                  label = "Is the data from Microarray or RNA Sequencing?",
-                  choices = list("Microarray"),
-                  selected = "Microarray"
-                )
-              })
-            } else {
-              output$output4 <- renderUI({
-                radioButtons(
-                  "typeOfData",
-                  label = "Is the data from Microarray or RNA Sequencing?",
-                  choices = list("Microarray", "RNA Sequencing"),
-                  selected = "Microarray"
-                )
-              })
-            }
-          })
-        } else
-        {
-          output$output4 <- renderUI({
-            radioButtons(
-              "typeOfData",
-              label = "Is the data from Microarray or RNA Sequencing?",
-              choices = list("Microarray", "RNA Sequencing"),
-              selected = "Microarray"
-            )
-          })
-        }
       })
       
       # File Upload Widget
@@ -2463,6 +2416,16 @@ loadDataSetCombinationUiComponents <- function(input, output, session,
           "<b>First Gene Expression Dataset Information</b><br></br>"
         )
       })
+      
+      output$output4 <- renderUI({
+        radioButtons(
+          "typeOfData",
+          label = "Is the data from Microarray or RNA Sequencing?",
+          choices = list("Microarray", "RNA Sequencing"),
+          selected = "Microarray"
+        )
+      })
+      
       # Second Data Set Information Widget
       output$output7 <- renderUI({
         HTML(
@@ -2713,6 +2676,7 @@ resetGeneEnrichmentOutputs <- function(input, output, session) {
   output$genesEnrichmentManhattanPlot <- renderPlotly({})
   output$genesEnrichmentBarchartPlot <- renderPlotly({})
 }
+
 #' A Function to reset the gene enrichment plots
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @author Guy Hunt
@@ -2726,4 +2690,26 @@ resetDifferentialGeneExpressionPlots <- function(input, output, session) {
   output$iDEMd <- renderPlotly({})
   output$iHeatmap <- renderPlotly({})
   output$geneAnnotationTable <- renderDataTable({})
+}
+
+
+#' A Function to reset the exploratory data analaysis plots
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @author Guy Hunt
+#' @noRd
+resetExploratoryDataAnalaysisPlots <- function(input, output, session) {
+  output$table <- renderDataTable({})
+  output$logTransformationText <- renderUI({})
+  output$experimentInfo <- renderUI({})
+  output$knnColumnTable <- renderDataTable({})
+  output$boxAndWhiskerPlot <- renderUI({})
+  output$interactiveDensityPlot <- renderPlotly({})
+  output$interactiveThreeDDensityPlot <- renderPlotly({})
+  output$interactiveUmapPlot <- renderPlotly({})
+  output$interactiveHeatMapPlot <- renderPlotly({})
+  output$interactiveMeanVariancePlot <- renderPlotly({})
+  output$interactivePcaScreePlot <- renderPlotly({})
+  output$interactivePcaIndividualsPlot <- renderPlotly({})
+  output$interactivePcaVariablesPlot <- renderPlotly({})
+  output$interactive3DPcaVariablesPlot <- renderPlotly({})
 }
