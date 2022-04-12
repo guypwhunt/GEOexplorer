@@ -64,8 +64,8 @@ sourceSideBarUi <- function() {
   sideBarUi <- sidebarPanel(id="sidebar",
     radioButtons(
       "dataSetType",
-      label = "Would you like analyse a single gene exression dataset or
-      combine two gene exression datasets?",
+      label = "Would you like analyse a single gene expression dataset or
+      combine two gene expression datasets?",
       choices = list("Single", "Combine"),
       selected = "Single"
     ),
@@ -255,11 +255,12 @@ sourceDifferentialGeneExpressionAnalysisUi <- function() {
                 selected =
                   "No"
               ),
-              sliderInput(
+              numericInput(
                 "significanceLevelCutOff",
                 "Significance level cut-off:",
                 min = 0,
                 max = 1,
+                step = 0.01,
                 value = 0.05
               ),
               uiOutput("output100"),
@@ -760,6 +761,16 @@ sourceEnrichmentnUi <- function() {
                                        "Set Parameters",
                                        br(),
                                        br(),
+                                       helpText("Gene enrichment analysis is 
+                                              performed using Enrichr."),
+                                       helpText("Information on each of the 
+                                              databases is available from the 
+                                              Enrichr website via the link 
+                                                below."),
+                                       tags$a(href="https://maayanlab.cloud/Enrichr/#libraries", 
+                                              "Enrichr", target="_blank"),
+                                       br(),
+                                       br(),
                                        tags$b("Select the column containg
                                               the gene symbols and input any
                                               missing gene symbols."),
@@ -856,7 +867,7 @@ sourceEnrichmentnUi <- function() {
                                                               "Combined.Score",
                                                               "Minus.Log.P.Value",
                                                               "Overlap.Value"),
-                                                  selected = "P.value"
+                                                  selected = "Minus.Log.P.Value"
                                                 )),
                                          column(6,
                                                 sliderInput(
@@ -874,7 +885,7 @@ sourceEnrichmentnUi <- function() {
                                                   label = "Sort the values ascendingly
                                          or descendingly:",
                                                   choices = list("Ascendingly", "Descendingly"),
-                                                  selected = "Ascendingly"
+                                                  selected = "Descendingly"
                                                 ))),
                                        br(),
                                        br(),
@@ -884,7 +895,8 @@ sourceEnrichmentnUi <- function() {
                                        "Volcano Plot",
                                        br(),
                                        span(
-                                         "Generated using R enrichR. The
+                                         "Generated using R enrichR and
+                                         plotly. The
                                          volcano plot displays statistical
                                          significance (-log10 P value) versus
                                          odds ratio and is useful for
@@ -952,7 +964,7 @@ sourceEnrichmentnUi <- function() {
                                              "Minus.Log.P.Value",
                                              "Overlap.Value"
                                            ),
-                                           selected = "P.value"
+                                           selected = "Minus.Log.P.Value"
                                          )
                                        )),
                                        br(),
