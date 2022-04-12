@@ -2435,14 +2435,7 @@ loadDataSetUiComponents <- function(input,
     errorChecks <- resetErrorChecks(errorChecks)
     # Update UI side bar with GEO widgets
     if (input$dataSource == "GEO") {
-      # GEO help text
-      #output$output4 <- renderUI({
-      #  helpText(
-      #    "Input a GEO series accession code (GSEXXXX format)
-      #to examine the gene expression data.
-      #This can be obtained from https://www.ncbi.nlm.nih.gov/gds."
-      #  )
-      #})
+      output$output5 <- renderUI({})
       # GEO accession input
       output$output5 <- renderUI({
         textInput("geoAccessionCode", "GEO accession code", "")
@@ -2496,6 +2489,15 @@ loadDataSetUiComponents <- function(input,
       observeEvent(input$dataSetType, {
         # Reset error checks when data set type is changed
         errorChecks <- resetErrorChecks(errorChecks)
+      })
+      
+      output$output4 <- renderUI({
+        radioButtons(
+          "typeOfData",
+          label = "Is the data from Microarray or RNA Sequencing?",
+          choices = list("Microarray", "RNA Sequencing"),
+          selected = "Microarray"
+        )
       })
       
       # File Upload Widget
