@@ -41,7 +41,13 @@ sourceUi <- function() {
                    # Source the Enrichment
                    # UI Components
                    sourceEnrichmentnUi()
-                 )
+                 ),
+                 br(),
+                 br(),
+                 br(),
+                 actionButton("clearAllResults", "Clear All Results", 
+                              icon = icon("exclamation", lib = "font-awesome")),
+                 br()
                )),
       tabPanel("About", tags$html(HTML(aboutPage))),
       tabPanel("Workflow", tags$html(HTML(workflow))),
