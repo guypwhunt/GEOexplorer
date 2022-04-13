@@ -2619,8 +2619,8 @@ loadDataSetCombinationUiComponents <- function(input, output, session,
       
       output$output15 <- renderUI({
         HTML(
-          "Only gene expression datasets from the same platform, particularly 
-          for microarray datasets, should be combined."
+          "<p>Only gene expression datasets from the same platform, particularly 
+          for microarray datasets, should be combined.</p><br>"
         )
         })
       
