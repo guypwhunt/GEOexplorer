@@ -2617,6 +2617,13 @@ loadDataSetCombinationUiComponents <- function(input, output, session,
       errorChecks$uploadFileExtension2 <- TRUE
       errorChecks$uploadLogData2 <- TRUE
       
+      output$output15 <- renderUI({
+        HTML(
+          "Only gene expression datasets from the same platform, particularly 
+          for microarray datasets, should be combined."
+        )
+        })
+      
       # First Data Set Information Widget
       output$output2 <- renderUI({
         HTML(
@@ -2675,6 +2682,15 @@ loadDataSetCombinationUiComponents <- function(input, output, session,
     {
       # Set all UI widgets to blank
       output$output2 <- renderUI({})
+      output$output15 <- renderUI({})
+      output$output4 <- renderUI({
+        radioButtons(
+          "typeOfData",
+          label = "Is the data from Microarray or RNA Sequencing?",
+          choices = list("Microarray", "RNA Sequencing"),
+          selected = "Microarray"
+        )
+      })
       output$output7 <- renderUI({})
       output$output8 <- renderUI({})
       output$output9 <- renderUI({})

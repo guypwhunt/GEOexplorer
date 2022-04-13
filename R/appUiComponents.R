@@ -69,6 +69,8 @@ sourceSideBarUi <- function() {
       choices = list("Single", "Combine"),
       selected = "Single"
     ),
+    uiOutput("output15"),
+    br(),
     uiOutput("output2"),
     radioButtons(
       "dataSource",
