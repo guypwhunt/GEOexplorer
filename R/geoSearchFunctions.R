@@ -163,15 +163,20 @@ searchGeo <- function(searchTerm,
     processable <- tryCatch({
       if (eSummaryDataLevel$GEO2R[[1]] == "yes") {
         append(processable, "Yes")
-      } else if (eSummaryDataLevel$suppFile[[1]] == "XLSX" |
-                 eSummaryDataLevel$suppFile[[1]] == "TXT" |
-                 eSummaryDataLevel$suppFile[[1]] == "CSV" |
-                 eSummaryDataLevel$suppFile[[1]] == "TSV" |
-                 eSummaryDataLevel$suppFile[[1]] == "TAR" |
-                 eSummaryDataLevel$suppFile[[1]] == "XLS") {
-        append(processable, "Potentially")
+      } else if (
+        grepl("XLSX", eSummaryDataLevel$suppFile[[1]], fixed = TRUE) |
+        grepl("TXT", eSummaryDataLevel$suppFile[[1]], fixed = TRUE) |
+        grepl("CSV", eSummaryDataLevel$suppFile[[1]], fixed = TRUE) |
+        grepl("TSV", eSummaryDataLevel$suppFile[[1]], fixed = TRUE) |
+        grepl("TAR", eSummaryDataLevel$suppFile[[1]], fixed = TRUE) |
+        grepl("XLS", eSummaryDataLevel$suppFile[[1]], fixed = TRUE)) {
+        append(processable, "Potentially, if not, please download the file(s) 
+               from the GEO link and format them into a count matrix as per 
+               the template in the 'Example Datasets' tab")
       } else {
-        append(processable, "No")
+        append(processable, "If the file(s) are downloaded from the GEO link 
+               and formatted into a count matrix as per the template in 
+               the 'Example Datasets' tab")
       }
     },
     error = function(cond) {
