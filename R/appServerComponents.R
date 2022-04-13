@@ -62,8 +62,17 @@ sourceServer <- function(input, output, session) {
       
       # Update Variables
       all$geoSearchTerm <- input$geoSearchTerm
+      all$geoSearchResultsNumber <- as.character(input$geoSearchResultsNumber)
+      
+      if (input$geoSearchResultsNumber > 250) {
+        showNotification("Please consider refining the keywords you search 
+                         for if you can not find the dataset you want",
+                         type = "warning")
+      }
+      
       all$geoSearchResults <- tryCatch({
-        searchGeo(input$geoSearchTerm, firstResultNumber, lastResultNumber)},
+        searchGeo(input$geoSearchTerm, firstResultNumber, 
+                  all$geoSearchResultsNumber)},
         error = function(e) {
           # return a safeError if a parsing error occurs
           return(NULL)

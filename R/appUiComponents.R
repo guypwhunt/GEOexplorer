@@ -735,7 +735,15 @@ sourceGeoSearchUi <- function() {
              relevant datasets."),
     br(),
     br(),
-    textInput("geoSearchTerm", "Keyword", value = ""),
+    textInput("geoSearchTerm", "Keywords", value = ""),
+    numericInput(
+      inputId = "geoSearchResultsNumber",
+      label = "Number of results to return",
+      value = 50,
+      min = 0,
+      max = 500,
+      step = 50
+    ),
     actionButton("searchGeo", "Search"),
     br(),
     br(),
