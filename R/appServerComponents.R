@@ -545,7 +545,8 @@ performExploratoryDataAnalysis <- function(input,
               }
               
             })
-          } else if (input$dataSource == "GEO") {
+          } else if (input$dataSource == "GEO") 
+            {
             all$typeOfData <- "Microarray"
           }
           
@@ -631,7 +632,7 @@ performExploratoryDataAnalysis <- function(input,
                     (first)
                     experimental conditions file. Please ensure it is in the 
                     same format as the example file in the 'Example Datasets' 
-                                     tab",type = "warning")
+                                     tab", type = "warning")
                     # return null if there is an error
                     return(all$columnInfo)
                   })
@@ -1226,6 +1227,19 @@ performExploratoryDataAnalysis <- function(input,
         # Update col info
         all$columnInfo <-
           all$columnInfo[all$knnColumns,]
+        
+        try({
+          if (all(is.na(all$columnInfo))) {
+            showNotification("The experimental conditions information row 
+            names do not match the count matrix column names. Therefore the 
+                             count matrix column names will be displayed in 
+                             the experimental conditions information tables.", 
+                             type = "warning")
+            all$columnInfo <-
+              convertExpressionDataToExperimentInformation(all$knnDataInput)
+          }
+        }
+        )
         
         # Remove all incomplete rows
         naOmitInput <- tryCatch({calculateNaOmit(all$knnDataInput)
