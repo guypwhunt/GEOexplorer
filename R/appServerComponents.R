@@ -30,6 +30,8 @@ sourceServer <- function(input, output, session) {
     
     # Button to clear all results
     observeEvent(input$clearAllResults, {
+      all$columnInfo <- NULL
+      all$knnColumnTableTwo <- NULL
       resetExploratoryDataAnalaysisPlots(input, output, session)
       resetDifferentialGeneExpressionPlots(input, output, session)
       resetGeneEnrichmentOutputs(input, output, session)
