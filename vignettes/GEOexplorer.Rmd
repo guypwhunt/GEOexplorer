@@ -412,6 +412,146 @@ Step 5: Review the results of gene enrichment analysis.
 ![](geoRnaSeqGea3.png)
 
 
+## f. Transforming Datasets into the Format Needed by GEOexplorer 
+There are two reasons you might need to transform gene expression datasets 
+into a format that GEOexplorer can use. The first reason is that your dataset
+is not published on GEO. The second reason is that it is published on GEO 
+but cannot be loaded automatically. 
+
+### I. Identifying that a GEO Dataset Failed to Loaded into GEOexplorer
+In this example, we will use the GEO accession code **GSE142654**.
+
+Step 1: Navigate to the **Home** tab.
+
+Step 2: If you see the following error "object 'autoLogInformation' not found" 
+it indicates something has gone wrong with loading the gene expression dataset.
+
+Step 3: Navigate to the **Dataset Information** tab.
+
+Step 4: Navigate to the **Gene Expression Dataset** sub-tab.
+
+Step 5: If the tab is empty it means the gene expression dataset failed to 
+load.
+
+![](geoRnaSeqConvertToCsv1.png)
+
+### II. Downloading GEO datasets
+GEO datasets that fail to automatically load into GEOexplorer need to be 
+downloaded and formatted into the correct format to be processed.
+
+Step 1: Navigate to the **GEO Search** tab.
+
+Step 2: Enter the GEO accession code or title of the study. In this example, we
+used **GSE142654**.
+
+Step 3: Click **Search**.
+
+![](geoRnaSeqConvertToCsv2.png)
+
+Step 4: Click on the **GEO** link. The GEO website will open in a new tab.
+
+![](geoRnaSeqConvertToCsv3.png)
+
+Step 5: Identify which file(s) contain the non-transformed GEO count matrix and 
+click the **http** link next to the file(s). This will download the file(s). 
+
+![](geoRnaSeqConvertToCsv4.png)
+
+Step 6: If the file name(s) end in .gz or .tar you will need to ungzip or untar 
+the file(s). There are several websites to do this but these are my favourites:
+* [Ungzip](https://gzip.swimburger.net/)
+* [Untar](https://www.ezyzip.com/open-extract-tar-file-online.html)
+
+
+Step 7: Back on GEOexplorer, navigate to the **Example Datasets** tab.
+
+Step 8: Download the *Gene Expression File Template**.
+
+![](geoRnaSeqConvertToCsv5.png)
+
+Note: There are several ways you can transform the GEO count matrix file(s) 
+into the  GEOexplorer gene expression file template format. However, Excel 
+is by far the simplest. In this example, we will import the GEO count matrix 
+file into Excel.
+
+Step 9: Open the program **Excel**.
+
+![](geoRnaSeqConvertToCsv6.png)
+
+Step 10: Click on the **Data** tab.
+
+Step 11: Click on the **Get Data** button.
+
+![](geoRnaSeqConvertToCsv7.png)
+
+Step 12: Click on the **From File** button.
+
+Step 13: Click on the **From Text/CSV** button.
+
+![](geoRnaSeqConvertToCsv8.png)
+
+Step 14: Select the ungzipped GEO count matrix file.
+
+Step 15: Click on the **Import** button. This step assumes that Excel 
+correctly identifies the right settings to import the file. If not, you  
+need to manually configure these settings.
+
+![](geoRnaSeqConvertToCsv9.png)
+
+Step 16: Click on the **Load** button.
+
+![](geoRnaSeqConvertToCsv10.png)
+
+Step 17: Identify the gene ID and gene expression columns from the dataset.
+
+![](geoRnaSeqConvertToCsv11.png)
+
+Step 18: Open the GEOexplorer gene expression template in Excel.
+
+![](geoRnaSeqConvertToCsv12.png)
+
+Step 19: Copy the gene ID and gene expression columns from the GEO dataset 
+and paste them into the GEOexplorer gene expression template. At this point,
+I would recommend converting the gene IDs into gene symbols if possible as 
+this will make gene enrichment analysis far easier.
+
+![](geoRnaSeqConvertToCsv13.png)
+
+Step 20: Select all the gene expression data and the gene IDs if they are 
+numbers.
+
+Step 21: Click **Convert to Number**.
+
+![](geoRnaSeqConvertToCsv15.png)
+
+Step 22: Save the updated GEOexplorer gene expression template as a CSV.
+
+## f. Uploading a Dataset to GEOexplorer 
+Step 1: Navigate to the **Home** tab.
+
+Step 2: Select that you want to analyse a single dataset.
+
+Step 3: Select that you want to upload the data yourself.
+
+Step 4: Select if you are uploading RNA-seq or microarray data.
+
+Step 5: Click **Browse**.
+
+![](userUpload1.png)
+
+Step 6: Select your gene expression dataset.
+
+Step 7: Click **Open**.
+
+![](userUpload2.png)
+
+Step 8: Click **Analyse**.
+
+![](userUpload3.png)
+
+Step 9: Continue with your analysis as usual.
+
+
 # 6. Reporting Problems or Bugs
 
 If you run into problems using GEOexplorer, the [Bioconductor Support
