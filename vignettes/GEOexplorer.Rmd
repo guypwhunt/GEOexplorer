@@ -1,7 +1,7 @@
 ---
 title: "GEOexplorer"
 author: "Guy Hunt"
-date: "March 09, 2022"
+date: "April 19, 2022"
 output: 
   rmarkdown::html_vignette:
     toc: yes
@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+
 ![](kcl.png)
 ![](qmul.png)
 ![](murdoch.png)
@@ -31,14 +32,13 @@ knitr::opts_chunk$set(
 # 1. Introduction
 
 GEOexplorer is a web server and R package for the exploration, generation, 
-and analysis of 
-transcriptomic datasets. GEOexplorer can be used for the exploration, 
-integration, and harmonization of different datasets available in GEO or 
-uploaded by the user. GEOexplorer is based on widely used and validated 
-protocols and enables users to take full advantage of the great availability 
-of high-throughput data both from in-house experiments and publicly 
-available databases. Additionally, GEOexplorer does not require programming 
-proficiency or in-depth statistical knowledge to use.
+and analysis of transcriptomic datasets. GEOexplorer can be used for the 
+exploration, integration, and harmonization of different datasets available 
+in GEO or uploaded by the user. GEOexplorer is based on widely used and 
+validated protocols and enables users to take full advantage of the great
+availability of high-throughput data both from in-house experiments and 
+publicly available databases. Additionally, GEOexplorer does not require 
+programming proficiency or in-depth statistical knowledge to use.
 
 GEOexplorer enables users to:
 
@@ -56,270 +56,13 @@ GEOexplorer enables users to:
 
 * Explore the results in interactive visualisations.
 
-# 2. Accessing the Web Server
+# 2. Accessing the GEOexplorer Web Server
 
-The web server can be accessed on the following [link](https://geoexplorer.rosalind.kcl.ac.uk/).
+GEOexplorer can be accessed on the following [link](https://geoexplorer.rosalind.kcl.ac.uk/).
 
-# 3. Tutorial
+# 3. Alternatively Installing the GEOexplorer R package
 
-GEOexplorer splits gene expression analysis into three
-distinct processes. 
-The first process is exploratory data analysis, which aims 
-to gain an overall understanding of the gene expression dataset. 
-The second process is differential gene expression analysis, 
-which aims to identify the genes that are statistically
-upregulated or downregulated between two groups. 
-The final process is gene enrichment analysis, which aims to 
-provide the biological context of the 
-differentially expressed genes.
-
-## a. Video Tutorial
-
-It is advised to watch the video tutorial of GEOexplorer,
-which is available on the following
-[link](https://youtu.be/SziUG8WOlNk). The video
-tutorial includes an explanation of how to interpret 
-the various results and visualisation.
-
-## b. GEOexplorer Structure
-GEOexplorer contains several tabs, each of which serves a distinct purpose. 
-These tabs will be described in the subsections below. 
-
-### I. Home Tab
-The home tab contains all the widgets to perform gene expression analysis.
-![](homeTab.png)
-
-### II. About Tab
-The about tab contains information about GEOexplorer including links to additional documentation.
-![](aboutTab.png)
-
-### III. Workflow Tab
-The workflow tab provides a high level overview of the workflow performed used
-by GEOexplorer.
-![](workflowTab.png)
-
-### IV. Tutorial Tab
-The tutorial tab provides a step by step guide on how to use GEOexplorer.
-![](tutorialTab.png)
-
-### V. GEO Search Tab
-The GEO search tab allows you to search for the GEO database for relevant 
-gene expression datasets to analyse.
-![](geoSearchTab.png)
-
-### V. Example Datasets Tab
-The example datasets tab provides an example GEO dataset, microarray CSV,
-RNA seq CSV and template for user-uploaded  gene expression data.
-![](exampleDatasetsTab.png)
-
-## c. Loading Gene Expression Data Into GEOexplorer
-There are three main ways that gene expression datasets can be loaded into 
-GEOexplorer, which will be described below.
-
-### I. Using a GEO Accession Code
-Step 1: Navigate to the **Home** tab.
-
-Step 2: Input the GEO accession code microarray gene expression dataset you 
-wish to study. GEOexplorer will automatically download the dataset from GEO. 
-The GEO accession code used in this tutorial is **GSE18388**.
-![](geoAccessionInput.png)
-
-### II. Searching for a GEO dataset
-Step 1: Navigate to the **GEO Search** tab.
-
-Step 2: Input the keywords you which to search.
-
-Step 3: Click the **Search** button. A table containing the results will be
-loaded. The keywords code used in this tutorial are 
-**Microarray Analysis of Space-flown Murine Thymus Tissue**.
-![](geoSearch1.png)
-
-Step 4: Click **Load Dataset** for the microarray gene expression dataset you 
-wish to load. The dataset will then be automatically downloaded from GEO.
-![](geoSearch2.png)
-
-Note: GEO RNA seq gene expression datasets come in a variety of file and data 
-formats. GEOexplorer can process several of these formats. For the formats that
-GEOexplorer can't handle, users can download the files from GEO, transform them
-into the format required by GEOexplorer and then upload them.
-
-### III. Manually Uploading Gene Expression Dataset
-Step 1: Navigate to the **Example Datasets** tab.
-
-Step 2: Download the template. Ensure your gene expression data is in the same
-format as the template.
-![](userUpload1.png)
-
-Step 3: Navigate to the **Home** tab.
-
-Step 4: Click the **Upload** option.
-
-Step 5: Select the type of gene expression data you are uploading e.g. 
-microarray or RNAseq.
-
-Step 6: Click **Browse**.
-![](userUpload2.png)
-
-Step 7: Select the file you wish to upload.
-
-Step 8: Click **Open**
-![](userUpload3.png)
-
-Step 9: Wait for the file to upload.
-
-### IV. Combining Two Gene Expression Datasets
-Step 1: Select that you want to combine two gene expression datasets.
-![](combineData1.png)
-
-Step 2: Select the source of the first gene expression dataset.
-
-Step 3: Load the first gene expression dataset as mentioned previously.
-![](combineData2.png)
-
-Step 4: Select the source of the second gene expression dataset.
-
-Step 5: Load the second gene expression dataset as mentioned previously.
-![](combineData3.png)
-
-Step 6: Select the batch correction method to use. The "Empirical Bayes" method
-is the recommended method.
-![](combineData4.png)
-
-## d. Performing Exploratory Data Analysis
-After loading your dataset onto GEOexplorer performing exploratory data 
-analysis is largely the same for both GEO and user-uploaded  microarray as well
-as RNAseq gene expression datasets. The steps to perform exploratory data
-analysis are outlined below.
-
-### I. GEO Microarray Datasets Steps
-Step 1: Select the platform you wish to analyse. 
-The platform used in this tutorial is **GPL6246**.
-![](geoMicroarrayEda.png)
-
-### II. RNAseq Datasets
-Step 1: Select if you want to convert the gene expression data to counts 
-per million.
-![](rnaSeqEda.png)
-
-### III. All Microarray Datasets
-Step 1: Select if you want to fill in missing values using KNN imputation.
-![](microarrayEda.png)
-
-### IV. All Gene Expression Datasets
-Step 1: Select if you want to log transform, not log transform or 
-auto-detect if log transformation should be applied to the gene 
-expression dataset.
-
-Step 2: Click the **Analyse** button.
-![](allEda1.png)
-
-After clicking "Analyse", exploratory data analysis will be completed and the 
-results can be reviewed.
-
-Step 3: Click on the **Dataset Information** tab.
-
-Step 4: Review the information presented in the subtabs, which includes
-details of the experiment, details of the experimental conditions and the 
-gene expression dataset.
-![](allEda2.png)
-
-Step 5: After reviewing this information, click on the 
-**Exploratory Data Analysis** tab.
-
-Step 6: Within the **Exploratory Data Analysis** tab, review the 
-visualisations in each of the subtabs. The visualisations can be 
-divided into four groups:
-
-Group 1: This allows you to identify if the gene expression dataset 
-is normalised.
-
-Group 2: Displays the amount of variation within each principal component.
-
-Group 3: This allows you to identify if the gene expression dataset 
-contains a large amount of variation.
-
-Group 4: This allows you to identify groups of similar experimental conditions.
-![](allEda3.png)
-
-## e. Performing Differential Gene Expression Analysis
-Step 1: After performing exploratory data analysis, click on the
-**Differential Gene Expression Analysis** tab.
-
-![](dgea1.png)
-
-Note: As part of differential gene expression analysis you will need to 
-define two groups of experimental conditions you want to compare, to 
-identify the genes that are expressed differently between the two groups.
-
-Step 2: Select the experimental conditions you want to include in Group 1.
-In the tutorial, the first 4 rows (space-flown mice) were included in Group 1.
-![](dgea2.png)
-
-Step 3: Select the experimental conditions you want to include in Group 2.
-In the tutorial, the first 4 rows (ground control mice) were included in 
-Group 2.
-![](dgea3.png)
-
-Step 4: Select the P-value adjustment you wih to apply.
-In the tutorial, the "Benjamini & Hochberg (False discovery rate)" P-value
-adjustment was selected.
-
-Step 5: Select whether to apply limma precision weights. The limma 
-precision weights improve the accuracy of differential gene expression 
-analysis when a strong mean-variance trend is present as can be identified 
-from the **Mean-Variance Plot** subtab.
-
-Step 6: Select whether to force normalisation.
-Forcing normalisation is advisable if the experimental conditions are
-not median centred as can be identified from the 
-**Box-and-WhisperPlot**, **Expression Density Plot** and 
-**3D Expression Density Plot** subtabs.
-
-Step 7: Select the significance level cut off value you want. 
-The cut off will be used to identify the genes that are under-expressed 
-and the genes that are over-expressed between the two groups.
-
-Step 8: Click the **Analyse** button to perform differential 
-gene expression analysis.
-![](dgea4.png)
-
-After clicking analyse, differential gene expression analysis will 
-be performed.
-
-Step: 9: Review the results on the following subtabs which can be divided
-into the following groups:
-
-Group 1: A table containing the statistics of the top 250 differentially 
-expressed genes.
-
-Group 2: Visualisations to indicate if an appropriate P-value adjustment
-was used.
-
-Group 3: Visualisations that display the differentially expressed genes.
-![](dgea5.png)
-
-## f. Performing Gene Enrichment Analysis
-Step 1: After performing differential gene expression analysis, click on the
-**Gene Enrichment Analysis** tab.
-
-Step 2: Fill in any missing gene symbols and select the column which contains 
-the gene symbols. 
-![](gea1.png)
-
-Step 3: Select the database you wish to use to enrich the genes.
-
-Step 4: Click the **Analyse** button.
-![](gea2.png)
-
-After clicking analyse, gene enrichment analysis will 
-be performed.
-
-Step 5: Review the results of gene enrichment analysis. 
-![](gea3.png)
-
-# 4. R Package Installation
-
-GEOexplorer can be installed from Bioconductor:
+GEOexplorer can be installed as an R package from Bioconductor:
 
 ```{r eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -331,7 +74,7 @@ BiocManager::install(version='devel')
 BiocManager::install("GEOexplorer")
 ```
 
-Or from GitHub:
+Or the latest version can be downloaded from GitHub:
 
 ```{r eval=FALSE}
 if (!requireNamespace("devtools", quietly = TRUE))
@@ -340,7 +83,7 @@ if (!requireNamespace("devtools", quietly = TRUE))
 devtools::install_github("guypwhunt/GEOexplorer")
 ```
 
-# 5. Launching GEOexplorer from the R package 
+# 4. Launching the GEOexplorer R package 
 
 GEOexplorer can be launched via the two steps below:
 
@@ -357,7 +100,319 @@ loadApp()
 ```
 
 
-# 6. Reporting problems or bugs
+# 3. Tutorial
+
+GEOexplorer splits gene expression analysis into three distinct processes. The 
+first process is exploratory data analysis, which aims to gain an overall 
+understanding of the gene expression dataset. The second process is 
+differential gene expression analysis, which aims to identify the genes that 
+are statistically upregulated or downregulated between two groups. The final 
+process is gene enrichment analysis, which aims to provide the biological 
+context of the differentially expressed genes.
+
+
+## a. GEOexplorer Structure
+GEOexplorer contains several tabs, each of which serves a distinct purpose. 
+These tabs will be described in the subsections below. 
+
+### I. Home Tab
+The home tab contains all the widgets to perform gene expression analysis.
+
+![](homeTab.png)
+
+### II. About Tab
+The about tab contains information about GEOexplorer including links to 
+additional documentation.
+
+![](aboutTab.png)
+
+### III. Workflow Tab
+The workflow tab provides a high level overview of the workflow performed used
+by GEOexplorer.
+
+![](workflowTab.png)
+
+### IV. Tutorial Tab
+The tutorial tab provides a step by step guide on how to use GEOexplorer.
+
+![](tutorialTab.png)
+
+### V. GEO Search Tab
+The GEO search tab allows you to search for the GEO database for relevant 
+gene expression datasets to analyse.
+
+![](geoSearchTab.png)
+
+### VI. Example Datasets Tab
+The example datasets tab provides the following:
+* An example microarray GEO dataset
+* A gene expression file template 
+* An experimental file template 
+* A microarray gene expression dataset
+* A microarray experimental conditions file
+* An RNA-seq gene expression dataset
+* An RNA-seq experimental conditions file
+
+![](exampleDatasetsTab.png)
+
+
+## b. Loading GEO Datasets into GEOexplorer
+In this tutorial, we will be exploring the following GEO RNA-seq dataset 
+**GSE93939**. This dataset contains the gene expression profiles of 
+oculomotor and spinal motor neurons. Oculomotor motor neurons
+are resilient to degeneration in the lethal motor neuron disease 
+amyotrophic lateral sclerosis (ALS). Therefore comparing the gene expression
+profiles of oculomotor neurons to spinal motor neurons
+may indicate the protective mechanisms of oculomotor neurons.
+There are two ways to automatically load GEO datasets into 
+GEOexplorer. Using the GEO search functionality or manually inputting a GEO 
+accession code
+
+### I. Searching for a GEO Dataset
+Step 1: Navigate to the **GEO Search** tab.
+
+Step 2: Input the keywords you which to search. The keywords used in this 
+tutorial are 
+**RNA-seq of laser captured oculomotor, cervical and lumbar spinal motor**.
+
+Step 3: Select the number of results to display.
+
+Step 4: Click the **Search** button. A table containing the results will be
+loaded. 
+
+![](geoRnaSeqGeoSearch1.png)
+
+Step 5: Check if the file is processable by GEOexplorer. Due to the 
+variability in the format of GEO RNA-seq datasets, not all GEO RNA-seq datasets
+can automatically be loaded into GEOexplorer. If the dataset cannot be 
+automatically loaded into GEOexplorer, the user will have to download the 
+dataset and format it into a count matrix as per the template on the 
+**Example Datasets** tab. However, nearly all GEO microarray datasets can 
+automatically be loaded into GEOexplorer.
+
+Step 6: Click **Load Dataset** for the microarray gene expression dataset you 
+wish to load. GEOexplorer will attempt to load the dataset from GEO.
+
+![](geoRnaSeqGeoSearch2.png)
+
+
+### II. Using a GEO Accession Code
+If you already know the GEO accession code of the dataset you wish to analyse
+you can perform the following steps.
+
+Step 1: Navigate to the **Home** tab.
+
+Step 2: Select if you want to analyse multiple datasets or a single dataset. 
+In this example, we will analyse a single dataset.
+
+Step 3: Select the data source. In this example, we will source the dataset 
+directly from GEO.
+
+Step 4: Select if the dataset contains microarray or RNA-seq data.
+
+Step 5: Input the GEO accession code you wish to analyse. 
+GEOexplorer will attempt to load the dataset from GEO. The GEO accession code
+used in this tutorial is **GSE93939**.
+
+![](geoRnaSeqGeoAccessionInput.png)
+
+
+## c. Performing Exploratory Data Analysis
+After loading your dataset onto GEOexplorer performing exploratory data 
+analysis is very similar for GEO datasets and user uploaded datasets as well as
+microarray and RNA-seq datasets.
+
+### I. Checking if RNA-seq Datasets Contain Transformed Data
+For GEOexplorer to perform differential gene expression analysis RNA-seq 
+datasets must contain the raw counts rather than transformed 
+counts. This step is not required for analysing microarray datasets.
+
+Step 1: If the GEO accession code is linked to multiple datasets please 
+select the platform linked to the dataset you wish to analyse. 
+
+Step 2: Select not to apply log transformation. This is important as we want 
+to analyse the non-transformed data.
+
+Step 3: Select not to apply counts per million transformation. This is 
+important as we want to analyse the non-transformed data.
+
+Step 4: Click **Analyse**.
+
+![](geoRnaSeqEda1.png)
+
+After clicking "Analyse", exploratory data analysis will be performed and the 
+results can be reviewed.
+
+Step 5: Click on the **Dataset Information** tab.
+
+Step 6: Click on the **Gene Expression Dataset** sub-tab.
+
+Step 7: Review the dataset. If there are any values with non zero decimal 
+places or any negative values, this indicates the RNA-seq dataset has already
+been transformed and should not be used for differential gene expression 
+analysis.
+
+![](geoRnaSeqEda2.png)
+
+Step 8: Click on the **Exploratory Data Analysis** tab.
+
+Step 9: Click on the **Expression Density Plot** sub-tab.
+
+Step 10: Review the expression density plot. The plot should look similar to 
+the image below. If the plot contains normally distributed density curves with 
+a bell shaped pattern it indicates the RNA-seq dataset has already
+been transformed and should not be used for differential gene expression 
+analysis.
+
+![](geoRnaSeqEda3.png)
+
+Step 11: Click on the **Box-and-Whisker Plot** sub-tab.
+
+Step 12: Review the box-and-whisker plot. The plot should look similar to 
+the image below with the lowest value being 0 or more e.g. a positive number. 
+If the plot contains negative values or median centred values it indicates the 
+RNA-seq dataset has already been transformed and should not be used for 
+differential gene expression analysis.
+
+![](geoRnaSeqEda4.png)
+
+Note: Whilst transformed datasets should not be used for differential gene 
+expression analysis, they can be used for exploratory data analysis.
+
+### II. Reviewing the Results of Exploratory Data Analysis
+After checking if the RNA-seq dataset contains transformed data you can 
+continue performing exploratory data analysis.
+
+Step 1: You can set GEOexplorer to perform log transformation or auto-detect
+if log transformation should be applied.
+
+Step 2: You can set GEOexplorer to perform counts per million transformation. 
+This setting is only available for RNA-seq datasets. For microarray datasets, 
+you can instead select whether to fill in missing values using KNN imputation.
+
+Step 3: Click **Analyse** to rerun exploratory data analysis.
+
+![](geoRnaSeqEda5.png)
+
+Step 4: Click on the **Dataset Information** tab.
+
+Step 5: Review the information presented in the subtabs, which includes
+details of the experiment, details of the experimental conditions and the 
+gene expression dataset.
+
+![](geoRnaSeqEda6.png)
+
+Step 6: Click on the **Exploratory Data Analysis** tab.
+
+Step 7: Review the plots in each of the subtabs. The plots can be divided into 
+four groups:
+
+Group 1: This allows you to identify if the gene expression dataset 
+is normalised. If microarray datasets are not normalised then forced 
+normalisation should be applied during differential gene expression analysis.
+
+Group 2: Displays the amount of variation within each principal component.
+
+Group 3: This allows you to identify if the gene expression dataset 
+contains a large amount of variation. If microarray datasets have a strong mean
+variance trend then limma precision weights should be applied during 
+differential gene expression analysis.
+
+Group 4: This allows you to identify groups of similar experimental conditions.
+These different groups can be explored during differential gene expression 
+analysis.
+
+![](geoRnaSeqEda7.png)
+
+## d. Performing Differential Gene Expression Analysis
+If the RNA-seq does not contain transformed data differential gene expression analysis. Don't worry if you applied log transformation or counts per million 
+transformation during exploratory data analysis as GEOexplorer will use the 
+non-log transformed and non-counts per million data.
+
+Step 1: After performing exploratory data analysis, click on the
+**Differential Gene Expression Analysis** tab.
+
+![](geoRnaSeqDgea1.png)
+
+Note: As part of differential gene expression analysis you will need to 
+define two groups of experimental conditions you want to compare, to 
+identify the genes that are expressed differently between the two groups.
+
+Step 2: Select the experimental conditions you want to include in Group 1.
+In the tutorial, we include all the oculomotor neurons in Group 1.
+
+![](geoRnaSeqDgea2.png)
+
+Step 3: Select the experimental conditions you want to include in Group 2.
+In the tutorial, all the spinal motor neurons in Group 2.
+
+![](geoRnaSeqDgea3.png)
+
+Step 4: Select the P-value adjustment you wish to apply.
+In the tutorial, the "Benjamini & Hochberg (False discovery rate)" P-value
+adjustment was selected.
+
+Step 5: Select whether to apply limma precision weights. For RNA-seq
+datasets, limma precision weights should always be applied. For microarray 
+datasets it is recommended to apply limma precision weights when there is a 
+strong mean-variance trend, as can be identified from the 
+**Mean-Variance Plot** subtab. Limma precision weights improve the accuracy of differential gene expression 
+analysis when 
+
+Step 6: Select whether to force normalisation. For RNA-seq datasets, force normalisation should always be applied. For microarray datasets, force 
+normalisation should be applied if the datasets do not appear normalised 
+from the **Box-and-WhisperPlot**, **Expression Density Plot** and 
+**3D Expression Density Plot** subtabs.
+
+Step 7: Select the significance level cut off value you want. 
+The cut off will be used to identify the genes that are under-expressed 
+and the genes that are over-expressed between the two groups.
+
+Step 8: Click the **Analyse** button to perform differential 
+gene expression analysis.
+
+![](geoRnaSeqDgea4.png)
+
+After clicking analyse, differential gene expression analysis will 
+be performed.
+
+Step: 9: Review the results on the following subtabs which can be divided
+into the following groups:
+
+Group 1: A table containing the statistics of the top 250 differentially 
+expressed genes.
+
+Group 2: Visualisations to indicate if an appropriate P-value adjustment
+was used.
+
+Group 3: Visualisations that display the differentially expressed genes.
+
+![](geoRnaSeqDgea5.png)
+
+## e. Performing Gene Enrichment Analysis
+Step 1: After performing differential gene expression analysis, click on the
+**Gene Enrichment Analysis** tab.
+
+Step 2: Fill in any missing gene symbols and select the column which contains 
+the gene symbols. 
+
+![](geoRnaSeqGea1.png)
+
+Step 3: Select the database you wish to use to enrich the genes.
+
+Step 4: Click the **Analyse** button.
+
+![](geoRnaSeqGea2.png)
+
+After clicking analyse, gene enrichment analysis will 
+be performed.
+
+Step 5: Review the results of gene enrichment analysis. 
+
+![](geoRnaSeqGea3.png)
+
+
+# 6. Reporting Problems or Bugs
 
 If you run into problems using GEOexplorer, the [Bioconductor Support
 site](https://support.bioconductor.org/) is a good first place to ask
@@ -376,7 +431,7 @@ of the R
 [limma package](https://bioconductor.org/packages/release/bioc/html/limma.html)
 and [Enrichr](https://maayanlab.cloud/Enrichr/).
 
-# 8. Session info
+# 8. Session Information
 
 The following package and versions were used in the production of this
 vignette.
