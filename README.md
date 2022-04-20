@@ -52,3 +52,6 @@ would like to change.
 ## Authors
 Guy Hunt with contributions from Fabrizio Smeraldi, Michael Barnes 
 and Rafael Henkin.
+
+## Future Updates
+Please see our Google [doc](https://docs.google.com/spreadsheets/d/14UW_-9pLbqJsh5pYUcSy2hE9CZCJ1nw5o5izuqo-fOw/edit?usp=sharing) for the planned updates.

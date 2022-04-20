@@ -526,7 +526,7 @@ Step 21: Click **Convert to Number**.
 
 Step 22: Save the updated GEOexplorer gene expression template as a CSV.
 
-## f. Uploading a Dataset to GEOexplorer 
+## g. Uploading a Dataset to GEOexplorer 
 Step 1: Navigate to the **Home** tab.
 
 Step 2: Select that you want to analyse a single dataset.
