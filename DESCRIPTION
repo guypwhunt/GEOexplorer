@@ -1,0 +1,94 @@
+Package: GEOexplorer
+Title: GEOexplorer: an R/Bioconductor package and web application for gene 
+  expression analysis and visualisation
+Date: 2022/04/19
+Version: 1.2.0
+Authors@R: 
+  c(person(given = "Guy",
+           family = "Hunt",
+           role = c("aut", "cre"),
+           email = "guy.hunt@kcl.ac.uk",
+           comment = c(ORCID = "0000-0002-5217-2678")),
+    person(given = "Rafael",
+           family = "Henkin",
+           role = c("ctb", "ths"),
+           email = "r.henkin@qmul.ac.uk",
+           comment = c(ORCID = "0000-0002-5511-5230")),
+    person(given = "Alfredo",
+           family = "Iacoangeli",
+           role = c("ctb", "ths"),
+           email = "alfredo.iacoangeli@kcl.ac.uk",
+           comment = c(ORCID = "0000-0002-5280-5017")),
+    person(given = "Fabrizio",
+           family = "Smeraldi",
+           role = c("ctb", "ths"),
+           email = "f.smeraldi@qmul.ac.uk",
+           comment = c(ORCID = "0000-0002-0057-8940")),
+    person(given = "Michael",
+           family = "Barnes",
+           role = c("ctb", "ths"),
+           email = "m.r.barnes@qmul.ac.uk",
+           comment = c(ORCID = "0000-0001-9097-7381")))
+Description: GEOexplorer is an R/Bioconductor package and web application
+  that enables users to perform gene expression analysis. The development of 
+  GEOexplorer was made possible because of the excellent code provided  by 
+  GEO2R (https: //www.ncbi.nlm.nih.gov/geo/geo2r/).
+License: GPL-3
+Encoding: UTF-8
+LazyData: false
+Roxygen: list(markdown = TRUE)
+URL: https://github.com/guypwhunt/GEOexplorer/
+BugReports: https://github.com/guypwhunt/GEOexplorer/issues
+RoxygenNote: 7.1.2
+biocViews: 
+  Software,
+  GeneExpression,
+  mRNAMicroarray,
+  DifferentialExpression,
+  Microarray,
+  MicroRNAArray,
+  Transcriptomics,
+  RNASeq
+Depends: 
+    shiny,
+    limma,
+    Biobase,
+    plotly,
+    enrichR,
+    R (>= 4.1.0)
+Imports: 
+  DT,
+  XML,
+  httr,
+  sva,
+  xfun,
+  edgeR,
+  htmltools,
+  factoextra,
+  heatmaply,
+  maptools,
+  pheatmap,
+  scales,
+  shinyHeatmaply,
+  shinybusy,
+  ggplot2,
+  stringr,
+  umap,
+  GEOquery,
+  impute,
+  grDevices,
+  stats,
+  graphics,
+  markdown,
+  knitr,
+  utils,
+  xml2,
+  R.utils,
+  readxl,
+  shinycssloaders
+Suggests: 
+    rmarkdown,
+    usethis,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3

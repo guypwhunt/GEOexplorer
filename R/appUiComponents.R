@@ -1,0 +1,1040 @@
+#' A Function to Return the Ui Components
+#'
+#' A Function to Return the Ui Components
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @examples navbarPage()
+#' @author Guy Hunt
+#' @import markdown
+#' @importFrom htmltools HTML
+#' @noRd
+sourceUi <- function() {
+  uiComponents <- fluidPage(title ="GEOexplorer",
+    navbarPage(
+      title = tags$html(HTML(icon)),
+      tags$head(tags$style(
+        HTML(
+          '.navbar-static-top {background-color: #011f4b;
+          color: white;}',
+          '.navbar-default .navbar-nav>.active>a {background-color: #03396c;
+          color: white;}',
+          '.tabbable > .nav > li[class=active]>a
+          {background-color: #005b96; color:white}',
+          '#sidebar {background-color: #b3cde0;}'
+        )
+      )),
+      id = "geoexplorerNavBar",
+      tabPanel("Home", value = "Home",
+               # Source the Side Bar UI Components
+               sourceSideBarUi(),
+               mainPanel(
+                 tabsetPanel(
+                   type = "tabs",
+                   # Source the Dataset Information
+                   # UI Components
+                   sourceDatasetInformationUi(),
+                   # Source the Exploratory Data Analysis
+                   # UI Components
+                   sourceExploratoryDataAnalysisUi(),
+                   # Source the Differential Gene Expression
+                   # UI Components
+                   sourceDifferentialGeneExpressionAnalysisUi(),
+                   # Source the Enrichment
+                   # UI Components
+                   sourceEnrichmentnUi()
+                 ),
+                 br(),
+                 br(),
+                 br(),
+                 actionButton("clearAllResults", 
+                              "Clear the Dataset and Results", 
+                              icon = icon("exclamation", lib = "font-awesome")),
+                 br()
+               )),
+      tabPanel("About", tags$html(HTML(aboutPage))),
+      tabPanel("Workflow", tags$html(HTML(workflow))),
+      tabPanel("Tutorial", tags$html(HTML(tutorialPage))),
+      tabPanel("GEO Search", sourceGeoSearchUi()),
+      tabPanel("Example Datasets", sourceExampleUI())
+    )
+  )
+  return(uiComponents)
+}
+
+#' A Function to Return the Side Bar Ui Component
+#'
+#' A Function to Return the Side Bar Ui Component
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @examples sourceSideBarUi()
+#' @author Guy Hunt
+#' @noRd
+sourceSideBarUi <- function() {
+  sideBarUi <- sidebarPanel(id="sidebar",
+    radioButtons(
+      "dataSetType",
+      label = "Would you like analyse a single gene expression dataset or
+      combine two gene expression datasets?",
+      choices = list("Single", "Combine"),
+      selected = "Single"
+    ),
+    uiOutput("output15"),
+    uiOutput("output2"),
+    radioButtons(
+      "dataSource",
+      label = "Would you like to upload the gene expression data
+      or source the data from GEO?",
+      choices = list("GEO", "Upload"),
+      selected = "GEO"
+    ),
+    radioButtons(
+      "typeOfData",
+      label = "Is the data from Microarray or RNA Sequencing?",
+      choices = list("Microarray", "RNA Sequencing"),
+      selected = "Microarray"
+    ),
+    uiOutput("output5"),
+    uiOutput("output6"),
+    uiOutput("output7"),
+    uiOutput("output8"),
+    uiOutput("output9"),
+    uiOutput("output10"),
+    uiOutput("output11"),
+    radioButtons(
+      "logTransformation",
+      label = "Apply log transformation to the data:",
+      choices = list("Auto-Detect", "Yes", "No"),
+      selected = "Auto-Detect"
+    ),
+    uiOutput("logTransformationText"),
+    uiOutput("output13"),
+    uiOutput("output14"),
+    actionButton("exploratoryDataAnalysisButton", "Analyse")
+  )
+  return(sideBarUi)
+}
+
+#' A Function to Return the Dataset Information Ui Component
+#'
+#' A Function to Return the Dataset Information Ui Component
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @importFrom DT dataTableOutput
+#' @examples sourceDatasetInformationUi()
+#' @author Guy Hunt
+#' @noRd
+sourceDatasetInformationUi <- function() {
+  datasetInformationUi <- tabPanel("Dataset Information",
+                                   tabsetPanel(
+                                     type = "tabs",
+                                     tabPanel(
+                                       "Experiment Information",
+                                       br(),
+                                       span(
+                                         "Summary information of the gene
+                                         expression study is displayed below."
+                                       ),
+                                       br(),
+                                       br(),
+                                       htmlOutput('experimentInfo')
+                                     ),
+                                     tabPanel(
+                                       "Experimental Conditions Information",
+                                       br(),
+                                       span(
+                                         "A table containing information for
+                                         each of the experimental conditions
+                                         used in the gene expression study is
+                                         displayed below.
+                                         Each experimental condition relates to
+                                         a column in the gene expression
+                                         dataset in the 'Gene Expression
+                                         Dataset' tab."
+                                       ),
+                                       br(),
+                                       br(),
+                                       dataTableOutput('columnTable')
+                                     ),
+                                     tabPanel(
+                                       "Gene Expression Dataset",
+                                       br(),
+                                       span(
+                                         "A table containing the gene
+                                         expression data is displayed below.
+                                         Each column
+                                         relates to an experimental condition,
+                                         each row relates to a gene, and each
+                                         value relates to a gene expression
+                                         value for that gene under that
+                                         experimental condition. The values
+                                         are displayed post KNN imputation,
+                                         count per million transformation and
+                                         log transformation if selected."
+                                       ),
+                                       br(),
+                                       br(),
+                                       downloadButton("downloadGeneExpression",
+                                                      "Download"),
+                                       br(),
+                                       br(),
+                                       dataTableOutput('table')
+                                     )
+                                   ))
+  return(datasetInformationUi)
+}
+
+#' A Function to Return the Differential Gene Expression Analysis Ui Component
+#'
+#' A Function to Return the Differential Gene Expression Analysis Ui Component
+#' @import plotly
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @examples sourceDifferentialGeneExpressionAnalysisUi()
+#' @importFrom DT dataTableOutput
+#' @importFrom shinycssloaders withSpinner
+#' @author Guy Hunt
+#' @noRd
+sourceDifferentialGeneExpressionAnalysisUi <- function() {
+  differentialGeneExpressionAnalysisUi <-
+    tabPanel(
+      "Differential Gene Expression Analysis",
+      tabsetPanel(
+        type = "tabs",
+        tabPanel(
+          "Set Parameters",
+          br(),
+          span(
+            "A table containing information for each of the experimental
+              conditions used in the gene expression study is displayed below.
+              In the group column, select the experimental conditions you want
+              to include in group 1, group 2 or N/A if you want the
+              experimental condition excluded from differential gene
+              expression analysis. During differential gene expression
+              analysis, group 1 is compared against group 2."
+          ),
+          br(),
+          br(),
+          tags$b("Select the experimental conditions to include in Group 1."),
+          br(),
+          br(),
+          dataTableOutput('knnColumnTableOne'),
+          br(),
+          br(),
+          tags$b("Select the experimental conditions to include in Group 2."),
+          br(),
+          br(),
+          dataTableOutput('knnColumnTableTwo'),
+          br(),
+          br(),
+          span(
+            "The parameters for differential gene expression analysis are
+              displayed below. Please select the appropriate parameters and
+              click analyse to perform differential gene expression analysis."
+          ),
+          br(),
+          br(),
+          fluidRow(
+            column(
+              6,
+              br(),
+              uiOutput("dyncolumns"),
+              selectInput(
+                "pValueAdjustment",
+                "Apply adjustment to the P-values:",
+                choices = c(
+                  "Benjamini & Hochberg (False discovery rate)",
+                  "Benjamini & Yekutieli",
+                  "Bonferroni",
+                  "Holm",
+                  "None"
+                )
+              ),
+              # "Hochberg" and "Hommel" were removed
+              radioButtons(
+                "limmaPrecisionWeights",
+                label =
+                  "Apply limma precision weights (vooma):",
+                choices =
+                  list("Yes", "No"),
+                selected =
+                  "No"
+              )
+            ),
+            br(),
+            column(
+              6,
+              radioButtons(
+                "forceNormalization",
+                label =
+                  "Force normalization:",
+                choices =
+                  list("Yes", "No"),
+                selected =
+                  "No"
+              ),
+              numericInput(
+                "significanceLevelCutOff",
+                "Significance level cut-off:",
+                min = 0,
+                max = 1,
+                step = 0.01,
+                value = 0.05
+              ),
+              uiOutput("output100"),
+              br(),
+              br()
+            )
+          )
+        ),
+        tabPanel(
+          "Top Differentially Expressed Genes",
+          br(),
+          span(
+            "Generated using R limma. The table below displays the top
+            differentially expressed genes
+            between the groups selected."
+          ),
+          br(),
+          br(),
+          span(
+            "adj.P.Val is the P-value after adjustment for multiple testing.
+            This column is generally recommended as the primary statistic by
+            which to interpret results.
+            Genes with the smallest P-values will be the most reliable."
+          ),
+          br(),
+          br(),
+          span("P.Value is the Raw P-value"),
+          br(),
+          br(),
+          span("t is the Moderated t-statistic"),
+          br(),
+          br(),
+          span(
+            "B is the B-statistic or log-odds that the gene is
+            differentially expressed"
+          ),
+          br(),
+          br(),
+          span(
+            "logFC is the Log2-fold change between two experimental
+            conditions"
+          ),
+          br(),
+          br(),
+          span(
+            "F is the moderated F-statistic which combines
+            the t-statistics for all the pair-wise comparisons into an
+            overall test of significance for that gene"
+          ),
+          br(),
+          br(),
+          downloadButton("downloadData", "Download"),
+          br(),
+          br(),
+          dataTableOutput('dETable')
+        ),
+        tabPanel(
+          "Histogram Plot",
+          br(),
+          span(
+            "Generated using R limma and plotly. Use to view the distribution of
+            the P-values in the analysis results.
+            The P-value here is the same as in the Top differentially
+            expressed genes table and computed
+            using all selected contrasts. While the displayed table is
+            limited by size this plot allows
+            you to see the 'big picture' by showing the P-value
+            distribution for all analyzed genes."
+          ),
+          br(),
+          br(),
+          plotlyOutput('iDEHistogram') %>% withSpinner(color="#0dc5c1")
+        ),
+        tabPanel(
+          "Venn Diagram Plot",
+          br(),
+          span(
+            "Generated using limma (vennDiagram).
+            Displays the number of differentially expressed genes versus the
+            number of non-differentially expressed genes."
+          ),
+          plotOutput('dEVennDiagram') %>% withSpinner(color="#0dc5c1")
+        ),
+        tabPanel(
+          "Q-Q Plot",
+          br(),
+          span(
+            "Generated using R limma (qqt) and plotly.
+            Plots the quantiles of a data sample against the
+            theoretical quantiles of a Student's t distribution.
+            This plot helps to assess the quality of the limma
+            test results. Ideally the points should lie along a straight line,
+            meaning that the values for moderated t-statistic computed
+            during the test follow their theoretically predicted distribution."
+          ),
+          br(),
+          br(),
+          plotlyOutput('iDEQQ') %>% withSpinner(color="#0dc5c1")
+        ),
+        tabPanel(
+          "Volcano Plot",
+          br(),
+          span(
+            "Generated using R limma and plotly.
+            The volcano plot displays statistical significance
+            (-log10 P value) versus magnitude of change (log2 fold change)
+            and is useful for visualizing differentially expressed genes.
+            Highlighted genes are significantly differentially expressed at
+            the selected adjusted p-value cutoff value."
+          ),
+          br(),
+          br(),
+          plotlyOutput('iDEVolcano') %>% withSpinner(color="#0dc5c1")
+        ),
+        tabPanel(
+          "Mean Difference Plot",
+          br(),
+          span(
+            "Generated using R limma and plotly.
+            The mean difference (MD) plot displays
+            log2 fold change versus average
+            log2 expression values and is useful for visualizing differentially
+            expressed genes. Highlighted genes are significantly differentially
+            expressed at the selected adjusted p-value cutoff."
+          ),
+          br(),
+          br(),
+          plotlyOutput('iDEMd') %>% withSpinner(color="#0dc5c1")
+        ),
+        tabPanel(
+          "Heatmap Plot",
+          br(),
+          span(
+            "Generated using R limma and heatmaply.
+            A heatmap plot displaying the top differentially expressed genes
+            expression values for each experimental condition. The expression
+            values are displayed post KNN imputation, count per million
+            transformation, log transformation, normalisation and limma
+            precision weights if selected."
+          ),
+          br(),
+          br(),
+          numericInput(
+            "numberOfGenes",
+            "Input the number of genes to display:",
+            2,
+            min = 2,
+            max = 250,
+            step = 1
+          ),
+          br(),
+          plotlyOutput('iHeatmap') %>% withSpinner(color="#0dc5c1")
+        )
+      )
+    )
+  return(differentialGeneExpressionAnalysisUi)
+}
+
+#' A Function to Return the Exploratory Data Analysis Ui Component
+#'
+#' A Function to Return the Exploratory Data Analysis Ui Component
+#' @import plotly
+#' @importFrom shinycssloaders withSpinner
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @examples sourceExploratoryDataAnalysisUi()
+#' @author Guy Hunt
+#' @noRd
+sourceExploratoryDataAnalysisUi <- function() {
+  exploratoryDataAnalysisUi <- tabPanel(
+    "Exploratory Data Analysis",
+    tabsetPanel(
+      id = "edaTabs",
+      type = "tabs",
+      tabPanel(
+        "Expression Density Plot",
+        br(),
+        span(
+          "Generated using R plotly.
+          The plot below displays the distribution of the values
+          of the genes in the dataset.
+          This plot is useful for identifying if the data is normalised before
+          performing differential expression analysis. If
+          density curves are similar from gene
+          to gene, it is indicative that the data
+          is normalized and cross-comparable.
+          The values are displayed post KNN imputation, count per million
+          transformation and log transformation if selected."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactiveDensityPlot') %>% withSpinner(color="#0dc5c1")
+      ),
+      tabPanel(
+        "3D Expression Density Plot",
+        br(),
+        span(
+          "Generated using R plotly.
+          The plot below displays the distribution of the values of the genes
+          in the dataset. This plot is useful for identifying if the data is
+          normalised before
+          performing differential expression analysis.
+          If density curves are similar from gene to gene, it is indicative
+          that the data is normalized and cross-comparable. The values are
+          displayed post KNN imputation, count per million
+          transformation and log transformation if selected."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactiveThreeDDensityPlot') %>% withSpinner(
+          color="#0dc5c1")
+      ),
+      tabPanel(
+        value = "Box-and-Whisker Plot",
+        title = "Box-and-Whisker Plot",
+        br(),
+        span(
+          "Generated using R plotly.
+          The plot below displays the distribution of the values
+          of the genes in the dataset.
+          The quartiles are calculated using the linear method.
+          Viewing the distribution can be useful for determining if the
+          data in the dataset is suitable for differential expression analysis.
+          Generally, median-centred values are indicative that the data is
+          normalized and cross-comparable.
+          The values are displayed post KNN imputation, count per million
+          transformation and log transformation if selected."
+        ),
+        br(),
+        br(),
+        uiOutput("boxAndWhiskerPlot") %>% withSpinner(color="#0dc5c1")
+      ),
+      tabPanel(
+        "PCA Scree Plot",
+        br(),
+        span(
+          "Generated using R prcomp and plotly.
+              Principal component analysis (PCA) reduces the
+              dimensionality of multivariate data to two dimensions
+              that can be visualized graphically with minimal loss
+              of information."
+        ),
+        br(),
+        span(
+          "Eigenvalues correspond to the amount of the variation
+              explained by each principal component (PC).
+              The plot displays the eigenvalues against the number of
+              dimensions.  The values are displayed post KNN imputation,
+          count per million transformation and log transformation if selected."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactivePcaScreePlot') %>% withSpinner(
+          color="#0dc5c1")
+      ),
+      tabPanel(
+        "PCA Individuals Plot",
+        br(),
+        span(
+          "Generated using R prcomp and R plotly.
+              Principal component analysis (PCA)
+              reduces the dimensionality of multivariate data to two dimensions
+              that
+              can be visualized graphically with minimal loss of information."
+        ),
+        br(),
+        span(
+          "Eigenvalues correspond to the amount of the variation explained
+              by each principal component (PC). The plot displays the
+              eigenvalues
+              for each individual (row) in the gene expression dataset for the
+              top two principal components (PC1 and PC2). The values are
+              displayed post KNN imputation, count per million
+              transformation and log transformation if selected."
+        ),
+        br(),
+        br(), 
+        plotlyOutput('interactivePcaIndividualsPlot') %>% withSpinner(
+          color="#0dc5c1")
+      ),
+      tabPanel(
+        value = "Mean-Variance Plot",
+        title = "Mean-Variance Plot",
+        br(),
+        span(
+          "Generated using R limma and plotly.
+          The plot below is used to check the mean-variance relationship
+          of the expression data, after fitting a linear model.
+          It can help show if there is a lot of variation in the data.
+          Each point represents a gene.
+          The values are displayed post KNN imputation, count per million
+          transformation and log transformation if selected."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactiveMeanVariancePlot') %>% withSpinner(
+          color="#0dc5c1")
+      ),
+      tabPanel(
+        "Heatmap Plot",
+        br(),
+        span(
+          "Generated using R cor and heatmaply.
+          The plot below compares the correlation values of the samples in a
+          heatmap. The values are displayed post KNN imputation, count per
+          million transformation and log transformation if selected."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactiveHeatMapPlot') %>% withSpinner(color="#0dc5c1")
+      ),
+      tabPanel(
+        "PCA Variables Plot",
+        br(),
+        span(
+          "Generated using R prcomp and R plotly. Principal component
+          analysis (PCA) reduces the dimensionality of multivariate data to two
+          dimensions that can be visualized graphically with minimal loss
+          of information."
+        ),
+        br(),
+        span(
+          "Eigenvalues correspond to the amount of the variation explained
+              by each principal component (PC). The plot displays the
+              eigenvalues for each variable (column) in the gene expression
+              dataset for the top two principal components (PC1 and PC2).
+              The values are displayed post KNN imputation, count per million
+              transformation and log transformation if selected."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactivePcaVariablesPlot') %>% withSpinner(
+          color="#0dc5c1")
+      ),
+      tabPanel(
+        "3D PCA Variables Plot",
+        br(),
+        span(
+          "Generated using R prcomp and R plotly. Principal component
+          analysis
+          (PCA) reduces the dimensionality of multivariate data to two
+          dimensions that can be visualized graphically with minimal loss
+          of information."
+        ),
+        br(),
+        span(
+          "Eigenvalues correspond to the amount of the variation explained
+              by each principal component (PC). The plot displays the
+              eigenvalues for each variable (column) in the gene expression
+              dataset for the top three principal components
+              (PC1, PC2 and PC3).
+              The values are displayed post KNN imputation, count per million
+              transformation and log transformation if selected."
+        ),
+        br(),
+        br(),
+        plotlyOutput('interactive3DPcaVariablesPlot') %>% withSpinner(
+          color="#0dc5c1")
+      ),
+      tabPanel(
+        "UMAP Plot",
+        br(),
+        span(
+          "Generated using R umap and plotly.
+          Uniform Manifold Approximation and Projection (UMAP)
+          is a dimension reduction technique useful for visualizing
+          how genes are related to each other. The number of nearest
+          neighbours used in the calculation is indicated in the graph.
+          The values are displayed post KNN imputation, count per million
+          transformation and log transformation if selected."
+        ),
+        br(),
+        br(),
+        numericInput(
+          "knn",
+          "Input the k-nearest neighbors value  to use:",
+          2,
+          min = 2,
+          step = 1
+        ),
+        br(),
+        plotlyOutput('interactiveUmapPlot') %>% withSpinner(color="#0dc5c1")
+      )
+    )
+  )
+  return(exploratoryDataAnalysisUi)
+}
+
+#' A Function to Return the Side Bar Ui Component
+#'
+#' A Function to Return the Side Bar Ui Component
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @examples sourceSideBarUi()
+#' @importFrom htmltools HTML
+#' @author Guy Hunt
+#' @noRd
+sourceExampleUI <- function() {
+  exampleUIComponents <- mainPanel(
+    br(),
+    br(),
+    strong("This tab contains:"),
+    helpText(
+      "1. An example GEO accession code that can be
+             loaded into GEOexplorer."
+    ),
+    helpText(
+      "2. The required format of gene
+             expression files to be processed by GEOexplorer."
+    ),
+    helpText(
+      "3. The required format of experimental conditions (sample information) 
+      files to be processed by GEOexplorer."
+    ),
+    helpText(
+      "4. An example of a microarray and an RNA seq gene expression
+             file and experimental conditions file that can be processed by 
+      GEOexplorer."
+    ),
+    br(),
+    br(),
+    strong("Example GEO Accession Code"),
+    br(),
+    actionButton("loadExampleData", "Load"),
+    br(),
+    br(),
+    strong("Gene Expression File Template"),
+    br(),
+    downloadButton("downloadGeneExpressionFileTemplate", "Download"),
+    br(),
+    br(),
+    strong("Experimental Conditions File Template"),
+    br(),
+    downloadButton("downloadExperimentalConditionsFileTemplate", "Download"),
+    br(),
+    br(),
+    strong("Example Microarray Gene Expression File"),
+    br(),
+    downloadButton("downloadMicroarrayExample", "Download"),
+    br(),
+    br(),
+    strong("Example Microarray Experimental Conditions File"),
+    br(),
+    downloadButton("downloadMicroarrayExperimentalConditionsExample", 
+                   "Download"),
+    br(),
+    br(),
+    strong("Example RNASeq Gene Expression File"),
+    br(),
+    downloadButton("downloadRnaSeqExample", "Download"),
+    br(),
+    br(),
+    strong("Example RNASeq Experimental Conditions File"),
+    br(),
+    downloadButton("downloadRNASeqExperimentalConditionsExample", "Download"),
+    width = 12
+  )
+  return(exampleUIComponents)
+}
+
+#' A Function to Return the Side Bar Ui Component
+#'
+#' A Function to Return the Side Bar Ui Component
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @examples sourceSideBarUi()
+#' @importFrom DT dataTableOutput
+#' @author Guy Hunt
+#' @noRd
+sourceGeoSearchUi <- function() {
+  geoSearchUiComponents <- mainPanel(
+    helpText("Please input a keyword or phrase (such as a paper
+             title or author name) below, to search the GEO database for
+             relevant datasets."),
+    br(),
+    br(),
+    textInput("geoSearchTerm", "Keywords", value = ""),
+    numericInput(
+      inputId = "geoSearchResultsNumber",
+      label = "Number of results to return",
+      value = 50,
+      min = 0,
+      max = 500,
+      step = 50
+    ),
+    actionButton("searchGeo", "Search"),
+    br(),
+    br(),
+    textOutput("totalGeoSearchResults"),
+    br(),
+    br(),
+    dataTableOutput('geoSearchResults'),
+    br(),
+    br(),
+    actionButton("clearSearchResults", 
+                 "Clear Search Results", 
+                 icon = icon("exclamation", lib = "font-awesome")),
+    width = 12
+  )
+  return(geoSearchUiComponents)
+}
+
+
+#' A Function to Return the Enrichment Ui Component
+#'
+#' A Function to Return the Enrichment Ui Component
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @importFrom DT dataTableOutput
+#' @examples sourceEnrichmentnUi()
+#' @author Guy Hunt
+#' @noRd
+sourceEnrichmentnUi <- function() {
+  enrichmentUi <- tabPanel("Gene Enrichment Analysis",
+                                   tabsetPanel(
+                                     type = "tabs",
+                                     tabPanel(
+                                       "Set Parameters",
+                                       br(),
+                                       br(),
+                                       helpText("Gene enrichment analysis is 
+                                              performed using Enrichr."),
+                                       helpText("Information on each of the 
+                                              databases is available from the 
+                                              Enrichr website via the link 
+                                                below."),
+                                       tags$a(href="https://maayanlab.cloud/Enrichr/#libraries", 
+                                              "Enrichr", target="_blank"),
+                                       br(),
+                                       br(),
+                                       tags$b("Select the column containg
+                                              the gene symbols and input any
+                                              missing gene symbols."),
+                                       br(),
+                                       br(),
+                                       dataTableOutput('geneAnnotationTable'),
+                                       br(),
+                                       br(),
+                                       selectInput("enrichDatabases",
+                                                   "Select a database to use
+                                                   for gene enrichment 
+                                                   analysis",
+                                                   c("GO_Molecular_
+                                                     Function_2015",
+                                                     "GO_Cellular_
+                                                     Component_2015",
+                                                     "GO_Biological_
+                                                     Process_2015"),
+                                                   selected =
+                                                     "GO_Biological
+                                                   _Process_2015"),
+                                       br(),
+                                       br(),
+                                       uiOutput("output101")
+                                     ),
+                                     tabPanel(
+                                       "Gene Enrichment Table",
+                                       br(),
+                                       span(
+                                         "Generated using R enrichR. The table
+                                         below displays the gene sets
+                                         identified from the genes, including
+                                         several summary and statistical
+                                         values."
+                                       ),
+                                       br(),
+                                       br(),
+                                       selectInput(
+                                         "geneEnrichmentDataTable",
+                                         "Select if you want to view results
+                                         for all differentially expressed
+                                         genes, upregulated genes or
+                                         downregulated genes",
+                                         choices = c("All differentially expressed genes",
+                                                     "Upregulated genes",
+                                                     "Downregulated genes"),
+                                         selected = "All differentially
+                                         expressed genes"
+                                       ),
+                                       br(),
+                                       br(),
+                                       downloadButton(
+                                         "downloadDifferentiallyExpressedGenesEnrichmentTable",
+                                         "Download"),
+                                       br(),
+                                       br(),
+                                       dataTableOutput(
+                                         'differentiallyExpressedGenesEnrichmentTable')
+                                     ),
+                                     tabPanel(
+                                       "Barchart Plot",
+                                       br(),
+                                       span(
+                                         "Generated using R enrichR and
+                                         plotly. The
+                                         Barchart plot displays the gene sets
+                                         along the y axis and the user selected
+                                         column along the y axis. The points
+                                         are ordered based on the user selected
+                                         column."
+                                       ),
+                                       br(),
+                                       br(),
+                                       fluidRow(
+                                         column(6,
+                                                selectInput(
+                                                  "geneEnrichmentDataBarchartPlot",
+                                                  "Select if you want to view results
+                                             for all differentially expressed
+                                             genes, upregulated genes or
+                                             downregulated genes",
+                                                  choices = c("All differentially expressed genes",
+                                                              "Upregulated genes",
+                                                              "Downregulated genes"),
+                                                  selected = "All differentially expressed genes"
+                                                ),
+                                                br(),
+                                                br(),
+                                                selectInput(
+                                                  "columnToSortBarChartPlot",
+                                                  "Select the column to display:",
+                                                  choices = c("P.value",
+                                                              "Adjusted.P.value",
+                                                              "Odds.Ratio",
+                                                              "Combined.Score",
+                                                              "Minus.Log.P.Value",
+                                                              "Minus.Log.Adjusted.P.Value",
+                                                              "Overlap.Value"),
+                                                  selected = "Minus.Log.P.Value"
+                                                )),
+                                         column(6,
+                                                sliderInput(
+                                                  "recordsToDisplay",
+                                                  "The number of gene sets to display:",
+                                                  min = 0,
+                                                  max = 100,
+                                                  step = 1,
+                                                  value = 10
+                                                ),
+                                                br(),
+                                                br(),
+                                                radioButtons(
+                                                  "sortDecreasingly",
+                                                  label = "Sort the values ascendingly
+                                         or descendingly:",
+                                                  choices = list("Ascendingly", "Descendingly"),
+                                                  selected = "Descendingly"
+                                                ))),
+                                       br(),
+                                       br(),
+                                       plotlyOutput('genesEnrichmentBarchartPlot') %>% withSpinner(color="#0dc5c1")
+                                     ),
+                                     tabPanel(
+                                       "Volcano Plot",
+                                       br(),
+                                       span(
+                                         "Generated using R enrichR and
+                                         plotly. The
+                                         volcano plot displays statistical
+                                         significance (-log10 P value) versus
+                                         odds ratio and is useful for
+                                         visualizing
+                                         the statistically significant gene
+                                         sets."
+                                       ),
+                                       br(),
+                                       br(),
+                                       selectInput(
+                                         "geneEnrichmentDataVolcanoPlot",
+                                         "Select if you want to view results
+                                         for all differentially expressed
+                                         genes, upregulated genes or
+                                         downregulated genes",
+                                         choices = c("All differentially expressed genes",
+                                                     "Upregulated genes",
+                                                     "Downregulated genes"),
+                                         selected = "All differentially expressed genes"
+                                       ),
+                                       br(),
+                                       br(),
+                                       plotlyOutput('genesEnrichmentVolcanoPlot') %>% withSpinner(color="#0dc5c1")
+                                     ),
+                                     tabPanel(
+                                       "Manhattan Plot",
+                                       br(),
+                                       span(
+                                         "Generated using R enrichR and
+                                         plotly. The
+                                         manhattan plot displays the gene sets
+                                         along the x axis and the user selected
+                                         column along the y axis. The points
+                                         are ordered based on the user selected
+                                         column."
+                                       ),
+                                       br(),
+                                       br(),
+                                       fluidRow(column(
+                                         6,
+                                         selectInput(
+                                           "geneEnrichmentDataManhattanPlot",
+                                           "Select if you want to view results
+                                         for all differentially expressed
+                                         genes, upregulated genes or
+                                         downregulated genes",
+                                           choices = c(
+                                             "All differentially expressed genes",
+                                             "Upregulated genes",
+                                             "Downregulated genes"
+                                           ),
+                                           selected = "All differentially expressed genes"
+                                         )
+                                       ),
+                                       column(
+                                         6,
+                                         selectInput(
+                                           "columnToSortManhattanPlot",
+                                           "Select the column to display:",
+                                           choices = c(
+                                             "P.value",
+                                             "Adjusted.P.value",
+                                             "Odds.Ratio",
+                                             "Combined.Score",
+                                             "Minus.Log.P.Value",
+                                             "Minus.Log.Adjusted.P.Value",
+                                             "Overlap.Value"
+                                           ),
+                                           selected = "Minus.Log.P.Value"
+                                         )
+                                       )),
+                                       br(),
+                                       br(),
+                                       plotlyOutput('genesEnrichmentManhattanPlot') %>% withSpinner(color="#0dc5c1")
+                                     )
+                                   )
+                           )
+  return(enrichmentUi)
+}
+
+
+#' A Function to Return the Contact details Ui Component
+#'
+#' A Function to Return the Contact details Ui Component
+#' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
+#' @examples sourceContactUI()
+#' @author Guy Hunt
+#' @noRd
+sourceContactUI <- function() {
+  contactUIComponents <- mainPanel(
+    br(),
+    br(),
+    strong("The authors' contact details are:"),
+    br(),
+    br(),
+    tags$a(href="mailto:guy.hunt@kcl.ac.uk", "Guy P Hunt*"),
+    br(),
+    br(),
+    tags$a(href="mailto:alfredo.iacoangeli@kcl.ac.uk",
+           "Dr Alfredo Iacoangeli"),
+    br(),
+    br(),
+    tags$a(href="mailto:m.r.barnes@qmul.ac.uk", "Professor Michael R Barnes"),
+    br(),
+    br(),
+    tags$p("*  To whom correspondence should be addressed."),
+    width = 12
+  )
+  return(contactUIComponents)
+}
