@@ -4,7 +4,6 @@
 .Ruserdata
 inst/doc
 GEOexplorerV1.Rproj
-app.R
 errors/
 rsconnect/
 r/bioChecks/
