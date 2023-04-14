@@ -823,11 +823,11 @@ calculateCountsPerMillion <- function(rnaExpressionData, applyCpm) {
 #' This function allows you to apply batch correction
 #' @keywords geneExpression
 #' @import limma
-#' @importFrom sva ComBat
+#' @importFrom sva ComBat ComBat_seq
 #' @author Guy Hunt
 #' @noRd
 calculateBatchCorrection <- function(expressionData, expressionData2,
-                            combinedExpressionData, batchCorrection) {
+                            combinedExpressionData, batchCorrection, typeOfData) {
   if (batchCorrection != "None"){
     # Define the batches
     batchOne <- replicate(ncol(expressionData), "Batch1")
@@ -837,9 +837,22 @@ calculateBatchCorrection <- function(expressionData, expressionData2,
     if (batchCorrection == "Empirical Bayes") {
       # Remove null values
       combinedExpressionData <- na.omit(combinedExpressionData)
+      
+      combinedExpressionData <- as.matrix(combinedExpressionData)
+      
       # Remove batch effect
-      combinedExpressionDataBatchRemoved <- ComBat(combinedExpressionData,
-                                                   batch = finalBatch)
+      if (typeOfData  == "RNA Sequencing") {
+        combinedExpressionDataBatchRemoved <- ComBat_seq(combinedExpressionData,
+                                                     batch = finalBatch,
+                                                     group=NULL)
+        
+      } else {
+        combinedExpressionDataBatchRemoved <- ComBat(combinedExpressionData,
+                                                     batch = finalBatch)
+      }
+      
+      combinedExpressionDataBatchRemoved <- as.data.frame(combinedExpressionDataBatchRemoved)
+
     } else if (batchCorrection == "Linear Model") {
       # Remove batch effect using Limma
       # (should not be done prior to fitting a linear mode)

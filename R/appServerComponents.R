@@ -1057,7 +1057,8 @@ performExploratoryDataAnalysis <- function(input,
             all$expressionData,
             all$expressionData2,
             combinedExpressionData,
-            input$batchCorrection
+            input$batchCorrection,
+            input$typeOfData
           )
         }, error = function(err) {
           # Return null if there is a error in the getGeoObject function
