@@ -21,7 +21,7 @@ sourceServer <- function(input, output, session) {
     try(options(timeout = 300))
     
     # Update default max file upload
-    try(options(shiny.maxRequestSize = Inf))
+    try(options(shiny.maxRequestSize = -1))
     
     # Set plots to nothing
     resetExploratoryDataAnalaysisPlots(input, output, session)
