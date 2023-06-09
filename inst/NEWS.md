@@ -158,3 +158,7 @@ Changes in version 1.2.0 (2022-04-19)
 + Bug fixes
 + User upload of experimental conditions CSV
 + Tutorial updates
+
+Changes in version 1.6.1 (2023-06-09)
++ Bug fixes
++ Removal of maptools

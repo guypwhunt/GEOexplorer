@@ -1,8 +1,7 @@
 Package: GEOexplorer
-Title: GEOexplorer: an R/Bioconductor package and web application for gene 
-  expression analysis and visualisation
-Date: 2022/04/19
-Version: 1.2.0
+Title: GEOexplorer: a webserver for gene expression analysis and visualisation
+Date: 2023/06/09
+Version: 1.6.1
 Authors@R: 
   c(person(given = "Guy",
            family = "Hunt",
@@ -29,7 +28,7 @@ Authors@R:
            role = c("ctb", "ths"),
            email = "m.r.barnes@qmul.ac.uk",
            comment = c(ORCID = "0000-0001-9097-7381")))
-Description: GEOexplorer is an R/Bioconductor package and web application
+Description: GEOexplorer is a webserver and R/Bioconductor package and web application
   that enables users to perform gene expression analysis. The development of 
   GEOexplorer was made possible because of the excellent code provided  by 
   GEO2R (https: //www.ncbi.nlm.nih.gov/geo/geo2r/).
