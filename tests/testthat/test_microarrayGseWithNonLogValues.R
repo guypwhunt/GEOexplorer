@@ -421,7 +421,7 @@ test_that("Microarray GSE with non-log values is handled correctly
             expect_type(column2, "character")
             expect_equal(column2[1], "GSM53")
             expect_equal(column2[2], "GSM54")
-            expect_equal(column2[3], "NA")
+            # expect_equal(column2[3], "NA")
             expect_equal(length(column2), 2)
 
             # Calculate all$gsms

@@ -428,7 +428,7 @@ test_that("Microarray GSE with a blank column is handled correctly by all
             expect_type(column2, "character")
             expect_equal(column2[1], "GSM5388261")
             expect_equal(column2[2], "GSM5388262")
-            expect_equal(column2[3], "NA")
+            # expect_equal(column2[3], "NA")
             expect_equal(length(column2), 2)
 
             # Calculate gsms

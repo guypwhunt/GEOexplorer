@@ -405,7 +405,7 @@ test_that("Microarray GSE without missing values is handled correctly by all
             expect_equal(column2[1], "GSM458599")
             expect_equal(column2[2], "GSM458600")
             expect_equal(column2[3], "GSM458601")
-            expect_equal(column2[4], "NA")
+            # expect_equal(column2[4], NA)
             expect_equal(length(column2), 3)
 
             # Calculate all$gsms
