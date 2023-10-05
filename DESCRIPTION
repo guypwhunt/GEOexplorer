@@ -2,7 +2,7 @@ Package: GEOexplorer
 Title: GEOexplorer: an R/Bioconductor package for gene expression analysis 
   and visualisation
 Date: 2021/10/15
-Version: 1.7.0
+Version: 1.7.1
 Authors@R: 
   c(person(given = "Guy",
            family = "Hunt",
@@ -73,3 +73,4 @@ Suggests:
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+PackageStatus: Deprecated
