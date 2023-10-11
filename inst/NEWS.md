@@ -95,3 +95,74 @@ Changes in version 0.99.30 (2021-10-13)
 
 Changes in version 0.99.31 (2021-10-15)
 + Test updates
+
+Changes in version 0.99.32 (2021-10-27)
++ User Upload functionality added
++ 3D PCA Variables Plot
+- PCA Scree Plot
+
+Changes in version 0.99.33 (2021-12-09)
++ Combing datasets functionality added
+
+Changes in version 0.99.34 (2021-12-13)
++ Tutorial added
+
+Changes in version 0.99.34 (2021-12-15)
++ GEO Search Functionality Added
+
+Changes in version 1.1.1 (2021-12-17)
++ Bug fixes
+
+Changes in version 1.1.2 (2021-12-19)
++ Gene enrichment analysis added
+
+Changes in version 1.1.3 (2021-12-23)
++ Bug fixes
++ UI Updates
++ Image Compression
+
+Changes in version 1.1.4 (2022-01-09)
++ Gene Annotation Updates
++ Tutorial Updates
+
+Changes in version 1.1.5 (2022-01-11)
++ Gene Enrichment Updates
+
+Changes in version 1.1.6 (2022-01-14)
++ Gene Enrichment Updates
+
+Changes in version 1.1.7 (2022-01-18)
++ Gene Enrichment Updates
+
+Changes in version 1.1.8 (2022-01-26)
++ GEO RNA SEQ Updates
+
+Changes in version 1.1.9 (2022-02-07)
++ GEO RNA SEQ Updates
++ Test updates
+
+Changes in version 1.1.10 (2022-02-09)
++ GEO RNA SEQ Updates and bug fixes
+
+Changes in version 1.1.11 (2022-02-14)
++ GEO RNA SEQ bug fixes
+
+Changes in version 1.1.12 (2022-02-17)
++ GEO RNA SEQ bug fixes
++ GEO Search Updates
+
+Changes in version 1.1.13 (2022-03-21)
++ Improved plots speed
+
+Changes in version 1.2.0 (2022-04-19)
++ Bug fixes
++ User upload of experimental conditions CSV
++ Tutorial updates
+
+Changes in version 1.6.1 (2023-06-09)
++ Bug fixes
++ Removal of maptools
+
+Changes in version 1.7.2 (2023-10-11)
++ Bug fixes
++ Removal of maptools

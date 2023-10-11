@@ -129,6 +129,7 @@ calculateEachGroupsSamples <-
 #' can be obtained from the extractExpressionData() function
 #' @keywords GEO
 #' @import limma
+#' @importFrom edgeR DGEList as.matrix.DGEList calcNormFactors
 #' @examples
 #' # Get the GEO data for all platforms
 #' geoAccessionCode <- "GSE18388"
@@ -200,66 +201,306 @@ calculateEachGroupsSamples <-
 #' sample belongs to
 calculateDifferentialGeneExpression <-
   function(gsms,
-           limmaPrecisionWeights,
-           forceNormalization,
-           gset,
-           ex) {
-    # make proper column names to match toptable
-    fvarLabels(gset) <- make.names(fvarLabels(gset))
-
-    # group membership for all samples
-    sml <- strsplit(gsms, split = "")[[1]]
-
-    # Reduce the dimensionality of gset to that of ex
-    gset <- gset[row.names(gset) %in% row.names(ex), ]
-    gset <- gset[, colnames(gset) %in% colnames(ex)]
-
-    sel <- which(sml != "X")
-    sml <- sml[sel]
-    gset <- gset[, sel]
-    ex <- ex[, sel]
-    exprs(gset) <- ex
-
-    if (forceNormalization == "Yes") {
-      # normalize data
-      exprs(gset) <- normalizeBetweenArrays(exprs(gset))
+           input,
+           all) {
+    # Define results variable
+    results <- NULL
+    gsetData <- all$gsetData
+    knnDataInput <- all$knnDataInput
+    expressionData <- all$expressionData
+    dataSource <- input$dataSource
+    
+    # Define flags
+    microarrayData <- all$typeOfData == "Microarray"
+    geoMicroarrayData <- dataSource == "GEO" & microarrayData
+    rnaSeqData <- all$typeOfData == "RNA Sequencing"
+    
+    dataSource <- input$dataSource
+    
+    if (is.null(gsetData)){
+      dataSource <- "Upload"
     }
-
-    # assign samples to groups and set up design matrix
-    gs <- factor(sml)
-    groups <- make.names(c("Group1", "Group2"))
-    levels(gs) <- groups
-    gset$group <- gs
-    design <- model.matrix(~ group + 0, gset)
-    colnames(design) <- levels(gs)
-
-    if (limmaPrecisionWeights == "Yes") {
-      nall <- nrow(gset)
-      gset <- gset[complete.cases(exprs(gset)), ]
-
-      # calculate precision weights and show plot of
-      # mean-variance trend
-      v <- vooma(gset, design, plot = FALSE)
-      # attach gene annotations
-      v$genes <- fData(gset)
-
-      # fit linear model
-      fit  <- lmFit(v)
-    } else if (limmaPrecisionWeights == "No") {
-      # fit linear model
-      fit <- lmFit(gset, design)
+    
+    if (input$dataSetType == "Single") {
+      if (geoMicroarrayData) {
+        # make proper column names to match toptable
+        fvarLabels(gsetData) <- make.names(fvarLabels(gsetData))
+        
+        # Reduce the dimensionality of gsetData to that of ex
+        gsetData <- gsetData[row.names(gsetData) %in% row.names(knnDataInput),]
+        gsetData <- gsetData[, colnames(gsetData) %in% colnames(knnDataInput)]
+      }
+      
+      # group membership for all samples
+      sml <- strsplit(gsms, split = "")[[1]]
+      sel <- which(sml != "X")
+      sml <- sml[sel]
+      
+      if (microarrayData) {
+        knnDataInput <- knnDataInput[, sel]
+      } else {
+        keep.exprs <- filterByExpr(expressionData, group=gsms)
+        expressionData <- expressionData[keep.exprs,]
+        expressionData <- expressionData[, sel]
+      }
+      
+      if (geoMicroarrayData) {
+        # Update gset data
+        gsetData <- gsetData[, sel]
+        exprs(gsetData) <- knnDataInput
+      } 
+      else if (rnaSeqData) {
+        expressionData <- DGEList(expressionData, group = sml)
+      }
+      
+      if (input$forceNormalization == "Yes") {
+        if (geoMicroarrayData) {
+          # normalize data
+          exprs(gsetData) <- normalizeBetweenArrays(knnDataInput)
+        } 
+        else if (rnaSeqData) {
+          expressionData = calcNormFactors(expressionData, 
+                                           method = "TMM")
+        } else if (microarrayData) {
+          knnDataInput <- normalizeBetweenArrays(knnDataInput)
+        }
+      }
+      
+      # assign samples to groups and set up design matrix
+      gs <- factor(sml)
+      groups <- make.names(c("Group1", "Group2"))
+      levels(gs) <- groups
+      
+      if (geoMicroarrayData) {
+        # Update gset data
+        gsetData$group <- gs
+        
+        # Create design
+        design <- model.matrix(~ group + 0, gsetData)
+      } 
+      else if (microarrayData) {
+        # Convert knnDataInput to expression dataset
+        knnDataInput <- ExpressionSet(knnDataInput)
+        knnDataInput$group <- gs
+        # Create design
+        design <- model.matrix(~ group + 0, knnDataInput)
+      } else if (rnaSeqData) {
+        expressionData$samples$group <- gs
+        # Create design
+        design <- model.matrix(~ group + 0, expressionData$samples)
+      }
+      
+      colnames(design) <- levels(gs)
+      
+      if (input$limmaPrecisionWeights == "Yes") {
+        if (geoMicroarrayData) {
+          gsetData <- gsetData[complete.cases(exprs(gsetData)), ]
+          
+          # calculate precision weights and show plot of
+          # mean-variance trend
+          v <- vooma(gsetData, design, plot = FALSE)
+          # attach gene annotations
+          v$genes <- fData(gsetData)
+        } 
+        else if (microarrayData) {
+          # Convert knnDataInput to matrix
+          knnDataInput <- as.matrix(knnDataInput)
+          knnDataInput <- knnDataInput[complete.cases(knnDataInput), ]
+          # calculate precision weights
+          v <- vooma(knnDataInput, design, plot = FALSE)
+          # Add gene information
+          v$genes <- as.matrix(row.names(knnDataInput))
+          colnames(v$genes) <- list("ID")
+        }
+        else if (rnaSeqData) {
+          # calculate precision weights
+          v <- voom(expressionData, design, plot = FALSE)
+        }
+        
+        # fit linear model
+        fit  <- lmFit(v)
+        
+        # Update results
+        results$ex <- v
+        
+      } else if (input$limmaPrecisionWeights == "No") {
+        if (geoMicroarrayData) {
+          # fit linear model
+          fit <- lmFit(gsetData, design)
+          # Update results
+          results$ex <- exprs(gsetData)
+        } else if (microarrayData) {
+          # fit linear model
+          fit <- lmFit(knnDataInput, design)
+          # attach gene annotations
+          fit$genes <- as.matrix(row.names(knnDataInput))
+          # Update column name
+          colnames(fit$genes) <- list("ID")
+          
+          # Update results as a matrix
+          results$ex <- as.matrix(knnDataInput)
+        } else if (rnaSeqData) {
+          # fit linear model
+          fit <- lmFit(as.matrix.DGEList(expressionData), design)
+          # Update results
+          results$ex <- expressionData$counts
+        }
+      }
+      
+      # set up contrasts of interest and recalculate
+      # model coefficients
+      cts <- paste(groups[1], groups[2], sep = "-")
+      cont.matrix <- makeContrasts(contrasts = cts,
+                                   levels = design)
+      fit2 <- contrasts.fit(fit, cont.matrix)
+      
+      # compute statistics and table of top significant genes
+      fit2 <- eBayes(fit2, 0.01)
+      
+      # Update results
+      results$fit2 <- fit2
+      
+    } else if (input$dataSetType == "Combine")
+    {
+      if (geoMicroarrayData) {
+        # make proper column names to match toptable
+        fvarLabels(gsetData) <- make.names(fvarLabels(gsetData))
+        
+        # Reduce the dimensionality of gsetData to that of knnDataInput
+        gsetData <- gsetData[row.names(gsetData) %in% row.names(knnDataInput),]
+        gsetData <- gsetData[, colnames(gsetData) %in% colnames(knnDataInput)]
+      }
+      
+      # group membership for all samples
+      sml <- strsplit(gsms, split = "")[[1]]
+      sel <- which(sml != "X")
+      sml <- sml[sel]
+      
+      if (microarrayData) {
+        knnDataInput <- knnDataInput[, sel]
+      } else {
+        keep.exprs <- filterByExpr(expressionData, group=gsms)
+        expressionData <- expressionData[keep.exprs,]
+        expressionData <- expressionData[, sel]
+      }
+      
+      if (rnaSeqData) {
+        expressionData = DGEList(expressionData, group = sml)
+      }
+      
+      if (input$forceNormalization == "Yes") {
+        if (geoMicroarrayData) {
+          # normalize data
+          knnDataInput <- normalizeBetweenArrays(knnDataInput)
+        } else if (rnaSeqData) {
+          expressionData = calcNormFactors(expressionData, 
+                                           method = "TMM")
+        } else if (microarrayData) {
+          knnDataInput <- normalizeBetweenArrays(knnDataInput)
+        }
+      }
+      
+      # assign samples to groups and set up design matrix
+      gs <- factor(sml)
+      groups <- make.names(c("Group1", "Group2"))
+      levels(gs) <- groups
+      
+      if (geoMicroarrayData) {
+        # Update gsetData data
+        knnDataInput <- ExpressionSet(knnDataInput)
+        knnDataInput$group <- gs
+        
+        # Create design
+        design <- model.matrix(~ group + 0, knnDataInput)
+      } else if (microarrayData ) {
+        # Convert knnDataInput to expression dataset
+        knnDataInput <- ExpressionSet(knnDataInput)
+        knnDataInput$group <- gs
+        # Create design
+        design <- model.matrix(~ group + 0, knnDataInput)
+      } else if (rnaSeqData) {
+        expressionData$samples$group <- gs
+        # Create design
+        design <- model.matrix(~ group + 0, expressionData$samples)
+      }
+      
+      colnames(design) <- levels(gs)
+      
+      if (input$limmaPrecisionWeights == "Yes") {
+        if (geoMicroarrayData) {
+          # Convert to matrix
+          knnDataInput <- as.matrix(knnDataInput)
+          knnDataInput <- knnDataInput[complete.cases(knnDataInput), ]
+          
+          # calculate precision weights and show plot of
+          # mean-variance trend
+          v <- vooma(knnDataInput, design, plot = FALSE)
+          # attach gene annotations
+          geneInfo <- as.data.frame(fData(gsetData))
+          geneInfo <- geneInfo[row.names(geneInfo) %in% row.names(v$E),]
+          geneInfo <- geneInfo[row.names(v$E), ]
+          v$genes <- geneInfo
+        } else if (microarrayData) {
+          # Convert knnDataInput to matrix
+          knnDataInput <- as.matrix(knnDataInput)
+          knnDataInput <- knnDataInput[complete.cases(knnDataInput), ]
+          # calculate precision weights
+          v <- vooma(knnDataInput, design, plot = FALSE)
+          v$genes <- as.matrix(row.names(knnDataInput))
+          colnames(v$genes) <- list("ID")
+        }
+        else if (rnaSeqData) {
+          # calculate precision weights
+          v <- voom(expressionData, design, plot = FALSE)
+        }
+        
+        # fit linear model
+        fit  <- lmFit(v)
+        
+        # Update results
+        results$ex <- v
+        
+      } else if (input$limmaPrecisionWeights == "No") {
+        if (geoMicroarrayData) {
+          # fit linear model
+          fit <- lmFit(knnDataInput, design)
+          # Update gene information
+          fit$genes <- fData(gsetData)
+          # Update results
+          results$ex <- as.matrix(knnDataInput)
+        } else if (microarrayData) {
+          # fit linear model
+          fit <- lmFit(knnDataInput, design)
+          # attach gene annotations
+          fit$genes <- as.matrix(row.names(knnDataInput))
+          # Update column name
+          colnames(fit$genes) <- list("ID")
+          
+          # Update results as a matrix
+          results$ex <- as.matrix(knnDataInput)
+        } else if (rnaSeqData) {
+          # fit linear model
+          fit <- lmFit(as.matrix.DGEList(expressionData), design)
+          # Update results
+          results$ex <- expressionData$counts
+        }
+      }
+      
+      # set up contrasts of interest and recalculate
+      # model coefficients
+      cts <- paste(groups[1], groups[2], sep = "-")
+      cont.matrix <- makeContrasts(contrasts = cts,
+                                   levels = design)
+      fit2 <- contrasts.fit(fit, cont.matrix)
+      
+      # compute statistics and table of top significant genes
+      fit2 <- eBayes(fit2, 0.01)
+      
+      # Update results
+      results$fit2 <- fit2
     }
-
-    # set up contrasts of interest and recalculate
-    # model coefficients
-    cts <- paste(groups[1], groups[2], sep = "-")
-    cont.matrix <- makeContrasts(contrasts = cts,
-                                 levels = design)
-    fit2 <- contrasts.fit(fit, cont.matrix)
-
-    # compute statistics and table of top significant genes
-    fit2 <- eBayes(fit2, 0.01)
-    return(fit2)
+    
+    return(results)
   }
 
 #' A Function to Convert the UI P-Value Adjustment
@@ -388,11 +629,11 @@ convertAdjustment <- function(adjustment) {
 #' @seealso [calculateDifferentialGeneExpression()]
 #' for differential gene expression object
 calculateTopDifferentiallyExpressedGenes <-
-  function(fit2, adjustment) {
+  function(fit2, adjustment, numberOfGenes = 250) {
     tT <- topTable(fit2,
                    adjust.method = adjustment,
                    sort.by = "B",
-                   number = 250)
+                   number = numberOfGenes)
     columnNamesList <- c()
     optionalColumnNamesList <-
       c(
@@ -605,7 +846,7 @@ calculateDifferentialGeneExpressionSummary <-
 calculateEachGroupsSamplesFromDataFrame <-
   function(groupDataFrame) {
     # Convert the input to a dataframe
-    groupDataFrame <- as.data.frame(groupDataFrame)
+    groupDataFrame <- as.matrix(groupDataFrame)
 
     # For each row convert the UI codes to backend codes
     for (val in seq_len(nrow(groupDataFrame))) {
@@ -627,4 +868,37 @@ calculateEachGroupsSamplesFromDataFrame <-
       str_remove_all(str_remove_all(stringGroup, ","), " ")
 
     return(stringGroup)
+  }
+
+#' A Function to Calculate the Samples Selected in Each Group
+#'
+#' This function calculates the GSMS object
+#' @author Guy Hunt
+#' @noRd
+calculateEachGroupsSamplesGsms <-
+  function(columnInfo, groupOne, groupTwo) {
+    # Update all rows to X
+    columnInfo$group <- "X"
+
+    # Add group 1 columns
+    columnInfo[groupOne,]$group <- "0"
+
+    # Add group 2 columns
+    columnInfo[groupTwo,]$group <- "1"
+
+    # colapse columns to character
+    gsms <- paste(columnInfo$group, collapse = '')
+
+    return(gsms)
+  }
+
+#' A Function to remove lowly expressed genes
+#' @importFrom edgeR filterByExpr 
+#' @author Guy Hunt
+#' @noRd
+removeLowlyExpressedGenes <- function(expressionData, gsms) {
+    keep.exprs <- filterByExpr(expressionData, group=gsms)
+    expressionData <- expressionData[keep.exprs,]
+    
+    return(expressionData)
   }

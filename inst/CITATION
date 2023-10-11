@@ -2,21 +2,25 @@ citHeader("Please cite the following if utilizing the GEOquery software: ")
 
 citEntry(entry="article",
   author = c(person(c("Guy","P"),"Hunt"),
+  person("Luigi","Grassi"),
   person("Rafael","Henkin"),
   person("Fabrizio","Smeraldi"),
+  person(c("Thomas","P"),"Spargo"),
+  person("Renata","Kabiljo"),
+  person("Sulev","Koks"),
+  person("Zina","Ibrahim"),
+  person(c("Richard","J B"),"Dobson"),
+  person("Ammar","Al-Chalabi"),
   person(c("Michael","R"),"Barnes")),
-  title = "GEOexplorer: an R/Bioconductor package for gene
-          expression analysis and visualisation",
-  journal = "bioRxiv",
-  year = 2021,
-  volume = "2021.10.06.459411",
-  doi = "10.1101/2021.10.06.459411",
+  title = "GEOexplorer: a webserver for gene expression analysis and visualisation ",
+  journal = "Nucleic Acids Research",
+  year = 2023,
+  volume = "50",
+  doi = "https://doi.org/10.1093/nar/gkac364",
   textVersion =
-    paste("Hunt, G. P., Henkin, R., Smeraldi, F. and
-    Barnes, M. R.  (2021)",
-    "'GEOexplorer: an R/Bioconductor package for gene expression
-    analysis and visualisation'",
-    "bioRxiv, pp. 2021.10.06.459411.",sep="\n")
+    paste("Hunt et al., (2023)",
+    "'GEOexplorer: a webserver for gene expression analysis and visualisation'",
+    "Nucleic Acids Research, Volume 50, Issue W1, 5 July 2022, Pages W367–W374",sep="\n")
 )
 
 citFooter("This free open-source software implements academic

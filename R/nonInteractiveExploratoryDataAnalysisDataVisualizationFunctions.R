@@ -40,17 +40,16 @@
 #' @noRd
 #' @seealso [extractExpressionData()] for expression object
 nonInteractiveBoxAndWhiskerPlot <-
-  function(ex,
-           geoAccessionCode = "",
-           platform = "") {
+  function(ex) {
     par(mar = c(7, 4, 2, 1))
-    title <- paste (geoAccessionCode, "/", platform, sep = "")
     fig <-
       boxplot(
         ex,
         boxwex = 0.7,
+        #xlab = "Experimental Conditions",
+        ylab = "Gene Expression",
         notch = TRUE,
-        main = title,
+        main = "",
         outline = FALSE,
         las = 2
       )
@@ -168,77 +167,6 @@ nonInteractiveMeanVariancePlot <-
     return(fig)
   }
 
-#' A Function to Create a UMAP Plot from an Expression Object
-#'
-#' This function allows you to plot expression data into a
-#' UMAP Plot
-#' @param geoAccessionCode A character string representing a
-#' GEO object for download and parsing
-#' @param platform A character string representing the study's
-#' platform
-#' @param ex The GEO expression object which can be obtained
-#' from the extractExpressionData() function
-#' @keywords GEO
-#' @import umap limma
-#' @importFrom maptools pointLabel
-#' @examples
-#' # Get the GEO data for all platforms
-#' geoAccessionCode <- "GSE18388"
-#' allGset <- getGeoObject(geoAccessionCode)
-#'
-#' # Extract platforms
-#' platforms <- extractPlatforms(allGset)
-#' platform <- platforms[1]
-#'
-#' # Extract the GEO2R data from the specified platform
-#' gsetData <- extractPlatformGset(allGset, platform)
-#'
-#' # Extract expression data
-#' expressionData <- extractExpressionData(gsetData)
-#'
-#' # Apply log transformation to expression data if necessary
-#' logTransformation <- "Auto-Detect"
-#' dataInput <- calculateLogTransformation(expressionData,
-#' logTransformation)
-#'
-#' # Perform KNN transformation on log expression data if necessary
-#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
-#'
-#' # Remove all incomplete rows
-#' naOmitInput <- calculateNaOmit(knnDataInput)
-#'
-#' # Non-Interactive UMAP
-#' knn <- 2
-#' fig <- nonInteractiveUmapPlot(naOmitInput, knn,
-#' geoAccessionCode)
-#'
-#' @author Guy Hunt
-#' @noRd
-#' @seealso [extractExpressionData()] for expression object
-nonInteractiveUmapPlot <-
-  function(ex,
-           knn,
-           geoAccessionCode = "",
-           platform = "") {
-    ex <- ex[!duplicated(ex),]  # remove duplicates
-    ump <- umap(t(ex), n_neighbors = knn, random_state = 123)
-    plot(
-      ump$layout,
-      main = paste("UMAP plot, number of nearest neighbors used =",
-                   knn),
-      xlab = "",
-      ylab = "",
-      pch = 20,
-      cex = 1.5
-    )
-    fig <- pointLabel(
-      ump$layout,
-      labels = rownames(ump$layout),
-      method = "SANN",
-      cex = 0.6
-    )
-    return(fig)
-  }
 
 #' A Function to Create a Histogram of the Principle Components
 #' from the PCA outputs of an Expression Object
@@ -509,3 +437,76 @@ nonInteractiveCorrelationMatrixPlot <- function(ex) {
   fig <- pheatmap(corMatrix)
   return(fig)
 }
+
+#' A Function to Create a UMAP Plot from an Expression Object
+#'
+#' This function allows you to plot expression data into a
+#' UMAP Plot
+#' @param geoAccessionCode A character string representing a
+#' GEO object for download and parsing
+#' @param platform A character string representing the study's
+#' platform
+#' @param ex The GEO expression object which can be obtained
+#' from the extractExpressionData() function
+#' @keywords GEO
+#' @import umap limma
+#' @importFrom car pointLabel
+#' @examples
+#' # Get the GEO data for all platforms
+#' geoAccessionCode <- "GSE18388"
+#' allGset <- getGeoObject(geoAccessionCode)
+#'
+#' # Extract platforms
+#' platforms <- extractPlatforms(allGset)
+#' platform <- platforms[1]
+#'
+#' # Extract the GEO2R data from the specified platform
+#' gsetData <- extractPlatformGset(allGset, platform)
+#'
+#' # Extract expression data
+#' expressionData <- extractExpressionData(gsetData)
+#'
+#' # Apply log transformation to expression data if necessary
+#' logTransformation <- "Auto-Detect"
+#' dataInput <- calculateLogTransformation(expressionData,
+#' logTransformation)
+#'
+#' # Perform KNN transformation on log expression data if necessary
+#' knnDataInput <- calculateKnnImpute(dataInput, "Yes")
+#'
+#' # Remove all incomplete rows
+#' naOmitInput <- calculateNaOmit(knnDataInput)
+#'
+#' # Non-Interactive UMAP
+#' knn <- 2
+#' fig <- nonInteractiveUmapPlot(naOmitInput, knn,
+#' geoAccessionCode)
+#'
+#' @author Guy Hunt
+#' @noRd
+#' @seealso [extractExpressionData()] for expression object
+nonInteractiveUmapPlot <-
+  function(ex,
+           knn,
+           geoAccessionCode = "",
+           platform = "") {
+    ex <- ex[!duplicated(ex),]  # remove duplicates
+    ump <- umap(t(ex), n_neighbors = knn, random_state = 123)
+    plot(
+      ump$layout,
+      main = paste("UMAP plot, number of nearest neighbors used =",
+                   knn),
+      xlab = "",
+      ylab = "",
+      pch = 20,
+      cex = 1.5
+    )
+    fig <- pointLabel(
+      ump$layout,
+      labels = rownames(ump$layout),
+      method = "SANN",
+      cex = 0.6
+    )
+    return(fig)
+  }
+

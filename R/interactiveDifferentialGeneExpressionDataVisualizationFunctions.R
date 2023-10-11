@@ -88,15 +88,18 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
                   adjust.method = adjustment,
                   sort.by = "B",
                   number = Inf)
-  fig <- plot_ly(x = tT2$adj.P.Val,
+  fig15 <- plot_ly(x = tT2$adj.P.Val,
                  type = "histogram",
                  nbinsx = 30)
-  fig <- fig %>% layout(
+  fig15 <- fig15 %>% layout(
     title = 'Adjusted P-value distribution',
     xaxis = list(title = 'Adjusted P-value'),
-    yaxis = list(title = 'Number of genes')
+    yaxis = list(title = 'Number of Genes')
   )
-  fig
+  
+  try(fig15 <- toWebGL(fig15))
+  
+  return(fig15)
 }
 
 #' A Function to Create an Interactive Mean Difference
@@ -201,33 +204,52 @@ interactiveHistogramPlot <- function(fit2, adjustment) {
 interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
   attributes_list <- c('ID', 'Gene.symbol', 'Gene.title', 'Gene.ID')
   final_attributes_list <- c()
-
+  
   for (attribute in attributes_list) {
     if (attribute %in% colnames(fit2$genes))
       final_attributes_list <- c(final_attributes_list,
                                  attribute)
   }
-
+  
   if (is.null(fit2$genes[final_attributes_list]) == TRUE) {
     fit2Df <- data.frame(fit2$Amean, fit2$coefficients,
                          dT[, ct])
+    colnames(fit2Df) <- 
+      c("aMean",
+        "coefficients",
+        "regulation"
+      )
   } else {
-    fit2Df <-
-      data.frame(fit2$Amean, fit2$coefficients, dT[, ct],
-                 fit2$genes[final_attributes_list])
+    fit2Df <- tryCatch({
+      fit2DfTemp <- data.frame(fit2$Amean, fit2$coefficients, dT[, ct],
+                      fit2$genes[final_attributes_list])
+      colnames(fit2DfTemp) <- 
+        c("aMean",
+          "coefficients",
+          "regulation",
+          final_attributes_list)
+      fit2DfTemp
+    },
+    error=function(cond) {
+      fit2DfTemp <- data.frame(fit2$Amean, fit2$coefficients,
+                      dT[, ct])
+      colnames(fit2DfTemp) <-
+        c("aMean",
+          "coefficients",
+          "regulation"
+        )
+      fit2DfTemp
+    }
+    )
   }
-
-  colnames(fit2Df) <-
-    c("aMean",
-      "coefficients",
-      "regulation",
-      final_attributes_list)
+  
   fit2Df$regulation[fit2Df$regulation == "1"] <- "Upregulated"
   fit2Df$regulation[fit2Df$regulation == "0"] <-
     "Similar Expression"
   fit2Df$regulation[fit2Df$regulation == "-1"] <- "Downregulation"
-
-  fig <-
+  fit2DfColnames <- colnames(fit2Df)
+  
+  fig16 <-
     plot_ly(
       data = fit2Df,
       x = ~ aMean,
@@ -236,26 +258,26 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
       colors = c("blue", "black", "red"),
       type = 'scatter',
       mode = 'markers',
-      text = if ('ID' %in% final_attributes_list) {
-        if ('Gene.symbol' %in% final_attributes_list) {
-          if ('Gene.title' %in% final_attributes_list) {
-            if ('Gene.ID' %in% final_attributes_list) {
+      text = if ('ID' %in% fit2DfColnames) {
+        if ('Gene.symbol' %in% fit2DfColnames) {
+          if ('Gene.title' %in% fit2DfColnames) {
+            if ('Gene.ID' %in% fit2DfColnames) {
               ~ paste(
                 'ID: ',
                 ID,
-                '<br></br>',
+                '<br>',
                 'Gene Symbol: ',
                 Gene.symbol,
-                '<br></br>',
+                '<br>',
                 'Gene Title: ',
                 Gene.title,
-                '<br></br>',
+                '<br>',
                 'Gene ID: ',
                 Gene.ID,
-                '<br></br>',
+                '<br>',
                 'Average Log-Expression: ',
                 aMean,
-                '<br></br>',
+                '<br>',
                 'Log-Fold-Change: ',
                 coefficients
               )
@@ -263,16 +285,16 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
               ~ paste(
                 'ID: ',
                 ID,
-                '<br></br>',
+                '<br>',
                 'Gene Symbol: ',
                 Gene.symbol,
-                '<br></br>',
+                '<br>',
                 'Gene Title: ',
                 Gene.title,
-                '<br></br>',
+                '<br>',
                 'Average Log-Expression: ',
                 aMean,
-                '<br></br>',
+                '<br>',
                 'Log-Fold-Change: ',
                 coefficients
               )
@@ -281,26 +303,27 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
             ~ paste(
               'ID: ',
               ID,
-              '<br></br>',
+              '<br>',
               'Gene Symbol: ',
               Gene.symbol,
-              '<br></br>',
-              '<br></br>',
+              '<br>',
+              '<br>',
               'Average Log-Expression: ',
               aMean,
-              '<br></br>',
+              '<br>',
               'Log-Fold-Change: ',
               coefficients
             )
           }
-        } else {
+        } else 
+        {
           ~ paste(
             'ID: ',
             ID,
-            '<br></br>',
+            '<br>',
             'Average Log-Expression: ',
             aMean,
-            '<br></br>',
+            '<br>',
             'Log-Fold-Change: ',
             coefficients
           )
@@ -308,7 +331,7 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
       } else {
         ~ paste('Average Log-Expression: ',
                 aMean,
-                '<br></br>',
+                '<br>',
                 'Log-Fold-Change: ',
                 coefficients)
       }
@@ -316,13 +339,14 @@ interactiveMeanDifferencePlot <- function(fit2, dT, ct) {
       hoverinfo = text,
       marker = list(size = 3)
     )
-
-  fig <- fig %>% layout(
+  
+  fig16 <- fig16 %>% layout(
     title = ('Group1-Group2'),
-    xaxis = list(title = "Average log-expression"),
-    yaxis = list(title = "log-fold-change")
+    xaxis = list(title = "log2(expression)"),
+    yaxis = list(title = "log2(fold change)")
   )
-  fig
+  
+  return(fig16)
 }
 
 #' A Function to Create an Interactive Volcano Plot of
@@ -427,34 +451,51 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
   attributes_list <- c('ID', 'Gene.symbol', 'Gene.title',
                        'Gene.ID')
   final_attributes_list <- c()
-
+  
   for (attribute in attributes_list) {
     if (attribute %in% colnames(fit2$genes))
       final_attributes_list <- c(final_attributes_list,
                                  attribute)
   }
-
+  
   if (is.null(fit2$genes[final_attributes_list]) == TRUE) {
     fit2Df <-
       data.frame((0 - log10(fit2$p.value)), fit2$coefficients,
                  dT[, ct])
+    colnames(fit2Df) <-
+      c("pValues",
+        "coefficients",
+        "regulation"
+      )
   } else {
-    fit2Df <-
-      data.frame((0 - log10(fit2$p.value)), fit2$coefficients,
-                 dT[, ct], fit2$genes[final_attributes_list])
+    fit2Df <- tryCatch({
+      fit2DfTemp <- data.frame((0 - log10(fit2$p.value)), fit2$coefficients,
+                      dT[, ct], fit2$genes[final_attributes_list])
+      colnames(fit2DfTemp) <- 
+        c("pValues",
+          "coefficients",
+          "regulation",
+          final_attributes_list)
+      fit2DfTemp},
+      error=function(cond) {
+        fit2DfTemp <- data.frame((0 - log10(fit2$p.value)), fit2$coefficients,
+                        dT[, ct])
+        colnames(fit2DfTemp) <- 
+          c("pValues",
+            "coefficients",
+            "regulation"
+          )
+        fit2DfTemp
+      }
+    )
   }
-
-  colnames(fit2Df) <-
-    c("pValues",
-      "coefficients",
-      "regulation",
-      final_attributes_list)
+  
   fit2Df$regulation[fit2Df$regulation == "1"] <- "Upregulated"
   fit2Df$regulation[fit2Df$regulation == "0"] <-
     "Similar Expression"
   fit2Df$regulation[fit2Df$regulation == "-1"] <- "Downregulation"
-
-  fig <-
+  fit2DfColnames <- colnames(fit2Df)
+  fig17 <-
     plot_ly(
       data = fit2Df,
       x = ~ coefficients,
@@ -464,26 +505,26 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
       type = 'scatter',
       mode = 'markers',
       text =
-        if ('ID' %in% final_attributes_list) {
-          if ('Gene.symbol' %in% final_attributes_list) {
-            if ('Gene.title' %in% final_attributes_list) {
-              if ('Gene.ID' %in% final_attributes_list) {
+        if ('ID' %in% fit2DfColnames) {
+          if ('Gene.symbol' %in% fit2DfColnames) {
+            if ('Gene.title' %in% fit2DfColnames) {
+              if ('Gene.ID' %in% fit2DfColnames) {
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Gene Title: ',
                   Gene.title,
-                  '<br></br>',
+                  '<br>',
                   'Gene ID: ',
                   Gene.ID,
-                  '<br></br>',
+                  '<br>',
                   'Log2 Fold Change: ',
                   coefficients,
-                  '<br></br>',
+                  '<br>',
                   '-Log10(P-Value): ',
                   pValues
                 )
@@ -491,16 +532,16 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Gene Title: ',
                   Gene.title,
-                  '<br></br>',
+                  '<br>',
                   'Log2 Fold Change: ',
                   coefficients,
-                  '<br></br>',
+                  '<br>',
                   '-Log10(P-Value): ',
                   pValues
                 )
@@ -509,14 +550,14 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
               ~ paste(
                 'ID: ',
                 ID,
-                '<br></br>',
+                '<br>',
                 'Gene Symbol: ',
                 Gene.symbol,
-                '<br></br>',
-                '<br></br>',
+                '<br>',
+                '<br>',
                 'Log2 Fold Change: ',
                 coefficients,
-                '<br></br>',
+                '<br>',
                 '-Log10(P-Value): ',
                 pValues
               )
@@ -525,10 +566,10 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
             ~ paste(
               'ID: ',
               ID,
-              '<br></br>',
+              '<br>',
               'Log2 Fold Change: ',
               coefficients,
-              '<br></br>',
+              '<br>',
               '-Log10(P-Value): ',
               pValues
             )
@@ -536,21 +577,23 @@ interactiveVolcanoPlot <- function(fit2, dT, ct) {
         } else {
           ~ paste('Log2 Fold Change: ',
                   coefficients,
-                  '<br></br>',
+                  '<br>',
                   '-Log10(P-Value): ',
                   pValues)
         }
       ,
+      
       hoverinfo = text,
       marker = list(size = 3)
     )
-
-  fig <- fig %>% layout(
+  
+  fig17 <- fig17 %>% layout(
     title = ('Group1-Group2'),
-    xaxis = list(title = "Log2 Fold Change"),
+    xaxis = list(title = "log2(fold change)"),
     yaxis = list(title = "-log10(P-value)")
   )
-  fig
+  
+  return(fig17)
 }
 
 #' A Function to Create an Interactive QQ Plot of the
@@ -658,26 +701,32 @@ interactiveQQPlot <- function(fit2, dT, ct) {
         fit2$df.total[t.good],
         main = "Moderated t statistic",
         plot.it = FALSE)
-
+  
   attributes_list <- c('ID', 'Gene.symbol', 'Gene.title',
                        'Gene.ID')
   final_attributes_list <- c()
-
+  
   for (attribute in attributes_list) {
     if (attribute %in% colnames(fit2$genes))
       final_attributes_list <- c(final_attributes_list,
                                  attribute)
   }
-
-  if (is.null(fit2$genes[final_attributes_list][t.good, ]) == TRUE) {
+  
+  genes <- tryCatch({
+    fit2$genes[,final_attributes_list][t.good,]
+  }, error=function(cond) {
+    fit2$genes[,final_attributes_list][t.good]
+  }
+  )
+  
+  if (is.null(genes)) {
     qqData2 <- data.frame(qqData, dT[t.good, ct])
   } else {
     qqData2 <-
       data.frame(qqData, dT[t.good, ct],
-                 fit2$genes[final_attributes_list][t.good, ])
+                 genes)
   }
-
-
+  
   colnames(qqData2) <-
     c("x", "y", "regulation", final_attributes_list)
   qqData2$regulation <- as.character(qqData2$regulation)
@@ -685,10 +734,10 @@ interactiveQQPlot <- function(fit2, dT, ct) {
   qqData2$regulation[qqData2$regulation == "0"] <-
     "Similar Expression"
   qqData2$regulation[qqData2$regulation == "-1"] <- "Downregulation"
-
-  fig <- plot_ly()
-  fig <-
-    fig %>% add_trace(
+  
+  fig18 <- plot_ly()
+  fig18 <-
+    fig18 %>% add_trace(
       data = qqData2,
       x = ~ x,
       y = ~ y,
@@ -704,19 +753,19 @@ interactiveQQPlot <- function(fit2, dT, ct) {
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Gene Title: ',
                   Gene.title,
-                  '<br></br>',
+                  '<br>',
                   'Gene ID: ',
                   Gene.ID,
-                  '<br></br>',
+                  '<br>',
                   'Theoretical Quantiles: ',
                   x,
-                  '<br></br>',
+                  '<br>',
                   'Sample Quantiles: ',
                   y
                 )
@@ -724,16 +773,16 @@ interactiveQQPlot <- function(fit2, dT, ct) {
                 ~ paste(
                   'ID: ',
                   ID,
-                  '<br></br>',
+                  '<br>',
                   'Gene Symbol: ',
                   Gene.symbol,
-                  '<br></br>',
+                  '<br>',
                   'Gene Title: ',
                   Gene.title,
-                  '<br></br>',
+                  '<br>',
                   'Theoretical Quantiles: ',
                   x,
-                  '<br></br>',
+                  '<br>',
                   'Sample Quantiles: ',
                   y
                 )
@@ -742,13 +791,13 @@ interactiveQQPlot <- function(fit2, dT, ct) {
               ~ paste(
                 'ID: ',
                 ID,
-                '<br></br>',
+                '<br>',
                 'Gene Symbol: ',
                 Gene.symbol,
-                '<br></br>',
+                '<br>',
                 'Theoretical Quantiles: ',
                 x,
-                '<br></br>',
+                '<br>',
                 'Sample Quantiles: ',
                 y
               )
@@ -757,10 +806,10 @@ interactiveQQPlot <- function(fit2, dT, ct) {
             ~ paste(
               'ID: ',
               ID,
-              '<br></br>',
+              '<br>',
               'Theoretical Quantiles: ',
               x,
-              '<br></br>',
+              '<br>',
               'Sample Quantiles: ',
               y
             )
@@ -768,7 +817,7 @@ interactiveQQPlot <- function(fit2, dT, ct) {
         } else {
           ~ paste('Theoretical Quantiles: ',
                   x,
-                  '<br></br>',
+                  '<br>',
                   'Sample Quantiles: ',
                   y)
         }
@@ -776,10 +825,42 @@ interactiveQQPlot <- function(fit2, dT, ct) {
       hoverinfo = text,
       marker = list(size = 3)
     )
-  fig <- fig %>% layout(
+  fig18 <- fig18 %>% layout(
     title = ('Moderated t statistic'),
     xaxis = list(title = "Theoretical Quantiles"),
     yaxis = list(title = "Sample Quantiles")
   )
-  fig
+
+  return(fig18)
+}
+
+
+#' A Function to Create an Heatmap Plot of the
+#' Top Differentially expressed genes for each experimental condition
+#'
+#' This function allows you to Create an Heatmap Plot of the
+#' Top Differentially expressed genes for each experimental condition
+#' @import heatmaply
+#' @author Guy Hunt
+#' @noRd
+#' @seealso [calculateDifferentialGeneExpression()]
+#' for differential gene expression object,
+#' [calculateDifferentialGeneExpressionSummary()]
+#' for summary differential gene expression object
+interactiveDGEHeatMapPlot <- function(ex, limmaPrecisionWeights,
+                                      numberOfGenes, tT) {
+  # Select the genes of interest
+  i <- row.names(tT[seq_len(numberOfGenes),])
+
+  # Create the heatmap
+  if (limmaPrecisionWeights == "Yes") {
+    heatmapFig <- heatmaply(ex$E[i, ])
+  } else if (limmaPrecisionWeights == "No") {
+    heatmapFig <- heatmaply(ex[i, ], xlab = "Experimental Conditions", 
+                            ylab = "Probes", 
+                            main = "Heatmap Plot")
+  }
+  
+  return(heatmapFig)
+
 }
