@@ -166,3 +166,6 @@ Changes in version 1.6.1 (2023-06-09)
 Changes in version 1.7.2 (2023-10-11)
 + Bug fixes
 + Removal of maptools
+
+Changes in version 1.7.3 (2023-10-17)
++ Test updates
