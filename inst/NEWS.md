@@ -169,3 +169,6 @@ Changes in version 1.7.2 (2023-10-11)
 
 Changes in version 1.7.3 (2023-10-17)
 + Test updates
+
+Changes in version 1.7.4 (2023-10-19)
++ Bug fixes
