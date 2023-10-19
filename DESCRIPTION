@@ -83,7 +83,8 @@ Imports:
   xml2,
   R.utils,
   readxl,
-  shinycssloaders
+  shinycssloaders,
+  car
 Suggests: 
     rmarkdown,
     usethis,
