@@ -1,7 +1,7 @@
 Package: GEOexplorer
 Title: GEOexplorer: a webserver for gene expression analysis and visualisation
 Date: 2023/10/19
-Version: 1.8.0
+Version: 1.9.0
 Authors@R: 
   c(person(given = "Guy",
            family = "Hunt",
