@@ -172,3 +172,6 @@ Changes in version 1.7.3 (2023-10-17)
 
 Changes in version 1.7.4 (2023-10-19)
 + Bug fixes
+
+Changes in version 1.9.1 (2023-10-31)
++ Reduced size test to avoid curl memory issue

@@ -625,7 +625,7 @@ test_that("Microarray GSE with non-log values is handled correctly
             
             # enrich Differential Expressed Genes
             enrichedDifferentiallyExpressedGenes <-
-              enrichGenes(differemtiallyExpressedGeneSymbols, 
+              enrichGenes(differemtiallyExpressedGeneSymbols[1:10], 
                           "GO_Biological_Process_2015")
             expect_type(enrichedDifferentiallyExpressedGenes, 'list')
             
@@ -708,7 +708,7 @@ test_that("Microarray GSE with non-log values is handled correctly
             
             # enrich upregulated Genes
             enrichedUpregulatedGenes <-
-              enrichGenes(upregulatedGenesGeneSymbols, 
+              enrichGenes(upregulatedGenesGeneSymbols[1:10], 
                           "GO_Biological_Process_2015")
             expect_type(enrichedUpregulatedGenes, 'list')
             
@@ -733,7 +733,7 @@ test_that("Microarray GSE with non-log values is handled correctly
             expect_type(downregulatedGenesGeneSymbols, 'character')
             
             enrichedDownregulatedGenes <-
-              enrichGenes(downregulatedGenesGeneSymbols, 
+              enrichGenes(downregulatedGenesGeneSymbols[1:10], 
                           "GO_Biological_Process_2015")
             expect_type(enrichedDownregulatedGenes, 'list')
             
